@@ -182,11 +182,6 @@
   "claudeFlow": {
     "version": "3.0.0",
     "enabled": true,
-    "platform": {
-      "os": "windows",
-      "arch": "x64",
-      "shell": "powershell"
-    },
     "modelPreferences": {
       "default": "claude-sonnet-5",
       "routing": "claude-haiku-4-5-20251001"
