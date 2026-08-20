@@ -279,6 +279,8 @@ body {
   text-shadow: 1px 1px 0 #000;
 }
 .overlay-body ul { padding-left: 18px; }
+.overlay-body b { color: var(--ink); }
+.overlay-body .muted { color: var(--gold); }
 
 /* ---------- tooltip ---------- */
 .tooltip {

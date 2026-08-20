@@ -2,39 +2,65 @@
 (function () {
   "use strict";
 
+  var S = window.Stats;
+
   var state = {
     name: "JONIS",
     title: "Apprentice blacksmith",
-    level: 5,
-    xp: 62, // percent toward the next level
+    level: 0,
+    xp: 0, // percent toward the next level
     slots: [null, null, null],
-    buffs: [
-      { key: "rarity", label: "Rarity", value: 150, up: 150, down: -150,
-        help: "Rarity shifts the odds of the tier you pull from the forge. Higher rolls burn hotter, but a bad heat can drag the tier back down." },
-      { key: "quality", label: "Quality", value: 0, up: 50, down: -50,
-        help: "Quality is the finish on the piece. It scales the sale price and the stat roll of whatever you forge." },
-      { key: "eslots", label: "E.Slots", value: 0, up: 1, down: -1,
-        help: "Enchant slots left open on the finished item. Each slot can hold one enchant later at the shop." },
-      { key: "edition", label: "Edition", value: 0, up: 1, down: -4,
-        help: "Edition number of the mint. A low edition is rarer, and a failed strike can push it several numbers down." }
-    ]
+    values: {
+      rarity: S.STATS.rarity.start,
+      quality: S.STATS.quality.start,
+      eslots: S.STATS.eslots.start,
+      edition: S.STATS.edition.start
+    }
   };
 
-  var PANELS = {
-    forge: { title: "Forge", body:
-      "<p>Feed the coals and strike. Every pull rolls against your current buffs.</p>" +
-      "<ul><li>Rarity and Quality decide the tier and the finish.</li>" +
-      "<li>A failed strike applies the red value instead of the green one.</li>" +
-      "<li>Finished pieces land in your inventory.</li></ul>" },
-    shop: { title: "Shop", body:
-      "<p>Sell what you forged, or buy coal, ingots and enchants.</p>" +
-      "<ul><li>Sale price scales with Quality and Edition.</li>" +
-      "<li>Enchants need an open E.Slot on the item.</li></ul>" },
-    inventory: { title: "Inventory", body:
-      "<p>Everything you have forged and not yet sold.</p><p>Nothing here yet — light the forge.</p>" },
-    options: { title: "Options", body:
-      "<ul><li>Sound: on</li><li>Pixel scaling: nearest</li><li>Screen shake: on</li></ul>" }
+  // Per-stat help text; the live roll window is appended at render time.
+  var HELP = {
+    rarity:
+      "Rarity runs 0\u20131000 and sets the tier bracket the forge pulls from. " +
+      "Each strike swings it by your luck, \u00b1150 at base. It cannot drop below 0.",
+    quality:
+      "Quality runs \u221250 to 400 and sets the finish band on the piece. " +
+      "Each strike swings it by \u00b150 at base. It can go negative, down to Bad.",
+    eslots:
+      "Enchant slots run 0\u20136 and decide how many enchants the piece can hold. " +
+      "Each strike swings it by \u00b11 at base. It cannot drop below 0.",
+    edition:
+      "Edition runs 0\u20135 and names the mint the piece is struck in. " +
+      "A good strike gains 1, a bad one loses 4. It cannot drop below 0."
   };
+
+  function panels() {
+    return {
+      forge: { title: "Forge", body: forecastTable() +
+        "<p>Every strike swings each stat by your luck: the green value on a " +
+        "good heat, the red one on a bad heat. The stats you end on decide " +
+        "what the piece is worth.</p>" },
+      shop: { title: "Shop", body:
+        "<p>Sell what you forged, or buy coal, ingots and enchants.</p>" +
+        "<ul><li>Sale price scales with Quality band and Edition.</li>" +
+        "<li>An enchant needs an open slot on the piece.</li></ul>" },
+      inventory: { title: "Inventory", body:
+        "<p>Everything you have forged and not yet sold.</p>" +
+        "<p>Nothing here yet \u2014 light the forge.</p>" },
+      options: { title: "Options", body:
+        "<ul><li>Sound: on</li><li>Pixel scaling: nearest</li>" +
+        "<li>Screen shake: on</li></ul>" }
+    };
+  }
+
+  // What the current stats could produce on the next strike.
+  function forecastTable() {
+    var rows = S.forecast(state.values).map(function (row) {
+      return "<li>" + row.label + ": <b>" + row.value + "</b> " +
+        '<span class="muted">(' + row.detail + ")</span></li>";
+    });
+    return "<p>Next strike can land:</p><ul>" + rows.join("") + "</ul>";
+  }
 
   var $ = function (id) { return document.getElementById(id); };
   var tooltipEl = $("tooltip");
@@ -47,20 +73,22 @@
   function renderBuffs() {
     var grid = $("buff-grid");
     grid.innerHTML = "";
-    state.buffs.forEach(function (buff) {
+    Object.keys(S.STATS).forEach(function (key) {
+      var stat = S.STATS[key];
+      var value = state.values[key];
       var cell = document.createElement("div");
       cell.className = "buff";
 
       var text = document.createElement("div");
       var name = document.createElement("div");
       name.className = "buff-name";
-      name.innerHTML = buff.label + ": <b>" + buff.value + "</b>";
+      name.innerHTML = stat.label + ": <b>" + value + "</b>";
       var delta = document.createElement("div");
       delta.className = "buff-delta";
       delta.innerHTML =
-        '<span class="up">+' + buff.up + '</span> ' +
+        '<span class="up">+' + stat.up + '</span> ' +
         '<span class="sep">#</span> ' +
-        '<span class="down">' + buff.down + "</span>";
+        '<span class="down">' + stat.down + "</span>";
       text.appendChild(name);
       text.appendChild(delta);
 
@@ -68,13 +96,36 @@
       help.className = "help";
       help.type = "button";
       help.textContent = "?";
-      help.setAttribute("aria-label", buff.label + " info");
-      bindTooltip(help, "<b>" + buff.label + "</b><br>" + buff.help);
+      help.setAttribute("aria-label", stat.label + " info");
+      bindTooltip(help, buffTooltip(key, stat, value));
 
       cell.appendChild(text);
       cell.appendChild(help);
       grid.appendChild(cell);
     });
+  }
+
+  // Tooltip: the rule for the stat, then the window it can roll into now.
+  function buffTooltip(key, stat, value) {
+    var range = S.rollRange(key, value);
+    var lands;
+    if (key === "rarity") {
+      lands = bracketSpan(S.tierAt(range.low).name, S.tierAt(range.high).name);
+    } else if (key === "quality") {
+      lands = bracketSpan(S.qualityBandAt(range.low).name,
+                          S.qualityBandAt(range.high).name);
+    } else if (key === "edition") {
+      lands = bracketSpan(S.editionAt(range.low), S.editionAt(range.high));
+    } else {
+      lands = bracketSpan(range.low + " slots", range.high + " slots");
+    }
+    return "<b>" + stat.label + "</b><br>" + HELP[key] +
+      "<br><br>Next strike: <b>" + range.low + "\u2013" + range.high + "</b>" +
+      "<br>Lands in: <b>" + lands + "</b>";
+  }
+
+  function bracketSpan(low, high) {
+    return low === high ? low : low + "\u2013" + high;
   }
 
   function renderSlots() {
@@ -119,7 +170,7 @@
   function hideTooltip() { tooltipEl.hidden = true; }
 
   function openPanel(key) {
-    var panel = PANELS[key];
+    var panel = panels()[key];
     if (!panel) return;
     $("overlay-title").textContent = panel.title;
     $("overlay-body").innerHTML = panel.body;
@@ -142,8 +193,8 @@
     $("btn-profile").addEventListener("click", function () {
       $("overlay-title").textContent = state.name;
       $("overlay-body").innerHTML =
-        "<p>" + state.title + " — level " + state.level + "</p>" +
-        "<p>" + state.xp + "% toward the next level.</p>";
+        "<p>" + state.title + " \u2014 level " + state.level + "</p>" +
+        "<p>" + state.xp + "% toward the next level.</p>" + forecastTable();
       $("overlay").hidden = false;
     });
     document.addEventListener("keydown", function (ev) {
