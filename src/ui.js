@@ -192,6 +192,9 @@
     scene.strike(3, null, function () {
       var result = G.forge(state, recipe);
       view.striking = false;
+      // Enough left for another of the same piece? Keep it on the anvil so
+      // the smith can swing again without reopening the menu.
+      if (!view.pending && G.canForge(state, recipe)) view.pending = recipe;
       renderStrike();
       renderPurse();
       if (result.ok) showResult(result.item);

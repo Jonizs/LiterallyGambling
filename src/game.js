@@ -38,6 +38,21 @@
     return Math.max(1, Math.round(price * PRICE_SCALE));
   }
 
+  function inventoryValue(state) {
+    return state.inventory.reduce(function (sum, item) {
+      return sum + sellPrice(item);
+    }, 0);
+  }
+
+  function sellAll(state) {
+    var count = state.inventory.length;
+    if (!count) return { ok: false, reason: "Nothing to sell." };
+    var total = inventoryValue(state);
+    state.inventory.length = 0;
+    state.silver += total;
+    return { ok: true, count: count, total: total };
+  }
+
   function sell(state, id) {
     for (var i = 0; i < state.inventory.length; i++) {
       if (state.inventory[i].id === id) {
@@ -144,6 +159,8 @@
     canForge: canForge,
     sellPrice: sellPrice,
     sell: sell,
+    sellAll: sellAll,
+    inventoryValue: inventoryValue,
     rollLuck: rollLuck,
     rollStat: rollStat,
     forge: forge

@@ -47,7 +47,9 @@
   var HIT_TIME = 0.44;   // seconds per hammer blow
   var IMPACT_AT = 0.72;  // fraction of a blow when the head lands
   var LIFT = 22;         // pixels the head rises at the top of the swing
-  var HEAD_DIST = 24;    // head centre to the smith's grip
+  var HEAD_DIST = 26;    // head centre to the smith's grip
+  var HEAD_LONG = 8;     // half the head's length along the handle
+  var HEAD_THICK = 5;    // half the head's thickness
   var SWING_ARC = 1.15;  // radians the hammer turns between rest and lift
 
   // Start a run of hammer blows. onDone fires once the last one settles.
@@ -152,13 +154,13 @@
     var lift = this.swingLift(this.swing.t / HIT_TIME);
     // The hammer turns about the smith's grip, so the head travels an arc
     // and the whole tool tilts with it instead of sliding up and down.
-    var pivotX = STRIKE_X + HEAD_DIST, pivotY = ANVIL_TOP - 4;
+    var pivotX = STRIKE_X + HEAD_DIST, pivotY = ANVIL_TOP - HEAD_THICK;
     var angle = Math.PI + lift * SWING_ARC;
     var ux = Math.cos(angle), uy = Math.sin(angle);
     var hx = pivotX + ux * HEAD_DIST, hy = pivotY + uy * HEAD_DIST;
 
     // Handle: a line of pixels from the grip out to the head.
-    for (var d = 4; d < HEAD_DIST - 5; d++) {
+    for (var d = 4; d < HEAD_DIST - HEAD_LONG; d++) {
       var sx = pivotX + ux * d, sy = pivotY + uy * d;
       for (var v = -1; v <= 1; v++) {
         var shade = v < 0 ? "#6f4823" : v > 0 ? PALETTE.woodDark : PALETTE.wood;
@@ -167,10 +169,11 @@
     }
 
     // Head: a block rotated onto the same axis, lit on top, dark underneath.
-    for (var u = -6; u <= 6; u++) {
-      for (var w = -4; w <= 4; w++) {
-        var color = w <= -3 ? "#9d9daa" : w >= 3 ? PALETTE.anvilEdge : PALETTE.steel;
-        if (u <= -4) color = w <= -3 ? "#8a8a95" : "#5f5f6a"; // striking face
+    for (var u = -HEAD_LONG; u <= HEAD_LONG; u++) {
+      for (var w = -HEAD_THICK; w <= HEAD_THICK; w++) {
+        var edge = HEAD_THICK - 1;
+        var color = w <= -edge ? "#9d9daa" : w >= edge ? PALETTE.anvilEdge : PALETTE.steel;
+        if (u <= -HEAD_LONG + 2) color = w <= -edge ? "#8a8a95" : "#5f5f6a"; // face
         this.rect(Math.round(hx + ux * u - uy * w),
                   Math.round(hy + uy * u + ux * w), 1, 1, color);
       }

@@ -340,6 +340,7 @@ body {
   border: 2px solid rgba(0,0,0,.5);
 }
 .row-title { color: var(--ink); font-size: clamp(11px, 1.35vw, 15px); }
+.head-row { border-color: var(--gold-dark); background: rgba(0,0,0,.32); margin-bottom: 6px; }
 .btn-group { display: flex; gap: 4px; }
 
 .mini-btn {

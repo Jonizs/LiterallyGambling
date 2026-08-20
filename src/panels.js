@@ -122,8 +122,19 @@
       if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
       return wrap;
     }
-    wrap.appendChild(el("p", null,
-      items.length + " piece" + (items.length === 1 ? "" : "s") + " forged."));
+    var head = el("div", "row head-row");
+    head.appendChild(el("div", "row-title",
+      items.length + " piece" + (items.length === 1 ? "" : "s") + " forged \u00b7 " +
+      G.inventoryValue(ctx.state) + " silver on the rack"));
+    head.appendChild(button("SELL ALL", "mini-btn strong", function () {
+      var result = G.sellAll(ctx.state);
+      ctx.setNotice(result.ok
+        ? "Sold " + result.count + " piece" + (result.count === 1 ? "" : "s") +
+          " for " + result.total + " silver."
+        : result.reason);
+      ctx.refresh();
+    }));
+    wrap.appendChild(head);
     var rows = el("div", "rows");
     items.forEach(function (item) {
       var row = el("div", "row");
