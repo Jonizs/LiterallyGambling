@@ -495,13 +495,13 @@ body {
 
 /* ---------- item icons ---------- */
 .icon {
-  width: clamp(20px, 2.6vw, 30px);
+  width: clamp(26px, 3.2vw, 38px);
   height: auto;
   aspect-ratio: 1;
   image-rendering: pixelated;
   flex: none;
 }
-.icon.big { width: clamp(34px, 4.4vw, 52px); }
+.icon.big { width: clamp(44px, 5.6vw, 68px); }
 
 /* Display header doubles as a button */
 .tab-btn {
