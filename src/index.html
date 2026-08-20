@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Literally Gambling — Forge</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="game" id="game">
+  <div class="frame">
+
+    <aside class="sidebar">
+      <div class="plate nameplate">
+        <div class="name-row">
+          <span class="player-name">JONIS</span>
+          <button class="chip" id="btn-profile">Profile</button>
+        </div>
+        <div class="player-title">Apprentice blacksmith</div>
+      </div>
+
+      <div class="xp-row">
+        <div class="xp-track">
+          <div class="xp-fill" id="xp-fill"></div>
+        </div>
+        <div class="level-medallion">
+          <span class="lvl-label">lvl</span>
+          <span class="lvl-value" id="lvl-value">5</span>
+        </div>
+      </div>
+
+      <div class="purse" id="purse"></div>
+
+      <section class="plate buffs">
+        <h2 class="tab-title">Forge buffs</h2>
+        <div class="buff-grid" id="buff-grid"></div>
+      </section>
+
+      <div class="btn-row">
+        <button class="wood-btn" data-panel="forge">FORGE</button>
+        <button class="wood-btn" data-panel="shop">SHOP</button>
+      </div>
+      <div class="btn-row">
+        <button class="wood-btn small" data-panel="inventory">INVENTORY</button>
+        <button class="wood-btn small" data-panel="upgrades">UPGRADES</button>
+      </div>
+      <div class="btn-row">
+        <button class="wood-btn small" data-panel="enchant">ENCHANT</button>
+        <button class="wood-btn small" data-panel="awaken">AWAKEN</button>
+      </div>
+
+      <div class="display-block">
+        <button class="tab-btn" data-panel="display">Display</button>
+        <div class="slot-row compact" id="slot-row"></div>
+      </div>
+
+      <button class="wood-btn wide options" data-panel="options">OPTIONS</button>
+    </aside>
+
+    <main class="scene">
+      <canvas id="forge-canvas" width="256" height="160" aria-label="Blacksmith forge"></canvas>
+      <div class="filigree tl"></div><div class="filigree tr"></div>
+      <div class="filigree bl"></div><div class="filigree br"></div>
+      <div class="gem g1"></div><div class="gem g2"></div>
+      <div class="gem g3"></div><div class="gem g4"></div>
+
+      <button class="strike-btn idle" id="strike-btn" type="button" disabled>FORGE!</button>
+
+      <div class="popup" id="result-pop" hidden>
+        <div class="plate popup-card">
+          <div class="popup-head">Pulled from the coals</div>
+          <div class="popup-icon" id="pop-icon"></div>
+          <div class="popup-name" id="pop-name"></div>
+          <div class="popup-stats" id="pop-stats"></div>
+          <div class="popup-actions">
+            <button class="mini-btn strong" id="pop-close" type="button">TAKE IT</button>
+            <button class="mini-btn" id="pop-sell" type="button">SELL</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="overlay" id="overlay" hidden>
+        <div class="plate overlay-card">
+          <div class="overlay-head">
+            <h2 class="tab-title" id="overlay-title">Forge</h2>
+            <button class="chip" id="overlay-close">Close</button>
+          </div>
+          <div class="overlay-body" id="overlay-body"></div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+  <div class="tooltip" id="tooltip" hidden></div>
+</div>
+<script src="stats.js"></script>
+<script src="icons.js"></script>
+<script src="game.js"></script>
+<script src="panels.js"></script>
+<script src="forge.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
