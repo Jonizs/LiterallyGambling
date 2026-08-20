@@ -1,73 +1,57 @@
-/* Wiring for the forge HUD: player state, buff readouts, tooltips and panels. */
+/* Wiring for the forge HUD: purse, buff readouts, tooltips and panels. */
 (function () {
   "use strict";
 
-  var S = window.Stats;
+  var S = window.Stats, G = window.Game, P = window.Panels;
 
-  var state = {
+  var player = {
     name: "JONIS",
     title: "Apprentice blacksmith",
     level: 0,
     xp: 0, // percent toward the next level
-    slots: [null, null, null],
-    values: {
-      rarity: S.STATS.rarity.start,
-      quality: S.STATS.quality.start,
-      eslots: S.STATS.eslots.start,
-      edition: S.STATS.edition.start
-    }
+    display: [null, null, null]
   };
+
+  var state = G.createState();
+  var view = { panel: null, lastItem: null, notice: "" };
 
   // Per-stat help text; the live roll window is appended at render time.
   var HELP = {
     rarity:
-      "Rarity runs 0\u20131000 and sets the tier bracket the forge pulls from. " +
-      "Each strike swings it by your luck, \u00b1150 at base. It cannot drop below 0.",
+      "Rarity runs 0–1000 and sets the tier bracket the forge pulls from. " +
+      "Each strike swings it by your luck, ±150 at base. It cannot drop below 0.",
     quality:
-      "Quality runs \u221250 to 400 and sets the finish band on the piece. " +
-      "Each strike swings it by \u00b150 at base. It can go negative, down to Bad.",
+      "Quality runs −50 to 400 and sets the finish band on the piece. " +
+      "Each strike swings it by ±50 at base. It can go negative, down to Bad.",
     eslots:
-      "Enchant slots run 0\u20136 and decide how many enchants the piece can hold. " +
-      "Each strike swings it by \u00b11 at base. It cannot drop below 0.",
+      "Enchant slots run 0–6 and decide how many enchants the piece can hold. " +
+      "Each strike swings it by ±1 at base. It cannot drop below 0.",
     edition:
-      "Edition runs 0\u20135 and names the mint the piece is struck in. " +
+      "Edition runs 0–5 and names the mint the piece is struck in. " +
       "A good strike gains 1, a bad one loses 4. It cannot drop below 0."
   };
-
-  function panels() {
-    return {
-      forge: { title: "Forge", body: forecastTable() +
-        "<p>Every strike swings each stat by your luck: the green value on a " +
-        "good heat, the red one on a bad heat. The stats you end on decide " +
-        "what the piece is worth.</p>" },
-      shop: { title: "Shop", body:
-        "<p>Sell what you forged, or buy coal, ingots and enchants.</p>" +
-        "<ul><li>Sale price scales with Quality band and Edition.</li>" +
-        "<li>An enchant needs an open slot on the piece.</li></ul>" },
-      inventory: { title: "Inventory", body:
-        "<p>Everything you have forged and not yet sold.</p>" +
-        "<p>Nothing here yet \u2014 light the forge.</p>" },
-      options: { title: "Options", body:
-        "<ul><li>Sound: on</li><li>Pixel scaling: nearest</li>" +
-        "<li>Screen shake: on</li></ul>" }
-    };
-  }
-
-  // What the current stats could produce on the next strike.
-  function forecastTable() {
-    var rows = S.forecast(state.values).map(function (row) {
-      return "<li>" + row.label + ": <b>" + row.value + "</b> " +
-        '<span class="muted">(' + row.detail + ")</span></li>";
-    });
-    return "<p>Next strike can land:</p><ul>" + rows.join("") + "</ul>";
-  }
 
   var $ = function (id) { return document.getElementById(id); };
   var tooltipEl = $("tooltip");
 
   function renderHeader() {
-    $("lvl-value").textContent = state.level;
-    $("xp-fill").style.width = state.xp + "%";
+    $("lvl-value").textContent = player.level;
+    $("xp-fill").style.width = player.xp + "%";
+  }
+
+  function renderPurse() {
+    var purse = $("purse");
+    purse.innerHTML = "";
+    var coins = P.el("span", "coin", state.silver + " silver");
+    bindTooltip(coins, "<b>Silver</b><br>Spent at the shop on materials.");
+    purse.appendChild(coins);
+    Object.keys(G.MATERIALS).forEach(function (key) {
+      var mat = G.MATERIALS[key];
+      var chip = P.el("span", "mat", mat.label + " " + state.materials[key]);
+      bindTooltip(chip, "<b>" + mat.label + "</b><br>" + mat.price +
+        " silver each in the shop.");
+      purse.appendChild(chip);
+    });
   }
 
   function renderBuffs() {
@@ -75,16 +59,13 @@
     grid.innerHTML = "";
     Object.keys(S.STATS).forEach(function (key) {
       var stat = S.STATS[key];
-      var value = state.values[key];
-      var cell = document.createElement("div");
-      cell.className = "buff";
+      var value = state.base[key];
+      var cell = P.el("div", "buff");
 
-      var text = document.createElement("div");
-      var name = document.createElement("div");
-      name.className = "buff-name";
+      var text = P.el("div");
+      var name = P.el("div", "buff-name");
       name.innerHTML = stat.label + ": <b>" + value + "</b>";
-      var delta = document.createElement("div");
-      delta.className = "buff-delta";
+      var delta = P.el("div", "buff-delta");
       delta.innerHTML =
         '<span class="up">+' + stat.up + '</span> ' +
         '<span class="sep">#</span> ' +
@@ -92,10 +73,8 @@
       text.appendChild(name);
       text.appendChild(delta);
 
-      var help = document.createElement("button");
-      help.className = "help";
+      var help = P.el("button", "help", "?");
       help.type = "button";
-      help.textContent = "?";
       help.setAttribute("aria-label", stat.label + " info");
       bindTooltip(help, buffTooltip(key, stat, value));
 
@@ -120,21 +99,19 @@
       lands = bracketSpan(range.low + " slots", range.high + " slots");
     }
     return "<b>" + stat.label + "</b><br>" + HELP[key] +
-      "<br><br>Next strike: <b>" + range.low + "\u2013" + range.high + "</b>" +
-      "<br>Lands in: <b>" + lands + "</b>";
+      "<br><br>Next strike: <b>" + range.low + "–" + range.high +
+      "</b>, every value equally likely<br>Lands in: <b>" + lands + "</b>";
   }
 
   function bracketSpan(low, high) {
-    return low === high ? low : low + "\u2013" + high;
+    return low === high ? low : low + "–" + high;
   }
 
   function renderSlots() {
     var row = $("slot-row");
     row.innerHTML = "";
-    state.slots.forEach(function (item, i) {
-      var slot = document.createElement("div");
-      slot.className = "slot";
-      slot.textContent = item ? item.name : "";
+    player.display.forEach(function (item, i) {
+      var slot = P.el("div", "slot", item ? item.name : "");
       bindTooltip(slot, item
         ? "<b>" + item.name + "</b><br>On display."
         : "Display slot " + (i + 1) + "<br>Empty. Show off a forged piece here.");
@@ -169,15 +146,67 @@
 
   function hideTooltip() { tooltipEl.hidden = true; }
 
+  function context() {
+    return {
+      state: state,
+      lastItem: view.lastItem,
+      notice: view.notice,
+      setResult: function (item) { view.lastItem = item; view.notice = ""; },
+      setNotice: function (text) { view.notice = text; },
+      refresh: refresh
+    };
+  }
+
   function openPanel(key) {
-    var panel = panels()[key];
+    var panel = P.BUILDERS[key];
     if (!panel) return;
-    $("overlay-title").textContent = panel.title;
-    $("overlay-body").innerHTML = panel.body;
+    view.panel = key;
+    view.notice = "";
+    if (key !== "forge") view.lastItem = null;
+    drawPanel();
     $("overlay").hidden = false;
   }
 
-  function closePanel() { $("overlay").hidden = true; }
+  function drawPanel() {
+    if (!view.panel) return;
+    var panel = P.BUILDERS[view.panel];
+    $("overlay-title").textContent = panel.title;
+    var body = $("overlay-body");
+    body.innerHTML = "";
+    body.appendChild(panel.build(context()));
+  }
+
+  function closePanel() {
+    view.panel = null;
+    $("overlay").hidden = true;
+  }
+
+  function refresh() {
+    renderPurse();
+    renderBuffs();
+    renderSlots();
+    drawPanel();
+  }
+
+  function openProfile() {
+    view.panel = null;
+    $("overlay-title").textContent = player.name;
+    var body = $("overlay-body");
+    body.innerHTML = "";
+    body.appendChild(P.el("p", null,
+      player.title + " — level " + player.level));
+    body.appendChild(P.el("p", null, player.xp + "% toward the next level."));
+    body.appendChild(P.el("p", null, "Next strike can land:"));
+    var list = P.el("ul");
+    S.forecast(state.base).forEach(function (row) {
+      var li = P.el("li", null, row.label + ": ");
+      li.appendChild(P.el("b", null, row.value));
+      li.appendChild(P.el("span", "muted", " (" + row.detail + ")"));
+      list.appendChild(li);
+    });
+    body.appendChild(list);
+    $("overlay").hidden = false;
+  }
 
   function bindControls() {
     Array.prototype.forEach.call(
@@ -190,13 +219,7 @@
     $("overlay").addEventListener("click", function (ev) {
       if (ev.target === $("overlay")) closePanel();
     });
-    $("btn-profile").addEventListener("click", function () {
-      $("overlay-title").textContent = state.name;
-      $("overlay-body").innerHTML =
-        "<p>" + state.title + " \u2014 level " + state.level + "</p>" +
-        "<p>" + state.xp + "% toward the next level.</p>" + forecastTable();
-      $("overlay").hidden = false;
-    });
+    $("btn-profile").addEventListener("click", openProfile);
     document.addEventListener("keydown", function (ev) {
       if (ev.key === "Escape") { closePanel(); hideTooltip(); }
     });
@@ -205,6 +228,7 @@
 
   function init() {
     renderHeader();
+    renderPurse();
     renderBuffs();
     renderSlots();
     bindControls();
