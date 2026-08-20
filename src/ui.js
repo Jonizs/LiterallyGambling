@@ -13,7 +13,7 @@
   };
 
   var state = G.createState();
-  var view = { panel: null, notice: "", pending: null, striking: false };
+  var view = { panel: null, notice: "", pending: null, striking: false, shown: null };
   var scene = null;
 
   // Per-stat help text; the live roll window is appended at render time.
@@ -216,10 +216,24 @@
       row.appendChild(P.el("span", "popup-value", pair[1]));
       stats.appendChild(row);
     });
+    view.shown = item;
+    $("pop-sell").textContent = "SELL " + G.sellPrice(item);
     $("result-pop").hidden = false;
   }
 
-  function closeResult() { $("result-pop").hidden = true; }
+  function closeResult() {
+    view.shown = null;
+    $("result-pop").hidden = true;
+  }
+
+  // Sell straight off the detail screen, without a trip to the inventory.
+  function sellShown() {
+    if (!view.shown) return;
+    G.sell(state, view.shown.id);
+    closeResult();
+    renderPurse();
+    drawPanel();
+  }
 
   function openPanel(key) {
     var panel = P.BUILDERS[key];
@@ -287,6 +301,7 @@
     $("btn-profile").addEventListener("click", openProfile);
     $("strike-btn").addEventListener("click", doStrike);
     $("pop-close").addEventListener("click", closeResult);
+    $("pop-sell").addEventListener("click", sellShown);
     $("result-pop").addEventListener("click", function (ev) {
       if (ev.target === $("result-pop")) closeResult();
     });

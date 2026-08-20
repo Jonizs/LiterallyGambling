@@ -398,6 +398,7 @@ body {
   color: var(--gold);
   margin-bottom: 4px;
 }
+.popup-actions { display: flex; gap: 6px; justify-content: center; }
 .notice { margin-top: 6px; color: var(--gold-lit); }
 .empty { color: var(--ink-dim); }
 
