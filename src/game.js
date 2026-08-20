@@ -27,6 +27,7 @@
   var BAND_MULTIPLIER = {
     Bad: 0.5, Normal: 1, Good: 1.6, Refined: 2.4, Pristine: 3.4, Legendary: 5
   };
+  var PRICE_SCALE = 2.5; // one knob over the whole sale curve
 
   function sellPrice(item) {
     var tierIndex = parseInt(item.tier.slice(1), 10) || 1;
@@ -34,7 +35,7 @@
     var price = base * (1 + (tierIndex - 1) * 0.35) *
                 (BAND_MULTIPLIER[item.band] || 1);
     price += item.slots * 12 + item.edition * 20;
-    return Math.max(1, Math.round(price));
+    return Math.max(1, Math.round(price * PRICE_SCALE));
   }
 
   function sell(state, id) {
