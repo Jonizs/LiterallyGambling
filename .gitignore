@@ -16,3 +16,10 @@ node_modules/
 .claude-flow/metrics/security-audit.json
 .claude/.proven-config-version
 .claude/proven-config.json
+.claude-flow/metrics/backup.json
+.claude-flow/metrics/consolidation.json
+.claude-flow/metrics/harness-loop.json
+.claude-flow/metrics/test-gaps.json
+.swarm/backups/
+.swarm/memory.db-shm
+.swarm/memory.db-wal
