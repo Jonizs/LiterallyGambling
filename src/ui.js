@@ -13,7 +13,8 @@
   };
 
   var state = G.createState();
-  var view = { panel: null, lastItem: null, notice: "" };
+  var view = { panel: null, notice: "", pending: null, striking: false };
+  var scene = null;
 
   // Per-stat help text; the live roll window is appended at render time.
   var HELP = {
@@ -149,13 +150,73 @@
   function context() {
     return {
       state: state,
-      lastItem: view.lastItem,
       notice: view.notice,
-      setResult: function (item) { view.lastItem = item; view.notice = ""; },
+      pending: view.pending,
       setNotice: function (text) { view.notice = text; },
+      queue: queueStrike,
       refresh: refresh
     };
   }
+
+  // Picking a piece in the forge menu sets it on the anvil; the strike
+  // itself waits for the FORGE! button over the menu.
+  function queueStrike(recipe) {
+    view.pending = recipe;
+    closePanel();
+    renderStrike();
+  }
+
+  // The button keeps its space in the column so nothing shifts when a
+  // strike is queued; it is only made visible and clickable.
+  function renderStrike() {
+    var btn = $("strike-btn");
+    var ready = !!view.pending && !view.striking;
+    btn.classList.toggle("idle", !ready);
+    btn.disabled = !ready;
+    btn.setAttribute("aria-hidden", ready ? "false" : "true");
+  }
+
+  function doStrike() {
+    var recipe = view.pending;
+    if (!recipe || view.striking) return;
+    if (!G.canForge(state, recipe)) {
+      view.pending = null;
+      renderStrike();
+      return;
+    }
+    // The piece is on the anvil now, so the queue is free again: anything
+    // picked during the strike waits its turn instead of being lost.
+    view.pending = null;
+    view.striking = true;
+    renderStrike();
+    scene.strike(3, null, function () {
+      var result = G.forge(state, recipe);
+      view.striking = false;
+      renderStrike();
+      renderPurse();
+      if (result.ok) showResult(result.item);
+    });
+  }
+
+  function showResult(item) {
+    $("pop-name").textContent = item.name;
+    var stats = $("pop-stats");
+    stats.innerHTML = "";
+    [
+      ["Rarity", item.rarity + " · " + item.tier],
+      ["Quality", item.quality + " · " + item.band],
+      ["Ench. slots", String(item.slots)],
+      ["Edition", item.edition + " · " + item.editionName]
+    ].forEach(function (pair) {
+      var row = P.el("div", "popup-stat");
+      row.appendChild(P.el("span", "popup-key", pair[0]));
+      row.appendChild(P.el("span", "popup-value", pair[1]));
+      stats.appendChild(row);
+    });
+    $("result-pop").hidden = false;
+  }
+
+  function closeResult() { $("result-pop").hidden = true; }
 
   function openPanel(key) {
     var panel = P.BUILDERS[key];
@@ -182,6 +243,7 @@
   }
 
   function refresh() {
+    renderStrike();
     renderPurse();
     renderBuffs();
     renderSlots();
@@ -220,19 +282,26 @@
       if (ev.target === $("overlay")) closePanel();
     });
     $("btn-profile").addEventListener("click", openProfile);
+    $("strike-btn").addEventListener("click", doStrike);
+    $("pop-close").addEventListener("click", closeResult);
+    $("result-pop").addEventListener("click", function (ev) {
+      if (ev.target === $("result-pop")) closeResult();
+    });
     document.addEventListener("keydown", function (ev) {
-      if (ev.key === "Escape") { closePanel(); hideTooltip(); }
+      if (ev.key === "Escape") { closePanel(); closeResult(); hideTooltip(); }
     });
     document.addEventListener("click", hideTooltip);
   }
 
   function init() {
     renderHeader();
+    renderStrike();
     renderPurse();
     renderBuffs();
     renderSlots();
+    scene = new window.Forge(document.getElementById("forge-canvas"));
     bindControls();
-    new window.Forge(document.getElementById("forge-canvas")).start();
+    scene.start();
   }
 
   if (document.readyState === "loading") {

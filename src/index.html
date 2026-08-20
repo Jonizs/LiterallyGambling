@@ -36,6 +36,8 @@
         <div class="buff-grid" id="buff-grid"></div>
       </section>
 
+      <button class="strike-btn idle" id="strike-btn" type="button" disabled>FORGE!</button>
+
       <div class="btn-row">
         <button class="wood-btn" data-panel="forge">FORGE</button>
         <button class="wood-btn" data-panel="shop">SHOP</button>
@@ -60,6 +62,15 @@
       <div class="filigree bl"></div><div class="filigree br"></div>
       <div class="gem g1"></div><div class="gem g2"></div>
       <div class="gem g3"></div><div class="gem g4"></div>
+
+      <div class="popup" id="result-pop" hidden>
+        <div class="plate popup-card">
+          <div class="popup-head">Pulled from the coals</div>
+          <div class="popup-name" id="pop-name"></div>
+          <div class="popup-stats" id="pop-stats"></div>
+          <button class="mini-btn strong" id="pop-close" type="button">TAKE IT</button>
+        </div>
+      </div>
 
       <div class="overlay" id="overlay" hidden>
         <div class="plate overlay-card">

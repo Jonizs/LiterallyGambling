@@ -45,18 +45,9 @@
   // --- forge ---------------------------------------------------------------
   function forgePanel(ctx) {
     var wrap = el("div");
-    if (ctx.lastItem) {
-      var out = el("div", "result");
-      out.appendChild(el("div", "result-head", "Pulled from the coals"));
-      out.appendChild(itemLine(ctx.lastItem));
-      out.appendChild(el("div", "muted",
-        "rarity " + ctx.lastItem.rarity + " \u00b7 quality " + ctx.lastItem.quality));
-      wrap.appendChild(out);
-    }
     wrap.appendChild(el("p", null,
-      "Pick a piece. Forging spends the materials and rolls each stat " +
-      "around your forge buffs \u2014 every value in the luck window is " +
-      "equally likely."));
+      "Pick a piece to set on the anvil. The strike itself happens at the " +
+      "forge \u2014 every value in the luck window is equally likely."));
 
     var rows = el("div", "rows");
     G.RECIPES.forEach(function (recipe) {
@@ -68,9 +59,7 @@
 
       var ready = G.canForge(ctx.state, recipe);
       var b = button("FORGE", "mini-btn strong", function () {
-        var result = G.forge(ctx.state, recipe);
-        if (result.ok) ctx.setResult(result.item);
-        ctx.refresh();
+        ctx.queue(recipe);
       });
       b.disabled = !ready;
       if (!ready) {

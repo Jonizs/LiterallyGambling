@@ -34,9 +34,137 @@
     this.ctx = canvas.getContext("2d");
     this.ctx.imageSmoothingEnabled = false;
     this.embers = [];
+    this.sparks = [];
     this.t = 0;
     this.raf = null;
+    this.swing = null;  // active strike sequence
+    this.shake = 0;     // seconds of screen shake left
+    this.flash = 0;     // white impact flash left
+    this.glow = 0;      // hot metal glow left on the anvil
   }
+
+  var ANVIL_TOP = 104, STRIKE_X = 128;
+  var HIT_TIME = 0.44;   // seconds per hammer blow
+  var IMPACT_AT = 0.72;  // fraction of a blow when the head lands
+
+  // Start a run of hammer blows. onDone fires once the last one settles.
+  Forge.prototype.strike = function (blows, onImpact, onDone) {
+    if (this.swing) return false;
+    this.swing = {
+      t: 0, blow: 0, blows: blows || 3, hitThisBlow: false,
+      onImpact: onImpact, onDone: onDone
+    };
+    return true;
+  };
+
+  Forge.prototype.isStriking = function () { return !!this.swing; };
+
+  // Height of the hammer head above the anvil, 0 at the moment of impact.
+  Forge.prototype.swingHeight = function (p) {
+    var lift = 22;
+    if (p < 0.5) return lift * Math.sin((p / 0.5) * Math.PI / 2);
+    if (p < IMPACT_AT) {
+      var f = (p - 0.5) / (IMPACT_AT - 0.5);
+      return lift * (1 - f * f);
+    }
+    var b = (p - IMPACT_AT) / (1 - IMPACT_AT);
+    return 6 * Math.sin(b * Math.PI); // recoil bounce
+  };
+
+  Forge.prototype.updateSwing = function (dt) {
+    var sw = this.swing;
+    if (!sw) return;
+    sw.t += dt;
+    var p = sw.t / HIT_TIME;
+    if (!sw.hitThisBlow && p >= IMPACT_AT) {
+      sw.hitThisBlow = true;
+      this.impact();
+      if (sw.onImpact) sw.onImpact(sw.blow + 1, sw.blows);
+    }
+    if (p >= 1) {
+      sw.blow++;
+      sw.t = 0;
+      sw.hitThisBlow = false;
+      if (sw.blow >= sw.blows) {
+        var done = sw.onDone;
+        this.swing = null;
+        if (done) done();
+      }
+    }
+  };
+
+  Forge.prototype.impact = function () {
+    this.shake = 0.14;
+    this.glow = 0.9;
+    this.flash = 0.09;
+    // Sparks fly wide of the fire, otherwise they are lost against it.
+    for (var i = 0; i < 22; i++) {
+      var side = i % 2 ? 1 : -1;
+      var a = -Math.PI / 2 + side * (0.5 + Math.random() * 1.15);
+      var speed = 50 + Math.random() * 80;
+      this.sparks.push({
+        x: STRIKE_X + (Math.random() - 0.5) * 12,
+        y: ANVIL_TOP - 1,
+        vx: Math.cos(a) * speed,
+        vy: Math.sin(a) * speed,
+        life: 0.4 + Math.random() * 0.45
+      });
+    }
+  };
+
+  Forge.prototype.updateSparks = function (dt) {
+    for (var i = this.sparks.length - 1; i >= 0; i--) {
+      var s = this.sparks[i];
+      s.vy += 150 * dt; // gravity
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.life -= dt;
+      if (s.life <= 0 || s.y > ANVIL_TOP + 26) this.sparks.splice(i, 1);
+    }
+  };
+
+  Forge.prototype.drawSparks = function () {
+    for (var i = 0; i < this.sparks.length; i++) {
+      var s = this.sparks[i];
+      this.ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 2));
+      // A dark pixel behind each spark keeps it readable over the flame.
+      this.rect(s.x, s.y + 1, 2, 2, "#2a1206");
+      this.rect(s.x, s.y, 2, 2, s.life > 0.35 ? "#fffdf2" : "#ffd75e");
+      this.ctx.globalAlpha = 1;
+    }
+    if (this.flash > 0) {
+      this.ctx.globalAlpha = this.flash / 0.09 * 0.6;
+      this.rect(STRIKE_X - 14, ANVIL_TOP - 5, 28, 7, "#fffdf2");
+      this.ctx.globalAlpha = 1;
+    }
+  };
+
+  // Hammer and the workpiece, drawn only while a strike is running.
+  Forge.prototype.drawHammer = function () {
+    if (!this.swing) return;
+    var h = this.swingHeight(this.swing.t / HIT_TIME);
+    var y = ANVIL_TOP - 8 - h;
+    var x = STRIKE_X - 7;
+    // The handle rakes further back the higher the head is lifted.
+    var rake = 1 + h / 14;
+    for (var i = 0; i < 7; i++) {
+      this.rect(x + 14 + i * 2, y + 3 - Math.round(i * rake), 3, 4, PALETTE.wood);
+    }
+    this.rect(x, y, 14, 9, PALETTE.steel);
+    this.rect(x, y, 14, 2, "#9d9daa");
+    this.rect(x, y + 7, 14, 2, PALETTE.anvilEdge);
+    this.rect(x + 2, y + 2, 3, 5, "#5f5f6a");
+  };
+
+  Forge.prototype.drawWorkpiece = function () {
+    if (!this.swing && this.glow <= 0) return;
+    var heat = Math.max(0, this.glow);
+    var color = heat > 0.6 ? "#fff2c0" : heat > 0.3 ? FIRE[4] : FIRE[2];
+    this.rect(STRIKE_X - 8, ANVIL_TOP - 2, 16, 3, color);
+    this.ctx.globalAlpha = 0.45 * heat;
+    this.rect(STRIKE_X - 11, ANVIL_TOP - 4, 22, 6, FIRE[3]);
+    this.ctx.globalAlpha = 1;
+  };
 
   Forge.prototype.rect = function (x, y, w, h, color) {
     this.ctx.fillStyle = color;
@@ -209,16 +337,28 @@
 
   Forge.prototype.frame = function (dt) {
     this.t += dt;
+    this.updateSwing(dt);
+    this.updateSparks(dt);
+    this.shake = Math.max(0, this.shake - dt);
+    this.flash = Math.max(0, this.flash - dt);
+    this.glow = Math.max(0, this.glow - dt * 0.7);
     var flicker = 0.85 + 0.15 * Math.sin(this.t * 6.3) + 0.05 * Math.sin(this.t * 17);
     this.ctx.clearRect(0, 0, W, H);
+    this.ctx.save();
+    if (this.shake > 0) {
+      this.ctx.translate((Math.random() - 0.5) * 3 | 0, (Math.random() - 0.5) * 3 | 0);
+    }
     this.drawWall();
     this.drawForge(flicker);
     this.drawFire(this.t);
     this.drawFloor();
     this.drawAnvil();
     this.drawProps();
+    this.drawWorkpiece();
+    this.drawHammer();
     this.updateEmbers(dt);
     this.drawEmbers();
+    this.drawSparks();
     // Warm light pooling in front of the forge.
     var grad = this.ctx.createRadialGradient(128, 100, 10, 128, 100, 120);
     grad.addColorStop(0, "rgba(255,140,50,0.22)");
@@ -231,6 +371,7 @@
     this.ctx.fillStyle = "rgba(0,0,0,0.28)";
     this.ctx.fillRect(0, 0, W, 6);
     this.ctx.fillRect(0, H - 6, W, 6);
+    this.ctx.restore();
   };
 
   Forge.prototype.start = function () {
