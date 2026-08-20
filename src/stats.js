@@ -6,7 +6,7 @@
   var TIERS = (function () {
     var list = [];
     for (var i = 0; i < 20; i++) {
-      list.push({ name: "T" + (i + 1), min: i * 50, max: i * 50 + 50 });
+      list.push({ name: "T" + (i + 1), index: i + 1, min: i * 50, max: i * 50 + 50 });
     }
     list[0].min = 0;
     return list;

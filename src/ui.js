@@ -9,7 +9,7 @@
     title: "Apprentice blacksmith",
     level: 0,
     xp: 0, // percent toward the next level
-    display: [null, null, null]
+    display: [null, null]
   };
 
   var state = G.createState();
@@ -203,14 +203,20 @@
 
   function showResult(item) {
     $("pop-name").textContent = item.name;
+    var art = $("pop-icon");
+    art.innerHTML = "";
+    art.appendChild(window.Icons.make(item.recipe, "icon big"));
     var stats = $("pop-stats");
     stats.innerHTML = "";
-    [
-      ["Rarity", item.rarity + " · " + item.tier],
-      ["Quality", item.quality + " · " + item.band],
-      ["Ench. slots", String(item.slots)],
-      ["Edition", item.edition + " · " + item.editionName]
-    ].forEach(function (pair) {
+    var rows = [];
+    if (item.damage) rows.push(["Damage", String(item.damage)]);
+    if (item.armor) rows.push(["Armor", String(item.armor)]);
+    rows.push(["Durability", String(item.durability)]);
+    rows.push(["Rarity", item.rarity + " · " + item.tier]);
+    rows.push(["Quality", item.quality + " · " + item.band]);
+    rows.push(["Ench. slots", String(item.slots)]);
+    rows.push(["Edition", item.edition + " · " + item.editionName]);
+    rows.forEach(function (pair) {
       var row = P.el("div", "popup-stat");
       row.appendChild(P.el("span", "popup-key", pair[0]));
       row.appendChild(P.el("span", "popup-value", pair[1]));

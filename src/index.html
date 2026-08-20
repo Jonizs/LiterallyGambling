@@ -36,6 +36,8 @@
         <div class="buff-grid" id="buff-grid"></div>
       </section>
 
+      <button class="wood-btn wide small" data-panel="upgrades">UPGRADES</button>
+
       <div class="btn-row">
         <button class="wood-btn" data-panel="forge">FORGE</button>
         <button class="wood-btn" data-panel="shop">SHOP</button>
@@ -47,7 +49,7 @@
       </div>
 
       <div class="display-block">
-        <div class="tab-title small">Display</div>
+        <button class="tab-btn" data-panel="display">Display</button>
         <div class="slot-row compact" id="slot-row"></div>
       </div>
 
@@ -66,6 +68,7 @@
       <div class="popup" id="result-pop" hidden>
         <div class="plate popup-card">
           <div class="popup-head">Pulled from the coals</div>
+          <div class="popup-icon" id="pop-icon"></div>
           <div class="popup-name" id="pop-name"></div>
           <div class="popup-stats" id="pop-stats"></div>
           <div class="popup-actions">
@@ -90,6 +93,7 @@
   <div class="tooltip" id="tooltip" hidden></div>
 </div>
 <script src="stats.js"></script>
+<script src="icons.js"></script>
 <script src="game.js"></script>
 <script src="panels.js"></script>
 <script src="forge.js"></script>

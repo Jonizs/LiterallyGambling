@@ -193,7 +193,7 @@ body {
 
 /* ---------- display slots ---------- */
 .display-block { text-align: center; }
-.slot-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.slot-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .slot {
   aspect-ratio: 1;
   background: #1b1008;
@@ -339,6 +339,7 @@ body {
   background: rgba(0,0,0,.22);
   border: 2px solid rgba(0,0,0,.5);
 }
+.row-main { flex: 1; text-align: left; min-width: 0; }
 .row-title { color: var(--ink); font-size: clamp(11px, 1.35vw, 15px); }
 .head-row { border-color: var(--gold-dark); background: rgba(0,0,0,.32); margin-bottom: 6px; }
 .btn-group { display: flex; gap: 4px; }
@@ -379,6 +380,8 @@ body {
   color: var(--ink-dim);
 }
 .chip-stat.tier { color: var(--gold-lit); border-color: var(--gold); }
+.chip-stat.dmg { color: #e08a6a; }
+.chip-stat.arm { color: #8ab4d8; }
 .chip-stat.band-bad { color: var(--red); }
 .chip-stat.band-normal { color: var(--ink-dim); }
 .chip-stat.band-good { color: var(--green); }
@@ -489,3 +492,29 @@ body {
   .popup-card { animation: none; }
   .gem { animation: none; }
 }
+
+/* ---------- item icons ---------- */
+.icon {
+  width: clamp(20px, 2.6vw, 30px);
+  height: auto;
+  aspect-ratio: 1;
+  image-rendering: pixelated;
+  flex: none;
+}
+.icon.big { width: clamp(34px, 4.4vw, 52px); }
+
+/* Display header doubles as a button */
+.tab-btn {
+  font-family: var(--font);
+  font-size: clamp(10px, 1.4vw, 15px);
+  letter-spacing: 1px;
+  color: var(--ink);
+  text-shadow: 2px 2px 0 #000;
+  padding: 1px 12px;
+  margin-bottom: 4px;
+  background: linear-gradient(180deg, var(--wood-lit), var(--wood));
+  border: 2px solid var(--gold);
+  box-shadow: 0 2px 0 #000;
+  cursor: pointer;
+}
+.tab-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); }

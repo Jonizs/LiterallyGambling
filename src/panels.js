@@ -2,7 +2,7 @@
 (function (global) {
   "use strict";
 
-  var G = global.Game, S = global.Stats;
+  var G = global.Game, S = global.Stats, I = global.Icons;
 
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -32,10 +32,14 @@
 
   function itemLine(item) {
     var line = el("div", "item-line");
+    line.appendChild(I.make(item.recipe));
     line.appendChild(el("span", "item-name", item.name));
     var meta = el("span", "item-meta");
     meta.appendChild(el("span", "chip-stat tier", item.tier));
     meta.appendChild(el("span", "chip-stat band-" + item.band.toLowerCase(), item.band));
+    if (item.damage) meta.appendChild(el("span", "chip-stat dmg", item.damage + " dmg"));
+    if (item.armor) meta.appendChild(el("span", "chip-stat arm", item.armor + " arm"));
+    meta.appendChild(el("span", "chip-stat", item.durability + " dur"));
     meta.appendChild(el("span", "chip-stat", item.slots + " slot" + (item.slots === 1 ? "" : "s")));
     meta.appendChild(el("span", "chip-stat", item.editionName));
     line.appendChild(meta);
@@ -52,8 +56,12 @@
     var rows = el("div", "rows");
     G.RECIPES.forEach(function (recipe) {
       var row = el("div", "row");
+      row.appendChild(I.make(recipe.key));
       var main = el("div", "row-main");
-      main.appendChild(el("div", "row-title", recipe.name));
+      var title = el("div", "row-title", recipe.name);
+      title.appendChild(el("span", "muted",
+        recipe.kind === "weapon" ? "  damage" : "  armor"));
+      main.appendChild(title);
       main.appendChild(costLine(ctx.state, recipe));
       row.appendChild(main);
 
@@ -167,6 +175,8 @@
     shop: { title: "Shop", build: shopPanel },
     inventory: { title: "Inventory", build: inventoryPanel },
     enchant: { title: "Enchant", build: soonPanel("Enchanting") },
+    upgrades: { title: "Upgrades", build: soonPanel("Upgrades") },
+    display: { title: "Display", build: soonPanel("The display case") },
     awaken: { title: "Awaken", build: soonPanel("Awakening") },
     options: { title: "Options", build: function () {
       var wrap = el("div");
