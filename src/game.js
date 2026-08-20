@@ -20,6 +20,35 @@
 
   var STARTING_SILVER = 100;
 
+  // Placeholder sale pricing - the shape is right, the numbers are not
+  // balanced yet. Base value per piece, scaled by tier and quality band,
+  // with a flat bonus per enchant slot and per edition step.
+  var SELL_BASE = { bow: 20, sword: 25, helmet: 22, armor: 35, boots: 24 };
+  var BAND_MULTIPLIER = {
+    Bad: 0.5, Normal: 1, Good: 1.6, Refined: 2.4, Pristine: 3.4, Legendary: 5
+  };
+
+  function sellPrice(item) {
+    var tierIndex = parseInt(item.tier.slice(1), 10) || 1;
+    var base = SELL_BASE[item.recipe] || 20;
+    var price = base * (1 + (tierIndex - 1) * 0.35) *
+                (BAND_MULTIPLIER[item.band] || 1);
+    price += item.slots * 12 + item.edition * 20;
+    return Math.max(1, Math.round(price));
+  }
+
+  function sell(state, id) {
+    for (var i = 0; i < state.inventory.length; i++) {
+      if (state.inventory[i].id === id) {
+        var item = state.inventory.splice(i, 1)[0];
+        var price = sellPrice(item);
+        state.silver += price;
+        return { ok: true, item: item, price: price };
+      }
+    }
+    return { ok: false, reason: "That piece is gone." };
+  }
+
   function createState() {
     return {
       silver: STARTING_SILVER,
@@ -112,6 +141,8 @@
     buy: buy,
     missingFor: missingFor,
     canForge: canForge,
+    sellPrice: sellPrice,
+    sell: sell,
     rollLuck: rollLuck,
     rollStat: rollStat,
     forge: forge

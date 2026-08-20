@@ -46,6 +46,9 @@
   var ANVIL_TOP = 104, STRIKE_X = 128;
   var HIT_TIME = 0.44;   // seconds per hammer blow
   var IMPACT_AT = 0.72;  // fraction of a blow when the head lands
+  var LIFT = 22;         // pixels the head rises at the top of the swing
+  var HEAD_DIST = 24;    // head centre to the smith's grip
+  var SWING_ARC = 1.15;  // radians the hammer turns between rest and lift
 
   // Start a run of hammer blows. onDone fires once the last one settles.
   Forge.prototype.strike = function (blows, onImpact, onDone) {
@@ -61,14 +64,18 @@
 
   // Height of the hammer head above the anvil, 0 at the moment of impact.
   Forge.prototype.swingHeight = function (p) {
-    var lift = 22;
-    if (p < 0.5) return lift * Math.sin((p / 0.5) * Math.PI / 2);
+    if (p < 0.5) return LIFT * Math.sin((p / 0.5) * Math.PI / 2);
     if (p < IMPACT_AT) {
       var f = (p - 0.5) / (IMPACT_AT - 0.5);
-      return lift * (1 - f * f);
+      return LIFT * (1 - f * f);
     }
     var b = (p - IMPACT_AT) / (1 - IMPACT_AT);
     return 6 * Math.sin(b * Math.PI); // recoil bounce
+  };
+
+  // How far through the swing the hammer is turned, 0 at the anvil.
+  Forge.prototype.swingLift = function (p) {
+    return this.swingHeight(p) / LIFT;
   };
 
   Forge.prototype.updateSwing = function (dt) {
@@ -142,17 +149,32 @@
   // Hammer and the workpiece, drawn only while a strike is running.
   Forge.prototype.drawHammer = function () {
     if (!this.swing) return;
-    var h = this.swingHeight(this.swing.t / HIT_TIME);
-    var y = ANVIL_TOP - 8 - h;
-    var x = STRIKE_X - 7;
-    // Straight shaft running back from the head.
-    this.rect(x + 14, y + 2, 17, 4, PALETTE.wood);
-    this.rect(x + 14, y + 2, 17, 1, "#6f4823");
-    this.rect(x + 14, y + 5, 17, 1, PALETTE.woodDark);
-    this.rect(x, y, 14, 9, PALETTE.steel);
-    this.rect(x, y, 14, 2, "#9d9daa");
-    this.rect(x, y + 7, 14, 2, PALETTE.anvilEdge);
-    this.rect(x + 2, y + 2, 3, 5, "#5f5f6a");
+    var lift = this.swingLift(this.swing.t / HIT_TIME);
+    // The hammer turns about the smith's grip, so the head travels an arc
+    // and the whole tool tilts with it instead of sliding up and down.
+    var pivotX = STRIKE_X + HEAD_DIST, pivotY = ANVIL_TOP - 4;
+    var angle = Math.PI + lift * SWING_ARC;
+    var ux = Math.cos(angle), uy = Math.sin(angle);
+    var hx = pivotX + ux * HEAD_DIST, hy = pivotY + uy * HEAD_DIST;
+
+    // Handle: a line of pixels from the grip out to the head.
+    for (var d = 4; d < HEAD_DIST - 5; d++) {
+      var sx = pivotX + ux * d, sy = pivotY + uy * d;
+      for (var v = -1; v <= 1; v++) {
+        var shade = v < 0 ? "#6f4823" : v > 0 ? PALETTE.woodDark : PALETTE.wood;
+        this.rect(Math.round(sx - uy * v), Math.round(sy + ux * v), 1, 1, shade);
+      }
+    }
+
+    // Head: a block rotated onto the same axis, lit on top, dark underneath.
+    for (var u = -6; u <= 6; u++) {
+      for (var w = -4; w <= 4; w++) {
+        var color = w <= -3 ? "#9d9daa" : w >= 3 ? PALETTE.anvilEdge : PALETTE.steel;
+        if (u <= -4) color = w <= -3 ? "#8a8a95" : "#5f5f6a"; // striking face
+        this.rect(Math.round(hx + ux * u - uy * w),
+                  Math.round(hy + uy * u + ux * w), 1, 1, color);
+      }
+    }
   };
 
   Forge.prototype.drawWorkpiece = function () {

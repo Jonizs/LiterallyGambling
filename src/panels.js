@@ -119,6 +119,7 @@
     if (!items.length) {
       wrap.appendChild(el("p", "empty",
         "Nothing forged yet. Buy materials in the shop, then strike."));
+      if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
       return wrap;
     }
     wrap.appendChild(el("p", null,
@@ -127,9 +128,18 @@
     items.forEach(function (item) {
       var row = el("div", "row");
       row.appendChild(itemLine(item));
+      var price = G.sellPrice(item);
+      row.appendChild(button("SELL " + price, "mini-btn", function () {
+        var result = G.sell(ctx.state, item.id);
+        ctx.setNotice(result.ok
+          ? "Sold " + result.item.name + " for " + result.price + " silver."
+          : result.reason);
+        ctx.refresh();
+      }));
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
+    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
     return wrap;
   }
 
