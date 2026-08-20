@@ -145,11 +145,10 @@
     var h = this.swingHeight(this.swing.t / HIT_TIME);
     var y = ANVIL_TOP - 8 - h;
     var x = STRIKE_X - 7;
-    // The handle rakes further back the higher the head is lifted.
-    var rake = 1 + h / 14;
-    for (var i = 0; i < 7; i++) {
-      this.rect(x + 14 + i * 2, y + 3 - Math.round(i * rake), 3, 4, PALETTE.wood);
-    }
+    // Straight shaft running back from the head.
+    this.rect(x + 14, y + 2, 17, 4, PALETTE.wood);
+    this.rect(x + 14, y + 2, 17, 1, "#6f4823");
+    this.rect(x + 14, y + 5, 17, 1, PALETTE.woodDark);
     this.rect(x, y, 14, 9, PALETTE.steel);
     this.rect(x, y, 14, 2, "#9d9daa");
     this.rect(x, y + 7, 14, 2, PALETTE.anvilEdge);
