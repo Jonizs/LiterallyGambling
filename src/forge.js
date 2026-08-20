@@ -49,7 +49,7 @@
   var LIFT = 22;         // pixels the head rises at the top of the swing
   var HEAD_DIST = 26;    // head centre to the smith's grip
   var HEAD_LONG = 6;     // half the head's length along the handle (13px)
-  var HEAD_THICK = 8;    // half the head's thickness (17px)
+  var HEAD_THICK = 10;   // half the head's thickness (21px)
   var SWING_ARC = 1.15;  // radians the hammer turns between rest and lift
 
   // Start a run of hammer blows. onDone fires once the last one settles.
