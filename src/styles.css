@@ -15,15 +15,26 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+button, .slot, .buff, .purse span, .chip, .xp-row {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 body {
   background: #120a06;
   font-family: var(--font);
   color: var(--ink);
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
   padding: 12px;
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
   image-rendering: pixelated;
+  overscroll-behavior-y: contain;
 }
 
 .game { width: min(1024px, 100%); }
@@ -55,6 +66,9 @@ body {
   flex-direction: column;
   gap: 5px;
   min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 /* ---------- nameplate ---------- */
@@ -82,10 +96,10 @@ body {
   cursor: pointer;
   text-shadow: 1px 1px 0 #000;
 }
-.chip:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); }
+@media (hover: hover) { .chip:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
 
 /* ---------- xp bar ---------- */
-.xp-row { display: flex; align-items: center; gap: 8px; }
+.xp-row { display: flex; align-items: center; gap: 8px; cursor: help; }
 .xp-track {
   flex: 1;
   height: clamp(12px, 1.8vw, 18px);
@@ -166,7 +180,7 @@ body {
   cursor: pointer;
   line-height: 1;
 }
-.help:hover { background: var(--gold); color: #2b1a10; }
+@media (hover: hover) { .help:hover { background: var(--gold); color: #2b1a10; } }
 
 /* ---------- buttons ---------- */
 .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -185,7 +199,7 @@ body {
   box-shadow: inset 0 0 0 2px rgba(0,0,0,.45), 0 3px 0 #000;
   cursor: pointer;
 }
-.wood-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); }
+@media (hover: hover) { .wood-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
 .wood-btn:active { transform: translateY(2px); box-shadow: inset 0 0 0 2px rgba(0,0,0,.45), 0 1px 0 #000; }
 .wood-btn.wide { width: 100%; }
 .wood-btn.small { font-size: clamp(10px, 1.45vw, 16px); letter-spacing: 1px; }
@@ -205,7 +219,7 @@ body {
   color: var(--ink-dim);
   cursor: pointer;
 }
-.slot:hover { border-color: var(--gold); }
+@media (hover: hover) { .slot:hover { border-color: var(--gold); } }
 
 /* ---------- scene ---------- */
 .scene {
@@ -260,6 +274,11 @@ body {
 .gem.g3 { bottom: 8px; left: 8px; }
 .gem.g4 { bottom: 8px; right: 8px; }
 @keyframes emberPulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
+@keyframes fxFade {
+  0% { opacity: 0; transform: translate(-50%, calc(-50% - var(--push))); }
+  20%, 70% { opacity: 1; transform: translate(-50%, calc(-140% - var(--push))); }
+  100% { opacity: 0; transform: translate(-50%, calc(-170% - var(--push))); }
+}
 
 /* ---------- overlay panel ---------- */
 .overlay[hidden] { display: none; }
@@ -299,12 +318,6 @@ body {
   pointer-events: none;
 }
 
-@media (max-width: 640px) {
-  .frame { grid-template-columns: 1fr; aspect-ratio: auto; }
-  .scene { min-height: 220px; }
-  .wood-btn.options { margin-top: 8px; }
-}
-
 /* ---------- purse ---------- */
 .purse {
   display: flex;
@@ -342,6 +355,8 @@ body {
 .row-main { flex: 1; text-align: left; min-width: 0; }
 .row-title { color: var(--ink); font-size: clamp(11px, 1.35vw, 15px); }
 .head-row { border-color: var(--gold-dark); background: rgba(0,0,0,.32); margin-bottom: 6px; }
+.row.locked { opacity: .55; }
+.row.locked .row-title { color: var(--ink-dim); }
 .btn-group { display: flex; gap: 4px; }
 
 .mini-btn {
@@ -356,7 +371,7 @@ body {
   text-shadow: 1px 1px 0 #000;
 }
 .mini-btn.strong { letter-spacing: 1px; font-weight: 700; }
-.mini-btn:hover:not(:disabled) { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); }
+@media (hover: hover) { .mini-btn:hover:not(:disabled) { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
 .mini-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 0 0 #000; }
 .mini-btn:disabled { opacity: .45; cursor: not-allowed; border-color: var(--gold-dark); }
 
@@ -382,12 +397,29 @@ body {
 .chip-stat.tier { color: var(--gold-lit); border-color: var(--gold); }
 .chip-stat.dmg { color: #e08a6a; }
 .chip-stat.arm { color: #8ab4d8; }
-.chip-stat.band-bad { color: var(--red); }
-.chip-stat.band-normal { color: var(--ink-dim); }
-.chip-stat.band-good { color: var(--green); }
-.chip-stat.band-refined { color: #6fb7d4; }
-.chip-stat.band-pristine { color: #b98fe0; }
-.chip-stat.band-legendary { color: var(--gold-lit); border-color: var(--gold); }
+.chip-stat.spd { color: #9ed7a8; }
+.chip-stat.crit { color: #e0c56a; }
+.chip-stat.pen { color: #d09ad8; }
+.chip-stat.ench { color: var(--ink); border-color: var(--gold-dark); }
+.chip-stat.ench.uncommon, .chip-stat.rarity-uncommon { color: #6fb7d4; border-color: #6fb7d4; }
+.chip-stat.ench.rare, .chip-stat.rarity-rare { color: var(--gold-lit); border-color: var(--gold); }
+.chip-stat.rarity-common { color: var(--ink-dim); }
+.chip-stat.rarity-common, .chip-stat.rarity-uncommon, .chip-stat.rarity-rare {
+  margin-left: 6px;
+  letter-spacing: 1px;
+}
+.chip-stat.lock {
+  color: var(--ink-dim);
+  border-color: var(--ink-dim);
+  margin-left: 6px;
+}
+.chip-stat.band-bad, .fx.band-bad { color: var(--red); }
+.chip-stat.band-normal, .fx.band-normal { color: var(--ink-dim); }
+.chip-stat.band-good, .fx.band-good { color: var(--green); }
+.chip-stat.band-refined, .fx.band-refined { color: #6fb7d4; }
+.chip-stat.band-pristine, .fx.band-pristine { color: #b98fe0; }
+.chip-stat.band-legendary, .fx.band-legendary { color: var(--gold-lit); }
+.chip-stat.band-legendary { border-color: var(--gold); }
 
 .result {
   margin-bottom: 8px;
@@ -401,6 +433,26 @@ body {
   color: var(--gold);
   margin-bottom: 4px;
 }
+.popup-note {
+  margin-bottom: 8px;
+  padding: 2px 6px;
+  font-size: clamp(10px, 1.25vw, 13px);
+  letter-spacing: 1px;
+  color: var(--ink-dim);
+  text-shadow: 1px 1px 0 #000;
+}
+.popup-note[hidden] { display: none; }
+.popup-note.level-up {
+  color: var(--gold-lit);
+  border: 2px solid var(--gold);
+  background: rgba(0,0,0,.3);
+  animation: levelFlare .9s steps(4) 2;
+}
+@keyframes levelFlare {
+  0%, 100% { box-shadow: 0 0 0 rgba(255,190,90,0); }
+  50% { box-shadow: 0 0 14px rgba(255,190,90,.8); }
+}
+
 .popup-actions { display: flex; gap: 6px; justify-content: center; }
 .notice { margin-top: 6px; color: var(--gold-lit); }
 .empty { color: var(--ink-dim); }
@@ -427,12 +479,105 @@ body {
   animation: strikePulse 1.1s steps(4) infinite;
 }
 .strike-btn.idle { visibility: hidden; animation: none; }
-.strike-btn:hover { background: linear-gradient(180deg, #ffe9b6, #e0b565 55%, #b98d3c); }
+@media (hover: hover) { .strike-btn:hover { background: linear-gradient(180deg, #ffe9b6, #e0b565 55%, #b98d3c); } }
 .strike-btn:active { transform: translate(-50%, 2px); box-shadow: inset 0 0 0 2px rgba(255,255,255,.3), 0 1px 0 #000; }
 @keyframes strikePulse {
   0%, 100% { box-shadow: inset 0 0 0 2px rgba(255,255,255,.3), 0 3px 0 #000, 0 0 10px rgba(255,170,60,.4); }
   50%      { box-shadow: inset 0 0 0 2px rgba(255,255,255,.3), 0 3px 0 #000, 0 0 20px rgba(255,190,90,.85); }
 }
+
+/* ---------- enchant offers ---------- */
+/* The frames land with the panel; each enchant drops into its frame a beat
+   later, one after another. --d is when this row's turn comes. */
+.row.offer { position: relative; overflow: hidden; }
+.row.offer.common { --flash: var(--gold); }
+.row.offer.uncommon { --flash: #6fb7d4; }
+.row.offer.rare { --flash: var(--gold-lit); }
+
+/* A slot waits as a flat dark silhouette of itself. When its turn comes the
+   whole thing strikes in at once: the frame punches out and brightens as the
+   enchant and its TAKE arrive inside it, with a flash and a ring in the
+   rarity's colour. */
+.offer-reveal {
+  animation: offerSlot .45s steps(7) backwards,
+             offerRing .55s steps(6) backwards;
+  animation-delay: var(--d);
+}
+@keyframes offerSlot {
+  0% { transform: scale(.94); background: #0c0603; border-color: #000; }
+  45% { transform: scale(1.16); }
+  75% { transform: scale(.96); }
+  100% { transform: scale(1); }
+}
+.offer-reveal .offer-body {
+  animation: offerBodyIn .45s steps(7) backwards;
+  animation-delay: var(--d);
+}
+@keyframes offerBodyIn {
+  0% { opacity: 0; }
+  45% { opacity: 1; }
+  100% { opacity: 1; }
+}
+.offer-reveal.rare { animation-duration: .9s; }
+.offer-reveal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: var(--flash);
+  animation: offerFlash .45s steps(5);
+  animation-delay: var(--d);
+}
+@keyframes offerRing {
+  0% { box-shadow: none; }
+  35% { box-shadow: 0 0 22px var(--flash), inset 0 0 12px var(--flash); }
+  100% { box-shadow: none; }
+}
+@keyframes offerFlash {
+  0% { opacity: .85; }
+  100% { opacity: 0; }
+}
+
+
+/* ---------- strike reveals ---------- */
+/* A layer over the whole scene; each effect is pinned to the point the
+   hammer lands and thrown out from there. */
+.reveals {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+.fx {
+  position: absolute;
+  --dx: 0px;
+  --push: 0em;
+  font-size: clamp(14px, 2.1vw, 24px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  color: var(--ink);
+  /* A hard pixel outline instead of a plate, plus a halo in the effect's own
+     colour so it carries over the fire. */
+  text-shadow:
+    2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,
+    2px 2px 0 #000, -2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000,
+    0 0 12px currentColor;
+  animation: fxFly 1s steps(14) forwards;
+}
+/* Off the hammer head, up and out, thinning as it goes. */
+@keyframes fxFly {
+  0% { opacity: 0; transform: translate(-50%, calc(-50% - var(--push))) scale(.35); }
+  12% { opacity: 1; transform: translate(-50%, calc(-80% - var(--push))) scale(1.3); }
+  30% { opacity: 1; transform: translate(calc(-50% + var(--dx) * .45), calc(-160% - var(--push))) scale(1); }
+  70% { opacity: .95; transform: translate(calc(-50% + var(--dx) * .8), calc(-250% - var(--push))) scale(.98); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-330% - var(--push))) scale(.9); }
+}
+.fx.tier { color: var(--gold-lit); }
+.fx.slots { color: #b9d4e0; }
+.fx.edition { color: #d8b8f0; }
 
 /* ---------- forged-item popup ---------- */
 .popup[hidden] { display: none; }
@@ -488,6 +633,9 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .offer-reveal, .offer-reveal::after, .offer-reveal .offer-body { animation: none; }
+  .fx { animation: fxFade 1s steps(3) forwards; }
+  .popup-note.level-up { animation: none; }
   .strike-btn { animation: none; }
   .popup-card { animation: none; }
   .gem { animation: none; }
@@ -517,4 +665,108 @@ body {
   box-shadow: 0 2px 0 #000;
   cursor: pointer;
 }
-.tab-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); }
+@media (hover: hover) { .tab-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
+
+/* ---------- phones and small tablets ---------- */
+@media (max-width: 860px), (pointer: coarse) and (max-width: 1024px) {
+  /* Panels and popups escape the scene box so they get the whole screen
+     instead of a letterboxed strip. */
+  .overlay, .popup {
+    position: fixed;
+    padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
+             max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+    z-index: 30;
+  }
+  .overlay-card, .popup-card { max-height: 88dvh; overflow: auto; }
+  .popup-card { min-width: min(320px, 100%); }
+  .tooltip { z-index: 40; max-width: min(280px, calc(100vw - 24px)); font-size: 13px; }
+
+  /* Touch targets: nothing interactive smaller than a fingertip. */
+  .wood-btn { font-size: 16px; padding: 10px 8px; min-height: 46px; }
+  .wood-btn.small { font-size: 14px; }
+  .mini-btn { font-size: 14px; padding: 8px 14px; min-height: 40px; }
+  .chip { font-size: 13px; padding: 8px 12px; }
+  .tab-btn { font-size: 14px; padding: 8px 14px; }
+  .help { width: 34px; font-size: 15px; }
+  .purse { gap: 6px; }
+  .purse span { padding: 6px 10px; }
+  .slot-row.compact .slot { height: 52px; font-size: 12px; }
+  .strike-btn { font-size: 20px; padding: 10px 22px; }
+
+  /* Readable text at phone widths, where the vw clamps bottom out. */
+  .player-name { font-size: 22px; }
+  .player-title, .buff-name, .row-title, .item-name { font-size: 13px; }
+  .buff-delta, .purse, .cost, .chip-stat { font-size: 12px; }
+  .overlay-body { font-size: 14px; }
+  .popup-stats { font-size: 14px; }
+  .popup-note { font-size: 13px; padding: 4px 8px; }
+  .fx { font-size: 17px; letter-spacing: 1px; }
+}
+
+/* ---------- portrait: scene on top, controls below ---------- */
+@media (max-width: 860px) and (orientation: portrait), (max-width: 640px) {
+  body { display: block; padding-top: max(8px, env(safe-area-inset-top)); }
+  .game { width: 100%; }
+  .frame {
+    grid-template-columns: 1fr;
+    aspect-ratio: auto;
+    gap: 8px;
+    padding: 8px;
+  }
+  /* The forge is what the player taps, so it leads. */
+  .scene { order: -1; aspect-ratio: 16 / 11; }
+  .sidebar { overflow-y: visible; }
+  .wood-btn.options { margin-top: 8px; }
+  .buff { padding: 4px 6px; }
+  .slot-row { gap: 10px; }
+  /* Icon and name keep one line; the action gets a full-width line of its
+     own so it is comfortably tappable. */
+  .row { flex-wrap: wrap; padding: 8px; }
+  .row-main { flex: 1 1 0; min-width: 55%; }
+  .btn-group { gap: 8px; flex: 1 0 100%; }
+  .btn-group .mini-btn, .row > .mini-btn { flex: 1 0 0; }
+  .row > .mini-btn { flex-basis: 100%; }
+  .head-row .row-title { min-width: 0; }
+}
+
+/* Very narrow phones: one action per row rather than two cramped ones. */
+@media (max-width: 340px) {
+  .btn-row { grid-template-columns: 1fr; }
+  .buff-grid { grid-template-columns: 1fr; }
+  .buff-name { white-space: normal; }
+}
+
+/* ---------- landscape phones: keep the two-column frame, drop the padding ---------- */
+@media (orientation: landscape) and (max-height: 520px) {
+  body { display: grid; padding: 4px; }
+  .frame {
+    grid-template-columns: minmax(230px, 34%) 1fr;
+    padding: 6px;
+    gap: 6px;
+    aspect-ratio: auto;
+    height: calc(100dvh - 8px);
+  }
+  .scene { order: 0; aspect-ratio: auto; }
+  .sidebar { overflow-y: auto; }
+  .buff-grid { grid-template-columns: 1fr 1fr; }
+  .plate { padding: 4px 7px; }
+  .sidebar { gap: 4px; }
+  .wood-btn { min-height: 36px; padding: 4px 6px; font-size: 14px; }
+  .wood-btn.small { font-size: 12px; }
+  .slot-row.compact .slot { height: 34px; }
+  .wood-btn.options { margin-top: 4px; }
+  .player-name { font-size: 17px; }
+  .player-title { font-size: 11px; }
+  .chip { font-size: 12px; padding: 5px 10px; }
+  .xp-track { height: 12px; }
+  .level-medallion { width: 30px; }
+  .tab-title { font-size: 12px; margin-bottom: 2px; }
+  .buff { padding: 1px 4px; }
+  .buff-name { font-size: 11px; }
+  .buff-delta { font-size: 10px; }
+  .help { width: 26px; font-size: 12px; }
+  .purse { gap: 4px; font-size: 11px; }
+  .purse span { padding: 3px 6px; }
+  .btn-row { gap: 6px; }
+  .tab-btn { padding: 4px 12px; font-size: 12px; }
+}

@@ -2,18 +2,18 @@
 (function () {
   "use strict";
 
-  var S = window.Stats, G = window.Game, P = window.Panels;
+  var S = window.Stats, G = window.Game, P = window.Panels,
+      E = window.Enchants, U = window.Upgrades;
 
   var player = {
     name: "JONIS",
     title: "Apprentice blacksmith",
-    level: 0,
-    xp: 0, // percent toward the next level
     display: [null, null]
   };
 
   var state = G.createState();
-  var view = { panel: null, notice: "", pending: null, striking: false, shown: null };
+  var view = { panel: null, notice: "", pending: null, striking: false,
+               shown: null, offer: null };
   var scene = null;
 
   // Per-stat help text; the live roll window is appended at render time.
@@ -32,12 +32,28 @@
       "A good strike gains 1, a bad one loses 4. It cannot drop below 0."
   };
 
+  var REVEAL_HOLD = 650; // ms the last effect gets before the card appears
+  var REVEAL_PUSH = 1.8; // em each effect already in the air is shoved up by
+
   var $ = function (id) { return document.getElementById(id); };
   var tooltipEl = $("tooltip");
 
   function renderHeader() {
-    $("lvl-value").textContent = player.level;
-    $("xp-fill").style.width = player.xp + "%";
+    $("lvl-value").textContent = state.level;
+    $("xp-fill").style.width = G.xpPercent(state) + "%";
+  }
+
+  function xpTooltip() {
+    var need = G.xpToNext(state.level);
+    var locked = G.lockedRecipes(state);
+    var text = "<b>Smith level " + state.level + "</b><br>" +
+      state.xp + " / " + need + " XP toward level " + (state.level + 1) +
+      "<br>Forging earns XP \u2014 better pieces teach more.";
+    if (locked.length) {
+      text += "<br><br>Next unlock: <b>" + locked[0].name +
+        "</b> at level " + locked[0].level + ".";
+    }
+    return text;
   }
 
   function renderPurse() {
@@ -120,28 +136,65 @@
     });
   }
 
+  // A finger has no hover, so touch taps toggle the tooltip and anchor it to
+  // the element instead of trailing a pointer that is not there.
+  var lastPointerType = "mouse";
+  document.addEventListener("pointerdown", function (ev) {
+    lastPointerType = ev.pointerType || "mouse";
+  }, true);
+
+  function clampTip(x, y) {
+    var rect = tooltipEl.getBoundingClientRect();
+    x = Math.min(x, window.innerWidth - rect.width - 4);
+    y = Math.min(y, window.innerHeight - rect.height - 4);
+    tooltipEl.style.left = Math.max(4, x) + "px";
+    tooltipEl.style.top = Math.max(4, y) + "px";
+  }
+
   function bindTooltip(el, html) {
-    function show(ev) {
-      tooltipEl.innerHTML = html;
+    function open() {
+      tooltipEl.innerHTML = typeof html === "function" ? html() : html;
       tooltipEl.hidden = false;
-      place(ev);
+      tooltipEl.style.left = "0px";
+      tooltipEl.style.top = "0px";
     }
-    function place(ev) {
+    function showAtPointer(ev) {
+      open();
+      placeAtPointer(ev);
+    }
+    function placeAtPointer(ev) {
       var pad = 12;
       var rect = tooltipEl.getBoundingClientRect();
       var x = ev.clientX + pad;
       var y = ev.clientY + pad;
       if (x + rect.width > window.innerWidth) x = ev.clientX - rect.width - pad;
       if (y + rect.height > window.innerHeight) y = ev.clientY - rect.height - pad;
-      tooltipEl.style.left = Math.max(4, x) + "px";
-      tooltipEl.style.top = Math.max(4, y) + "px";
+      clampTip(x, y);
     }
-    el.addEventListener("mouseenter", show);
-    el.addEventListener("mousemove", place);
-    el.addEventListener("mouseleave", hideTooltip);
+    // Touch: sit the card above the tapped control, or below it when there is
+    // no room, so the finger never covers what it just opened.
+    function showAtElement() {
+      open();
+      var box = el.getBoundingClientRect();
+      var tip = tooltipEl.getBoundingClientRect();
+      var gap = 8;
+      var y = box.top - tip.height - gap;
+      if (y < 4) y = box.bottom + gap;
+      clampTip(box.left + box.width / 2 - tip.width / 2, y);
+    }
+    el.addEventListener("pointerenter", function (ev) {
+      if (ev.pointerType === "mouse") showAtPointer(ev);
+    });
+    el.addEventListener("pointermove", function (ev) {
+      if (ev.pointerType === "mouse" && !tooltipEl.hidden) placeAtPointer(ev);
+    });
+    el.addEventListener("pointerleave", function (ev) {
+      if (ev.pointerType === "mouse") hideTooltip();
+    });
     el.addEventListener("click", function (ev) {
       ev.stopPropagation();
-      if (tooltipEl.hidden) show(ev); else hideTooltip();
+      if (!tooltipEl.hidden) { hideTooltip(); return; }
+      if (lastPointerType === "mouse") showAtPointer(ev); else showAtElement();
     });
   }
 
@@ -154,8 +207,60 @@
       pending: view.pending,
       setNotice: function (text) { view.notice = text; },
       queue: queueStrike,
+      offer: offerView(),
+      rollEnchant: rollEnchant,
+      takeEnchant: takeEnchant,
+      buyUpgrade: buyUpgrade,
       refresh: refresh
     };
+  }
+
+  // The pending offer holds an id, not the piece, so it cannot outlive it.
+  function offerFor(id) {
+    for (var i = 0; i < state.inventory.length; i++) {
+      if (state.inventory[i].id === id) return state.inventory[i];
+    }
+    return null;
+  }
+
+  function offerView() {
+    if (!view.offer) return null;
+    var item = offerFor(view.offer.itemId);
+    if (!item) { view.offer = null; return null; }
+    return { item: item, choices: view.offer.choices, fresh: view.offer.fresh };
+  }
+
+  // The silver goes at the roll, so the offer is kept until it is taken -
+  // closing the panel must not lose what was paid for.
+  function rollEnchant(item) {
+    var result = E.buyOffer(state, item);
+    if (!result.ok) {
+      view.notice = result.reason;
+      refresh();
+      return;
+    }
+    view.offer = { itemId: item.id, choices: result.choices, fresh: true };
+    view.notice = "Paid " + result.cost + " silver for the roll.";
+    refresh();
+  }
+
+  function buyUpgrade(def) {
+    var result = U.buy(state, def);
+    view.notice = result.ok
+      ? def.name + " tier " + result.tier + " built for " + result.cost + " silver."
+      : result.reason;
+    refresh();
+  }
+
+  function takeEnchant(choice) {
+    var pending = offerView();
+    if (!pending) return;
+    var result = E.apply(pending.item, choice);
+    view.offer = null;
+    view.notice = result.ok
+      ? E.label(choice) + " set into " + pending.item.name + "."
+      : result.reason;
+    refresh();
   }
 
   // Picking a piece in the forge menu sets it on the anvil; the strike
@@ -176,10 +281,49 @@
     btn.setAttribute("aria-hidden", ready ? "false" : "true");
   }
 
+  function revealsFor(item) {
+    return [
+      { text: "TIER " + S.tierAt(item.rarity).index, tone: "tier" },
+      { text: item.band + " quality", tone: "band-" + item.band.toLowerCase() },
+      { text: item.slots + " E. Slot" + (item.slots === 1 ? "" : "s"), tone: "slots" },
+      { text: item.edition ? item.editionName + " edition" : "Base edition",
+        tone: "edition" }
+    ];
+  }
+
+  // Each blow throws its line off the hammer head, fanning left and right so
+  // blows that overlap in the air stay readable.
+  function showReveal(reveal, index) {
+    if (!reveal) return;
+    var fx = P.el("div", "fx " + reveal.tone, reveal.text);
+    var at = scene.impactPoint();
+    fx.style.left = (at.x * 100) + "%";
+    fx.style.top = (at.y * 100) + "%";
+    fx.style.setProperty("--dx", (index % 2 ? 1 : -1) * (46 + index * 14) + "px");
+    fx.addEventListener("animationend", function () {
+      if (fx.parentNode) fx.parentNode.removeChild(fx);
+    });
+    // Shove everything still in the air up a line so the new one has clear
+    // space at the hammer. They all climb at the same rate, so the gap holds.
+    var host = $("reveals");
+    Array.prototype.forEach.call(host.children, function (older) {
+      older.push = (older.push || 0) + REVEAL_PUSH;
+      older.style.setProperty("--push", older.push + "em");
+    });
+    host.appendChild(fx);
+  }
+
+  function clearReveals() {
+    $("reveals").innerHTML = "";
+  }
+
   function doStrike() {
     var recipe = view.pending;
     if (!recipe || view.striking) return;
-    if (!G.canForge(state, recipe)) {
+    // The roll happens before the hammer falls: every blow reveals one more
+    // thing about the piece already lying on the anvil.
+    var result = G.forge(state, recipe);
+    if (!result.ok) {
       view.pending = null;
       renderStrike();
       return;
@@ -189,28 +333,41 @@
     view.pending = null;
     view.striking = true;
     renderStrike();
-    scene.strike(3, null, function () {
-      var result = G.forge(state, recipe);
-      view.striking = false;
-      // Enough left for another of the same piece? Keep it on the anvil so
-      // the smith can swing again without reopening the menu.
-      if (!view.pending && G.canForge(state, recipe)) view.pending = recipe;
-      renderStrike();
-      renderPurse();
-      if (result.ok) showResult(result.item);
+    renderPurse();
+    clearReveals();
+
+    var reveals = revealsFor(result.item);
+    scene.strike(reveals.length, function (blow) {
+      showReveal(reveals[blow - 1], blow - 1);
+    }, function () {
+      // Hold the card back until the last effect has flown, or it lands on
+      // top of the reveal it was meant to pay off.
+      setTimeout(function () {
+        view.striking = false;
+        // Enough left for another of the same piece? Keep it on the anvil so
+        // the smith can swing again without reopening the menu.
+        if (!view.pending && G.canForge(state, recipe)) view.pending = recipe;
+        renderStrike();
+        renderHeader();
+        showResult(result.item, result.xp);
+      }, REVEAL_HOLD);
     });
   }
 
-  function showResult(item) {
+  function showResult(item, xp) {
     $("pop-name").textContent = item.name;
     var art = $("pop-icon");
     art.innerHTML = "";
-    art.appendChild(window.Icons.make(item.recipe, "icon big"));
+    art.appendChild(window.Icons.make(item.icon, "icon big"));
     var stats = $("pop-stats");
     stats.innerHTML = "";
     var rows = [];
     if (item.damage) rows.push(["Damage", String(item.damage)]);
     if (item.armor) rows.push(["Armor", String(item.armor)]);
+    rows.push(["Attack speed", item.attackSpeed + "/s"]);
+    rows.push(["Crit chance", item.critChance + "%"]);
+    rows.push(["Crit damage", item.critDamage + "%"]);
+    rows.push(["Armor pen", String(item.armorPen)]);
     rows.push(["Durability", String(item.durability)]);
     rows.push(["Rarity", item.rarity + " · " + item.tier]);
     rows.push(["Quality", item.quality + " · " + item.band]);
@@ -222,6 +379,16 @@
       row.appendChild(P.el("span", "popup-value", pair[1]));
       stats.appendChild(row);
     });
+    var note = $("pop-note");
+    if (xp) {
+      note.textContent = xp.levels
+        ? "+" + xp.amount + " XP \u00b7 Level " + xp.level + "!"
+        : "+" + xp.amount + " XP";
+      note.classList.toggle("level-up", xp.levels > 0);
+      note.hidden = false;
+    } else {
+      note.hidden = true;
+    }
     view.shown = item;
     $("pop-sell").textContent = "SELL " + G.sellPrice(item);
     $("result-pop").hidden = false;
@@ -230,6 +397,7 @@
   function closeResult() {
     view.shown = null;
     $("result-pop").hidden = true;
+    clearReveals();
   }
 
   // Sell straight off the detail screen, without a trip to the inventory.
@@ -246,6 +414,7 @@
     if (!panel) return;
     view.panel = key;
     view.notice = "";
+    hideTooltip();
     if (key !== "forge") view.lastItem = null;
     drawPanel();
     $("overlay").hidden = false;
@@ -258,6 +427,7 @@
     var body = $("overlay-body");
     body.innerHTML = "";
     body.appendChild(panel.build(context()));
+    if (view.offer) view.offer.fresh = false;
   }
 
   function closePanel() {
@@ -266,6 +436,7 @@
   }
 
   function refresh() {
+    renderHeader();
     renderStrike();
     renderPurse();
     renderBuffs();
@@ -279,8 +450,13 @@
     var body = $("overlay-body");
     body.innerHTML = "";
     body.appendChild(P.el("p", null,
-      player.title + " — level " + player.level));
-    body.appendChild(P.el("p", null, player.xp + "% toward the next level."));
+      player.title + " — level " + state.level));
+    body.appendChild(P.el("p", null, state.xp + " / " + G.xpToNext(state.level) +
+      " XP toward level " + (state.level + 1) + "."));
+    G.lockedRecipes(state).forEach(function (recipe) {
+      body.appendChild(P.el("p", null,
+        recipe.name + " unlocks at level " + recipe.level + "."));
+    });
     body.appendChild(P.el("p", null, "Next strike can land:"));
     var list = P.el("ul");
     S.forecast(state.base).forEach(function (row) {
@@ -315,6 +491,9 @@
       if (ev.key === "Escape") { closePanel(); closeResult(); hideTooltip(); }
     });
     document.addEventListener("click", hideTooltip);
+    window.addEventListener("resize", hideTooltip);
+    window.addEventListener("orientationchange", hideTooltip);
+    window.addEventListener("scroll", hideTooltip, true);
   }
 
   function init() {
@@ -323,6 +502,7 @@
     renderPurse();
     renderBuffs();
     renderSlots();
+    bindTooltip(document.querySelector(".xp-row"), xpTooltip);
     scene = new window.Forge(document.getElementById("forge-canvas"));
     bindControls();
     scene.start();

@@ -64,6 +64,12 @@
 
   Forge.prototype.isStriking = function () { return !!this.swing; };
 
+  // Where the hammer meets the anvil, as fractions of the scene, so the HUD
+  // can hang effects on the impact without repeating the layout numbers.
+  Forge.prototype.impactPoint = function () {
+    return { x: STRIKE_X / W, y: (ANVIL_TOP - 2) / H };
+  };
+
   // Height of the hammer head above the anvil, 0 at the moment of impact.
   Forge.prototype.swingHeight = function (p) {
     if (p < 0.5) return LIFT * Math.sin((p / 0.5) * Math.PI / 2);
