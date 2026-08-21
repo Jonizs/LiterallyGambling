@@ -527,8 +527,9 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  opacity: 0;
   background: var(--flash);
-  animation: offerFlash .45s steps(5) backwards;
+  animation: offerFlash .45s steps(5);
   animation-delay: var(--d);
 }
 .offer-reveal .offer-body {
