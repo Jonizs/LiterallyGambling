@@ -32,13 +32,17 @@
 
   function itemLine(item) {
     var line = el("div", "item-line");
-    line.appendChild(I.make(item.recipe));
+    line.appendChild(I.make(item.icon));
     line.appendChild(el("span", "item-name", item.name));
     var meta = el("span", "item-meta");
     meta.appendChild(el("span", "chip-stat tier", item.tier));
     meta.appendChild(el("span", "chip-stat band-" + item.band.toLowerCase(), item.band));
     if (item.damage) meta.appendChild(el("span", "chip-stat dmg", item.damage + " dmg"));
     if (item.armor) meta.appendChild(el("span", "chip-stat arm", item.armor + " arm"));
+    meta.appendChild(el("span", "chip-stat spd", item.attackSpeed + " spd"));
+    meta.appendChild(el("span", "chip-stat crit", item.critChance + "% crit"));
+    meta.appendChild(el("span", "chip-stat crit", item.critDamage + "% cdmg"));
+    if (item.armorPen) meta.appendChild(el("span", "chip-stat pen", item.armorPen + " pen"));
     meta.appendChild(el("span", "chip-stat", item.durability + " dur"));
     meta.appendChild(el("span", "chip-stat", item.slots + " slot" + (item.slots === 1 ? "" : "s")));
     meta.appendChild(el("span", "chip-stat", item.editionName));
@@ -55,22 +59,26 @@
 
     var rows = el("div", "rows");
     G.RECIPES.forEach(function (recipe) {
-      var row = el("div", "row");
-      row.appendChild(I.make(recipe.key));
+      var open = G.unlocked(ctx.state, recipe);
+      var row = el("div", "row" + (open ? "" : " locked"));
+      row.appendChild(I.make(recipe.icon));
       var main = el("div", "row-main");
       var title = el("div", "row-title", recipe.name);
       title.appendChild(el("span", "muted",
         recipe.kind === "weapon" ? "  damage" : "  armor"));
+      if (!open) title.appendChild(el("span", "chip-stat lock", "Level " + recipe.level));
       main.appendChild(title);
       main.appendChild(costLine(ctx.state, recipe));
       row.appendChild(main);
 
       var ready = G.canForge(ctx.state, recipe);
-      var b = button("FORGE", "mini-btn strong", function () {
+      var b = button(open ? "FORGE" : "LOCKED", "mini-btn strong", function () {
         ctx.queue(recipe);
       });
       b.disabled = !ready;
-      if (!ready) {
+      if (!open) {
+        b.title = "Unlocks at smith level " + recipe.level + ".";
+      } else if (!ready) {
         var missing = G.missingFor(ctx.state, recipe).map(function (m) {
           return m.short + " " + G.MATERIALS[m.key].label.toLowerCase();
         });

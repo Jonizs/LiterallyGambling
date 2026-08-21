@@ -15,7 +15,7 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-button, .slot, .buff, .purse span, .chip {
+button, .slot, .buff, .purse span, .chip, .xp-row {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;
@@ -99,7 +99,7 @@ body {
 @media (hover: hover) { .chip:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
 
 /* ---------- xp bar ---------- */
-.xp-row { display: flex; align-items: center; gap: 8px; }
+.xp-row { display: flex; align-items: center; gap: 8px; cursor: help; }
 .xp-track {
   flex: 1;
   height: clamp(12px, 1.8vw, 18px);
@@ -350,6 +350,8 @@ body {
 .row-main { flex: 1; text-align: left; min-width: 0; }
 .row-title { color: var(--ink); font-size: clamp(11px, 1.35vw, 15px); }
 .head-row { border-color: var(--gold-dark); background: rgba(0,0,0,.32); margin-bottom: 6px; }
+.row.locked { opacity: .55; }
+.row.locked .row-title { color: var(--ink-dim); }
 .btn-group { display: flex; gap: 4px; }
 
 .mini-btn {
@@ -390,6 +392,14 @@ body {
 .chip-stat.tier { color: var(--gold-lit); border-color: var(--gold); }
 .chip-stat.dmg { color: #e08a6a; }
 .chip-stat.arm { color: #8ab4d8; }
+.chip-stat.spd { color: #9ed7a8; }
+.chip-stat.crit { color: #e0c56a; }
+.chip-stat.pen { color: #d09ad8; }
+.chip-stat.lock {
+  color: var(--ink-dim);
+  border-color: var(--ink-dim);
+  margin-left: 6px;
+}
 .chip-stat.band-bad { color: var(--red); }
 .chip-stat.band-normal { color: var(--ink-dim); }
 .chip-stat.band-good { color: var(--green); }
@@ -409,6 +419,26 @@ body {
   color: var(--gold);
   margin-bottom: 4px;
 }
+.popup-note {
+  margin-bottom: 8px;
+  padding: 2px 6px;
+  font-size: clamp(10px, 1.25vw, 13px);
+  letter-spacing: 1px;
+  color: var(--ink-dim);
+  text-shadow: 1px 1px 0 #000;
+}
+.popup-note[hidden] { display: none; }
+.popup-note.level-up {
+  color: var(--gold-lit);
+  border: 2px solid var(--gold);
+  background: rgba(0,0,0,.3);
+  animation: levelFlare .9s steps(4) 2;
+}
+@keyframes levelFlare {
+  0%, 100% { box-shadow: 0 0 0 rgba(255,190,90,0); }
+  50% { box-shadow: 0 0 14px rgba(255,190,90,.8); }
+}
+
 .popup-actions { display: flex; gap: 6px; justify-content: center; }
 .notice { margin-top: 6px; color: var(--gold-lit); }
 .empty { color: var(--ink-dim); }
@@ -496,6 +526,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .popup-note.level-up { animation: none; }
   .strike-btn { animation: none; }
   .popup-card { animation: none; }
   .gem { animation: none; }
@@ -559,6 +590,7 @@ body {
   .buff-delta, .purse, .cost, .chip-stat { font-size: 12px; }
   .overlay-body { font-size: 14px; }
   .popup-stats { font-size: 14px; }
+  .popup-note { font-size: 13px; padding: 4px 8px; }
 }
 
 /* ---------- portrait: scene on top, controls below ---------- */

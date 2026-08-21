@@ -10,18 +10,22 @@
     metal:  { label: "Metal",  price: 5 }
   };
 
-  // perTier is the stat a tier-1 piece carries; tier multiplies it.
+  // perTier is the stat a tier-1 piece carries; tier multiplies it. combat is
+  // the piece's own handling: it barely moves with tier, so it stays flat here
+  // and takes only a gentle share of the quality and edition rolls.
+  // level is the smith level the recipe unlocks at; xp is what a tier-1
+  // Normal piece is worth at the bench.
   var RECIPES = [
-    { key: "bow", name: "Weak Bow", kind: "weapon",
-      perTier: { damage: 5, durability: 16 }, cost: { wood: 10, string: 5 } },
-    { key: "sword", name: "Weak Sword", kind: "weapon",
-      perTier: { damage: 6, durability: 20 }, cost: { wood: 5, metal: 10 } },
-    { key: "helmet", name: "Weak Helmet", kind: "armor",
-      perTier: { armor: 3, durability: 18 }, cost: { metal: 8, string: 4 } },
-    { key: "armor", name: "Weak Armor", kind: "armor",
-      perTier: { armor: 6, durability: 30 }, cost: { metal: 15, string: 10 } },
-    { key: "boots", name: "Weak Boots", kind: "armor",
-      perTier: { armor: 2.5, durability: 15 }, cost: { metal: 10, string: 6 } }
+    { key: "sword", name: "Weak Sword", kind: "weapon", icon: "sword",
+      level: 1, xp: 15,
+      perTier: { damage: 6, durability: 20 },
+      combat: { speed: 0.85, crit: 5, critDamage: 150, pen: 0 },
+      cost: { wood: 5, metal: 10 } },
+    { key: "apprentice-bow", name: "Apprentice Bow", kind: "weapon", icon: "bow",
+      level: 2, xp: 25,
+      perTier: { damage: 9, durability: 24 },
+      combat: { speed: 1.25, crit: 9, critDamage: 165, pen: 0 },
+      cost: { wood: 14, string: 8 } }
   ];
 
   function recipeFor(key) {
@@ -32,6 +36,46 @@
   }
 
   var STARTING_SILVER = 100;
+  var STARTING_LEVEL = 1;
+
+  // Each level costs a third again as much as the one before it.
+  var XP_BASE = 45, XP_GROWTH = 1.35;
+  var XP_PER_TIER = 0.35; // extra share of a recipe's xp per tier above T1
+
+  function xpToNext(level) {
+    return Math.round(XP_BASE * Math.pow(XP_GROWTH, level - 1));
+  }
+
+  // A better piece teaches more: tier and finish both raise the bench xp.
+  function xpFor(recipe, tierIndex, band) {
+    return Math.max(1, Math.round(
+      recipe.xp * (1 + (tierIndex - 1) * XP_PER_TIER) * (QUALITY_MULT[band] || 1)));
+  }
+
+  function grantXp(state, amount) {
+    state.xp += amount;
+    var levels = 0;
+    while (state.xp >= xpToNext(state.level)) {
+      state.xp -= xpToNext(state.level);
+      state.level++;
+      levels++;
+    }
+    return { amount: amount, levels: levels, level: state.level };
+  }
+
+  function xpPercent(state) {
+    return Math.max(0, Math.min(100,
+      Math.round(state.xp / xpToNext(state.level) * 100)));
+  }
+
+  function unlocked(state, recipe) {
+    return state.level >= recipe.level;
+  }
+
+  // Recipes the smith cannot forge yet, so the bench can show what is coming.
+  function lockedRecipes(state) {
+    return RECIPES.filter(function (recipe) { return !unlocked(state, recipe); });
+  }
 
   // Tier sets the base stat, quality scales it modestly, edition scales it
   // hard. Enchant slots change no stat - they only hold enchants later.
@@ -40,24 +84,57 @@
   };
   var EDITION_MULT = [1, 2, 3.5, 6, 10, 20];
 
-  // Sale value is read off the stats the piece actually carries.
-  var VALUE_PER = { damage: 4, armor: 5, durability: 0.4 };
+  // Sale value is read off the stats the piece actually carries. Damage,
+  // speed and crit are priced together as the damage a piece actually puts
+  // out, so a fast piece and a hard-hitting one can be worth the same.
+  var VALUE_PER = { dps: 5, armor: 5, durability: 0.4, armorPen: 2 };
   var PRICE_SCALE = 2.5; // one knob over the whole sale curve
 
+  // Shares of the quality/edition roll the combat stats keep. Damage takes the
+  // multiplier whole; speed and crit would run away if they did the same.
+  var SPEED_SHARE = 0.2;
+  var CRIT_SHARE = 0.5;
+  var CRIT_PER_EDITION = 1.5;
+  var CRIT_DMG_SHARE = 20;
+  var CRIT_DMG_PER_EDITION = 10;
+  var CRIT_CAP = 75; // percent, so a piece never crits every swing
+
+  function round(value, places) {
+    var factor = Math.pow(10, places);
+    return Math.round(value * factor) / factor;
+  }
+
   function statsFor(recipe, tierIndex, band, edition) {
-    var mult = (QUALITY_MULT[band] || 1) * (EDITION_MULT[edition] || 1);
+    var quality = QUALITY_MULT[band] || 1;
+    var mult = quality * (EDITION_MULT[edition] || 1);
     var per = recipe.perTier;
+    var combat = recipe.combat;
     return {
       damage: per.damage ? Math.max(1, Math.round(per.damage * tierIndex * mult)) : 0,
       armor: per.armor ? Math.max(1, Math.round(per.armor * tierIndex * mult)) : 0,
-      durability: Math.max(1, Math.round(per.durability * tierIndex * mult))
+      durability: Math.max(1, Math.round(per.durability * tierIndex * mult)),
+      attackSpeed: round(combat.speed * (1 + (quality - 1) * SPEED_SHARE), 2),
+      critChance: round(Math.min(CRIT_CAP,
+        combat.crit * (1 + (quality - 1) * CRIT_SHARE) + edition * CRIT_PER_EDITION), 1),
+      critDamage: Math.round(combat.critDamage + (quality - 1) * CRIT_DMG_SHARE +
+        edition * CRIT_DMG_PER_EDITION),
+      // Armour penetration is modelled but not rolled yet; every piece is 0.
+      armorPen: Math.round(combat.pen)
     };
   }
 
+  // Damage a piece lands per second on average, counting crits as the share
+  // of swings they actually are.
+  function damagePerSecond(item) {
+    var critMult = 1 + (item.critChance / 100) * (item.critDamage / 100 - 1);
+    return item.damage * item.attackSpeed * critMult;
+  }
+
   function sellPrice(item) {
-    var value = item.damage * VALUE_PER.damage +
+    var value = damagePerSecond(item) * VALUE_PER.dps +
                 item.armor * VALUE_PER.armor +
-                item.durability * VALUE_PER.durability;
+                item.durability * VALUE_PER.durability +
+                item.armorPen * VALUE_PER.armorPen;
     return Math.max(1, Math.round(value * PRICE_SCALE));
   }
 
@@ -91,6 +168,8 @@
   function createState() {
     return {
       silver: STARTING_SILVER,
+      level: STARTING_LEVEL,
+      xp: 0,
       materials: { wood: 0, string: 0, metal: 0 },
       inventory: [],
       // Base stats the forge rolls around. They are not spent by forging.
@@ -128,7 +207,7 @@
   }
 
   function canForge(state, recipe) {
-    return missingFor(state, recipe).length === 0;
+    return unlocked(state, recipe) && missingFor(state, recipe).length === 0;
   }
 
   // Every value in the luck window is equally likely, so a wider negative
@@ -144,6 +223,9 @@
   }
 
   function forge(state, recipe) {
+    if (!unlocked(state, recipe)) {
+      return { ok: false, reason: "Reach level " + recipe.level + " first." };
+    }
     if (!canForge(state, recipe)) {
       return { ok: false, reason: "Missing materials." };
     }
@@ -161,6 +243,7 @@
       id: state.nextId++,
       name: recipe.name,
       recipe: recipe.key,
+      icon: recipe.icon,
       kind: recipe.kind,
       rarity: rarity,
       tier: tier.name,
@@ -171,17 +254,29 @@
       editionName: S.editionAt(edition),
       damage: stats.damage,
       armor: stats.armor,
-      durability: stats.durability
+      durability: stats.durability,
+      attackSpeed: stats.attackSpeed,
+      critChance: stats.critChance,
+      critDamage: stats.critDamage,
+      armorPen: stats.armorPen
     };
     state.inventory.unshift(item);
-    return { ok: true, item: item };
+    return { ok: true, item: item, xp: grantXp(state, xpFor(recipe, tier.index, band)) };
   }
 
   global.Game = {
     MATERIALS: MATERIALS,
     RECIPES: RECIPES,
     STARTING_SILVER: STARTING_SILVER,
+    STARTING_LEVEL: STARTING_LEVEL,
     createState: createState,
+    xpToNext: xpToNext,
+    xpFor: xpFor,
+    grantXp: grantXp,
+    xpPercent: xpPercent,
+    unlocked: unlocked,
+    lockedRecipes: lockedRecipes,
+    damagePerSecond: damagePerSecond,
     priceOf: priceOf,
     buy: buy,
     missingFor: missingFor,

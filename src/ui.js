@@ -7,8 +7,6 @@
   var player = {
     name: "JONIS",
     title: "Apprentice blacksmith",
-    level: 0,
-    xp: 0, // percent toward the next level
     display: [null, null]
   };
 
@@ -36,8 +34,21 @@
   var tooltipEl = $("tooltip");
 
   function renderHeader() {
-    $("lvl-value").textContent = player.level;
-    $("xp-fill").style.width = player.xp + "%";
+    $("lvl-value").textContent = state.level;
+    $("xp-fill").style.width = G.xpPercent(state) + "%";
+  }
+
+  function xpTooltip() {
+    var need = G.xpToNext(state.level);
+    var locked = G.lockedRecipes(state);
+    var text = "<b>Smith level " + state.level + "</b><br>" +
+      state.xp + " / " + need + " XP toward level " + (state.level + 1) +
+      "<br>Forging earns XP \u2014 better pieces teach more.";
+    if (locked.length) {
+      text += "<br><br>Next unlock: <b>" + locked[0].name +
+        "</b> at level " + locked[0].level + ".";
+    }
+    return text;
   }
 
   function renderPurse() {
@@ -137,7 +148,7 @@
 
   function bindTooltip(el, html) {
     function open() {
-      tooltipEl.innerHTML = html;
+      tooltipEl.innerHTML = typeof html === "function" ? html() : html;
       tooltipEl.hidden = false;
       tooltipEl.style.left = "0px";
       tooltipEl.style.top = "0px";
@@ -234,20 +245,25 @@
       if (!view.pending && G.canForge(state, recipe)) view.pending = recipe;
       renderStrike();
       renderPurse();
-      if (result.ok) showResult(result.item);
+      renderHeader();
+      if (result.ok) showResult(result.item, result.xp);
     });
   }
 
-  function showResult(item) {
+  function showResult(item, xp) {
     $("pop-name").textContent = item.name;
     var art = $("pop-icon");
     art.innerHTML = "";
-    art.appendChild(window.Icons.make(item.recipe, "icon big"));
+    art.appendChild(window.Icons.make(item.icon, "icon big"));
     var stats = $("pop-stats");
     stats.innerHTML = "";
     var rows = [];
     if (item.damage) rows.push(["Damage", String(item.damage)]);
     if (item.armor) rows.push(["Armor", String(item.armor)]);
+    rows.push(["Attack speed", item.attackSpeed + "/s"]);
+    rows.push(["Crit chance", item.critChance + "%"]);
+    rows.push(["Crit damage", item.critDamage + "%"]);
+    rows.push(["Armor pen", String(item.armorPen)]);
     rows.push(["Durability", String(item.durability)]);
     rows.push(["Rarity", item.rarity + " · " + item.tier]);
     rows.push(["Quality", item.quality + " · " + item.band]);
@@ -259,6 +275,16 @@
       row.appendChild(P.el("span", "popup-value", pair[1]));
       stats.appendChild(row);
     });
+    var note = $("pop-note");
+    if (xp) {
+      note.textContent = xp.levels
+        ? "+" + xp.amount + " XP \u00b7 Level " + xp.level + "!"
+        : "+" + xp.amount + " XP";
+      note.classList.toggle("level-up", xp.levels > 0);
+      note.hidden = false;
+    } else {
+      note.hidden = true;
+    }
     view.shown = item;
     $("pop-sell").textContent = "SELL " + G.sellPrice(item);
     $("result-pop").hidden = false;
@@ -304,6 +330,7 @@
   }
 
   function refresh() {
+    renderHeader();
     renderStrike();
     renderPurse();
     renderBuffs();
@@ -317,8 +344,13 @@
     var body = $("overlay-body");
     body.innerHTML = "";
     body.appendChild(P.el("p", null,
-      player.title + " — level " + player.level));
-    body.appendChild(P.el("p", null, player.xp + "% toward the next level."));
+      player.title + " — level " + state.level));
+    body.appendChild(P.el("p", null, state.xp + " / " + G.xpToNext(state.level) +
+      " XP toward level " + (state.level + 1) + "."));
+    G.lockedRecipes(state).forEach(function (recipe) {
+      body.appendChild(P.el("p", null,
+        recipe.name + " unlocks at level " + recipe.level + "."));
+    });
     body.appendChild(P.el("p", null, "Next strike can land:"));
     var list = P.el("ul");
     S.forecast(state.base).forEach(function (row) {
@@ -364,6 +396,7 @@
     renderPurse();
     renderBuffs();
     renderSlots();
+    bindTooltip(document.querySelector(".xp-row"), xpTooltip);
     scene = new window.Forge(document.getElementById("forge-canvas"));
     bindControls();
     scene.start();
