@@ -274,6 +274,11 @@ body {
 .gem.g3 { bottom: 8px; left: 8px; }
 .gem.g4 { bottom: 8px; right: 8px; }
 @keyframes emberPulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
+@keyframes fxFade {
+  0% { opacity: 0; transform: translate(-50%, -50%); }
+  20%, 70% { opacity: 1; transform: translate(-50%, -140%); }
+  100% { opacity: 0; transform: translate(-50%, -170%); }
+}
 
 /* ---------- overlay panel ---------- */
 .overlay[hidden] { display: none; }
@@ -400,12 +405,13 @@ body {
   border-color: var(--ink-dim);
   margin-left: 6px;
 }
-.chip-stat.band-bad, .reveal.band-bad { color: var(--red); }
-.chip-stat.band-normal, .reveal.band-normal { color: var(--ink-dim); }
-.chip-stat.band-good, .reveal.band-good { color: var(--green); }
-.chip-stat.band-refined, .reveal.band-refined { color: #6fb7d4; }
-.chip-stat.band-pristine, .reveal.band-pristine { color: #b98fe0; }
-.chip-stat.band-legendary, .reveal.band-legendary { color: var(--gold-lit); border-color: var(--gold); }
+.chip-stat.band-bad, .fx.band-bad { color: var(--red); }
+.chip-stat.band-normal, .fx.band-normal { color: var(--ink-dim); }
+.chip-stat.band-good, .fx.band-good { color: var(--green); }
+.chip-stat.band-refined, .fx.band-refined { color: #6fb7d4; }
+.chip-stat.band-pristine, .fx.band-pristine { color: #b98fe0; }
+.chip-stat.band-legendary, .fx.band-legendary { color: var(--gold-lit); }
+.chip-stat.band-legendary { border-color: var(--gold); }
 
 .result {
   margin-bottom: 8px;
@@ -473,40 +479,42 @@ body {
 }
 
 /* ---------- strike reveals ---------- */
-/* Hung from the top of the scene so the stack builds downward and never
-   covers the anvil, the hammer or the sparks coming off it. */
+/* A layer over the whole scene; each effect is pinned to the point the
+   hammer lands and thrown out from there. */
 .reveals {
   position: absolute;
-  left: 50%;
-  top: 7%;
-  transform: translateX(-50%);
+  inset: 0;
   z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
+  overflow: hidden;
   pointer-events: none;
 }
-.reveal {
-  padding: 1px 10px;
-  font-size: clamp(11px, 1.6vw, 17px);
+.fx {
+  position: absolute;
+  --dx: 0px;
+  font-size: clamp(14px, 2.1vw, 24px);
   font-weight: 700;
   letter-spacing: 2px;
   white-space: nowrap;
   color: var(--ink);
-  background: rgba(10,5,2,.78);
-  border: 2px solid var(--gold-dark);
-  box-shadow: 0 2px 0 #000;
-  text-shadow: 2px 2px 0 #000;
-  animation: revealPop .3s steps(4);
+  /* A hard pixel outline instead of a plate, plus a halo in the effect's own
+     colour so it carries over the fire. */
+  text-shadow:
+    2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,
+    2px 2px 0 #000, -2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000,
+    0 0 12px currentColor;
+  animation: fxFly 1s steps(14) forwards;
 }
-@keyframes revealPop {
-  from { opacity: 0; transform: translateY(12px) scale(.75); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+/* Off the hammer head, up and out, thinning as it goes. */
+@keyframes fxFly {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.35); }
+  12% { opacity: 1; transform: translate(-50%, -80%) scale(1.3); }
+  30% { opacity: 1; transform: translate(calc(-50% + var(--dx) * .45), -210%) scale(1); }
+  70% { opacity: .95; transform: translate(calc(-50% + var(--dx) * .8), -400%) scale(.98); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), -560%) scale(.9); }
 }
-.reveal.tier { color: var(--gold-lit); border-color: var(--gold); }
-.reveal.slots { color: #b9d4e0; }
-.reveal.edition { color: #d8b8f0; }
+.fx.tier { color: var(--gold-lit); }
+.fx.slots { color: #b9d4e0; }
+.fx.edition { color: #d8b8f0; }
 
 /* ---------- forged-item popup ---------- */
 .popup[hidden] { display: none; }
@@ -562,7 +570,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal { animation: none; }
+  .fx { animation: fxFade 1s steps(3) forwards; }
   .popup-note.level-up { animation: none; }
   .strike-btn { animation: none; }
   .popup-card { animation: none; }
@@ -628,7 +636,7 @@ body {
   .overlay-body { font-size: 14px; }
   .popup-stats { font-size: 14px; }
   .popup-note { font-size: 13px; padding: 4px 8px; }
-  .reveal { font-size: 13px; padding: 2px 10px; letter-spacing: 1px; }
+  .fx { font-size: 17px; letter-spacing: 1px; }
 }
 
 /* ---------- portrait: scene on top, controls below ---------- */

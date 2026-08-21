@@ -30,6 +30,8 @@
       "A good strike gains 1, a bad one loses 4. It cannot drop below 0."
   };
 
+  var REVEAL_HOLD = 650; // ms the last effect gets before the card appears
+
   var $ = function (id) { return document.getElementById(id); };
   var tooltipEl = $("tooltip");
 
@@ -234,11 +236,19 @@
     ];
   }
 
-  // Each blow pushes a line up off the anvil, so the piece is read out as it
-  // is beaten into shape rather than all at once at the end.
-  function showReveal(reveal) {
+  // Each blow throws its line off the hammer head, fanning left and right so
+  // blows that overlap in the air stay readable.
+  function showReveal(reveal, index) {
     if (!reveal) return;
-    $("reveals").appendChild(P.el("div", "reveal " + reveal.tone, reveal.text));
+    var fx = P.el("div", "fx " + reveal.tone, reveal.text);
+    var at = scene.impactPoint();
+    fx.style.left = (at.x * 100) + "%";
+    fx.style.top = (at.y * 100) + "%";
+    fx.style.setProperty("--dx", (index % 2 ? 1 : -1) * (46 + index * 14) + "px");
+    fx.addEventListener("animationend", function () {
+      if (fx.parentNode) fx.parentNode.removeChild(fx);
+    });
+    $("reveals").appendChild(fx);
   }
 
   function clearReveals() {
@@ -266,15 +276,19 @@
 
     var reveals = revealsFor(result.item);
     scene.strike(reveals.length, function (blow) {
-      showReveal(reveals[blow - 1]);
+      showReveal(reveals[blow - 1], blow - 1);
     }, function () {
-      view.striking = false;
-      // Enough left for another of the same piece? Keep it on the anvil so
-      // the smith can swing again without reopening the menu.
-      if (!view.pending && G.canForge(state, recipe)) view.pending = recipe;
-      renderStrike();
-      renderHeader();
-      showResult(result.item, result.xp);
+      // Hold the card back until the last effect has flown, or it lands on
+      // top of the reveal it was meant to pay off.
+      setTimeout(function () {
+        view.striking = false;
+        // Enough left for another of the same piece? Keep it on the anvil so
+        // the smith can swing again without reopening the menu.
+        if (!view.pending && G.canForge(state, recipe)) view.pending = recipe;
+        renderStrike();
+        renderHeader();
+        showResult(result.item, result.xp);
+      }, REVEAL_HOLD);
     });
   }
 
