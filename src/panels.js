@@ -2,7 +2,7 @@
 (function (global) {
   "use strict";
 
-  var G = global.Game, S = global.Stats, I = global.Icons;
+  var G = global.Game, S = global.Stats, I = global.Icons, E = global.Enchants;
 
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -44,8 +44,12 @@
     meta.appendChild(el("span", "chip-stat crit", item.critDamage + "% cdmg"));
     if (item.armorPen) meta.appendChild(el("span", "chip-stat pen", item.armorPen + " pen"));
     meta.appendChild(el("span", "chip-stat", item.durability + " dur"));
-    meta.appendChild(el("span", "chip-stat", item.slots + " slot" + (item.slots === 1 ? "" : "s")));
+    meta.appendChild(el("span", "chip-stat",
+      item.enchants.length + "/" + item.slots + " slot" + (item.slots === 1 ? "" : "s")));
     meta.appendChild(el("span", "chip-stat", item.editionName));
+    item.enchants.forEach(function (entry) {
+      meta.appendChild(el("span", "chip-stat ench " + entry.rarity, E.label(entry)));
+    });
     line.appendChild(meta);
     return line;
   }
@@ -170,6 +174,65 @@
     return wrap;
   }
 
+  // Two states: pick a piece, or pick one of the three the ritual turned up.
+  function enchantPanel(ctx) {
+    var wrap = el("div");
+
+    if (ctx.offer) {
+      wrap.appendChild(el("p", null,
+        "Three came out of the coals for " + ctx.offer.item.name +
+        ". One of them goes on the piece."));
+      var choices = el("div", "rows");
+      ctx.offer.choices.forEach(function (choice) {
+        var row = el("div", "row");
+        var main = el("div", "row-main");
+        var title = el("div", "row-title", E.label(choice));
+        title.appendChild(el("span", "chip-stat rarity-" + choice.rarity, choice.rarity));
+        main.appendChild(title);
+        main.appendChild(el("div", "muted", choice.text));
+        row.appendChild(main);
+        row.appendChild(button("TAKE", "mini-btn strong", function () {
+          ctx.takeEnchant(choice);
+        }));
+        choices.appendChild(row);
+      });
+      wrap.appendChild(choices);
+      if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+      return wrap;
+    }
+
+    var items = ctx.state.inventory;
+    if (!items.length) {
+      wrap.appendChild(el("p", "empty", "Nothing on the rack to enchant yet."));
+      if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+      return wrap;
+    }
+    wrap.appendChild(el("p", null,
+      "Rolling three enchants for a piece costs half what it sells for. " +
+      "Each one takes an enchant slot."));
+
+    var rows = el("div", "rows");
+    items.forEach(function (item) {
+      var row = el("div", "row");
+      row.appendChild(itemLine(item));
+      var cost = E.costFor(item);
+      var free = E.slotsLeft(item);
+      var b = button(free > 0 ? "ENCHANT " + cost : "NO SLOTS", "mini-btn",
+        function () { ctx.rollEnchant(item); });
+      b.disabled = !E.canEnchant(ctx.state, item);
+      if (free <= 0) {
+        b.title = "Every slot on this piece is filled.";
+      } else if (ctx.state.silver < cost) {
+        b.title = "Short " + (cost - ctx.state.silver) + " silver.";
+      }
+      row.appendChild(b);
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+    return wrap;
+  }
+
   function soonPanel(what) {
     return function () {
       var wrap = el("div");
@@ -182,7 +245,7 @@
     forge: { title: "Forge", build: forgePanel },
     shop: { title: "Shop", build: shopPanel },
     inventory: { title: "Inventory", build: inventoryPanel },
-    enchant: { title: "Enchant", build: soonPanel("Enchanting") },
+    enchant: { title: "Enchant", build: enchantPanel },
     upgrades: { title: "Upgrades", build: soonPanel("Upgrades") },
     display: { title: "Display", build: soonPanel("The display case") },
     awaken: { title: "Awaken", build: soonPanel("Awakening") },

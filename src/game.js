@@ -258,7 +258,8 @@
       attackSpeed: stats.attackSpeed,
       critChance: stats.critChance,
       critDamage: stats.critDamage,
-      armorPen: stats.armorPen
+      armorPen: stats.armorPen,
+      enchants: []
     };
     state.inventory.unshift(item);
     return { ok: true, item: item, xp: grantXp(state, xpFor(recipe, tier.index, band)) };
@@ -277,6 +278,7 @@
     unlocked: unlocked,
     lockedRecipes: lockedRecipes,
     damagePerSecond: damagePerSecond,
+    CRIT_CAP: CRIT_CAP,
     priceOf: priceOf,
     buy: buy,
     missingFor: missingFor,

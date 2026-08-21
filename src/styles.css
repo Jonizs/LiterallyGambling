@@ -400,6 +400,14 @@ body {
 .chip-stat.spd { color: #9ed7a8; }
 .chip-stat.crit { color: #e0c56a; }
 .chip-stat.pen { color: #d09ad8; }
+.chip-stat.ench { color: var(--ink); border-color: var(--gold-dark); }
+.chip-stat.ench.uncommon, .chip-stat.rarity-uncommon { color: #6fb7d4; border-color: #6fb7d4; }
+.chip-stat.ench.rare, .chip-stat.rarity-rare { color: var(--gold-lit); border-color: var(--gold); }
+.chip-stat.rarity-common { color: var(--ink-dim); }
+.chip-stat.rarity-common, .chip-stat.rarity-uncommon, .chip-stat.rarity-rare {
+  margin-left: 6px;
+  letter-spacing: 1px;
+}
 .chip-stat.lock {
   color: var(--ink-dim);
   border-color: var(--ink-dim);

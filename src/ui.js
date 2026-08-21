@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var S = window.Stats, G = window.Game, P = window.Panels;
+  var S = window.Stats, G = window.Game, P = window.Panels, E = window.Enchants;
 
   var player = {
     name: "JONIS",
@@ -11,7 +11,8 @@
   };
 
   var state = G.createState();
-  var view = { panel: null, notice: "", pending: null, striking: false, shown: null };
+  var view = { panel: null, notice: "", pending: null, striking: false,
+               shown: null, offer: null };
   var scene = null;
 
   // Per-stat help text; the live roll window is appended at render time.
@@ -205,8 +206,51 @@
       pending: view.pending,
       setNotice: function (text) { view.notice = text; },
       queue: queueStrike,
+      offer: offerView(),
+      rollEnchant: rollEnchant,
+      takeEnchant: takeEnchant,
       refresh: refresh
     };
+  }
+
+  // The pending offer holds an id, not the piece, so it cannot outlive it.
+  function offerFor(id) {
+    for (var i = 0; i < state.inventory.length; i++) {
+      if (state.inventory[i].id === id) return state.inventory[i];
+    }
+    return null;
+  }
+
+  function offerView() {
+    if (!view.offer) return null;
+    var item = offerFor(view.offer.itemId);
+    if (!item) { view.offer = null; return null; }
+    return { item: item, choices: view.offer.choices };
+  }
+
+  // The silver goes at the roll, so the offer is kept until it is taken -
+  // closing the panel must not lose what was paid for.
+  function rollEnchant(item) {
+    var result = E.buyOffer(state, item);
+    if (!result.ok) {
+      view.notice = result.reason;
+      refresh();
+      return;
+    }
+    view.offer = { itemId: item.id, choices: result.choices };
+    view.notice = "Paid " + result.cost + " silver for the roll.";
+    refresh();
+  }
+
+  function takeEnchant(choice) {
+    var pending = offerView();
+    if (!pending) return;
+    var result = E.apply(pending.item, choice);
+    view.offer = null;
+    view.notice = result.ok
+      ? E.label(choice) + " set into " + pending.item.name + "."
+      : result.reason;
+    refresh();
   }
 
   // Picking a piece in the forge menu sets it on the anvil; the strike
