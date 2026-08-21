@@ -11,6 +11,12 @@
 - NEVER add a `Co-Authored-By` trailer to user commits unless this project's `.claude/settings.json` has `attribution.commit` set (#2078). The Claude Code Bash tool may suggest one in its default commit-message template — ignore it. `Co-Authored-By` is semantic authorship attribution under git/GitHub convention; the tool is the facilitator, not a co-author.
 - Keep files under 500 lines
 - Validate input at system boundaries
+- NEVER take or send screenshots — the user tests visual changes themselves.
+  Verify with headless checks (no errors, no overflow, expected DOM/state) and
+  say what was checked; do not render, read back, or attach images.
+- Keep responses short. Match length to the task: a few lines for an ordinary
+  change. State what changed and anything the user must decide — no feature
+  tours, no restating the request, no design essays.
 
 ## Ruflo Capability Brain & Implementation Loop
 
