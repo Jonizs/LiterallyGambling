@@ -19,6 +19,9 @@
     return b;
   }
 
+  var FIRST_REVEAL = 0.35; // seconds after the panel lands
+  var REVEAL_GAP = 0.5;    // between one enchant and the next
+
   function costLine(state, recipe) {
     var line = el("div", "cost-line");
     Object.keys(recipe.cost).forEach(function (key) {
@@ -183,19 +186,35 @@
       wrap.appendChild(el("p", null,
         "Three came out of the coals for " + ctx.offer.item.name +
         ". One of them goes on the piece."));
+      // The three frames are part of the panel and land with it; what is in
+      // them arrives one at a time afterwards.
       var choices = el("div", "rows");
       ctx.offer.choices.forEach(function (choice, i) {
-        var row = el("div", "row offer-in");
-        row.style.animationDelay = (i * 0.14) + "s";
-        var main = el("div", "row-main");
+        var fresh = ctx.offer.fresh;
+        var at = FIRST_REVEAL + i * REVEAL_GAP;
+        var row = el("div", "row offer " + choice.rarity +
+          (fresh ? " offer-reveal" : ""));
+        if (fresh) {
+          row.style.setProperty("--d", at + "s");
+          row.appendChild(el("div", "offer-wait", "?"));
+        }
+
+        var main = el("div", "row-main offer-body");
         var title = el("div", "row-title", E.label(choice));
         title.appendChild(el("span", "chip-stat rarity-" + choice.rarity, choice.rarity));
         main.appendChild(title);
         main.appendChild(el("div", "muted", choice.text));
         row.appendChild(main);
-        row.appendChild(button("TAKE", "mini-btn strong", function () {
+
+        var take = button("TAKE", "mini-btn strong offer-body", function () {
           ctx.takeEnchant(choice);
-        }));
+        });
+        // Nothing is takeable before it has been shown.
+        if (fresh) {
+          take.disabled = true;
+          setTimeout(function () { take.disabled = false; }, (at + 0.3) * 1000);
+        }
+        row.appendChild(take);
         choices.appendChild(row);
       });
       wrap.appendChild(choices);

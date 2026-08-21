@@ -486,11 +486,69 @@ body {
   50%      { box-shadow: inset 0 0 0 2px rgba(255,255,255,.3), 0 3px 0 #000, 0 0 20px rgba(255,190,90,.85); }
 }
 
-/* Enchant offers arrive one after another rather than all at once. */
-.offer-in { animation: offerIn .4s steps(6) backwards; }
-@keyframes offerIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ---------- enchant offers ---------- */
+/* The frames land with the panel; each enchant drops into its frame a beat
+   later, one after another. --d is when this row's turn comes. */
+.row.offer { position: relative; overflow: hidden; }
+.row.offer.common { --flash: var(--gold); }
+.row.offer.uncommon { --flash: #6fb7d4; }
+.row.offer.rare { --flash: var(--gold-lit); }
+
+/* The empty frame keeps a pulsing mark until its enchant lands on it. */
+.offer-wait {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(16px, 2.4vw, 26px);
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--ink-dim);
+  text-shadow: 2px 2px 0 #000;
+  pointer-events: none;
+  animation: offerWait var(--d) steps(4) forwards;
+}
+@keyframes offerWait {
+  0% { opacity: .25; }
+  40% { opacity: .85; }
+  85% { opacity: .3; }
+  100% { opacity: 0; }
+}
+
+/* Struck into place: a flash across the frame, the piece punching in over it,
+   and the frame ringing in the rarity's colour. */
+.offer-reveal {
+  animation: offerRing .55s steps(6) backwards;
+  animation-delay: var(--d);
+}
+.offer-reveal.rare { animation-duration: .9s; }
+.offer-reveal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--flash);
+  animation: offerFlash .45s steps(5) backwards;
+  animation-delay: var(--d);
+}
+.offer-reveal .offer-body {
+  animation: offerPop .45s steps(7) backwards;
+  animation-delay: var(--d);
+}
+@keyframes offerRing {
+  0% { box-shadow: none; }
+  35% { box-shadow: 0 0 22px var(--flash), inset 0 0 12px var(--flash); }
+  100% { box-shadow: none; }
+}
+@keyframes offerFlash {
+  0% { opacity: .85; }
+  100% { opacity: 0; }
+}
+@keyframes offerPop {
+  0% { opacity: 0; transform: scale(.55); }
+  45% { opacity: 1; transform: scale(1.16); }
+  75% { transform: scale(.96); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 /* ---------- strike reveals ---------- */
@@ -586,7 +644,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .offer-in { animation: none; }
+  .offer-reveal, .offer-reveal::after, .offer-reveal .offer-body { animation: none; }
+  .offer-wait { display: none; }
   .fx { animation: fxFade 1s steps(3) forwards; }
   .popup-note.level-up { animation: none; }
   .strike-btn { animation: none; }

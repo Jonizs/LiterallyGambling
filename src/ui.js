@@ -227,7 +227,7 @@
     if (!view.offer) return null;
     var item = offerFor(view.offer.itemId);
     if (!item) { view.offer = null; return null; }
-    return { item: item, choices: view.offer.choices };
+    return { item: item, choices: view.offer.choices, fresh: view.offer.fresh };
   }
 
   // The silver goes at the roll, so the offer is kept until it is taken -
@@ -239,7 +239,7 @@
       refresh();
       return;
     }
-    view.offer = { itemId: item.id, choices: result.choices };
+    view.offer = { itemId: item.id, choices: result.choices, fresh: true };
     view.notice = "Paid " + result.cost + " silver for the roll.";
     refresh();
   }
@@ -427,6 +427,7 @@
     var body = $("overlay-body");
     body.innerHTML = "";
     body.appendChild(panel.build(context()));
+    if (view.offer) view.offer.fresh = false;
   }
 
   function closePanel() {
