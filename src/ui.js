@@ -120,28 +120,65 @@
     });
   }
 
+  // A finger has no hover, so touch taps toggle the tooltip and anchor it to
+  // the element instead of trailing a pointer that is not there.
+  var lastPointerType = "mouse";
+  document.addEventListener("pointerdown", function (ev) {
+    lastPointerType = ev.pointerType || "mouse";
+  }, true);
+
+  function clampTip(x, y) {
+    var rect = tooltipEl.getBoundingClientRect();
+    x = Math.min(x, window.innerWidth - rect.width - 4);
+    y = Math.min(y, window.innerHeight - rect.height - 4);
+    tooltipEl.style.left = Math.max(4, x) + "px";
+    tooltipEl.style.top = Math.max(4, y) + "px";
+  }
+
   function bindTooltip(el, html) {
-    function show(ev) {
+    function open() {
       tooltipEl.innerHTML = html;
       tooltipEl.hidden = false;
-      place(ev);
+      tooltipEl.style.left = "0px";
+      tooltipEl.style.top = "0px";
     }
-    function place(ev) {
+    function showAtPointer(ev) {
+      open();
+      placeAtPointer(ev);
+    }
+    function placeAtPointer(ev) {
       var pad = 12;
       var rect = tooltipEl.getBoundingClientRect();
       var x = ev.clientX + pad;
       var y = ev.clientY + pad;
       if (x + rect.width > window.innerWidth) x = ev.clientX - rect.width - pad;
       if (y + rect.height > window.innerHeight) y = ev.clientY - rect.height - pad;
-      tooltipEl.style.left = Math.max(4, x) + "px";
-      tooltipEl.style.top = Math.max(4, y) + "px";
+      clampTip(x, y);
     }
-    el.addEventListener("mouseenter", show);
-    el.addEventListener("mousemove", place);
-    el.addEventListener("mouseleave", hideTooltip);
+    // Touch: sit the card above the tapped control, or below it when there is
+    // no room, so the finger never covers what it just opened.
+    function showAtElement() {
+      open();
+      var box = el.getBoundingClientRect();
+      var tip = tooltipEl.getBoundingClientRect();
+      var gap = 8;
+      var y = box.top - tip.height - gap;
+      if (y < 4) y = box.bottom + gap;
+      clampTip(box.left + box.width / 2 - tip.width / 2, y);
+    }
+    el.addEventListener("pointerenter", function (ev) {
+      if (ev.pointerType === "mouse") showAtPointer(ev);
+    });
+    el.addEventListener("pointermove", function (ev) {
+      if (ev.pointerType === "mouse" && !tooltipEl.hidden) placeAtPointer(ev);
+    });
+    el.addEventListener("pointerleave", function (ev) {
+      if (ev.pointerType === "mouse") hideTooltip();
+    });
     el.addEventListener("click", function (ev) {
       ev.stopPropagation();
-      if (tooltipEl.hidden) show(ev); else hideTooltip();
+      if (!tooltipEl.hidden) { hideTooltip(); return; }
+      if (lastPointerType === "mouse") showAtPointer(ev); else showAtElement();
     });
   }
 
@@ -246,6 +283,7 @@
     if (!panel) return;
     view.panel = key;
     view.notice = "";
+    hideTooltip();
     if (key !== "forge") view.lastItem = null;
     drawPanel();
     $("overlay").hidden = false;
@@ -315,6 +353,9 @@
       if (ev.key === "Escape") { closePanel(); closeResult(); hideTooltip(); }
     });
     document.addEventListener("click", hideTooltip);
+    window.addEventListener("resize", hideTooltip);
+    window.addEventListener("orientationchange", hideTooltip);
+    window.addEventListener("scroll", hideTooltip, true);
   }
 
   function init() {

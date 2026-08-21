@@ -15,15 +15,26 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+button, .slot, .buff, .purse span, .chip {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 body {
   background: #120a06;
   font-family: var(--font);
   color: var(--ink);
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
   padding: 12px;
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
   image-rendering: pixelated;
+  overscroll-behavior-y: contain;
 }
 
 .game { width: min(1024px, 100%); }
@@ -55,6 +66,9 @@ body {
   flex-direction: column;
   gap: 5px;
   min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 /* ---------- nameplate ---------- */
@@ -82,7 +96,7 @@ body {
   cursor: pointer;
   text-shadow: 1px 1px 0 #000;
 }
-.chip:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); }
+@media (hover: hover) { .chip:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
 
 /* ---------- xp bar ---------- */
 .xp-row { display: flex; align-items: center; gap: 8px; }
@@ -166,7 +180,7 @@ body {
   cursor: pointer;
   line-height: 1;
 }
-.help:hover { background: var(--gold); color: #2b1a10; }
+@media (hover: hover) { .help:hover { background: var(--gold); color: #2b1a10; } }
 
 /* ---------- buttons ---------- */
 .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -185,7 +199,7 @@ body {
   box-shadow: inset 0 0 0 2px rgba(0,0,0,.45), 0 3px 0 #000;
   cursor: pointer;
 }
-.wood-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); }
+@media (hover: hover) { .wood-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
 .wood-btn:active { transform: translateY(2px); box-shadow: inset 0 0 0 2px rgba(0,0,0,.45), 0 1px 0 #000; }
 .wood-btn.wide { width: 100%; }
 .wood-btn.small { font-size: clamp(10px, 1.45vw, 16px); letter-spacing: 1px; }
@@ -205,7 +219,7 @@ body {
   color: var(--ink-dim);
   cursor: pointer;
 }
-.slot:hover { border-color: var(--gold); }
+@media (hover: hover) { .slot:hover { border-color: var(--gold); } }
 
 /* ---------- scene ---------- */
 .scene {
@@ -299,12 +313,6 @@ body {
   pointer-events: none;
 }
 
-@media (max-width: 640px) {
-  .frame { grid-template-columns: 1fr; aspect-ratio: auto; }
-  .scene { min-height: 220px; }
-  .wood-btn.options { margin-top: 8px; }
-}
-
 /* ---------- purse ---------- */
 .purse {
   display: flex;
@@ -356,7 +364,7 @@ body {
   text-shadow: 1px 1px 0 #000;
 }
 .mini-btn.strong { letter-spacing: 1px; font-weight: 700; }
-.mini-btn:hover:not(:disabled) { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); }
+@media (hover: hover) { .mini-btn:hover:not(:disabled) { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
 .mini-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 0 0 #000; }
 .mini-btn:disabled { opacity: .45; cursor: not-allowed; border-color: var(--gold-dark); }
 
@@ -427,7 +435,7 @@ body {
   animation: strikePulse 1.1s steps(4) infinite;
 }
 .strike-btn.idle { visibility: hidden; animation: none; }
-.strike-btn:hover { background: linear-gradient(180deg, #ffe9b6, #e0b565 55%, #b98d3c); }
+@media (hover: hover) { .strike-btn:hover { background: linear-gradient(180deg, #ffe9b6, #e0b565 55%, #b98d3c); } }
 .strike-btn:active { transform: translate(-50%, 2px); box-shadow: inset 0 0 0 2px rgba(255,255,255,.3), 0 1px 0 #000; }
 @keyframes strikePulse {
   0%, 100% { box-shadow: inset 0 0 0 2px rgba(255,255,255,.3), 0 3px 0 #000, 0 0 10px rgba(255,170,60,.4); }
@@ -517,4 +525,106 @@ body {
   box-shadow: 0 2px 0 #000;
   cursor: pointer;
 }
-.tab-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); }
+@media (hover: hover) { .tab-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
+
+/* ---------- phones and small tablets ---------- */
+@media (max-width: 860px), (pointer: coarse) and (max-width: 1024px) {
+  /* Panels and popups escape the scene box so they get the whole screen
+     instead of a letterboxed strip. */
+  .overlay, .popup {
+    position: fixed;
+    padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
+             max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+    z-index: 30;
+  }
+  .overlay-card, .popup-card { max-height: 88dvh; overflow: auto; }
+  .popup-card { min-width: min(320px, 100%); }
+  .tooltip { z-index: 40; max-width: min(280px, calc(100vw - 24px)); font-size: 13px; }
+
+  /* Touch targets: nothing interactive smaller than a fingertip. */
+  .wood-btn { font-size: 16px; padding: 10px 8px; min-height: 46px; }
+  .wood-btn.small { font-size: 14px; }
+  .mini-btn { font-size: 14px; padding: 8px 14px; min-height: 40px; }
+  .chip { font-size: 13px; padding: 8px 12px; }
+  .tab-btn { font-size: 14px; padding: 8px 14px; }
+  .help { width: 34px; font-size: 15px; }
+  .purse { gap: 6px; }
+  .purse span { padding: 6px 10px; }
+  .slot-row.compact .slot { height: 52px; font-size: 12px; }
+  .strike-btn { font-size: 20px; padding: 10px 22px; }
+
+  /* Readable text at phone widths, where the vw clamps bottom out. */
+  .player-name { font-size: 22px; }
+  .player-title, .buff-name, .row-title, .item-name { font-size: 13px; }
+  .buff-delta, .purse, .cost, .chip-stat { font-size: 12px; }
+  .overlay-body { font-size: 14px; }
+  .popup-stats { font-size: 14px; }
+}
+
+/* ---------- portrait: scene on top, controls below ---------- */
+@media (max-width: 860px) and (orientation: portrait), (max-width: 640px) {
+  body { display: block; padding-top: max(8px, env(safe-area-inset-top)); }
+  .game { width: 100%; }
+  .frame {
+    grid-template-columns: 1fr;
+    aspect-ratio: auto;
+    gap: 8px;
+    padding: 8px;
+  }
+  /* The forge is what the player taps, so it leads. */
+  .scene { order: -1; aspect-ratio: 16 / 11; }
+  .sidebar { overflow-y: visible; }
+  .wood-btn.options { margin-top: 8px; }
+  .buff { padding: 4px 6px; }
+  .slot-row { gap: 10px; }
+  /* Icon and name keep one line; the action gets a full-width line of its
+     own so it is comfortably tappable. */
+  .row { flex-wrap: wrap; padding: 8px; }
+  .row-main { flex: 1 1 0; min-width: 55%; }
+  .btn-group { gap: 8px; flex: 1 0 100%; }
+  .btn-group .mini-btn, .row > .mini-btn { flex: 1 0 0; }
+  .row > .mini-btn { flex-basis: 100%; }
+  .head-row .row-title { min-width: 0; }
+}
+
+/* Very narrow phones: one action per row rather than two cramped ones. */
+@media (max-width: 340px) {
+  .btn-row { grid-template-columns: 1fr; }
+  .buff-grid { grid-template-columns: 1fr; }
+  .buff-name { white-space: normal; }
+}
+
+/* ---------- landscape phones: keep the two-column frame, drop the padding ---------- */
+@media (orientation: landscape) and (max-height: 520px) {
+  body { display: grid; padding: 4px; }
+  .frame {
+    grid-template-columns: minmax(230px, 34%) 1fr;
+    padding: 6px;
+    gap: 6px;
+    aspect-ratio: auto;
+    height: calc(100dvh - 8px);
+  }
+  .scene { order: 0; aspect-ratio: auto; }
+  .sidebar { overflow-y: auto; }
+  .buff-grid { grid-template-columns: 1fr 1fr; }
+  .plate { padding: 4px 7px; }
+  .sidebar { gap: 4px; }
+  .wood-btn { min-height: 36px; padding: 4px 6px; font-size: 14px; }
+  .wood-btn.small { font-size: 12px; }
+  .slot-row.compact .slot { height: 34px; }
+  .wood-btn.options { margin-top: 4px; }
+  .player-name { font-size: 17px; }
+  .player-title { font-size: 11px; }
+  .chip { font-size: 12px; padding: 5px 10px; }
+  .xp-track { height: 12px; }
+  .level-medallion { width: 30px; }
+  .tab-title { font-size: 12px; margin-bottom: 2px; }
+  .buff { padding: 1px 4px; }
+  .buff-name { font-size: 11px; }
+  .buff-delta { font-size: 10px; }
+  .help { width: 26px; font-size: 12px; }
+  .purse { gap: 4px; font-size: 11px; }
+  .purse span { padding: 3px 6px; }
+  .btn-row { gap: 6px; }
+  .tab-btn { padding: 4px 12px; font-size: 12px; }
+}
