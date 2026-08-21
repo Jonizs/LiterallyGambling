@@ -494,13 +494,29 @@ body {
 .row.offer.uncommon { --flash: #6fb7d4; }
 .row.offer.rare { --flash: var(--gold-lit); }
 
-/* Struck into place: the whole slot punches in, a flash washes over it and
-   the frame rings in the rarity's colour. The row holds its space while it
-   waits, so nothing below it shifts. */
+/* A slot waits as a flat dark silhouette of itself. When its turn comes the
+   whole thing strikes in at once: the frame punches out and brightens as the
+   enchant and its TAKE arrive inside it, with a flash and a ring in the
+   rarity's colour. */
 .offer-reveal {
-  animation: offerPop .45s steps(7) backwards,
+  animation: offerSlot .45s steps(7) backwards,
              offerRing .55s steps(6) backwards;
   animation-delay: var(--d);
+}
+@keyframes offerSlot {
+  0% { transform: scale(.94); background: #0c0603; border-color: #000; }
+  45% { transform: scale(1.16); }
+  75% { transform: scale(.96); }
+  100% { transform: scale(1); }
+}
+.offer-reveal .offer-body {
+  animation: offerBodyIn .45s steps(7) backwards;
+  animation-delay: var(--d);
+}
+@keyframes offerBodyIn {
+  0% { opacity: 0; }
+  45% { opacity: 1; }
+  100% { opacity: 1; }
 }
 .offer-reveal.rare { animation-duration: .9s; }
 .offer-reveal::after {
@@ -522,12 +538,7 @@ body {
   0% { opacity: .85; }
   100% { opacity: 0; }
 }
-@keyframes offerPop {
-  0% { opacity: 0; transform: scale(.55); }
-  45% { opacity: 1; transform: scale(1.16); }
-  75% { transform: scale(.96); }
-  100% { opacity: 1; transform: scale(1); }
-}
+
 
 /* ---------- strike reveals ---------- */
 /* A layer over the whole scene; each effect is pinned to the point the
@@ -622,7 +633,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .offer-reveal, .offer-reveal::after { animation: none; }
+  .offer-reveal, .offer-reveal::after, .offer-reveal .offer-body { animation: none; }
   .fx { animation: fxFade 1s steps(3) forwards; }
   .popup-note.level-up { animation: none; }
   .strike-btn { animation: none; }
