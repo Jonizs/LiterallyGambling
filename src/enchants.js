@@ -43,24 +43,24 @@
   var DEFS = [
     // --- common ------------------------------------------------------------
     { key: "prospect", name: "Prospect", rarity: "common", maxTier: 3,
-      effect: function (t) { return { critChance: per(0.15, t) }; } },
+      effect: function (t) { return { critChance: per(1.34, t) }; } },
     { key: "sharp", name: "Sharp", rarity: "common", maxTier: 3,
-      effect: function (t) { return { damage: per(0.15, t) }; } },
+      effect: function (t) { return { damage: per(0.4, t) }; } },
     { key: "careful", name: "Careful", rarity: "common", maxTier: 2,
-      effect: function (t) { return { durability: per(0.2, t) }; } },
+      effect: function (t) { return { durability: per(0.7, t) }; } },
     { key: "deep-cuts", name: "Deep Cuts", rarity: "common", maxTier: 1,
-      effect: function () { return { critDamage: 1.25 }; } },
+      effect: function () { return { critDamage: 1.9 }; } },
 
     // --- uncommon ----------------------------------------------------------
     { key: "critical", name: "Critical", rarity: "uncommon", maxTier: 3,
       effect: function (t) {
-        return { critChance: per(0.2, t), critDamage: per(0.2, t) };
+        return { critChance: per(0.55, t), critDamage: per(0.55, t) };
       } },
     { key: "worthy", name: "Worthy", rarity: "uncommon", maxTier: 1,
-      effect: function () { return { all: 1.05 }; } },
+      effect: function () { return { all: 1.22 }; } },
     { key: "rested", name: "Rested", rarity: "uncommon", maxTier: 3,
       effect: function (t) {
-        return { damage: per(0.1, t), durability: per(0.1, t) };
+        return { damage: per(0.55, t), durability: per(0.55, t) };
       } },
 
     // --- rare --------------------------------------------------------------
@@ -68,12 +68,12 @@
       note: "Lets the piece be awakened.",
       effect: function () { return {}; } },
     { key: "godly", name: "Godly", rarity: "rare", maxTier: 3,
-      effect: function (t) { return { all: per(0.07, t) }; } },
+      effect: function (t) { return { all: per(0.33, t) }; } },
     { key: "reinforced", name: "Reinforced", rarity: "rare", maxTier: 3,
-      effect: function (t) { return { durability: per(0.55, t) }; } },
+      effect: function (t) { return { durability: per(3.2, t) }; } },
     { key: "bladed", name: "Bladed", rarity: "rare", maxTier: 3,
       effect: function (t) {
-        return { damage: per(0.35, t), critDamage: per(0.25, t) };
+        return { damage: per(0.85, t), critDamage: per(0.61, t) };
       } }
   ];
 

@@ -87,8 +87,18 @@
   // Sale value is read off the stats the piece actually carries. Damage,
   // speed and crit are priced together as the damage a piece actually puts
   // out, so a fast piece and a hard-hitting one can be worth the same.
-  var VALUE_PER = { dps: 5, armor: 5, durability: 0.4, armorPen: 2 };
-  var PRICE_SCALE = 2.5; // one knob over the whole sale curve
+  var VALUE_PER = { dps: 5, armor: 5, durability: 1.2, armorPen: 2 };
+  var PRICE_SCALE = 1.31; // one knob over the whole sale curve
+
+  // Buyers pay for a piece that crits far beyond the damage a crit actually
+  // adds, so crit chance is a real slice of the price rather than a rounding
+  // error. PRICE_SCALE is set against it to keep a plain piece worth what it
+  // was before.
+  // The premium saturates rather than climbing forever: a piece that already
+  // crits hard still gains from more crit, but never runs away with the
+  // price. HALF is the crit weight that buys half of what is on offer.
+  var CRIT_VALUE_CAP = 10;
+  var CRIT_VALUE_HALF = 0.35;
 
   // Shares of the quality/edition roll the combat stats keep. Damage takes the
   // multiplier whole; speed and crit would run away if they did the same.
@@ -130,8 +140,16 @@
     return item.damage * item.attackSpeed * critMult;
   }
 
+  // What the damage side of a piece is worth: its output, with crit counted
+  // at the premium the market puts on it.
+  function saleDamage(item) {
+    var crit = (item.critChance / 100) * (item.critDamage / 100 - 1);
+    var premium = 1 + (CRIT_VALUE_CAP - 1) * crit / (crit + CRIT_VALUE_HALF);
+    return item.damage * item.attackSpeed * premium;
+  }
+
   function sellPrice(item) {
-    var value = damagePerSecond(item) * VALUE_PER.dps +
+    var value = saleDamage(item) * VALUE_PER.dps +
                 item.armor * VALUE_PER.armor +
                 item.durability * VALUE_PER.durability +
                 item.armorPen * VALUE_PER.armorPen;
@@ -278,6 +296,7 @@
     unlocked: unlocked,
     lockedRecipes: lockedRecipes,
     damagePerSecond: damagePerSecond,
+    saleDamage: saleDamage,
     CRIT_CAP: CRIT_CAP,
     priceOf: priceOf,
     buy: buy,
