@@ -224,10 +224,34 @@
     btn.setAttribute("aria-hidden", ready ? "false" : "true");
   }
 
+  function revealsFor(item) {
+    return [
+      { text: "TIER " + S.tierAt(item.rarity).index, tone: "tier" },
+      { text: item.band + " quality", tone: "band-" + item.band.toLowerCase() },
+      { text: item.slots + " E. Slot" + (item.slots === 1 ? "" : "s"), tone: "slots" },
+      { text: item.edition ? item.editionName + " edition" : "Base edition",
+        tone: "edition" }
+    ];
+  }
+
+  // Each blow pushes a line up off the anvil, so the piece is read out as it
+  // is beaten into shape rather than all at once at the end.
+  function showReveal(reveal) {
+    if (!reveal) return;
+    $("reveals").appendChild(P.el("div", "reveal " + reveal.tone, reveal.text));
+  }
+
+  function clearReveals() {
+    $("reveals").innerHTML = "";
+  }
+
   function doStrike() {
     var recipe = view.pending;
     if (!recipe || view.striking) return;
-    if (!G.canForge(state, recipe)) {
+    // The roll happens before the hammer falls: every blow reveals one more
+    // thing about the piece already lying on the anvil.
+    var result = G.forge(state, recipe);
+    if (!result.ok) {
       view.pending = null;
       renderStrike();
       return;
@@ -237,16 +261,20 @@
     view.pending = null;
     view.striking = true;
     renderStrike();
-    scene.strike(3, null, function () {
-      var result = G.forge(state, recipe);
+    renderPurse();
+    clearReveals();
+
+    var reveals = revealsFor(result.item);
+    scene.strike(reveals.length, function (blow) {
+      showReveal(reveals[blow - 1]);
+    }, function () {
       view.striking = false;
       // Enough left for another of the same piece? Keep it on the anvil so
       // the smith can swing again without reopening the menu.
       if (!view.pending && G.canForge(state, recipe)) view.pending = recipe;
       renderStrike();
-      renderPurse();
       renderHeader();
-      if (result.ok) showResult(result.item, result.xp);
+      showResult(result.item, result.xp);
     });
   }
 
@@ -293,6 +321,7 @@
   function closeResult() {
     view.shown = null;
     $("result-pop").hidden = true;
+    clearReveals();
   }
 
   // Sell straight off the detail screen, without a trip to the inventory.
