@@ -2,7 +2,8 @@
 (function () {
   "use strict";
 
-  var S = window.Stats, G = window.Game, P = window.Panels, E = window.Enchants;
+  var S = window.Stats, G = window.Game, P = window.Panels,
+      E = window.Enchants, U = window.Upgrades;
 
   var player = {
     name: "JONIS",
@@ -209,6 +210,7 @@
       offer: offerView(),
       rollEnchant: rollEnchant,
       takeEnchant: takeEnchant,
+      buyUpgrade: buyUpgrade,
       refresh: refresh
     };
   }
@@ -239,6 +241,14 @@
     }
     view.offer = { itemId: item.id, choices: result.choices };
     view.notice = "Paid " + result.cost + " silver for the roll.";
+    refresh();
+  }
+
+  function buyUpgrade(def) {
+    var result = U.buy(state, def);
+    view.notice = result.ok
+      ? def.name + " tier " + result.tier + " built for " + result.cost + " silver."
+      : result.reason;
     refresh();
   }
 

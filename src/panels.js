@@ -2,7 +2,8 @@
 (function (global) {
   "use strict";
 
-  var G = global.Game, S = global.Stats, I = global.Icons, E = global.Enchants;
+  var G = global.Game, S = global.Stats, I = global.Icons,
+      E = global.Enchants, U = global.Upgrades;
 
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -183,8 +184,9 @@
         "Three came out of the coals for " + ctx.offer.item.name +
         ". One of them goes on the piece."));
       var choices = el("div", "rows");
-      ctx.offer.choices.forEach(function (choice) {
-        var row = el("div", "row");
+      ctx.offer.choices.forEach(function (choice, i) {
+        var row = el("div", "row offer-in");
+        row.style.animationDelay = (i * 0.14) + "s";
         var main = el("div", "row-main");
         var title = el("div", "row-title", E.label(choice));
         title.appendChild(el("span", "chip-stat rarity-" + choice.rarity, choice.rarity));
@@ -233,6 +235,42 @@
     return wrap;
   }
 
+  function upgradesPanel(ctx) {
+    var wrap = el("div");
+    wrap.appendChild(el("p", null,
+      "Work on the forge itself. Every tier lifts the stats each strike " +
+      "rolls around, for good."));
+
+    var rows = el("div", "rows");
+    U.UPGRADES.forEach(function (def) {
+      var tier = U.tierOf(ctx.state, def);
+      var max = U.maxTier(def);
+      var cost = U.nextCost(ctx.state, def);
+
+      var row = el("div", "row");
+      var main = el("div", "row-main");
+      var title = el("div", "row-title", def.name);
+      title.appendChild(el("span", "chip-stat tier", tier + "/" + max));
+      main.appendChild(title);
+      main.appendChild(el("div", "muted", U.describe(def) +
+        " \u00b7 built " + (U.built(ctx.state, def) > 0 ? "+" : "") +
+        U.built(ctx.state, def)));
+      row.appendChild(main);
+
+      var b = button(cost === null ? "FINISHED" : "BUILD " + cost,
+        "mini-btn strong", function () { ctx.buyUpgrade(def); });
+      b.disabled = cost === null || ctx.state.silver < cost;
+      if (cost !== null && ctx.state.silver < cost) {
+        b.title = "Short " + (cost - ctx.state.silver) + " silver.";
+      }
+      row.appendChild(b);
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+    return wrap;
+  }
+
   function soonPanel(what) {
     return function () {
       var wrap = el("div");
@@ -246,7 +284,7 @@
     shop: { title: "Shop", build: shopPanel },
     inventory: { title: "Inventory", build: inventoryPanel },
     enchant: { title: "Enchant", build: enchantPanel },
-    upgrades: { title: "Upgrades", build: soonPanel("Upgrades") },
+    upgrades: { title: "Upgrades", build: upgradesPanel },
     display: { title: "Display", build: soonPanel("The display case") },
     awaken: { title: "Awaken", build: soonPanel("Awakening") },
     options: { title: "Options", build: function () {

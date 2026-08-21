@@ -190,6 +190,7 @@
       xp: 0,
       materials: { wood: 0, string: 0, metal: 0 },
       inventory: [],
+      upgrades: {},
       // Base stats the forge rolls around. They are not spent by forging.
       base: {
         rarity: S.STATS.rarity.start,

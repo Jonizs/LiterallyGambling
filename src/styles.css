@@ -486,6 +486,13 @@ body {
   50%      { box-shadow: inset 0 0 0 2px rgba(255,255,255,.3), 0 3px 0 #000, 0 0 20px rgba(255,190,90,.85); }
 }
 
+/* Enchant offers arrive one after another rather than all at once. */
+.offer-in { animation: offerIn .4s steps(6) backwards; }
+@keyframes offerIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ---------- strike reveals ---------- */
 /* A layer over the whole scene; each effect is pinned to the point the
    hammer lands and thrown out from there. */
@@ -579,6 +586,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .offer-in { animation: none; }
   .fx { animation: fxFade 1s steps(3) forwards; }
   .popup-note.level-up { animation: none; }
   .strike-btn { animation: none; }
