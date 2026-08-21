@@ -494,31 +494,12 @@ body {
 .row.offer.uncommon { --flash: #6fb7d4; }
 .row.offer.rare { --flash: var(--gold-lit); }
 
-/* The empty frame keeps a pulsing mark until its enchant lands on it. */
-.offer-wait {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: clamp(16px, 2.4vw, 26px);
-  font-weight: 700;
-  letter-spacing: 4px;
-  color: var(--ink-dim);
-  text-shadow: 2px 2px 0 #000;
-  pointer-events: none;
-  animation: offerWait var(--d) steps(4) forwards;
-}
-@keyframes offerWait {
-  0% { opacity: .25; }
-  40% { opacity: .85; }
-  85% { opacity: .3; }
-  100% { opacity: 0; }
-}
-
-/* Struck into place: a flash across the frame, the piece punching in over it,
-   and the frame ringing in the rarity's colour. */
+/* Struck into place: the whole slot punches in, a flash washes over it and
+   the frame rings in the rarity's colour. The row holds its space while it
+   waits, so nothing below it shifts. */
 .offer-reveal {
-  animation: offerRing .55s steps(6) backwards;
+  animation: offerPop .45s steps(7) backwards,
+             offerRing .55s steps(6) backwards;
   animation-delay: var(--d);
 }
 .offer-reveal.rare { animation-duration: .9s; }
@@ -530,10 +511,6 @@ body {
   opacity: 0;
   background: var(--flash);
   animation: offerFlash .45s steps(5);
-  animation-delay: var(--d);
-}
-.offer-reveal .offer-body {
-  animation: offerPop .45s steps(7) backwards;
   animation-delay: var(--d);
 }
 @keyframes offerRing {
@@ -645,8 +622,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .offer-reveal, .offer-reveal::after, .offer-reveal .offer-body { animation: none; }
-  .offer-wait { display: none; }
+  .offer-reveal, .offer-reveal::after { animation: none; }
   .fx { animation: fxFade 1s steps(3) forwards; }
   .popup-note.level-up { animation: none; }
   .strike-btn { animation: none; }

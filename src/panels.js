@@ -186,27 +186,24 @@
       wrap.appendChild(el("p", null,
         "Three came out of the coals for " + ctx.offer.item.name +
         ". One of them goes on the piece."));
-      // The three frames are part of the panel and land with it; what is in
-      // them arrives one at a time afterwards.
+      // The panel lands first; the three slots strike into it one at a time,
+      // frame and all.
       var choices = el("div", "rows");
       ctx.offer.choices.forEach(function (choice, i) {
         var fresh = ctx.offer.fresh;
         var at = FIRST_REVEAL + i * REVEAL_GAP;
         var row = el("div", "row offer " + choice.rarity +
           (fresh ? " offer-reveal" : ""));
-        if (fresh) {
-          row.style.setProperty("--d", at + "s");
-          row.appendChild(el("div", "offer-wait", "?"));
-        }
+        if (fresh) row.style.setProperty("--d", at + "s");
 
-        var main = el("div", "row-main offer-body");
+        var main = el("div", "row-main");
         var title = el("div", "row-title", E.label(choice));
         title.appendChild(el("span", "chip-stat rarity-" + choice.rarity, choice.rarity));
         main.appendChild(title);
         main.appendChild(el("div", "muted", choice.text));
         row.appendChild(main);
 
-        var take = button("TAKE", "mini-btn strong offer-body", function () {
+        var take = button("TAKE", "mini-btn strong", function () {
           ctx.takeEnchant(choice);
         });
         // Nothing is takeable before it has been shown.
