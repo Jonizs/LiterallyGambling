@@ -31,6 +31,7 @@
   };
 
   var REVEAL_HOLD = 650; // ms the last effect gets before the card appears
+  var REVEAL_PUSH = 1.8; // em each effect already in the air is shoved up by
 
   var $ = function (id) { return document.getElementById(id); };
   var tooltipEl = $("tooltip");
@@ -248,7 +249,14 @@
     fx.addEventListener("animationend", function () {
       if (fx.parentNode) fx.parentNode.removeChild(fx);
     });
-    $("reveals").appendChild(fx);
+    // Shove everything still in the air up a line so the new one has clear
+    // space at the hammer. They all climb at the same rate, so the gap holds.
+    var host = $("reveals");
+    Array.prototype.forEach.call(host.children, function (older) {
+      older.push = (older.push || 0) + REVEAL_PUSH;
+      older.style.setProperty("--push", older.push + "em");
+    });
+    host.appendChild(fx);
   }
 
   function clearReveals() {

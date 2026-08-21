@@ -275,9 +275,9 @@ body {
 .gem.g4 { bottom: 8px; right: 8px; }
 @keyframes emberPulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
 @keyframes fxFade {
-  0% { opacity: 0; transform: translate(-50%, -50%); }
-  20%, 70% { opacity: 1; transform: translate(-50%, -140%); }
-  100% { opacity: 0; transform: translate(-50%, -170%); }
+  0% { opacity: 0; transform: translate(-50%, calc(-50% - var(--push))); }
+  20%, 70% { opacity: 1; transform: translate(-50%, calc(-140% - var(--push))); }
+  100% { opacity: 0; transform: translate(-50%, calc(-170% - var(--push))); }
 }
 
 /* ---------- overlay panel ---------- */
@@ -491,6 +491,7 @@ body {
 .fx {
   position: absolute;
   --dx: 0px;
+  --push: 0em;
   font-size: clamp(14px, 2.1vw, 24px);
   font-weight: 700;
   letter-spacing: 2px;
@@ -506,11 +507,11 @@ body {
 }
 /* Off the hammer head, up and out, thinning as it goes. */
 @keyframes fxFly {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(.35); }
-  12% { opacity: 1; transform: translate(-50%, -80%) scale(1.3); }
-  30% { opacity: 1; transform: translate(calc(-50% + var(--dx) * .45), -210%) scale(1); }
-  70% { opacity: .95; transform: translate(calc(-50% + var(--dx) * .8), -400%) scale(.98); }
-  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), -560%) scale(.9); }
+  0% { opacity: 0; transform: translate(-50%, calc(-50% - var(--push))) scale(.35); }
+  12% { opacity: 1; transform: translate(-50%, calc(-80% - var(--push))) scale(1.3); }
+  30% { opacity: 1; transform: translate(calc(-50% + var(--dx) * .45), calc(-160% - var(--push))) scale(1); }
+  70% { opacity: .95; transform: translate(calc(-50% + var(--dx) * .8), calc(-250% - var(--push))) scale(.98); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-330% - var(--push))) scale(.9); }
 }
 .fx.tier { color: var(--gold-lit); }
 .fx.slots { color: #b9d4e0; }
