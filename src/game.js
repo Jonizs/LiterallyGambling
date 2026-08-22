@@ -21,11 +21,33 @@
       perTier: { damage: 6, durability: 20 },
       combat: { speed: 0.85, crit: 5, critDamage: 150, pen: 0 },
       cost: { wood: 5, metal: 10 } },
-    { key: "apprentice-bow", name: "Apprentice Bow", kind: "weapon", icon: "bow",
-      level: 2, xp: 25,
-      perTier: { damage: 9, durability: 24 },
-      combat: { speed: 1.25, crit: 9, critDamage: 165, pen: 0 },
-      cost: { wood: 14, string: 8 } }
+    // Blades the smith has not learned yet: the bench shows the shape and
+    // nothing else. mystery keeps them off the anvil whatever the level is.
+    { key: "mystery-1", name: "???", kind: "weapon", icon: "sword-silhouette-1",
+      mystery: true, level: 99, xp: 0,
+      perTier: { damage: 0, durability: 0 },
+      combat: { speed: 1, crit: 0, critDamage: 150, pen: 0 },
+      cost: {} },
+    { key: "mystery-2", name: "???", kind: "weapon", icon: "sword-silhouette-2",
+      mystery: true, level: 99, xp: 0,
+      perTier: { damage: 0, durability: 0 },
+      combat: { speed: 1, crit: 0, critDamage: 150, pen: 0 },
+      cost: {} },
+    { key: "mystery-3", name: "???", kind: "weapon", icon: "sword-silhouette-3",
+      mystery: true, level: 99, xp: 0,
+      perTier: { damage: 0, durability: 0 },
+      combat: { speed: 1, crit: 0, critDamage: 150, pen: 0 },
+      cost: {} },
+    { key: "mystery-4", name: "???", kind: "weapon", icon: "sword-silhouette-4",
+      mystery: true, level: 99, xp: 0,
+      perTier: { damage: 0, durability: 0 },
+      combat: { speed: 1, crit: 0, critDamage: 150, pen: 0 },
+      cost: {} },
+    { key: "mystery-5", name: "???", kind: "weapon", icon: "sword-silhouette-5",
+      mystery: true, level: 99, xp: 0,
+      perTier: { damage: 0, durability: 0 },
+      combat: { speed: 1, crit: 0, critDamage: 150, pen: 0 },
+      cost: {} }
   ];
 
   function recipeFor(key) {
@@ -71,12 +93,14 @@
   }
 
   function unlocked(state, recipe) {
-    return state.level >= recipe.level;
+    return !recipe.mystery && state.level >= recipe.level;
   }
 
   // Recipes the smith cannot forge yet, so the bench can show what is coming.
   function lockedRecipes(state) {
-    return RECIPES.filter(function (recipe) { return !unlocked(state, recipe); });
+    return RECIPES.filter(function (recipe) {
+      return !recipe.mystery && !unlocked(state, recipe);
+    });
   }
 
   // Tier sets the base stat, quality scales it modestly, edition scales it

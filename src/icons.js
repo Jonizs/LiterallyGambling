@@ -7,7 +7,7 @@
     wood: "#8a5a2b", woodDark: "#5c3a1e", woodLit: "#ab7440",
     leather: "#7d4a24", leatherDark: "#4e2d14", leatherLit: "#a36733",
     gold: "#d9ac4f", goldDark: "#8f6d29", goldLit: "#f5dd9a",
-    shadow: "#241a12", string: "#e8dcc0"
+    shadow: "#241a12", string: "#e8dcc0", silhouette: "#1b1712"
   };
 
   function px(ctx, x, y, w, h, color) {
@@ -32,24 +32,50 @@
       px(c, 7, 14, 2, 1, C.leatherDark);
       px(c, 5, 15, 6, 1, C.gold);             // pommel
     },
-    bow: function (c) {
-      px(c, 6, 0, 3, 1, C.woodDark);          // upper limb
-      px(c, 5, 1, 2, 2, C.wood);
-      px(c, 4, 3, 2, 3, C.wood);
-      px(c, 3, 6, 2, 4, C.wood);              // riser
-      px(c, 3, 6, 1, 4, C.woodDark);
-      px(c, 4, 10, 2, 3, C.wood);
-      px(c, 5, 13, 2, 2, C.wood);
-      px(c, 6, 15, 3, 1, C.woodDark);         // lower limb
-      px(c, 4, 7, 1, 2, C.woodLit);           // grip highlight
-      px(c, 9, 1, 1, 14, C.string);           // string
-      px(c, 6, 7, 7, 1, C.wood);              // arrow shaft
-      px(c, 6, 8, 7, 1, C.woodDark);
-      px(c, 13, 6, 2, 1, C.steelLit);         // arrowhead
-      px(c, 13, 7, 3, 2, C.steel);
-      px(c, 13, 9, 2, 1, C.steelDark);
-      px(c, 5, 6, 2, 1, C.string);            // fletching
-      px(c, 5, 9, 2, 1, C.string);
+    // Blades the smith has not learned yet: shape only, no detail.
+    "sword-silhouette-1": function (c) {   // broadsword
+      px(c, 7, 0, 2, 1, C.silhouette);
+      px(c, 6, 1, 4, 9, C.silhouette);
+      px(c, 3, 10, 10, 2, C.silhouette);
+      px(c, 7, 12, 2, 3, C.silhouette);
+      px(c, 6, 15, 4, 1, C.silhouette);
+    },
+    "sword-silhouette-2": function (c) {   // rapier
+      px(c, 7, 0, 2, 9, C.silhouette);
+      px(c, 4, 9, 8, 1, C.silhouette);
+      px(c, 4, 10, 1, 3, C.silhouette);
+      px(c, 11, 10, 1, 3, C.silhouette);
+      px(c, 4, 13, 8, 1, C.silhouette);
+      px(c, 7, 10, 2, 3, C.silhouette);
+      px(c, 6, 14, 4, 2, C.silhouette);
+    },
+    "sword-silhouette-3": function (c) {   // greatsword
+      px(c, 7, 0, 2, 1, C.silhouette);
+      px(c, 6, 1, 4, 1, C.silhouette);
+      px(c, 5, 2, 6, 7, C.silhouette);
+      px(c, 1, 9, 14, 2, C.silhouette);
+      px(c, 6, 11, 4, 3, C.silhouette);
+      px(c, 5, 14, 6, 2, C.silhouette);
+    },
+    "sword-silhouette-4": function (c) {   // curved saber
+      px(c, 11, 0, 2, 1, C.silhouette);
+      px(c, 9, 1, 3, 2, C.silhouette);
+      px(c, 7, 3, 3, 2, C.silhouette);
+      px(c, 6, 5, 3, 2, C.silhouette);
+      px(c, 5, 7, 3, 2, C.silhouette);
+      px(c, 4, 9, 3, 2, C.silhouette);
+      px(c, 2, 10, 6, 1, C.silhouette);
+      px(c, 2, 11, 3, 3, C.silhouette);
+      px(c, 1, 14, 4, 2, C.silhouette);
+    },
+    "sword-silhouette-5": function (c) {   // falchion
+      px(c, 6, 1, 5, 1, C.silhouette);
+      px(c, 6, 2, 6, 3, C.silhouette);
+      px(c, 6, 5, 5, 2, C.silhouette);
+      px(c, 6, 7, 4, 3, C.silhouette);
+      px(c, 4, 10, 8, 1, C.silhouette);
+      px(c, 7, 11, 2, 3, C.silhouette);
+      px(c, 6, 14, 4, 2, C.silhouette);
     },
     helmet: function (c) {
       px(c, 5, 0, 6, 1, C.steelLit);          // dome

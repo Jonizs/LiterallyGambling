@@ -72,6 +72,17 @@
       row.appendChild(I.make(recipe.icon));
       var main = el("div", "row-main");
       var title = el("div", "row-title", recipe.name);
+      if (recipe.mystery) {
+        main.appendChild(title);
+        main.appendChild(el("div", "muted", "Undiscovered."));
+        row.appendChild(main);
+        var locked = button("???", "mini-btn strong", function () {});
+        locked.disabled = true;
+        locked.title = "The smith has not learned this blade yet.";
+        row.appendChild(locked);
+        rows.appendChild(row);
+        return;
+      }
       title.appendChild(el("span", "muted",
         recipe.kind === "weapon" ? "  damage" : "  armor"));
       if (!open) title.appendChild(el("span", "chip-stat lock", "Level " + recipe.level));
@@ -342,6 +353,8 @@
     enchant: { title: "Enchant", build: enchantPanel },
     upgrades: { title: "Upgrades", build: upgradesPanel },
     display: { title: "Display", build: soonPanel("The display case") },
+    smeltery: { title: "Smeltery", build: soonPanel("The smeltery") },
+    experimentation: { title: "Experimentation", build: soonPanel("Experimentation") },
     awaken: { title: "Awaken", build: soonPanel("Awakening") },
     options: { title: "Options", build: optionsPanel }
   };
