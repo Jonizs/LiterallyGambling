@@ -36,7 +36,7 @@
   }
 
   var STARTING_SILVER = 100;
-  var STIPEND = 50;
+  var STIPEND = 100;
   var STIPEND_COOLDOWN = 5 * 60 * 1000;
   var STARTING_LEVEL = 1;
 
