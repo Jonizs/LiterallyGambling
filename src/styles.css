@@ -37,7 +37,13 @@ body {
   overscroll-behavior-y: contain;
 }
 
-.game { width: min(1024px, 100%); }
+/* The frame holds 16:9, so it grows until it runs out of room: width on a
+   narrow window, height on a wide one. The vh line is the fallback for
+   browsers without dvh. */
+.game {
+  width: min(100%, calc((100vh - 24px) * 16 / 9));
+  width: min(100%, calc((100dvh - 24px) * 16 / 9));
+}
 
 .frame {
   display: grid;
@@ -739,6 +745,7 @@ body {
 /* ---------- landscape phones: keep the two-column frame, drop the padding ---------- */
 @media (orientation: landscape) and (max-height: 520px) {
   body { display: grid; padding: 4px; }
+  .game { width: 100%; }
   .frame {
     grid-template-columns: minmax(230px, 34%) 1fr;
     padding: 6px;
