@@ -12,12 +12,17 @@
   --red: #d4645c;
   --font: "Courier New", ui-monospace, monospace;
 
-  /* Spacing steps, in the same frame-relative unit as the type. Outside a
-     container cqw is meaningless, so the px floor carries the small screens. */
-  --gap-xs: clamp(2px, .22cqw, 6px);
-  --gap-sm: clamp(4px, .38cqw, 10px);
-  --gap: clamp(6px, .58cqw, 15px);
-  --pad-x: clamp(7px, .62cqw, 16px);
+  /* One percent of the frame, measured on whichever side runs out first, so
+     a wide-and-short window scales off its height instead of overflowing.
+     Outside a container these fall back to the viewport, which is what the
+     px floors are there for. */
+  --s: min(1cqw, 1.7778cqh);
+
+  /* Spacing steps, in the same unit as the type. */
+  --gap-xs: clamp(2px, calc(.22 * var(--s)), 6px);
+  --gap-sm: clamp(4px, calc(.38 * var(--s)), 10px);
+  --gap: clamp(6px, calc(.58 * var(--s)), 15px);
+  --pad-x: clamp(7px, calc(.62 * var(--s)), 16px);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,21 +49,19 @@ body {
   overscroll-behavior-y: contain;
 }
 
-/* The frame holds 16:9, so it grows until it runs out of room: width on a
-   narrow window, height on a wide one. The vh line is the fallback for
-   browsers without dvh. On a 1920x1080 screen it lands at 1877x1056, and
-   everything inside is sized off its width, so the UI fills it. */
-.game {
-  width: min(100%, calc((100vh - 24px) * 16 / 9));
-  width: min(100%, calc((100dvh - 24px) * 16 / 9));
-}
+/* The frame fills the window rather than holding a shape of its own: a 16:9
+   screen still has browser chrome on it, so anything locked to 16:9 leaves
+   black bars down both sides. The vh line is the fallback for browsers
+   without dvh. */
+.game { width: 100%; }
 
 .frame {
-  container-type: inline-size;
+  container-type: size;
   display: grid;
-  grid-template-columns: minmax(280px, 36%) 1fr;
+  grid-template-columns: minmax(280px, 32%) 1fr;
   gap: var(--gap);
-  aspect-ratio: 16 / 9;
+  height: calc(100vh - 24px);
+  height: calc(100dvh - 24px);
   padding: var(--gap);
   background: var(--wood-dark);
   border: 4px solid var(--wood-edge);
@@ -89,21 +92,21 @@ body {
 /* ---------- nameplate ---------- */
 .name-row { display: flex; align-items: center; gap: var(--gap); }
 .player-name {
-  font-size: clamp(16px, 2.6cqw, 62px);
+  font-size: clamp(16px, calc(2.6 * var(--s)), 62px);
   font-weight: 700;
   letter-spacing: 2px;
   color: var(--ink);
   text-shadow: 2px 2px 0 #000;
 }
 .player-title {
-  font-size: clamp(10px, 1.4cqw, 34px);
+  font-size: clamp(10px, calc(1.4 * var(--s)), 34px);
   color: var(--ink-dim);
   text-shadow: 1px 1px 0 #000;
 }
 
 .chip {
   font-family: var(--font);
-  font-size: clamp(9px, 1.2cqw, 29px);
+  font-size: clamp(9px, calc(1.2 * var(--s)), 29px);
   color: var(--ink);
   background: linear-gradient(180deg, var(--wood-lit), var(--wood));
   border: 2px solid var(--gold);
@@ -117,7 +120,7 @@ body {
 .xp-row { display: flex; align-items: center; gap: var(--gap); cursor: help; }
 .xp-track {
   flex: 1;
-  height: clamp(12px, 1.8cqw, 43px);
+  height: clamp(12px, calc(1.8 * var(--s)), 43px);
   background: #1d1108;
   border: 3px solid var(--gold-dark);
   box-shadow: inset 0 0 0 2px #000;
@@ -130,7 +133,7 @@ body {
   transition: width .3s steps(8);
 }
 .level-medallion {
-  width: clamp(34px, 5cqw, 120px);
+  width: clamp(34px, calc(5 * var(--s)), 120px);
   aspect-ratio: 1;
   border-radius: 50%;
   display: grid;
@@ -143,19 +146,19 @@ body {
   font-weight: 700;
   text-align: center;
 }
-.lvl-label { display: block; font-size: clamp(7px, .9cqw, 22px); }
-.lvl-value { display: block; font-size: clamp(11px, 1.5cqw, 36px); }
+.lvl-label { display: block; font-size: clamp(7px, calc(.9 * var(--s)), 22px); }
+.lvl-value { display: block; font-size: clamp(11px, calc(1.5 * var(--s)), 36px); }
 
 /* ---------- buffs ---------- */
 .tab-title {
   display: inline-block;
-  font-size: clamp(11px, 1.65cqw, 40px);
+  font-size: clamp(11px, calc(1.65 * var(--s)), 40px);
   letter-spacing: 1px;
   color: var(--ink);
   text-shadow: 2px 2px 0 #000;
   margin-bottom: 4px;
 }
-.tab-title.small { font-size: clamp(10px, 1.4cqw, 34px); }
+.tab-title.small { font-size: clamp(10px, calc(1.4 * var(--s)), 34px); }
 
 .buff-grid {
   display: grid;
@@ -173,12 +176,12 @@ body {
   min-width: 0;
 }
 .buff-name {
-  font-size: clamp(9px, 1.15cqw, 28px);
+  font-size: clamp(9px, calc(1.15 * var(--s)), 28px);
   white-space: nowrap;
   text-shadow: 1px 1px 0 #000;
 }
 .buff-name b { color: var(--gold-lit); font-weight: 700; }
-.buff-delta { font-size: clamp(8px, 1.05cqw, 25px); text-shadow: 1px 1px 0 #000; }
+.buff-delta { font-size: clamp(8px, calc(1.05 * var(--s)), 25px); text-shadow: 1px 1px 0 #000; }
 .buff-delta .up { color: var(--green); }
 .buff-delta .down { color: var(--red); }
 .buff-delta .sep { color: var(--ink-dim); }
@@ -186,8 +189,8 @@ body {
 .help {
   font-family: var(--font);
   font-weight: 700;
-  font-size: clamp(9px, 1.1cqw, 26px);
-  width: clamp(15px, 2cqw, 48px);
+  font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
+  width: clamp(15px, calc(2 * var(--s)), 48px);
   aspect-ratio: 1;
   color: var(--ink);
   background: linear-gradient(180deg, var(--wood-lit), var(--wood));
@@ -201,7 +204,7 @@ body {
 .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
 .wood-btn {
   font-family: var(--font);
-  font-size: clamp(12px, 1.85cqw, 44px);
+  font-size: clamp(12px, calc(1.85 * var(--s)), 44px);
   font-weight: 700;
   letter-spacing: 2px;
   color: var(--ink);
@@ -217,7 +220,7 @@ body {
 @media (hover: hover) { .wood-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
 .wood-btn:active { transform: translateY(2px); box-shadow: inset 0 0 0 2px rgba(0,0,0,.45), 0 1px 0 #000; }
 .wood-btn.wide { width: 100%; }
-.wood-btn.small { font-size: clamp(10px, 1.45cqw, 35px); letter-spacing: 1px; }
+.wood-btn.small { font-size: clamp(10px, calc(1.45 * var(--s)), 35px); letter-spacing: 1px; }
 .wood-btn.options { margin-top: auto; }
 
 /* ---------- display slots ---------- */
@@ -230,7 +233,7 @@ body {
   box-shadow: inset 0 0 0 2px #000, inset 0 0 14px rgba(0,0,0,.8);
   display: grid;
   place-items: center;
-  font-size: clamp(9px, 1.2cqw, 29px);
+  font-size: clamp(9px, calc(1.2 * var(--s)), 29px);
   color: var(--ink-dim);
   cursor: pointer;
 }
@@ -278,7 +281,7 @@ body {
 
 .gem {
   position: absolute;
-  width: clamp(8px, .7cqw, 17px);
+  width: clamp(8px, calc(.7 * var(--s)), 17px);
   aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #ffd9a0, #ff7a2a 55%, #7a2a08);
@@ -309,7 +312,7 @@ body {
 .overlay-card { width: 100%; max-height: 100%; overflow: auto; }
 .overlay-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .overlay-body {
-  font-size: clamp(10px, 1.3cqw, 31px);
+  font-size: clamp(10px, calc(1.3 * var(--s)), 31px);
   line-height: 1.7;
   color: var(--ink-dim);
   text-shadow: 1px 1px 0 #000;
@@ -339,7 +342,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap-sm);
-  font-size: clamp(9px, 1.1cqw, 26px);
+  font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
 }
 .purse span {
   padding: var(--gap-xs) var(--pad-x);
@@ -354,7 +357,7 @@ body {
 /* ---------- compact display slots ---------- */
 .slot-row.compact .slot {
   aspect-ratio: auto;
-  height: clamp(30px, 3.6cqw, 86px);
+  height: clamp(30px, calc(3.6 * var(--s)), 86px);
 }
 
 /* ---------- panel rows ---------- */
@@ -369,7 +372,7 @@ body {
   border: 2px solid rgba(0,0,0,.5);
 }
 .row-main { flex: 1; text-align: left; min-width: 0; }
-.row-title { color: var(--ink); font-size: clamp(11px, 1.35cqw, 32px); }
+.row-title { color: var(--ink); font-size: clamp(11px, calc(1.35 * var(--s)), 32px); }
 .head-row { border-color: var(--gold-dark); background: rgba(0,0,0,.32); margin-bottom: 6px; }
 .row.locked { opacity: .55; }
 .row.locked .row-title { color: var(--ink-dim); }
@@ -377,7 +380,7 @@ body {
 
 .mini-btn {
   font-family: var(--font);
-  font-size: clamp(10px, 1.2cqw, 29px);
+  font-size: clamp(10px, calc(1.2 * var(--s)), 29px);
   color: var(--ink);
   background: linear-gradient(180deg, var(--wood-lit), var(--wood));
   border: 2px solid var(--gold);
@@ -393,7 +396,7 @@ body {
 
 .cost-line { display: flex; flex-wrap: wrap; gap: var(--gap-sm); margin-top: var(--gap-xs); }
 .cost {
-  font-size: clamp(9px, 1.1cqw, 26px);
+  font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
   padding: 0 5px;
   border: 2px solid transparent;
 }
@@ -402,10 +405,10 @@ body {
 
 /* ---------- items ---------- */
 .item-line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap); }
-.item-name { color: var(--ink); font-size: clamp(11px, 1.35cqw, 32px); }
+.item-name { color: var(--ink); font-size: clamp(11px, calc(1.35 * var(--s)), 32px); }
 .item-meta { display: flex; flex-wrap: wrap; gap: var(--gap-sm); }
 .chip-stat {
-  font-size: clamp(9px, 1.05cqw, 25px);
+  font-size: clamp(9px, calc(1.05 * var(--s)), 25px);
   padding: 0 5px;
   border: 2px solid var(--gold-dark);
   color: var(--ink-dim);
@@ -444,7 +447,7 @@ body {
   background: rgba(0,0,0,.3);
 }
 .result-head {
-  font-size: clamp(9px, 1.1cqw, 26px);
+  font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
   letter-spacing: 1px;
   color: var(--gold);
   margin-bottom: 4px;
@@ -452,7 +455,7 @@ body {
 .popup-note {
   margin-bottom: 8px;
   padding: 2px 6px;
-  font-size: clamp(10px, 1.25cqw, 30px);
+  font-size: clamp(10px, calc(1.25 * var(--s)), 30px);
   letter-spacing: 1px;
   color: var(--ink-dim);
   text-shadow: 1px 1px 0 #000;
@@ -481,7 +484,7 @@ body {
   transform: translateX(-50%);
   z-index: 4;
   font-family: var(--font);
-  font-size: clamp(13px, 1.95cqw, 47px);
+  font-size: clamp(13px, calc(1.95 * var(--s)), 47px);
   font-weight: 700;
   letter-spacing: 3px;
   padding: var(--gap-sm) calc(var(--pad-x) * 2.2);
@@ -570,7 +573,7 @@ body {
   position: absolute;
   --dx: 0px;
   --push: 0em;
-  font-size: clamp(14px, 2.1cqw, 50px);
+  font-size: clamp(14px, calc(2.1 * var(--s)), 50px);
   font-weight: 700;
   letter-spacing: 2px;
   white-space: nowrap;
@@ -613,13 +616,13 @@ body {
 }
 @keyframes popIn { from { transform: scale(.82); } to { transform: scale(1); } }
 .popup-head {
-  font-size: clamp(9px, 1.1cqw, 26px);
+  font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
   letter-spacing: 2px;
   color: var(--gold);
   text-shadow: 1px 1px 0 #000;
 }
 .popup-name {
-  font-size: clamp(15px, 2.2cqw, 53px);
+  font-size: clamp(15px, calc(2.2 * var(--s)), 53px);
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--ink);
@@ -631,7 +634,7 @@ body {
   flex-direction: column;
   gap: 3px;
   margin-bottom: 8px;
-  font-size: clamp(10px, 1.3cqw, 31px);
+  font-size: clamp(10px, calc(1.3 * var(--s)), 31px);
 }
 .popup-stat {
   display: flex;
@@ -659,18 +662,18 @@ body {
 
 /* ---------- item icons ---------- */
 .icon {
-  width: clamp(26px, 3.2cqw, 77px);
+  width: clamp(26px, calc(3.2 * var(--s)), 77px);
   height: auto;
   aspect-ratio: 1;
   image-rendering: pixelated;
   flex: none;
 }
-.icon.big { width: clamp(44px, 5.6cqw, 134px); }
+.icon.big { width: clamp(44px, calc(5.6 * var(--s)), 134px); }
 
 /* Display header doubles as a button */
 .tab-btn {
   font-family: var(--font);
-  font-size: clamp(10px, 1.4cqw, 34px);
+  font-size: clamp(10px, calc(1.4 * var(--s)), 34px);
   letter-spacing: 1px;
   color: var(--ink);
   text-shadow: 2px 2px 0 #000;
@@ -709,7 +712,7 @@ body {
   .slot-row.compact .slot { height: 52px; font-size: 12px; }
   .strike-btn { font-size: 20px; padding: 10px 22px; }
 
-  /* Readable text at phone widths, where the cqw clamps bottom out. */
+  /* Readable text at phone widths, where the scaled clamps bottom out. */
   .player-name { font-size: 22px; }
   .player-title, .buff-name, .row-title, .item-name { font-size: 13px; }
   .buff-delta, .purse, .cost, .chip-stat { font-size: 12px; }
@@ -724,8 +727,9 @@ body {
   body { display: block; padding-top: max(8px, env(safe-area-inset-top)); }
   .game { width: 100%; }
   .frame {
+    container-type: inline-size;
     grid-template-columns: 1fr;
-    aspect-ratio: auto;
+    height: auto;
     gap: 8px;
     padding: 8px;
   }
@@ -760,7 +764,6 @@ body {
     grid-template-columns: minmax(230px, 34%) 1fr;
     padding: 6px;
     gap: 6px;
-    aspect-ratio: auto;
     height: calc(100dvh - 8px);
   }
   .scene { order: 0; aspect-ratio: auto; }
