@@ -263,10 +263,12 @@
       var max = U.maxTier(def);
       var cost = U.nextCost(ctx.state, def);
 
-      var row = el("div", "row");
+      var open = U.unlocked(ctx.state, def);
+      var row = el("div", "row" + (open ? "" : " locked"));
       var main = el("div", "row-main");
       var title = el("div", "row-title", def.name);
       title.appendChild(el("span", "chip-stat tier", tier + "/" + max));
+      if (!open) title.appendChild(el("span", "chip-stat lock", "lvl " + def.level));
       main.appendChild(title);
       main.appendChild(el("div", "muted", U.describe(def) +
         " \u00b7 built " + (U.built(ctx.state, def) > 0 ? "+" : "") +
@@ -275,8 +277,8 @@
 
       var b = button(cost === null ? "FINISHED" : "BUILD " + cost,
         "mini-btn strong", function () { ctx.buyUpgrade(def); });
-      b.disabled = cost === null || ctx.state.silver < cost;
-      if (cost !== null && ctx.state.silver < cost) {
+      b.disabled = !open || cost === null || ctx.state.silver < cost;
+      if (open && cost !== null && ctx.state.silver < cost) {
         b.title = "Short " + (cost - ctx.state.silver) + " silver.";
       }
       row.appendChild(b);

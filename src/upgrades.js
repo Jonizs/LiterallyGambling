@@ -5,10 +5,14 @@
   var S = global.Stats;
 
   // costs is the price of each tier in turn, so the length sets how many
-  // tiers an upgrade has.
+  // tiers an upgrade has. level is the smith level it unlocks at.
   var UPGRADES = [
     { key: "polished-anvil", name: "Polished Anvil", stat: "rarity", per: 10,
-      costs: [1000, 1200, 1350, 1500, 1700] }
+      level: 1,
+      costs: [400, 480, 540, 600, 680] },
+    { key: "quality-control", name: "Quality Control", stat: "quality", per: 5,
+      level: 5,
+      costs: [650, 715, 780, 850, 915, 980, 1050, 1120, 1185, 1250] }
   ];
 
   function defFor(key) {
@@ -16,6 +20,10 @@
       if (UPGRADES[i].key === key) return UPGRADES[i];
     }
     return null;
+  }
+
+  function unlocked(state, def) {
+    return state.level >= (def.level || 1);
   }
 
   function maxTier(def) {
@@ -41,6 +49,9 @@
   }
 
   function buy(state, def) {
+    if (!unlocked(state, def)) {
+      return { ok: false, reason: "Reach level " + def.level + " first." };
+    }
     var cost = nextCost(state, def);
     if (cost === null) {
       return { ok: false, reason: def.name + " is finished." };
@@ -59,6 +70,7 @@
   global.Upgrades = {
     UPGRADES: UPGRADES,
     defFor: defFor,
+    unlocked: unlocked,
     maxTier: maxTier,
     tierOf: tierOf,
     nextCost: nextCost,
