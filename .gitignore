@@ -23,3 +23,13 @@ node_modules/
 .swarm/backups/
 .swarm/memory.db-shm
 .swarm/memory.db-wal
+
+# Ruflo generates these per machine — statusline.cjs bakes in a
+# machine-specific install path — so every environment rewrites them and
+# they churn on every session. The rest of .claude/helpers stays tracked.
+.claude/helpers/.helpers-version
+.claude/helpers/helpers.manifest.json
+.claude/helpers/statusline.cjs
+.claude/helpers/hook-handler.cjs
+.claude/helpers/intelligence.cjs
+.claude/helpers/auto-memory-hook.mjs

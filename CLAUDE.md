@@ -14,6 +14,12 @@
 - NEVER take or send screenshots — the user tests visual changes themselves.
   Verify with headless checks (no errors, no overflow, expected DOM/state) and
   say what was checked; do not render, read back, or attach images.
+- ALWAYS merge your own pull requests yourself — the user should never have to
+  do it. Once the PR is mergeable and CI (if any) is green, merge it to `main`
+  without asking. Do not wait for review or approval on your own PRs. If it is
+  blocked — red CI, a merge conflict, an unresolved review thread — fix that
+  first, and only speak up if you cannot. Never force-push or rewrite `main`,
+  and never merge someone else's PR without being asked.
 - Keep responses short. Match length to the task: a few lines for an ordinary
   change. State what changed and anything the user must decide — no feature
   tours, no restating the request, no design essays.
