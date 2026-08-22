@@ -37,6 +37,7 @@
 
   var STARTING_SILVER = 100;
   var STIPEND = 50;
+  var STIPEND_COOLDOWN = 5 * 60 * 1000;
   var STARTING_LEVEL = 1;
 
   // Each level costs a third again as much as the one before it.
@@ -192,6 +193,8 @@
       materials: { wood: 0, string: 0, metal: 0 },
       inventory: [],
       upgrades: {},
+      // When the guild last covered a broke smith.
+      stipendAt: 0,
       // Base stats the forge rolls around. They are not spent by forging.
       base: {
         rarity: S.STATS.rarity.start,
@@ -235,13 +238,18 @@
 
   // A smith who can neither forge nor buy what a piece needs is stuck for
   // good, so the guild covers the gap 50 silver at a time.
-  function stipend(state) {
-    var given = 0;
-    while (stuck(state) && given < STIPEND * 20) {
-      state.silver += STIPEND;
-      given += STIPEND;
-    }
-    return given;
+  function stipend(state, now) {
+    var at = now || Date.now();
+    if (!stuck(state)) return 0;
+    if (at - state.stipendAt < STIPEND_COOLDOWN) return 0;
+    state.silver += STIPEND;
+    state.stipendAt = at;
+    return STIPEND;
+  }
+
+  // How long until the guild will pay out again, in ms.
+  function stipendWait(state, now) {
+    return Math.max(0, STIPEND_COOLDOWN - ((now || Date.now()) - state.stipendAt));
   }
 
   function stuck(state) {
@@ -329,7 +337,9 @@
     priceOf: priceOf,
     buy: buy,
     STIPEND: STIPEND,
+    STIPEND_COOLDOWN: STIPEND_COOLDOWN,
     stipend: stipend,
+    stipendWait: stipendWait,
     missingFor: missingFor,
     canForge: canForge,
     sellPrice: sellPrice,
