@@ -429,10 +429,13 @@
         var key = btn.dataset.panel;
         var panel = P.BUILDERS[key];
         var locked = panelLocked(key);
+        if (btn.dataset.label === undefined) btn.dataset.label = btn.textContent;
         btn.disabled = locked;
         btn.classList.toggle("locked", locked);
+        btn.textContent = btn.dataset.label;
         if (locked) {
           btn.title = "Unlocks at smith level " + panel.level + ".";
+          btn.appendChild(P.el("span", "btn-lock", "LVL " + panel.level));
         } else {
           btn.removeAttribute("title");
         }
