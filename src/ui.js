@@ -3,7 +3,7 @@
   "use strict";
 
   var S = window.Stats, G = window.Game, P = window.Panels,
-      E = window.Enchants, U = window.Upgrades;
+      E = window.Enchants, U = window.Upgrades, Save = window.Save;
 
   var player = {
     name: "JONIS",
@@ -11,7 +11,9 @@
     display: [null, null]
   };
 
-  var state = G.createState();
+  // Pick up where the last visit left off; a missing or unreadable save
+  // just starts a fresh smith.
+  var state = Save.load() || G.createState();
   var view = { panel: null, notice: "", pending: null, striking: false,
                shown: null, offer: null };
   var scene = null;
@@ -211,6 +213,8 @@
       rollEnchant: rollEnchant,
       takeEnchant: takeEnchant,
       buyUpgrade: buyUpgrade,
+      saveInfo: saveInfo,
+      wipeSave: wipeSave,
       refresh: refresh
     };
   }
@@ -332,6 +336,7 @@
     // picked during the strike waits its turn instead of being lost.
     view.pending = null;
     view.striking = true;
+    Save.schedule(state);
     renderStrike();
     renderPurse();
     clearReveals();
@@ -404,6 +409,7 @@
   function sellShown() {
     if (!view.shown) return;
     G.sell(state, view.shown.id);
+    Save.schedule(state);
     closeResult();
     renderPurse();
     drawPanel();
@@ -436,12 +442,47 @@
   }
 
   function refresh() {
+    Save.schedule(state);
     renderHeader();
     renderStrike();
     renderPurse();
     renderBuffs();
     renderSlots();
     drawPanel();
+  }
+
+  // Options panel readout: whether the save is working and how old it is.
+  function saveInfo() {
+    if (!Save.supported()) {
+      return { supported: false, text: "Progress cannot be saved in this browser." };
+    }
+    var at = Save.lastSaved();
+    return {
+      supported: true,
+      text: at ? "Progress saved " + agoText(at) + "." : "Progress saves as you play."
+    };
+  }
+
+  function agoText(at) {
+    var secs = Math.max(0, Math.round((Date.now() - at) / 1000));
+    if (secs < 5) return "just now";
+    if (secs < 60) return secs + "s ago";
+    return Math.round(secs / 60) + "m ago";
+  }
+
+  // Wiping starts the smith over: the file goes, and so does everything in
+  // memory, or the next save would put the old run straight back.
+  function wipeSave() {
+    Save.clear();
+    state = G.createState();
+    view.pending = null;
+    view.offer = null;
+    view.shown = null;
+    closeResult();
+    closePanel();
+    clearReveals();
+    Save.save(state);
+    refresh();
   }
 
   function openProfile() {
@@ -505,6 +546,12 @@
     bindTooltip(document.querySelector(".xp-row"), xpTooltip);
     scene = new window.Forge(document.getElementById("forge-canvas"));
     bindControls();
+    // A tab closed mid-swing still keeps its progress.
+    window.addEventListener("beforeunload", function () { Save.flush(state); });
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden") Save.flush(state);
+    });
+    Save.save(state);
     scene.start();
   }
 

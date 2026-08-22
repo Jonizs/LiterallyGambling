@@ -295,6 +295,44 @@
     };
   }
 
+  // Wiping is a two-tap button: the first arms it, the second does it, so a
+  // stray tap in the options never costs a run.
+  function optionsPanel(ctx) {
+    var wrap = el("div");
+    var list = el("ul");
+    ["Sound: on", "Pixel scaling: nearest", "Screen shake: on"].forEach(function (t) {
+      list.appendChild(el("li", null, t));
+    });
+    wrap.appendChild(list);
+
+    var info = ctx.saveInfo();
+    wrap.appendChild(el("p", "muted", info.text));
+    if (!info.supported) return wrap;
+
+    var armed = false;
+    var row = el("div", "row");
+    var main = el("div", "row-main");
+    main.appendChild(el("div", "row-title", "Wipe save"));
+    main.appendChild(el("div", "muted",
+      "Starts a new smith: silver, materials, level and every piece go."));
+    row.appendChild(main);
+
+    var group = el("div", "btn-group");
+    var wipe = button("WIPE", "mini-btn", function () {
+      if (!armed) {
+        armed = true;
+        wipe.textContent = "SURE?";
+        wipe.classList.add("strong");
+        return;
+      }
+      ctx.wipeSave();
+    });
+    group.appendChild(wipe);
+    row.appendChild(group);
+    wrap.appendChild(row);
+    return wrap;
+  }
+
   var BUILDERS = {
     forge: { title: "Forge", build: forgePanel },
     shop: { title: "Shop", build: shopPanel },
@@ -303,15 +341,7 @@
     upgrades: { title: "Upgrades", build: upgradesPanel },
     display: { title: "Display", build: soonPanel("The display case") },
     awaken: { title: "Awaken", build: soonPanel("Awakening") },
-    options: { title: "Options", build: function () {
-      var wrap = el("div");
-      var list = el("ul");
-      ["Sound: on", "Pixel scaling: nearest", "Screen shake: on"].forEach(function (t) {
-        list.appendChild(el("li", null, t));
-      });
-      wrap.appendChild(list);
-      return wrap;
-    } }
+    options: { title: "Options", build: optionsPanel }
   };
 
   global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, el: el };
