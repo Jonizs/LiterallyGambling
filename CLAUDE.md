@@ -20,9 +20,17 @@
   blocked — red CI, a merge conflict, an unresolved review thread — fix that
   first, and only speak up if you cannot. Never force-push or rewrite `main`,
   and never merge someone else's PR without being asked.
-- Keep responses short. Match length to the task: a few lines for an ordinary
-  change. State what changed and anything the user must decide — no feature
-  tours, no restating the request, no design essays.
+- Keep responses short. Match length to the task: one or two lines for an
+  ordinary change. State what changed and anything the user must decide — no
+  feature tours, no restating the request, no design essays, no summaries of
+  what you are about to do.
+- Do exactly what was asked and stop. No extra checks, no extra tooling, no
+  side quests. A one-file CSS tweak is one edit, not a browser harness — spend
+  effort proportional to the change and skip verification the user did not ask
+  for.
+- Prefer the smallest number of steps that gets the job done. Do not install
+  dependencies, spawn agents, or open panels to prove a change works unless the
+  user asks or the change is genuinely risky.
 
 ## Ruflo Capability Brain & Implementation Loop
 
