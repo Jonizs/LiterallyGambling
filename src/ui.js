@@ -43,6 +43,7 @@
   function renderHeader() {
     $("lvl-value").textContent = state.level;
     $("xp-fill").style.width = G.xpPercent(state) + "%";
+    renderPanelButtons();
   }
 
   function xpTooltip() {
@@ -415,9 +416,36 @@
     drawPanel();
   }
 
+  // A room the smith has not grown into yet stays shut, and its button says so.
+  function panelLocked(key) {
+    var panel = P.BUILDERS[key];
+    return !!(panel && panel.level && state.level < panel.level);
+  }
+
+  function renderPanelButtons() {
+    Array.prototype.forEach.call(
+      document.querySelectorAll("[data-panel]"),
+      function (btn) {
+        var key = btn.dataset.panel;
+        var panel = P.BUILDERS[key];
+        var locked = panelLocked(key);
+        if (btn.dataset.label === undefined) btn.dataset.label = btn.textContent;
+        btn.disabled = locked;
+        btn.classList.toggle("locked", locked);
+        btn.textContent = btn.dataset.label;
+        if (locked) {
+          btn.title = "Unlocks at smith level " + panel.level + ".";
+          btn.appendChild(P.el("span", "btn-lock", "LVL " + panel.level));
+        } else {
+          btn.removeAttribute("title");
+        }
+      }
+    );
+  }
+
   function openPanel(key) {
     var panel = P.BUILDERS[key];
-    if (!panel) return;
+    if (!panel || panelLocked(key)) return;
     view.panel = key;
     view.notice = "";
     hideTooltip();
