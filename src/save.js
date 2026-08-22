@@ -48,6 +48,7 @@
       inventory: state.inventory,
       upgrades: state.upgrades,
       base: state.base,
+      stipendAt: state.stipendAt,
       nextId: state.nextId
     };
   }
@@ -194,6 +195,8 @@
         state.materials[key] = whole(raw.materials[key], 0);
       });
     }
+    // A clock that has gone backwards must not hand out an extra payout.
+    state.stipendAt = Math.min(whole(raw.stipendAt, 0), Date.now());
     readUpgrades(raw.upgrades, state);
     readBase(raw.base, state);
 
