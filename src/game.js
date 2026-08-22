@@ -36,6 +36,7 @@
   }
 
   var STARTING_SILVER = 100;
+  var STIPEND = 50;
   var STARTING_LEVEL = 1;
 
   // Each level costs a third again as much as the one before it.
@@ -225,6 +226,32 @@
     }, []);
   }
 
+  // What the materials still missing for a recipe would cost at the shop.
+  function shortfallCost(state, recipe) {
+    return missingFor(state, recipe).reduce(function (sum, gap) {
+      return sum + priceOf(gap.key, gap.short);
+    }, 0);
+  }
+
+  // A smith who can neither forge nor buy what a piece needs is stuck for
+  // good, so the guild covers the gap 50 silver at a time.
+  function stipend(state) {
+    var given = 0;
+    while (stuck(state) && given < STIPEND * 20) {
+      state.silver += STIPEND;
+      given += STIPEND;
+    }
+    return given;
+  }
+
+  function stuck(state) {
+    return RECIPES.every(function (recipe) {
+      if (!unlocked(state, recipe)) return true;
+      if (canForge(state, recipe)) return false;
+      return shortfallCost(state, recipe) > state.silver;
+    });
+  }
+
   function canForge(state, recipe) {
     return unlocked(state, recipe) && missingFor(state, recipe).length === 0;
   }
@@ -301,6 +328,8 @@
     CRIT_CAP: CRIT_CAP,
     priceOf: priceOf,
     buy: buy,
+    STIPEND: STIPEND,
+    stipend: stipend,
     missingFor: missingFor,
     canForge: canForge,
     sellPrice: sellPrice,
