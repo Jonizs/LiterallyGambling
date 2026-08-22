@@ -1,0 +1,38 @@
+# Publishes src/ as the playable site on GitHub Pages.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One live site: a newer push waits for the running deploy rather than
+# cancelling it, so the site is never left half-published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      # The game is plain static files, so src/ ships as the site root and
+      # index.html is what a visitor lands on.
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: src
+      - id: deploy
+        uses: actions/deploy-pages@v4
