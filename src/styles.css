@@ -610,7 +610,8 @@ body {
   z-index: 5;
 }
 .popup-card {
-  min-width: min(280px, 80%);
+  width: clamp(280px, calc(34 * var(--s)), 720px);
+  max-width: 100%;
   text-align: center;
   animation: popIn .18s steps(3);
 }
@@ -697,7 +698,7 @@ body {
     z-index: 30;
   }
   .overlay-card, .popup-card { max-height: 88dvh; overflow: auto; }
-  .popup-card { min-width: min(320px, 100%); }
+  .popup-card { width: min(420px, 100%); }
   .tooltip { z-index: 40; max-width: min(280px, calc(100vw - 24px)); font-size: 13px; }
 
   /* Touch targets: nothing interactive smaller than a fingertip. */
