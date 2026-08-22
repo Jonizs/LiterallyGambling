@@ -442,6 +442,7 @@
   }
 
   function refresh() {
+    G.stipend(state);
     Save.schedule(state);
     renderHeader();
     renderStrike();
@@ -538,6 +539,7 @@
   }
 
   function init() {
+    G.stipend(state);
     renderHeader();
     renderStrike();
     renderPurse();
