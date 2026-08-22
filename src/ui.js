@@ -277,10 +277,11 @@
   }
 
   // The button keeps its space in the column so nothing shifts when a
-  // strike is queued; it is only made visible and clickable.
+  // strike is queued; it is only made visible and clickable. Anything laid
+  // over the scene — a panel or the result card — hides it again.
   function renderStrike() {
     var btn = $("strike-btn");
-    var ready = !!view.pending && !view.striking;
+    var ready = !!view.pending && !view.striking && !view.panel && !view.shown;
     btn.classList.toggle("idle", !ready);
     btn.disabled = !ready;
     btn.setAttribute("aria-hidden", ready ? "false" : "true");
@@ -396,6 +397,7 @@
       note.hidden = true;
     }
     view.shown = item;
+    renderStrike();
     $("pop-sell").textContent = "SELL " + G.sellPrice(item);
     $("result-pop").hidden = false;
   }
@@ -403,6 +405,7 @@
   function closeResult() {
     view.shown = null;
     $("result-pop").hidden = true;
+    renderStrike();
     clearReveals();
   }
 
@@ -452,6 +455,7 @@
     if (key !== "forge") view.lastItem = null;
     drawPanel();
     $("overlay").hidden = false;
+    renderStrike();
   }
 
   function drawPanel() {
@@ -467,6 +471,7 @@
   function closePanel() {
     view.panel = null;
     $("overlay").hidden = true;
+    renderStrike();
   }
 
   function refresh() {
