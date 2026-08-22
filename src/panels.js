@@ -353,7 +353,7 @@
     enchant: { title: "Enchant", build: enchantPanel, level: 4 },
     upgrades: { title: "Upgrades", build: upgradesPanel },
     display: { title: "Display", build: soonPanel("The display case") },
-    smeltery: { title: "Smeltery", build: soonPanel("The smeltery"), level: 2 },
+    resource: { title: "Resource", build: soonPanel("The resource yard"), level: 2 },
     experimentation: { title: "Experimentation", build: soonPanel("Experimentation"), level: 2 },
     awaken: { title: "Awaken", build: soonPanel("Awakening"), level: 12 },
     options: { title: "Options", build: optionsPanel }
