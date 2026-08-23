@@ -493,8 +493,10 @@
     drawPanel();
   }
 
-  // Utility crafts are bench work: materials in, a count out, no strike.
+  // Utility crafts take one blow at the forge: the materials go in on the
+  // click, the piece lands when the hammer does.
   function makeUtility(craft) {
+    if (view.striking) return;
     var short = Object.keys(craft.cost).some(function (key) {
       return state.materials[key] < craft.cost[key];
     });
@@ -506,9 +508,20 @@
     Object.keys(craft.cost).forEach(function (key) {
       state.materials[key] -= craft.cost[key];
     });
-    state.resources[craft.key] += 1;
-    view.notice = "Made a " + craft.name.toLowerCase() + ".";
-    refresh();
+    view.notice = "";
+    view.striking = true;
+    closePanel();
+    renderPurse();
+    clearReveals();
+    scene.strike(1, function () {
+      state.resources[craft.key] += 1;
+      showReveal({ text: craft.name, tone: "tier" }, 0);
+      Save.schedule(state);
+      renderPurse();
+    }, function () {
+      view.striking = false;
+      renderStrike();
+    });
   }
 
   // --- resource yard ------------------------------------------------------
