@@ -7,16 +7,16 @@
   var MAX_BATCH = 10;
 
   // cost is bars per alloy; seconds is the burn for one. A batch multiplies
-  // both by the count.
+  // both by the count. Listed shortest cook first.
   var ALLOYS = [
     { key: "argentaurum", name: "Argentaurum Alloy",
       cost: { bronze: 4, silver: 2 }, seconds: 45 },
     { key: "corinthium", name: "Corinthium Alloy",
       cost: { bronze: 10, gold: 1 }, seconds: 120 },
-    { key: "chrono", name: "Chrono-Bronze Alloy",
-      cost: { bronze: 20, crystal: 1 }, seconds: 600 },
     { key: "electrum", name: "Electrum Alloy",
       cost: { silver: 3, gold: 3 }, seconds: 180 },
+    { key: "chrono", name: "Chrono-Bronze Alloy",
+      cost: { bronze: 20, crystal: 1 }, seconds: 600 },
     { key: "lunite", name: "Lunite Alloy",
       cost: { silver: 10, crystal: 2 }, seconds: 900 },
     { key: "midas", name: "Midas Alloy",
