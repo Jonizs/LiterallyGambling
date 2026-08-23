@@ -320,6 +320,41 @@
     return wrap;
   }
 
+  // --- experimentation -----------------------------------------------------
+  // The tab lives outside the builder so it survives a panel redraw.
+  var experimentTab = "recipes";
+
+  var EXPERIMENT_TABS = [
+    { key: "recipes", label: "Recipes",
+      blurb: "Work out what the smith can learn to make." },
+    { key: "parts", label: "Parts",
+      blurb: "Break pieces down into the parts they are built from." }
+  ];
+
+  function experimentPanel(ctx) {
+    var wrap = el("div");
+
+    var strip = el("div", "tabs");
+    EXPERIMENT_TABS.forEach(function (tab) {
+      strip.appendChild(button(tab.label, "tab" + (tab.key === experimentTab ? " on" : ""),
+        function () {
+          experimentTab = tab.key;
+          ctx.setNotice("");
+          ctx.refresh();
+        }));
+    });
+    wrap.appendChild(strip);
+
+    var current = EXPERIMENT_TABS.filter(function (tab) {
+      return tab.key === experimentTab;
+    })[0];
+    wrap.appendChild(el("p", null, current.blurb));
+    wrap.appendChild(el("p", "empty", current.label + " is not built yet."));
+
+    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+    return wrap;
+  }
+
   function soonPanel(what) {
     return function () {
       var wrap = el("div");
@@ -387,7 +422,7 @@
     resource: { title: "Resource", build: function (ctx) {
       return global.Resource.build(ctx);
     }, level: 2 },
-    experimentation: { title: "Experimentation", build: soonPanel("Experimentation"), level: 2 },
+    experimentation: { title: "Experimentation", build: experimentPanel, level: 2 },
     awaken: { title: "Awaken", build: soonPanel("Awakening"), level: 12 },
     options: { title: "Options", build: optionsPanel }
   };
