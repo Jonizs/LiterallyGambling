@@ -178,10 +178,24 @@
     var rows = el("div", "rows");
     G.RECIPES.forEach(function (recipe) {
       var open = G.unlocked(ctx.state, recipe);
-      var row = el("div", "row" + (open ? "" : " locked"));
-      row.appendChild(I.make(recipe.icon));
+      var unread = recipe.research && !G.known(ctx.state, recipe);
+      var row = el("div", "row" + (open ? "" : " locked") +
+        (unread ? " silhouette" : ""));
+      row.appendChild(unread ? I.shadow(recipe.icon) : I.make(recipe.icon));
       var main = el("div", "row-main");
       var title = el("div", "row-title", recipe.name);
+      // Undiscovered: the name and the shape, nothing else.
+      if (unread) {
+        main.appendChild(title);
+        main.appendChild(el("div", "muted", "Undiscovered."));
+        row.appendChild(main);
+        var undone = button("???", "mini-btn strong", function () {});
+        undone.disabled = true;
+        undone.title = "Discover it at the experimentation bench.";
+        row.appendChild(undone);
+        rows.appendChild(row);
+        return;
+      }
       if (recipe.mystery) {
         main.appendChild(title);
         main.appendChild(el("div", "muted", "Undiscovered."));
@@ -193,10 +207,7 @@
         rows.appendChild(row);
         return;
       }
-      var unread = recipe.research && !G.known(ctx.state, recipe);
-      if (!open && !unread) {
-        title.appendChild(el("span", "chip-stat lock", "Level " + recipe.level));
-      }
+      if (!open) title.appendChild(el("span", "chip-stat lock", "Level " + recipe.level));
       main.appendChild(title);
       main.appendChild(recipeStats(recipe));
       main.appendChild(costLine(ctx.state, recipe));
@@ -207,9 +218,7 @@
         ctx.queue(recipe);
       });
       b.disabled = !ready;
-      if (unread) {
-        b.title = "Work it out at the experimentation bench first.";
-      } else if (!open) {
+      if (!open) {
         b.title = "Unlocks at smith level " + recipe.level + ".";
       } else if (!ready) {
         var missing = G.missingFor(ctx.state, recipe).map(function (m) {

@@ -757,7 +757,46 @@ body {
   .popup-note.level-up { animation: none; }
   .strike-btn { animation: none; }
   .popup-card { animation: none; }
+  .discover-spin { animation: none; }
+  .row.discovered { animation: none; opacity: 0; }
   .gem { animation: none; }
+}
+
+/* ---------- discovery ---------- */
+/* The slot flares gold, then folds away as the recipe leaves the bench. */
+.row.discovered {
+  overflow: hidden;
+  animation: discovered .56s ease forwards;
+}
+@keyframes discovered {
+  0%   { background: rgba(0,0,0,.3); }
+  30%  { background: rgba(255,215,106,.4); box-shadow: 0 0 20px rgba(255,215,106,.65); }
+  100% { opacity: 0; transform: translateX(28px) scale(.9);
+         max-height: 0; padding-top: 0; padding-bottom: 0; margin: 0; border-width: 0; }
+}
+
+/* The piece turns in its case while the smith looks at it. */
+.discover-box {
+  display: grid;
+  place-items: center;
+  margin: var(--gap-sm) auto;
+  padding: var(--gap-sm);
+  width: clamp(84px, calc(10 * var(--s)), 240px);
+  aspect-ratio: 1;
+  border: 3px solid var(--gold-dark);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255,215,106,.22), rgba(0,0,0,.45) 70%);
+  box-shadow: inset 0 0 18px rgba(255,138,36,.25), 0 0 16px rgba(0,0,0,.5);
+  perspective: 400px;
+}
+.discover-spin {
+  animation: discoverSpin 2.6s linear infinite;
+  transform-style: preserve-3d;
+  line-height: 0;
+}
+@keyframes discoverSpin {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
 }
 
 /* ---------- item icons ---------- */
