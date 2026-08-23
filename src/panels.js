@@ -59,11 +59,40 @@
   }
 
   // --- forge ---------------------------------------------------------------
+  // The tab lives outside the builder so it survives a panel redraw.
+  var forgeTab = "gear";
+
+  var FORGE_TABS = [
+    { key: "gear", label: "Gear",
+      blurb: "Pick a piece to set on the anvil. The strike itself happens at " +
+        "the forge \u2014 every value in the luck window is equally likely." },
+    { key: "utility", label: "Utility",
+      blurb: "Tools and oddments the forge can turn out." }
+  ];
+
   function forgePanel(ctx) {
     var wrap = el("div");
-    wrap.appendChild(el("p", null,
-      "Pick a piece to set on the anvil. The strike itself happens at the " +
-      "forge \u2014 every value in the luck window is equally likely."));
+
+    var strip = el("div", "tabs");
+    FORGE_TABS.forEach(function (tab) {
+      strip.appendChild(button(tab.label, "tab" + (tab.key === forgeTab ? " on" : ""),
+        function () {
+          forgeTab = tab.key;
+          ctx.setNotice("");
+          ctx.refresh();
+        }));
+    });
+    wrap.appendChild(strip);
+
+    var current = FORGE_TABS.filter(function (tab) {
+      return tab.key === forgeTab;
+    })[0];
+    wrap.appendChild(el("p", null, current.blurb));
+
+    if (forgeTab !== "gear") {
+      wrap.appendChild(el("p", "empty", "Utility is not built yet."));
+      return wrap;
+    }
 
     var rows = el("div", "rows");
     G.RECIPES.forEach(function (recipe) {
