@@ -503,6 +503,9 @@ body {
   border: 2px solid var(--gold-dark);
   color: var(--ink-dim);
 }
+/* A chip that trails a row title gets air, so the box never touches the name. */
+.row-title .chip-stat { margin-left: 12px; }
+
 .chip-stat.tier { color: var(--gold-lit); border-color: var(--gold); }
 .chip-stat.dmg { color: #e08a6a; }
 .chip-stat.arm { color: #8ab4d8; }
