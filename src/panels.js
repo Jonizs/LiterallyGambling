@@ -245,48 +245,6 @@
     return wrap;
   }
 
-  // --- inventory -----------------------------------------------------------
-  function inventoryPanel(ctx) {
-    var wrap = el("div");
-    var items = ctx.state.inventory;
-    if (!items.length) {
-      wrap.appendChild(el("p", "empty",
-        "Nothing forged yet. Buy materials in the shop, then strike."));
-      if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
-      return wrap;
-    }
-    var head = el("div", "row head-row");
-    head.appendChild(el("div", "row-title",
-      items.length + " piece" + (items.length === 1 ? "" : "s") + " forged \u00b7 " +
-      G.inventoryValue(ctx.state) + " silver on the rack"));
-    head.appendChild(button("SELL ALL", "mini-btn strong", function () {
-      var result = G.sellAll(ctx.state);
-      ctx.setNotice(result.ok
-        ? "Sold " + result.count + " piece" + (result.count === 1 ? "" : "s") +
-          " for " + result.total + " silver."
-        : result.reason);
-      ctx.refresh();
-    }));
-    wrap.appendChild(head);
-    var rows = el("div", "rows");
-    items.forEach(function (item) {
-      var row = el("div", "row");
-      row.appendChild(itemLine(item));
-      var price = G.sellPrice(item);
-      row.appendChild(button("SELL " + price, "mini-btn", function () {
-        var result = G.sell(ctx.state, item.id);
-        ctx.setNotice(result.ok
-          ? "Sold " + result.item.name + " for " + result.price + " silver."
-          : result.reason);
-        ctx.refresh();
-      }));
-      rows.appendChild(row);
-    });
-    wrap.appendChild(rows);
-    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
-    return wrap;
-  }
-
   // Two states: pick a piece, or pick one of the three the ritual turned up.
   function enchantPanel(ctx) {
     var wrap = el("div");
@@ -495,7 +453,9 @@
   var BUILDERS = {
     forge: { title: "Forge", build: forgePanel },
     shop: { title: "Shop", build: shopPanel },
-    inventory: { title: "Inventory", build: inventoryPanel },
+    inventory: { title: "Inventory", build: function (ctx) {
+      return global.Inventory.build(ctx);
+    } },
     enchant: { title: "Enchant", build: enchantPanel, level: 4 },
     upgrades: { title: "Upgrades", build: upgradesPanel },
     display: { title: "Display", build: soonPanel("The display case") },
