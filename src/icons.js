@@ -139,28 +139,29 @@
     }
   };
 
-  // The bar itself, as a 16x16 map so the chunky ingot shape stays readable.
-  //   o outline   L top face   b mottle on the top   d front face   . nothing
+  // The bar itself, as a 16x16 map: a cast ingot seen from above and to one
+  // side, three flat faces and no rounding beyond the cut corners.
+  //   L top face   d long front face   s near end face   . nothing
   var INGOT = [
     "................",
+    "........LL......",
+    ".....LLLLLL.....",
+    "..LLLLLLLLLL....",
+    ".LLLLLLLLLLLL...",
+    ".sLLLLLLLLLLLL..",
+    ".ssLLLLLLLLLLdd.",
+    ".sssLLLLLLddddd.",
+    ".ssssLLdddddddd.",
+    "..ssssddddddddd.",
+    "...sssddddddd...",
+    "....ssdddd......",
+    ".....sd.........",
     "................",
-    "......oooooo....",
-    "....ooLLLLLLoo..",
-    "..ooLLLLbLLLLLo.",
-    ".oLLLbLLLLLbLLo.",
-    ".oLLLLLLbLLLLLo.",
-    ".oLbLLLLLLLLLLo.",
-    ".oLLLLLLLbLLLdo.",
-    ".odLLLbLLLLLddo.",
-    ".oddddddddddddo.",
-    "..oddbddddddoo..",
-    "...oodddddoo....",
-    ".....oooooo.....",
     "................",
     "................"
   ];
 
-  var TONE = { o: "dark", L: "lit", b: "base", d: "base" };
+  var TONE = { L: "lit", d: "base", s: "dark" };
 
   // pick(x, y, tone) -> colour, so one bar and a two-metal bar share the shape.
   function ingot(c, pick) {
