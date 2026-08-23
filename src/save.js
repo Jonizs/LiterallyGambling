@@ -47,6 +47,8 @@
       materials: state.materials,
       resources: state.resources,
       gather: state.gather,
+      bars: state.bars,
+      refine: state.refine,
       inventory: state.inventory,
       upgrades: state.upgrades,
       base: state.base,
@@ -208,6 +210,19 @@
         key: raw.gather.key,
         startedAt: whole(raw.gather.startedAt, 0),
         endsAt: whole(raw.gather.endsAt, 0)
+      };
+    }
+    if (raw.bars && typeof raw.bars === "object") {
+      Object.keys(state.bars).forEach(function (key) {
+        state.bars[key] = whole(raw.bars[key], 0);
+      });
+    }
+    if (raw.refine && global.Refine.find(raw.refine.key)) {
+      state.refine = {
+        key: raw.refine.key,
+        qty: whole(raw.refine.qty, 0, 1),
+        startedAt: whole(raw.refine.startedAt, 0),
+        endsAt: whole(raw.refine.endsAt, 0)
       };
     }
     // A clock that has gone backwards must not hand out an extra payout.

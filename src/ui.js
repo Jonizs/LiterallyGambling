@@ -218,6 +218,8 @@
       devBoost: devBoost,
       startGather: startGather,
       claimGather: claimGather,
+      startRefine: startRefine,
+      claimRefine: claimRefine,
       wipeSave: wipeSave,
       refresh: refresh
     };
@@ -513,11 +515,31 @@
     refresh();
   }
 
+  function startRefine(ore, qty) {
+    var Re = window.Refine;
+    var result = Re.start(state, ore, qty);
+    view.notice = result.ok
+      ? result.qty + " " + ore.label.toLowerCase() + " ore in the smelter \u2014 " +
+        Re.durationText(Re.batchSeconds(ore, result.qty)) + "."
+      : result.reason;
+    refresh();
+  }
+
+  function claimRefine() {
+    var result = window.Refine.claim(state);
+    view.notice = result.ok
+      ? "Pulled " + result.qty + " " + result.ore.label.toLowerCase() + " bar" +
+        (result.qty === 1 ? "" : "s") + " out of the smelter."
+      : result.reason;
+    refresh();
+  }
+
   // A run out in the yard counts down in the open panel, and ticks over to
   // COLLECT on its own when the clock runs out.
   function startClock() {
     setInterval(function () {
-      if (view.panel === "resource" && window.Gather.running(state)) drawPanel();
+      if (view.panel !== "resource") return;
+      if (window.Gather.running(state) || window.Refine.running(state)) drawPanel();
     }, 1000);
   }
 

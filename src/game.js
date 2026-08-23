@@ -217,6 +217,9 @@
       // Ore and schematics from the resource yard, and the run that is out.
       resources: global.Gather.emptyResources(),
       gather: null,
+      // Bars out of the smelter, and the batch that is burning.
+      bars: global.Refine.emptyBars(),
+      refine: null,
       inventory: [],
       upgrades: {},
       // When the guild last covered a broke smith.

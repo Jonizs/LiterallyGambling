@@ -320,106 +320,6 @@
     return wrap;
   }
 
-  // --- resource ------------------------------------------------------------
-  // The tab lives outside the builder so it survives a panel redraw.
-  var resourceTab = "gather";
-
-  var RESOURCE_TABS = [
-    { key: "gather", label: "Gather",
-      blurb: "Send a crew out. It costs silver and time, and comes back with ore." },
-    { key: "refine", label: "Refine",
-      blurb: "Cook raw stock down into forge-grade material." },
-    { key: "compound", label: "Compound",
-      blurb: "Bind refined material into the higher alloys." }
-  ];
-
-  function gatherTab(ctx, wrap) {
-    var Ga = global.Gather;
-    var state = ctx.state;
-
-    // What the yard has brought in so far.
-    var stock = el("div", "stock");
-    Object.keys(Ga.RESOURCES).forEach(function (key) {
-      stock.appendChild(el("span", "mat" + (state.resources[key] ? "" : " none"),
-        Ga.RESOURCES[key].label + " " + state.resources[key]));
-    });
-    wrap.appendChild(stock);
-
-    var job = Ga.running(state);
-    var rows = el("div", "rows");
-    Ga.OPERATIONS.forEach(function (op) {
-      var open = Ga.unlocked(state, op);
-      var out = job && job.op.key === op.key;
-      var row = el("div", "row" + (open ? "" : " locked"));
-
-      var main = el("div", "row-main");
-      var title = el("div", "row-title", op.name);
-      title.appendChild(el("span", "chip-stat tier", Ga.durationText(op.minutes)));
-      if (!open) title.appendChild(el("span", "chip-stat lock", "Level " + op.level));
-      main.appendChild(title);
-      main.appendChild(el("div", "muted", op.cost.toLocaleString() + " silver"));
-      var line = el("div", "cost-line");
-      op.yields.forEach(function (entry) {
-        line.appendChild(el("span", "cost ok", Ga.yieldText(entry)));
-      });
-      main.appendChild(line);
-      row.appendChild(main);
-
-      var b;
-      if (out && Ga.done(state)) {
-        b = button("COLLECT", "mini-btn strong", function () { ctx.claimGather(); });
-      } else if (out) {
-        b = button(Ga.clockText(Ga.remaining(state)), "mini-btn", function () {});
-        b.disabled = true;
-      } else {
-        b = button(open ? "SEND" : "LOCKED", "mini-btn strong", function () {
-          ctx.startGather(op);
-        });
-        b.disabled = !open || !!job || state.silver < op.cost;
-        if (!open) {
-          b.title = "Unlocks at smith level " + op.level + ".";
-        } else if (job) {
-          b.title = "A run is already out.";
-        } else if (state.silver < op.cost) {
-          b.title = "Short " + (op.cost - state.silver) + " silver.";
-        }
-      }
-      row.appendChild(b);
-      rows.appendChild(row);
-    });
-    wrap.appendChild(rows);
-  }
-
-  function resourcePanel(ctx) {
-    var wrap = el("div");
-
-    var strip = el("div", "tabs");
-    RESOURCE_TABS.forEach(function (tab) {
-      var b = button(tab.label, "tab" + (tab.key === resourceTab ? " on" : ""),
-        function () {
-          resourceTab = tab.key;
-          ctx.setNotice("");
-          ctx.refresh();
-        });
-      strip.appendChild(b);
-    });
-    wrap.appendChild(strip);
-
-    var current = RESOURCE_TABS.filter(function (tab) {
-      return tab.key === resourceTab;
-    })[0];
-    wrap.appendChild(el("p", null, current.blurb));
-
-    if (resourceTab === "gather") {
-      gatherTab(ctx, wrap);
-    } else {
-      wrap.appendChild(el("p", "empty", current.label + " is not built yet."));
-    }
-
-    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
-    return wrap;
-  }
-
   function soonPanel(what) {
     return function () {
       var wrap = el("div");
@@ -484,11 +384,13 @@
     enchant: { title: "Enchant", build: enchantPanel, level: 4 },
     upgrades: { title: "Upgrades", build: upgradesPanel },
     display: { title: "Display", build: soonPanel("The display case") },
-    resource: { title: "Resource", build: resourcePanel, level: 2 },
+    resource: { title: "Resource", build: function (ctx) {
+      return global.Resource.build(ctx);
+    }, level: 2 },
     experimentation: { title: "Experimentation", build: soonPanel("Experimentation"), level: 2 },
     awaken: { title: "Awaken", build: soonPanel("Awakening"), level: 12 },
     options: { title: "Options", build: optionsPanel }
   };
 
-  global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, el: el };
+  global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, el: el, button: button };
 })(window);
