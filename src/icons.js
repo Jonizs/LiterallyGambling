@@ -10,6 +10,14 @@
     shadow: "#241a12", string: "#e8dcc0", silhouette: "#1b1712"
   };
 
+  // What each metal looks like as a poured bar, near enough to the real thing.
+  var METAL = {
+    bronze:  { base: "#a9662c", dark: "#5f3413", lit: "#e09a4e" },
+    silver:  { base: "#c3c9d4", dark: "#767e8d", lit: "#f2f5fb" },
+    gold:    { base: "#d9ac4f", dark: "#8f6d29", lit: "#f7e29b" },
+    crystal: { base: "#69c6d8", dark: "#2c6b7d", lit: "#c4f2fb" }
+  };
+
   function px(ctx, x, y, w, h, color) {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, w, h);
@@ -131,6 +139,85 @@
     }
   };
 
+  // An ingot, drawn as rows so a bar can be painted one column at a time.
+  // [y, x, width, tone]
+  var INGOT = [
+    [3,  6,  5, "lit"],           // top face
+    [4,  5,  7, "lit"],
+    [5,  4,  9, "base"],          // front face
+    [6,  4,  9, "base"],
+    [7,  3, 11, "base"],
+    [8,  3, 11, "base"],
+    [9,  3, 11, "base"],
+    [10, 2, 13, "base"],
+    [11, 2, 13, "dark"],          // bottom lip
+    [12, 3, 11, "dark"]
+  ];
+
+  // pick(x, y, tone) -> colour, so one bar and a two-metal bar share the shape.
+  function ingot(c, pick) {
+    INGOT.forEach(function (row) {
+      var y = row[0], x0 = row[1], w = row[2], tone = row[3];
+      for (var x = x0; x < x0 + w; x++) {
+        var edge = tone;
+        if (tone === "base") {
+          if (x === x0) edge = "lit";                 // catch-light down the side
+          else if (x === x0 + w - 1) edge = "dark";
+        }
+        px(c, x, y, 1, 1, pick(x, y, edge));
+      }
+    });
+    px(c, 13, 13, 1, 1, C.shadow);                    // ground shadow
+    px(c, 3, 13, 11, 1, C.shadow);
+    px(c, 7, 4, 3, 1, pick(7, 4, "lit"));             // shine on the top face
+  }
+
+  function solid(metal) {
+    var p = METAL[metal] || METAL.silver;
+    return function (x, y, tone) { return p[tone]; };
+  }
+
+  // Left metal fades into the right one across the bar with an ordered dither,
+  // so an alloy reads as the two bars that went into it.
+  function mixed(a, b) {
+    var pa = METAL[a] || METAL.silver, pb = METAL[b] || METAL.gold;
+    return function (x, y, tone) {
+      var t = (x - 3) / 10;
+      if (t <= 0.18) return pa[tone];
+      if (t >= 0.82) return pb[tone];
+      var d = ((x & 1) + (y & 1) * 2) / 4;
+      return (d < t ? pb : pa)[tone];
+    };
+  }
+
+  Object.keys(METAL).forEach(function (metal) {
+    DRAW["bar-" + metal] = function (c) { ingot(c, solid(metal)); };
+  });
+
+  function canvas(className) {
+    var node = document.createElement("canvas");
+    node.width = 16;
+    node.height = 16;
+    node.className = className || "icon";
+    var ctx = node.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    return { node: node, ctx: ctx };
+  }
+
+  // A single-metal bar: bar("bronze").
+  function bar(metal, className) {
+    var made = canvas(className);
+    ingot(made.ctx, solid(metal));
+    return made.node;
+  }
+
+  // An alloy bar: alloyBar("bronze", "silver") pours one into the other.
+  function alloyBar(a, b, className) {
+    var made = canvas(className);
+    ingot(made.ctx, b ? mixed(a, b) : solid(a));
+    return made.node;
+  }
+
   // Returns a 16x16 canvas holding the icon, scaled up by CSS.
   function make(key, className) {
     var canvas = document.createElement("canvas");
@@ -143,5 +230,5 @@
     return canvas;
   }
 
-  global.Icons = { make: make, DRAW: DRAW };
+  global.Icons = { make: make, bar: bar, alloyBar: alloyBar, METAL: METAL, DRAW: DRAW };
 })(window);
