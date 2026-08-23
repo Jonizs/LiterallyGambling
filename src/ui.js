@@ -213,6 +213,7 @@
       offer: offerView(),
       rollEnchant: rollEnchant,
       takeEnchant: takeEnchant,
+      reforge: reforge,
       buyUpgrade: buyUpgrade,
       saveInfo: saveInfo,
       devBoost: devBoost,
@@ -266,6 +267,15 @@
     var result = U.buy(state, def);
     view.notice = result.ok
       ? def.name + " tier " + result.tier + " built for " + result.cost + " silver."
+      : result.reason;
+    refresh();
+  }
+
+  function reforge(item) {
+    var result = window.Enchants.reforge(state, item);
+    view.notice = result.ok
+      ? "Stripped " + result.removed + " enchant" + (result.removed === 1 ? "" : "s") +
+        " off " + item.name + " for " + result.cost + " silver."
       : result.reason;
     refresh();
   }

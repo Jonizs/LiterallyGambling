@@ -364,6 +364,14 @@
     });
   }
 
+  // The stats a piece came off the anvil with, worked back out of the rolls
+  // it carries. Enchants multiply what is there, so this is what removing
+  // them has to put back.
+  function baseStatsOf(item) {
+    var tier = S.tierAt(item.rarity);
+    return statsFor(recipeFor(item.recipe), tier.index, item.band, item.edition);
+  }
+
   function forge(state, recipe) {
     if (!unlocked(state, recipe)) {
       return { ok: false, reason: "Reach level " + recipe.level + " first." };
@@ -436,6 +444,7 @@
     missingResearch: missingResearch,
     sellPrice: sellPrice,
     statsFor: statsFor,
+    baseStatsOf: baseStatsOf,
     recipeFor: recipeFor,
     QUALITY_MULT: QUALITY_MULT,
     EDITION_MULT: EDITION_MULT,

@@ -762,6 +762,29 @@ body {
   .gem { animation: none; }
 }
 
+/* ---------- enchant odds ---------- */
+.odds {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  margin: var(--gap-sm) 0;
+}
+.odds-band {
+  border: 2px solid var(--gold-dark);
+  background: rgba(0,0,0,.28);
+  padding: var(--gap-sm);
+}
+.odds-band .row-title { text-transform: capitalize; }
+.odds-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-xs);
+  font-size: clamp(9px, calc(1.05 * var(--s)), 24px);
+  padding: var(--gap-xs) 0;
+}
+.odds-name { color: var(--ink); min-width: 8em; }
+
 /* ---------- discovery ---------- */
 /* The slot flares gold, then folds away as the recipe leaves the bench. */
 .row.discovered {

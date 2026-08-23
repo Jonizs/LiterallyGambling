@@ -142,6 +142,9 @@
       enchants: readEnchants(raw.enchants, slots)
     };
     if (raw.awakenable) item.awakenable = true;
+    // How many times this piece has been stripped, so the next reforge is
+    // priced where it left off.
+    if (raw.reforges) item.reforges = whole(raw.reforges, 0);
     return item;
   }
 
