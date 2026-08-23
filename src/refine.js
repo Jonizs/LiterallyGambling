@@ -1,13 +1,12 @@
 /* Refining: ore goes into an oven and comes back as bars, one for one. Two
-   ovens burn side by side, one batch holds up to fifty ore, and the bars come
-   out one per burn rather than all at the end. */
+   ovens burn side by side, a batch is as big as the ore allows, and the bars
+   come out one per burn rather than all at the end. */
 (function (global) {
   "use strict";
 
   var B = global.Batch;
 
   var OVENS = 2;
-  var MAX_BATCH = 50;
 
   // seconds is what a single ore takes; a batch is that times the count.
   // value is what one bar of the metal is reckoned to be worth in silver,
@@ -78,9 +77,6 @@
   function start(state, ore, qty) {
     qty = Math.floor(qty);
     if (qty <= 0) return { ok: false, reason: "Nothing to refine." };
-    if (qty > MAX_BATCH) {
-      return { ok: false, reason: "An oven holds " + MAX_BATCH + " at most." };
-    }
     var index = freeSlot(state);
     if (index < 0) return { ok: false, reason: "Both ovens are burning." };
     if (state.resources[ore.key] < qty) {
@@ -171,7 +167,6 @@
 
   global.Refine = {
     OVENS: OVENS,
-    MAX_BATCH: MAX_BATCH,
     ORES: ORES,
     find: find,
     slot: slot,
