@@ -222,9 +222,11 @@
       startRefine: startRefine,
       claimRefine: claimRefine,
       stopRefine: stopRefine,
+      rushRefine: rushRefine,
       startCompound: startCompound,
       claimCompound: claimCompound,
       stopCompound: stopCompound,
+      rushCompound: rushCompound,
       wipeSave: wipeSave,
       refresh: refresh
     };
@@ -604,6 +606,15 @@
     refresh();
   }
 
+  function rushRefine(index) {
+    var result = window.Refine.rush(state, index);
+    view.notice = result.ok
+      ? "Oven " + (index + 1) + " forced through for " +
+        result.cost.toLocaleString() + " silver."
+      : result.reason;
+    refresh();
+  }
+
   function startCompound(alloy, qty) {
     var result = window.Compound.start(state, alloy, qty);
     view.notice = result.ok
@@ -631,6 +642,15 @@
     refresh();
   }
 
+  function rushCompound(index) {
+    var result = window.Compound.rush(state, index);
+    view.notice = result.ok
+      ? "Crucible " + (index + 1) + " poured out for " +
+        result.cost.toLocaleString() + " silver."
+      : result.reason;
+    refresh();
+  }
+
   // A run out in the yard counts down in the open panel, and ticks over to
   // COLLECT on its own when the clock runs out.
   function startClock() {
@@ -645,8 +665,8 @@
   function devBoost() {
     state.level = 100;
     state.xp = 0;
-    state.silver = 100000;
-    view.notice = "Dev boost: level 100, 100,000 silver.";
+    state.silver = 10000000;
+    view.notice = "Dev boost: level 100, 10,000,000 silver.";
     refresh();
   }
 

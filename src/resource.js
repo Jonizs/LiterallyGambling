@@ -12,6 +12,16 @@
     return global.Icons.alloyBar(metals[0], metals[1], className);
   }
 
+  // Five times what is still in the fire, or nothing left to pay for.
+  function rushButton(cost, silver, onClick) {
+    var b = button(cost ? "RUSH " + cost.toLocaleString() : "RUSH", "mini-btn", onClick);
+    b.disabled = !cost || silver < cost;
+    b.title = !cost ? "Nothing left to rush."
+      : silver < cost ? "Short " + (cost - silver).toLocaleString() + " silver."
+      : "Finishes the batch for " + cost.toLocaleString() + " silver.";
+    return b;
+  }
+
   // A stock chip with its bar sitting in front of the count.
   function stockChip(icon, text, className) {
     var chip = el("span", className);
@@ -143,6 +153,8 @@
             : "Nothing queued behind this one.";
           group.appendChild(halt);
           cell.appendChild(group);
+          cell.appendChild(rushButton(Re.rushCost(state, index), state.silver,
+            function () { ctx.rushRefine(index); }));
         }
         kit.appendChild(cell);
       })(i);
@@ -162,7 +174,8 @@
       title.appendChild(el("span", "chip-stat tier", Re.durationText(ore.seconds) + " each"));
       main.appendChild(title);
       main.appendChild(el("div", "muted", "1 " + Ga.RESOURCES[ore.key].label.toLowerCase() +
-        " per bar \u00b7 you hold " + held));
+        " per bar \u00b7 worth " + ore.value.toLocaleString() + " silver \u00b7 you hold " +
+        held));
       row.appendChild(main);
 
       var most = Math.min(held, Re.MAX_BATCH);
@@ -229,6 +242,8 @@
             : "Nothing queued behind this one.";
           pour.appendChild(halt);
           cell.appendChild(pour);
+          cell.appendChild(rushButton(Co.rushCost(state, index), state.silver,
+            function () { ctx.rushCompound(index); }));
         }
         slots.appendChild(cell);
       })(i);
@@ -243,6 +258,8 @@
       title.appendChild(alloyIcon(alloy, "icon tiny"));
       title.appendChild(el("span", null, alloy.name));
       title.appendChild(el("span", "chip-stat tier", Re.durationText(alloy.seconds) + " each"));
+      title.appendChild(el("span", "chip-stat",
+        Co.value(alloy).toLocaleString() + " silver"));
       main.appendChild(title);
       var line = el("div", "cost-line");
       Object.keys(alloy.cost).forEach(function (bar) {

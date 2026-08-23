@@ -8,6 +8,7 @@
 
   var CRUCIBLES = 3;
   var MAX_BATCH = 10;
+  var RUSH_MULTIPLIER = 5;
 
   // cost is bars per alloy; seconds is the burn for one. A batch multiplies
   // both by the count. Listed shortest cook first.
@@ -148,6 +149,37 @@
     return { ok: true, alloy: alloy, qty: cancelled };
   }
 
+  // An alloy is worth the bars poured into it, so rushing a crucible is
+  // priced off the same values the ovens use.
+  function value(alloy) {
+    var total = 0;
+    Object.keys(alloy.cost).forEach(function (bar) {
+      total += global.Refine.find(bar).value * alloy.cost[bar];
+    });
+    return total;
+  }
+
+  function rushCost(state, index) {
+    var job = state.crucibles[index];
+    if (!job) return 0;
+    var left = job.qty - B.finished(job, Date.now());
+    return left * value(find(job.key)) * RUSH_MULTIPLIER;
+  }
+
+  // Pours the rest of the batch at once, ready to lift.
+  function rush(state, index) {
+    var job = state.crucibles[index];
+    if (!job) return { ok: false, reason: "That crucible is cold." };
+    var cost = rushCost(state, index);
+    if (!cost) return { ok: false, reason: "The batch is already poured." };
+    if (state.silver < cost) {
+      return { ok: false, reason: "Short " + (cost - state.silver) + " silver to rush." };
+    }
+    state.silver -= cost;
+    job.startedAt = Date.now() - job.unitMs * job.qty;
+    return { ok: true, alloy: find(job.key), cost: cost };
+  }
+
   function emptyAlloys() {
     var out = {};
     ALLOYS.forEach(function (alloy) { out[alloy.key] = 0; });
@@ -176,6 +208,9 @@
     start: start,
     claim: claim,
     stop: stop,
+    value: value,
+    rush: rush,
+    rushCost: rushCost,
     emptyAlloys: emptyAlloys,
     emptyCrucibles: emptyCrucibles
   };

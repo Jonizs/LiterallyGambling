@@ -10,12 +10,16 @@
   var MAX_BATCH = 50;
 
   // seconds is what a single ore takes; a batch is that times the count.
+  // value is what one bar of the metal is reckoned to be worth in silver,
+  // which is what rushing the burn is priced from.
   var ORES = [
-    { key: "bronze",  label: "Bronze",  seconds: 10 },
-    { key: "silver",  label: "Silver",  seconds: 30 },
-    { key: "gold",    label: "Gold",    seconds: 60 },
-    { key: "crystal", label: "Crystal", seconds: 180 }
+    { key: "bronze",  label: "Bronze",  seconds: 10,  value: 25 },
+    { key: "silver",  label: "Silver",  seconds: 30,  value: 90 },
+    { key: "gold",    label: "Gold",    seconds: 60,  value: 220 },
+    { key: "crystal", label: "Crystal", seconds: 180, value: 900 }
   ];
+
+  var RUSH_MULTIPLIER = 5;
 
   function find(key) {
     for (var i = 0; i < ORES.length; i++) {
@@ -119,6 +123,29 @@
     return { ok: true, ore: ore, qty: cancelled };
   }
 
+  // Everything still in the fire, priced at five times what it is worth.
+  function rushCost(state, index) {
+    var job = state.ovens[index];
+    if (!job) return 0;
+    var ore = find(job.key);
+    var left = job.qty - B.finished(job, Date.now());
+    return left * ore.value * RUSH_MULTIPLIER;
+  }
+
+  // Pays the fire out: every bar in the batch is ready to lift straight away.
+  function rush(state, index) {
+    var job = state.ovens[index];
+    if (!job) return { ok: false, reason: "That oven is out." };
+    var cost = rushCost(state, index);
+    if (!cost) return { ok: false, reason: "The batch is already through." };
+    if (state.silver < cost) {
+      return { ok: false, reason: "Short " + (cost - state.silver) + " silver to rush." };
+    }
+    state.silver -= cost;
+    job.startedAt = Date.now() - job.unitMs * job.qty;
+    return { ok: true, ore: find(job.key), cost: cost };
+  }
+
   // 10s, 3m, 1h 40m — the shape a batch is quoted in.
   function durationText(seconds) {
     if (seconds < 60) return seconds + "s";
@@ -157,6 +184,8 @@
     start: start,
     claim: claim,
     stop: stop,
+    rush: rush,
+    rushCost: rushCost,
     durationText: durationText,
     emptyOvens: emptyOvens,
     emptyBars: emptyBars
