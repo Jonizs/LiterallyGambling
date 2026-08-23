@@ -49,6 +49,21 @@
     return line;
   }
 
+  // What a tier-1 piece off this recipe carries, in the order a forged piece
+  // shows its own stats.
+  function recipeStats(recipe) {
+    var per = recipe.perTier, combat = recipe.combat;
+    var meta = el("span", "item-meta");
+    if (per.damage) meta.appendChild(el("span", "chip-stat dmg", per.damage + " dmg"));
+    if (per.armor) meta.appendChild(el("span", "chip-stat arm", per.armor + " arm"));
+    meta.appendChild(el("span", "chip-stat", per.durability + " dur"));
+    meta.appendChild(el("span", "chip-stat spd", combat.speed + " spd"));
+    meta.appendChild(el("span", "chip-stat crit", combat.crit + "% crit"));
+    meta.appendChild(el("span", "chip-stat crit", combat.critDamage + "% cdmg"));
+    if (combat.pen) meta.appendChild(el("span", "chip-stat pen", combat.pen + " pen"));
+    return meta;
+  }
+
   function itemLine(item) {
     var line = el("div", "item-line");
     line.appendChild(I.make(item.icon));
@@ -178,12 +193,12 @@
         rows.appendChild(row);
         return;
       }
-      title.appendChild(el("span", "muted",
-        recipe.kind === "weapon" ? "  damage" : "  armor"));
       var unread = recipe.research && !G.known(ctx.state, recipe);
-      if (unread) title.appendChild(el("span", "chip-stat lock", "Not worked out"));
-      else if (!open) title.appendChild(el("span", "chip-stat lock", "Level " + recipe.level));
+      if (!open && !unread) {
+        title.appendChild(el("span", "chip-stat lock", "Level " + recipe.level));
+      }
       main.appendChild(title);
+      main.appendChild(recipeStats(recipe));
       main.appendChild(costLine(ctx.state, recipe));
       row.appendChild(main);
 
@@ -458,5 +473,5 @@
   };
 
   global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, costLine: costLine,
-    el: el, button: button };
+    recipeStats: recipeStats, el: el, button: button };
 })(window);
