@@ -218,6 +218,7 @@
       devBoost: devBoost,
       startGather: startGather,
       claimGather: claimGather,
+      rushGather: rushGather,
       startRefine: startRefine,
       claimRefine: claimRefine,
       stopRefine: stopRefine,
@@ -543,6 +544,15 @@
     var result = window.Gather.start(state, op);
     view.notice = result.ok
       ? op.name + " sent out for " + window.Gather.durationText(op.minutes) + "."
+      : result.reason;
+    refresh();
+  }
+
+  function rushGather() {
+    var result = window.Gather.rush(state);
+    view.notice = result.ok
+      ? result.op.name + " called straight back for " +
+        result.cost.toLocaleString() + " silver."
       : result.reason;
     refresh();
   }

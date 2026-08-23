@@ -87,6 +87,25 @@
     return { ok: true, cost: op.cost };
   }
 
+  // Cutting the wait short costs five times what the run itself cost.
+  var RUSH_MULTIPLIER = 5;
+
+  function rushCost(op) { return op.cost * RUSH_MULTIPLIER; }
+
+  // Pays the crew to come straight back: the haul is still rolled on collect.
+  function rush(state) {
+    var job = running(state);
+    if (!job) return { ok: false, reason: "Nothing is out." };
+    if (Date.now() >= job.endsAt) return { ok: false, reason: "The run is already back." };
+    var cost = rushCost(job.op);
+    if (state.silver < cost) {
+      return { ok: false, reason: "Short " + (cost - state.silver) + " silver to rush." };
+    }
+    state.silver -= cost;
+    state.gather.endsAt = Date.now();
+    return { ok: true, op: job.op, cost: cost };
+  }
+
   function roll(entry) {
     if (entry.chance !== undefined && Math.random() >= entry.chance) return 0;
     return entry.low + Math.floor(Math.random() * (entry.high - entry.low + 1));
@@ -154,6 +173,8 @@
     remaining: remaining,
     done: done,
     start: start,
+    rush: rush,
+    rushCost: rushCost,
     claim: claim,
     durationText: durationText,
     clockText: clockText,
