@@ -139,37 +139,38 @@
     }
   };
 
-  // An ingot, drawn as rows so a bar can be painted one column at a time.
-  // [y, x, width, tone]
+  // The bar itself, as a 16x16 map so the chunky ingot shape stays readable.
+  //   o outline   L top face   b mottle on the top   d front face   . nothing
   var INGOT = [
-    [3,  6,  5, "lit"],           // top face
-    [4,  5,  7, "lit"],
-    [5,  4,  9, "base"],          // front face
-    [6,  4,  9, "base"],
-    [7,  3, 11, "base"],
-    [8,  3, 11, "base"],
-    [9,  3, 11, "base"],
-    [10, 2, 13, "base"],
-    [11, 2, 13, "dark"],          // bottom lip
-    [12, 3, 11, "dark"]
+    "................",
+    "................",
+    "......oooooo....",
+    "....ooLLLLLLoo..",
+    "..ooLLLLbLLLLLo.",
+    ".oLLLbLLLLLbLLo.",
+    ".oLLLLLLbLLLLLo.",
+    ".oLbLLLLLLLLLLo.",
+    ".oLLLLLLLbLLLdo.",
+    ".odLLLbLLLLLddo.",
+    ".oddddddddddddo.",
+    "..oddbddddddoo..",
+    "...oodddddoo....",
+    ".....oooooo.....",
+    "................",
+    "................"
   ];
+
+  var TONE = { o: "dark", L: "lit", b: "base", d: "base" };
 
   // pick(x, y, tone) -> colour, so one bar and a two-metal bar share the shape.
   function ingot(c, pick) {
-    INGOT.forEach(function (row) {
-      var y = row[0], x0 = row[1], w = row[2], tone = row[3];
-      for (var x = x0; x < x0 + w; x++) {
-        var edge = tone;
-        if (tone === "base") {
-          if (x === x0) edge = "lit";                 // catch-light down the side
-          else if (x === x0 + w - 1) edge = "dark";
-        }
-        px(c, x, y, 1, 1, pick(x, y, edge));
+    for (var y = 0; y < INGOT.length; y++) {
+      var row = INGOT[y];
+      for (var x = 0; x < row.length; x++) {
+        var tone = TONE[row.charAt(x)];
+        if (tone) px(c, x, y, 1, 1, pick(x, y, tone));
       }
-    });
-    px(c, 13, 13, 1, 1, C.shadow);                    // ground shadow
-    px(c, 3, 13, 11, 1, C.shadow);
-    px(c, 7, 4, 3, 1, pick(7, 4, "lit"));             // shine on the top face
+    }
   }
 
   function solid(metal) {
