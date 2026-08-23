@@ -28,9 +28,11 @@
     { key: "gather", label: "Gather",
       blurb: "Send a crew out. It costs silver and time, and comes back with ore." },
     { key: "refine", label: "Refine",
-      blurb: "Burn ore down into bars, one bar per ore. Two ovens, up to fifty a batch." },
+      blurb: "Burn ore down into bars, one bar per ore. Two ovens, up to fifty a " +
+        "batch, and a bar drops every burn." },
     { key: "compound", label: "Compound",
-      blurb: "Bind bars into alloys. Three crucibles, up to ten per batch." }
+      blurb: "Bind bars into alloys. Three crucibles, up to ten a batch, poured " +
+        "one at a time." }
   ];
 
   function gatherTab(ctx, wrap) {
@@ -114,13 +116,22 @@
           cell.appendChild(el("div", "muted", "Out"));
         } else {
           cell.appendChild(el("div", "row-title", job.ore.label));
-          cell.appendChild(el("div", "muted", "\u00d7" + job.qty));
-          if (Re.done(state, index)) {
-            cell.appendChild(button("COLLECT", "mini-btn strong",
-              function () { ctx.claimRefine(index); }));
-          } else {
-            cell.appendChild(el("div", "muted", Ga.clockText(Re.remaining(state, index))));
-          }
+          cell.appendChild(el("div", "muted",
+            (job.qty - job.taken) + " left \u00b7 next " +
+            Ga.clockText(Re.remaining(state, index))));
+          var group = el("div", "btn-group");
+          var take = button(job.ready ? "TAKE " + job.ready : "TAKE", "mini-btn" +
+            (job.ready ? " strong" : ""), function () { ctx.claimRefine(index); });
+          take.disabled = !job.ready;
+          group.appendChild(take);
+          var queued = job.qty - job.taken - job.ready - 1;
+          var halt = button("STOP", "mini-btn", function () { ctx.stopRefine(index); });
+          halt.disabled = queued <= 0;
+          halt.title = queued > 0
+            ? "Drops the " + queued + " still queued; the one burning finishes."
+            : "Nothing queued behind this one.";
+          group.appendChild(halt);
+          cell.appendChild(group);
         }
         kit.appendChild(cell);
       })(i);
@@ -191,13 +202,22 @@
           lit.appendChild(alloyIcon(job.alloy, "icon tiny"));
           lit.appendChild(el("span", null, job.alloy.name.replace(" Alloy", "")));
           cell.appendChild(lit);
-          cell.appendChild(el("div", "muted", "\u00d7" + job.qty));
-          if (Date.now() >= job.endsAt) {
-            cell.appendChild(button("COLLECT", "mini-btn strong",
-              function () { ctx.claimCompound(index); }));
-          } else {
-            cell.appendChild(el("div", "muted", Ga.clockText(job.endsAt - Date.now())));
-          }
+          cell.appendChild(el("div", "muted",
+            (job.qty - job.taken) + " left \u00b7 next " +
+            Ga.clockText(Co.remaining(state, index))));
+          var pour = el("div", "btn-group");
+          var take = button(job.ready ? "TAKE " + job.ready : "TAKE", "mini-btn" +
+            (job.ready ? " strong" : ""), function () { ctx.claimCompound(index); });
+          take.disabled = !job.ready;
+          pour.appendChild(take);
+          var queued = job.qty - job.taken - job.ready - 1;
+          var halt = button("STOP", "mini-btn", function () { ctx.stopCompound(index); });
+          halt.disabled = queued <= 0;
+          halt.title = queued > 0
+            ? "Drops the " + queued + " still queued; the one cooking finishes."
+            : "Nothing queued behind this one.";
+          pour.appendChild(halt);
+          cell.appendChild(pour);
         }
         slots.appendChild(cell);
       })(i);

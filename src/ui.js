@@ -220,8 +220,10 @@
       claimGather: claimGather,
       startRefine: startRefine,
       claimRefine: claimRefine,
+      stopRefine: stopRefine,
       startCompound: startCompound,
       claimCompound: claimCompound,
+      stopCompound: stopCompound,
       wipeSave: wipeSave,
       refresh: refresh
     };
@@ -576,7 +578,18 @@
     var result = window.Refine.claim(state, index);
     view.notice = result.ok
       ? "Pulled " + result.qty + " " + result.ore.label.toLowerCase() + " bar" +
-        (result.qty === 1 ? "" : "s") + " out of oven " + (index + 1) + "."
+        (result.qty === 1 ? "" : "s") + " out of oven " + (index + 1) +
+        (result.left ? " \u2014 " + result.left + " still burning." : ".")
+      : result.reason;
+    refresh();
+  }
+
+  function stopRefine(index) {
+    var result = window.Refine.stop(state, index);
+    view.notice = result.ok
+      ? "Oven " + (index + 1) + ": " + result.qty + " " +
+        result.ore.label.toLowerCase() + " ore back in the yard. The one in the " +
+        "fire burns through."
       : result.reason;
     refresh();
   }
@@ -593,7 +606,17 @@
     var result = window.Compound.claim(state, index);
     view.notice = result.ok
       ? "Pulled " + result.qty + " " + result.alloy.name +
-        (result.qty === 1 ? "" : "s") + " out of crucible " + (index + 1) + "."
+        (result.qty === 1 ? "" : "s") + " out of crucible " + (index + 1) +
+        (result.left ? " \u2014 " + result.left + " still cooking." : ".")
+      : result.reason;
+    refresh();
+  }
+
+  function stopCompound(index) {
+    var result = window.Compound.stop(state, index);
+    view.notice = result.ok
+      ? "Crucible " + (index + 1) + ": bars for " + result.qty + " " +
+        result.alloy.name + " back on the rack. The pour underway finishes."
       : result.reason;
     refresh();
   }

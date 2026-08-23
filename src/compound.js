@@ -1,7 +1,10 @@
 /* Compounding: bars go into a crucible and come out as an alloy. Three
-   crucibles run side by side, and one batch makes up to ten alloys. */
+   crucibles run side by side, one batch makes up to ten alloys, and they are
+   poured one per cook rather than all at the end. */
 (function (global) {
   "use strict";
+
+  var B = global.Batch;
 
   var CRUCIBLES = 3;
   var MAX_BATCH = 10;
@@ -30,13 +33,20 @@
     return null;
   }
 
-  // A crucible holds {alloy, qty, endsAt} or null when it is cold.
+  // A crucible holds a batch job or null when it is cold.
   function slot(state, index) {
     var job = state.crucibles[index];
     if (!job) return null;
     var alloy = find(job.key);
     if (!alloy) { state.crucibles[index] = null; return null; }
-    return { alloy: alloy, qty: job.qty, endsAt: job.endsAt };
+    return {
+      alloy: alloy,
+      qty: job.qty,
+      taken: job.taken,
+      ready: B.claimable(job, Date.now()),
+      startedAt: job.startedAt,
+      endsAt: B.endsAt(job)
+    };
   }
 
   function freeSlot(state) {
@@ -56,6 +66,17 @@
 
   function running(state) {
     return busy(state) > 0;
+  }
+
+  // Time to the next pour, not to the end of the batch.
+  function remaining(state, index) {
+    var job = state.crucibles[index];
+    return job ? B.nextIn(job, Date.now()) : 0;
+  }
+
+  function done(state, index) {
+    var job = state.crucibles[index];
+    return !!job && B.claimable(job, Date.now()) > 0;
   }
 
   // The most of this alloy the bars on hand will cover, capped at the batch max.
@@ -93,19 +114,38 @@
     state.crucibles[index] = {
       key: alloy.key,
       qty: qty,
+      taken: 0,
       startedAt: Date.now(),
-      endsAt: Date.now() + alloy.seconds * qty * 1000
+      unitMs: alloy.seconds * 1000
     };
     return { ok: true, index: index, qty: qty };
   }
 
+  // Carry off every alloy poured so far; the rest keeps cooking.
   function claim(state, index) {
-    var job = slot(state, index);
+    var job = state.crucibles[index];
     if (!job) return { ok: false, reason: "That crucible is cold." };
-    if (Date.now() < job.endsAt) return { ok: false, reason: "Still compounding." };
-    state.alloys[job.alloy.key] += job.qty;
-    state.crucibles[index] = null;
-    return { ok: true, alloy: job.alloy, qty: job.qty };
+    var alloy = find(job.key);
+    var count = B.claim(job, Date.now());
+    if (!count) return { ok: false, reason: "Still compounding." };
+    state.alloys[alloy.key] += count;
+    var left = job.qty - job.taken;
+    if (!left) state.crucibles[index] = null;
+    return { ok: true, alloy: alloy, qty: count, left: left };
+  }
+
+  // The pour underway has to finish; the bars for everything queued behind it
+  // go back on the rack.
+  function stop(state, index) {
+    var job = state.crucibles[index];
+    if (!job) return { ok: false, reason: "That crucible is cold." };
+    var cancelled = B.stop(job, Date.now());
+    if (!cancelled) return { ok: false, reason: "Only the last one is left." };
+    var alloy = find(job.key);
+    Object.keys(alloy.cost).forEach(function (bar) {
+      state.bars[bar] += alloy.cost[bar] * cancelled;
+    });
+    return { ok: true, alloy: alloy, qty: cancelled };
   }
 
   function emptyAlloys() {
@@ -129,10 +169,13 @@
     freeSlot: freeSlot,
     busy: busy,
     running: running,
+    remaining: remaining,
+    done: done,
     affordable: affordable,
     missingFor: missingFor,
     start: start,
     claim: claim,
+    stop: stop,
     emptyAlloys: emptyAlloys,
     emptyCrucibles: emptyCrucibles
   };
