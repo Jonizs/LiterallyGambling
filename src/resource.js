@@ -71,8 +71,19 @@
       if (out && Ga.done(state)) {
         b = button("COLLECT", "mini-btn strong", function () { ctx.claimGather(); });
       } else if (out) {
-        b = button(Ga.clockText(Ga.remaining(state)), "mini-btn", function () {});
-        b.disabled = true;
+        var waiting = el("div", "btn-group");
+        var clock = button(Ga.clockText(Ga.remaining(state)), "mini-btn", function () {});
+        clock.disabled = true;
+        waiting.appendChild(clock);
+        var cost = Ga.rushCost(op);
+        var rush = button("RUSH " + cost.toLocaleString(), "mini-btn",
+          function () { ctx.rushGather(); });
+        rush.disabled = state.silver < cost;
+        rush.title = state.silver < cost
+          ? "Short " + (cost - state.silver).toLocaleString() + " silver."
+          : "Brings the crew straight back for " + cost.toLocaleString() + " silver.";
+        waiting.appendChild(rush);
+        b = waiting;
       } else {
         b = button(open ? "SEND" : "LOCKED", "mini-btn strong", function () {
           ctx.startGather(op);
