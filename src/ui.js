@@ -271,11 +271,12 @@
     refresh();
   }
 
-  function reforge(item) {
-    var result = window.Enchants.reforge(state, item);
+  function reforge(item, indexes) {
+    var result = window.Enchants.reforge(state, item, indexes);
     view.notice = result.ok
       ? "Stripped " + result.removed + " enchant" + (result.removed === 1 ? "" : "s") +
-        " off " + item.name + " for " + result.cost + " silver."
+        " off " + item.name + " for " + result.cost + " silver" +
+        (result.kept ? ", " + result.kept + " left on." : ".")
       : result.reason;
     refresh();
   }
