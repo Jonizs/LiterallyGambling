@@ -61,6 +61,7 @@
       resources: state.resources,
       gather: state.gather,
       bars: state.bars,
+      known: state.known,
       ovens: state.ovens,
       alloys: state.alloys,
       crucibles: state.crucibles,
@@ -226,6 +227,12 @@
         startedAt: whole(raw.gather.startedAt, 0),
         endsAt: whole(raw.gather.endsAt, 0)
       };
+    }
+    if (Array.isArray(raw.known)) {
+      raw.known.forEach(function (key) {
+        var recipe = global.Game.recipeFor(key);
+        if (recipe.key === key && state.known.indexOf(key) < 0) state.known.push(key);
+      });
     }
     if (raw.bars && typeof raw.bars === "object") {
       Object.keys(state.bars).forEach(function (key) {

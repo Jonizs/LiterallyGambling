@@ -11,7 +11,8 @@
     stone: "#6b6560", stoneDark: "#33302c", stoneLit: "#928a80",
     brick: "#8a4b34", brickDark: "#41221a", brickLit: "#b06a48",
     lava: "#ff8a24", lavaLit: "#ffd76a", lavaDark: "#c2450d",
-    cold: "#191310", mortar: "#57504a"
+    cold: "#191310", mortar: "#57504a",
+    blood: "#a3172a", bloodLit: "#e0384a", dark: "#2b2430", darkLit: "#4a3f52"
   };
 
   // What each metal looks like as a poured bar, near enough to the real thing.
@@ -88,6 +89,51 @@
       px(c, 4, 10, 8, 1, C.silhouette);
       px(c, 7, 11, 2, 3, C.silhouette);
       px(c, 6, 14, 4, 2, C.silhouette);
+    },
+    // Worked out at the bench: a lance, a dagger and a blade that drinks.
+    lance: function (c) {
+      px(c, 12, 0, 3, 1, C.steelLit);         // head
+      px(c, 11, 1, 4, 2, C.steel);
+      px(c, 11, 1, 1, 2, C.steelLit);
+      px(c, 10, 3, 4, 1, C.steel);
+      px(c, 9, 4, 3, 1, C.steelDark);
+      px(c, 10, 3, 2, 1, C.steelLit);
+      px(c, 8, 5, 3, 2, C.gold);              // vamplate
+      px(c, 8, 5, 1, 2, C.goldLit);
+      for (var i = 0; i < 8; i++) {           // shaft, down to the butt
+        px(c, 7 - i, 6 + i, 2, 2, C.wood);
+        px(c, 7 - i, 6 + i, 1, 1, C.woodLit);
+      }
+      px(c, 0, 14, 2, 2, C.leatherDark);      // grip end
+    },
+    dagger: function (c) {
+      px(c, 8, 1, 2, 1, C.steelLit);          // point
+      px(c, 7, 2, 3, 7, C.steel);
+      px(c, 7, 2, 1, 7, C.steelLit);
+      px(c, 9, 2, 1, 7, C.steelDark);
+      px(c, 8, 3, 1, 5, C.steelLit);          // fuller
+      px(c, 5, 9, 7, 1, C.goldDark);          // guard
+      px(c, 5, 10, 7, 1, C.gold);
+      px(c, 5, 10, 1, 1, C.goldLit);
+      px(c, 7, 11, 3, 3, C.leather);          // grip
+      px(c, 7, 11, 1, 3, C.leatherDark);
+      px(c, 6, 14, 5, 2, C.gold);             // pommel
+      px(c, 7, 15, 1, 1, C.goldLit);
+    },
+    bloodbane: function (c) {
+      px(c, 7, 0, 2, 1, C.bloodLit);          // point, already wet
+      px(c, 6, 1, 4, 9, C.dark);              // blade
+      px(c, 6, 1, 1, 9, C.blood);             // the edge that bleeds
+      px(c, 9, 1, 1, 9, C.darkLit);
+      px(c, 7, 2, 1, 7, C.bloodLit);          // channel down the fuller
+      px(c, 8, 4, 1, 4, C.blood);
+      px(c, 3, 10, 10, 1, C.darkLit);         // crossguard, swept
+      px(c, 3, 11, 10, 2, C.dark);
+      px(c, 2, 10, 2, 2, C.blood);
+      px(c, 12, 10, 2, 2, C.blood);
+      px(c, 6, 13, 4, 2, C.leatherDark);      // wrap
+      px(c, 7, 14, 2, 1, C.blood);
+      px(c, 5, 15, 6, 1, C.bloodLit);         // pommel stone
     },
     helmet: function (c) {
       px(c, 5, 0, 6, 1, C.steelLit);          // dome

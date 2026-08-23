@@ -11,45 +11,7 @@
     paper:  { label: "Paper",  price: 25, level: 2 }
   };
 
-  // perTier is the stat a tier-1 piece carries; tier multiplies it. combat is
-  // the piece's own handling: it barely moves with tier, so it stays flat here
-  // and takes only a gentle share of the quality and edition rolls.
-  // level is the smith level the recipe unlocks at; xp is what a tier-1
-  // Normal piece is worth at the bench.
-  var RECIPES = [
-    { key: "sword", name: "Weak Sword", kind: "weapon", icon: "sword",
-      level: 1, xp: 15,
-      perTier: { damage: 6, durability: 20 },
-      combat: { speed: 0.85, crit: 5, critDamage: 150, pen: 0 },
-      cost: { wood: 5, metal: 10 } },
-    // Blades the smith has not learned yet: the bench shows the shape and
-    // nothing else. mystery keeps them off the anvil whatever the level is.
-    { key: "mystery-1", name: "???", kind: "weapon", icon: "sword-silhouette-1",
-      mystery: true, level: 99, xp: 0,
-      perTier: { damage: 0, durability: 0 },
-      combat: { speed: 1, crit: 0, critDamage: 150, pen: 0 },
-      cost: {} },
-    { key: "mystery-2", name: "???", kind: "weapon", icon: "sword-silhouette-2",
-      mystery: true, level: 99, xp: 0,
-      perTier: { damage: 0, durability: 0 },
-      combat: { speed: 1, crit: 0, critDamage: 150, pen: 0 },
-      cost: {} },
-    { key: "mystery-3", name: "???", kind: "weapon", icon: "sword-silhouette-3",
-      mystery: true, level: 99, xp: 0,
-      perTier: { damage: 0, durability: 0 },
-      combat: { speed: 1, crit: 0, critDamage: 150, pen: 0 },
-      cost: {} },
-    { key: "mystery-4", name: "???", kind: "weapon", icon: "sword-silhouette-4",
-      mystery: true, level: 99, xp: 0,
-      perTier: { damage: 0, durability: 0 },
-      combat: { speed: 1, crit: 0, critDamage: 150, pen: 0 },
-      cost: {} },
-    { key: "mystery-5", name: "???", kind: "weapon", icon: "sword-silhouette-5",
-      mystery: true, level: 99, xp: 0,
-      perTier: { damage: 0, durability: 0 },
-      combat: { speed: 1, crit: 0, critDamage: 150, pen: 0 },
-      cost: {} }
-  ];
+  var RECIPES = global.Recipes.LIST;
 
   function recipeFor(key) {
     for (var i = 0; i < RECIPES.length; i++) {
@@ -94,13 +56,14 @@
   }
 
   function unlocked(state, recipe) {
-    return !recipe.mystery && state.level >= recipe.level;
+    return !recipe.mystery && state.level >= recipe.level && known(state, recipe);
   }
 
-  // Recipes the smith cannot forge yet, so the bench can show what is coming.
+  // Recipes still behind a level, so the bench can show what is coming. A
+  // recipe waiting on the experimentation bench is not waiting on a level.
   function lockedRecipes(state) {
     return RECIPES.filter(function (recipe) {
-      return !recipe.mystery && !unlocked(state, recipe);
+      return !recipe.mystery && !recipe.research && !unlocked(state, recipe);
     });
   }
 
@@ -221,6 +184,7 @@
       gather: null,
       // Bars out of the smelter, and the batch that is burning.
       bars: global.Refine.emptyBars(),
+      known: [],
       ovens: global.Refine.emptyOvens(),
       // Alloys out of the crucibles, and what each of the three is holding.
       alloys: global.Compound.emptyAlloys(),
@@ -263,19 +227,39 @@
     return { ok: true, spent: cost };
   }
 
-  // Materials still missing for a recipe, as {key, short} entries.
+  // A cost draws on three pools: shop materials, refined bars and alloys.
+  // POOLS names where each lives and what it is called on screen.
+  var POOLS = [
+    { on: "cost", from: "materials",
+      label: function (key) { return MATERIALS[key].label; } },
+    { on: "bars", from: "bars",
+      label: function (key) { return global.Refine.find(key).label + " bar"; } },
+    { on: "alloys", from: "alloys",
+      label: function (key) { return global.Compound.find(key).name; } }
+  ];
+
+  // Everything a recipe still needs, as {pool, key, short, label} entries.
   function missingFor(state, recipe) {
-    return Object.keys(recipe.cost).reduce(function (out, key) {
-      var short = recipe.cost[key] - state.materials[key];
-      if (short > 0) out.push({ key: key, short: short });
-      return out;
-    }, []);
+    var out = [];
+    POOLS.forEach(function (pool) {
+      var need = recipe[pool.on];
+      if (!need) return;
+      Object.keys(need).forEach(function (key) {
+        var short = need[key] - state[pool.from][key];
+        if (short > 0) {
+          out.push({ pool: pool.from, key: key, short: short,
+            label: pool.label(key) });
+        }
+      });
+    });
+    return out;
   }
 
-  // What the materials still missing for a recipe would cost at the shop.
+  // What the gap would cost at the shop. Only materials are sold there, so a
+  // recipe short of bars or alloys cannot be bought out of trouble.
   function shortfallCost(state, recipe) {
     return missingFor(state, recipe).reduce(function (sum, gap) {
-      return sum + priceOf(gap.key, gap.short);
+      return gap.pool === "materials" ? sum + priceOf(gap.key, gap.short) : Infinity;
     }, 0);
   }
 
@@ -319,6 +303,67 @@
     return S.clamp(key, base + rollLuck(key));
   }
 
+  // Takes a cost out of whichever pools it draws on. source picks between a
+  // recipe's forge cost and its research cost.
+  function spend(state, need) {
+    POOLS.forEach(function (pool) {
+      var want = need[pool.on];
+      if (!want) return;
+      Object.keys(want).forEach(function (key) {
+        state[pool.from][key] -= want[key];
+      });
+    });
+  }
+
+  // Research is quoted in schematics, molds, bars and alloys, and those live
+  // in the same pools a forge cost draws on.
+  function researchCost(recipe) {
+    var need = recipe.research;
+    return { cost: need.materials, bars: need.bars, alloys: need.alloys,
+      resources: need.resources };
+  }
+
+  function missingResearch(state, recipe) {
+    var need = researchCost(recipe), out = missingFor(state, need);
+    Object.keys(need.resources || {}).forEach(function (key) {
+      var short = need.resources[key] - state.resources[key];
+      if (short > 0) {
+        out.push({ pool: "resources", key: key, short: short,
+          label: global.Gather.RESOURCES[key].label });
+      }
+    });
+    return out;
+  }
+
+  function known(state, recipe) {
+    return !recipe.research || state.known.indexOf(recipe.key) >= 0;
+  }
+
+  // Pays for a recipe and writes it into the smith's book for good.
+  function learn(state, recipe) {
+    if (!recipe.research) return { ok: false, reason: "Nothing to work out." };
+    if (known(state, recipe)) return { ok: false, reason: "Already worked out." };
+    var missing = missingResearch(state, recipe);
+    if (missing.length) {
+      return { ok: false, reason: "Short " + missing.map(function (gap) {
+        return gap.short + " " + gap.label.toLowerCase();
+      }).join(", ") + "." };
+    }
+    var need = researchCost(recipe);
+    spend(state, need);
+    Object.keys(need.resources || {}).forEach(function (key) {
+      state.resources[key] -= need.resources[key];
+    });
+    state.known.push(recipe.key);
+    return { ok: true, recipe: recipe };
+  }
+
+  function unlearned(state) {
+    return RECIPES.filter(function (recipe) {
+      return recipe.research && !known(state, recipe);
+    });
+  }
+
   function forge(state, recipe) {
     if (!unlocked(state, recipe)) {
       return { ok: false, reason: "Reach level " + recipe.level + " first." };
@@ -326,9 +371,7 @@
     if (!canForge(state, recipe)) {
       return { ok: false, reason: "Missing materials." };
     }
-    Object.keys(recipe.cost).forEach(function (key) {
-      state.materials[key] -= recipe.cost[key];
-    });
+    spend(state, recipe);
 
     var rarity = rollStat("rarity", state.base.rarity);
     var quality = rollStat("quality", state.base.quality);
@@ -386,6 +429,11 @@
     stipendWait: stipendWait,
     missingFor: missingFor,
     canForge: canForge,
+    known: known,
+    learn: learn,
+    unlearned: unlearned,
+    researchCost: researchCost,
+    missingResearch: missingResearch,
     sellPrice: sellPrice,
     statsFor: statsFor,
     recipeFor: recipeFor,
