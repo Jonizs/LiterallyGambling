@@ -7,7 +7,6 @@
   var RESOURCES = {
     bronze:  { label: "Bronze ore" },
     silver:  { label: "Silver ore" },
-    iron:    { label: "Iron ore" },
     gold:    { label: "Gold ore" },
     crystal: { label: "Crystal ore" },
     rare:    { label: "Rare schematic" },
@@ -27,7 +26,7 @@
       cost: 2500, minutes: 15,
       yields: [
         { key: "bronze", low: 20, high: 28 },
-        { key: "iron", low: 6, high: 10 },
+        { key: "silver", low: 6, high: 10 },
         { key: "gold", low: 0, high: 5 },
         { key: "rare", low: 1, high: 1, chance: 0.2 }
       ] },
@@ -35,7 +34,7 @@
       cost: 30000, minutes: 120,
       yields: [
         { key: "bronze", low: 220, high: 310 },
-        { key: "iron", low: 45, high: 57 },
+        { key: "silver", low: 45, high: 57 },
         { key: "gold", low: 10, high: 19 },
         { key: "rare", low: 1, high: 3 },
         { key: "crystal", low: 1, high: 2 },

@@ -6,8 +6,7 @@
   // seconds is what a single ore takes; a batch is that times the count.
   var ORES = [
     { key: "bronze",  label: "Bronze",  seconds: 10 },
-    { key: "silver",  label: "Silver",  seconds: 20 },
-    { key: "iron",    label: "Iron",    seconds: 30 },
+    { key: "silver",  label: "Silver",  seconds: 30 },
     { key: "gold",    label: "Gold",    seconds: 60 },
     { key: "crystal", label: "Crystal", seconds: 180 }
   ];
