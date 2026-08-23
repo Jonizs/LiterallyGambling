@@ -20,6 +20,7 @@
 
   var COST_SHARE = 0.5; // of the piece's sale price, paid to roll the offer
   var OFFER_SIZE = 3;
+  var REFORGE_GROWTH = 1.2; // each reforge of the same piece costs this much more
 
   var RARITY_ODDS = [
     { value: "common", chance: 85 },
@@ -199,6 +200,74 @@
     return { ok: true, entry: entry };
   }
 
+  // What one slot of an offer is worth landing on: a rarity's odds split
+  // evenly between the enchants in it, since the pick inside a rarity is even.
+  function odds() {
+    return RARITY_ODDS.map(function (band) {
+      var pool = DEFS.filter(function (def) { return def.rarity === band.value; });
+      return {
+        rarity: band.value,
+        chance: band.chance,
+        each: Math.round(band.chance / pool.length * 10) / 10,
+        entries: pool.map(function (def) {
+          return {
+            key: def.key, name: def.name, maxTier: def.maxTier,
+            text: describe(def, def.maxTier)
+          };
+        })
+      };
+    });
+  }
+
+  // Tier odds as they actually land: anything past an enchant's top tier is
+  // clamped down onto it, so a two-tier enchant takes III's share into II.
+  function tierOdds(maxTier) {
+    var out = [];
+    TIER_ODDS.forEach(function (entry) {
+      var tier = Math.min(maxTier, entry.value);
+      var seen = out.filter(function (o) { return o.value === tier; })[0];
+      if (seen) seen.chance += entry.chance;
+      else out.push({ value: tier, chance: entry.chance });
+    });
+    return out;
+  }
+
+  // --- reforging -----------------------------------------------------------
+  // Stripping a piece back to the stats it was forged with, then rolling
+  // again. The first strip costs what a normal roll would; each one after
+  // that on the same piece costs a fifth again as much.
+  function reforgeCost(item) {
+    var base = Math.max(1, Math.round(G.sellPrice(bare(item)) * COST_SHARE));
+    return Math.round(base * Math.pow(REFORGE_GROWTH, item.reforges || 0));
+  }
+
+  // A copy of the piece with its enchants lifted off, for pricing.
+  function bare(item) {
+    var stats = G.baseStatsOf(item), copy = {};
+    Object.keys(item).forEach(function (key) { copy[key] = item[key]; });
+    Object.keys(stats).forEach(function (key) { copy[key] = stats[key]; });
+    copy.enchants = [];
+    return copy;
+  }
+
+  function reforge(state, item) {
+    if (!item.enchants.length) {
+      return { ok: false, reason: "Nothing on that piece to strip." };
+    }
+    var cost = reforgeCost(item);
+    if (state.silver < cost) {
+      return { ok: false, reason: "Not enough silver. Reforging costs " + cost + "." };
+    }
+    state.silver -= cost;
+    var stats = G.baseStatsOf(item);
+    Object.keys(stats).forEach(function (key) { item[key] = stats[key]; });
+    var count = item.enchants.length;
+    item.enchants = [];
+    item.awakenable = false;
+    item.reforges = (item.reforges || 0) + 1;
+    return { ok: true, cost: cost, removed: count };
+  }
+
   function label(entry) {
     var roman = ["", "I", "II", "III"];
     return entry.tiered ? entry.name + " " + roman[entry.tier] : entry.name;
@@ -215,6 +284,11 @@
     rollOffer: rollOffer,
     slotsLeft: slotsLeft,
     costFor: costFor,
+    odds: odds,
+    tierOdds: tierOdds,
+    REFORGE_GROWTH: REFORGE_GROWTH,
+    reforgeCost: reforgeCost,
+    reforge: reforge,
     canEnchant: canEnchant,
     buyOffer: buyOffer,
     apply: apply,

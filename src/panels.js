@@ -19,9 +19,6 @@
     return b;
   }
 
-  var FIRST_REVEAL = 0.35; // seconds after the panel lands
-  var REVEAL_GAP = 0.5;    // between one enchant and the next
-
   // A cost can call on materials, bars, alloys and the yard's own stock, so
   // the chips are built from wherever each part of it lives.
   var COST_POOLS = [
@@ -294,79 +291,6 @@
     return wrap;
   }
 
-  // Two states: pick a piece, or pick one of the three the ritual turned up.
-  function enchantPanel(ctx) {
-    var wrap = el("div");
-
-    if (ctx.offer) {
-      wrap.appendChild(el("p", null,
-        "Three came out of the coals for " + ctx.offer.item.name +
-        ". One of them goes on the piece."));
-      // The panel lands first with three empty slots waiting in it; each one
-      // strikes in whole, one at a time.
-      var choices = el("div", "rows");
-      ctx.offer.choices.forEach(function (choice, i) {
-        var fresh = ctx.offer.fresh;
-        var at = FIRST_REVEAL + i * REVEAL_GAP;
-        var row = el("div", "row offer " + choice.rarity +
-          (fresh ? " offer-reveal" : ""));
-        if (fresh) row.style.setProperty("--d", at + "s");
-
-        var main = el("div", "row-main offer-body");
-        var title = el("div", "row-title", E.label(choice));
-        title.appendChild(el("span", "chip-stat rarity-" + choice.rarity, choice.rarity));
-        main.appendChild(title);
-        main.appendChild(el("div", "muted", choice.text));
-        row.appendChild(main);
-
-        var take = button("TAKE", "mini-btn strong offer-body", function () {
-          ctx.takeEnchant(choice);
-        });
-        // Nothing is takeable before it has been shown.
-        if (fresh) {
-          take.disabled = true;
-          setTimeout(function () { take.disabled = false; }, (at + 0.3) * 1000);
-        }
-        row.appendChild(take);
-        choices.appendChild(row);
-      });
-      wrap.appendChild(choices);
-      if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
-      return wrap;
-    }
-
-    var items = ctx.state.inventory;
-    if (!items.length) {
-      wrap.appendChild(el("p", "empty", "Nothing on the rack to enchant yet."));
-      if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
-      return wrap;
-    }
-    wrap.appendChild(el("p", null,
-      "Rolling three enchants for a piece costs half what it sells for. " +
-      "Each one takes an enchant slot."));
-
-    var rows = el("div", "rows");
-    items.forEach(function (item) {
-      var row = el("div", "row");
-      row.appendChild(itemLine(item));
-      var cost = E.costFor(item);
-      var free = E.slotsLeft(item);
-      var b = button(free > 0 ? "ENCHANT " + cost : "NO SLOTS", "mini-btn",
-        function () { ctx.rollEnchant(item); });
-      b.disabled = !E.canEnchant(ctx.state, item);
-      if (free <= 0) {
-        b.title = "Every slot on this piece is filled.";
-      } else if (ctx.state.silver < cost) {
-        b.title = "Short " + (cost - ctx.state.silver) + " silver.";
-      }
-      row.appendChild(b);
-      rows.appendChild(row);
-    });
-    wrap.appendChild(rows);
-    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
-    return wrap;
-  }
-
   function upgradesPanel(ctx) {
     var wrap = el("div");
     wrap.appendChild(el("p", null,
@@ -468,7 +392,9 @@
     inventory: { title: "Inventory", build: function (ctx) {
       return global.Inventory.build(ctx);
     } },
-    enchant: { title: "Enchant", build: enchantPanel, level: 4 },
+    enchant: { title: "Enchant", build: function (ctx) {
+      return global.Enchant.build(ctx);
+    }, level: 4 },
     upgrades: { title: "Upgrades", build: upgradesPanel },
     display: { title: "Display", build: soonPanel("The display case") },
     resource: { title: "Resource", build: function (ctx) {
