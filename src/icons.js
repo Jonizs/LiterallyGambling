@@ -77,37 +77,6 @@
       px(c, 7, 11, 2, 3, C.silhouette);
       px(c, 6, 14, 4, 2, C.silhouette);
     },
-    // Materials the shop does not stock yet: shape only, no detail.
-    "mat-silhouette-1": function (c) {     // gemstone
-      px(c, 5, 2, 6, 1, C.silhouette);
-      px(c, 3, 3, 10, 2, C.silhouette);
-      px(c, 2, 5, 12, 3, C.silhouette);
-      px(c, 3, 8, 10, 3, C.silhouette);
-      px(c, 5, 11, 6, 2, C.silhouette);
-      px(c, 7, 13, 2, 1, C.silhouette);
-    },
-    "mat-silhouette-2": function (c) {     // ore chunk
-      px(c, 5, 3, 4, 2, C.silhouette);
-      px(c, 3, 5, 8, 2, C.silhouette);
-      px(c, 2, 7, 12, 4, C.silhouette);
-      px(c, 3, 11, 11, 2, C.silhouette);
-      px(c, 5, 13, 7, 1, C.silhouette);
-    },
-    "mat-silhouette-3": function (c) {     // ingot
-      px(c, 5, 5, 7, 1, C.silhouette);
-      px(c, 4, 6, 9, 2, C.silhouette);
-      px(c, 3, 8, 11, 3, C.silhouette);
-      px(c, 2, 11, 13, 2, C.silhouette);
-    },
-    "mat-silhouette-4": function (c) {     // hide
-      px(c, 4, 2, 3, 2, C.silhouette);
-      px(c, 10, 2, 3, 2, C.silhouette);
-      px(c, 3, 4, 11, 4, C.silhouette);
-      px(c, 2, 8, 13, 3, C.silhouette);
-      px(c, 4, 11, 9, 2, C.silhouette);
-      px(c, 5, 13, 3, 1, C.silhouette);
-      px(c, 10, 13, 3, 1, C.silhouette);
-    },
     helmet: function (c) {
       px(c, 5, 0, 6, 1, C.steelLit);          // dome
       px(c, 4, 1, 8, 2, C.steel);

@@ -143,16 +143,24 @@
     });
     wrap.appendChild(rows);
 
-    // Stock the shop does not carry yet: the shape and nothing else.
-    var locked = el("div", "silhouettes");
-    ["mat-silhouette-1", "mat-silhouette-2",
-     "mat-silhouette-3", "mat-silhouette-4"].forEach(function (icon) {
-      var cell = el("div", "silhouette");
-      cell.appendChild(I.make(icon));
-      cell.appendChild(el("span", "muted", "???"));
-      cell.title = "The shop does not carry this yet.";
-      locked.appendChild(cell);
-    });
+    // Stock the shop does not carry yet: the same bar as a material, inked out.
+    var locked = el("div", "rows silhouettes");
+    for (var i = 0; i < 4; i++) {
+      var bar = el("div", "row silhouette");
+      var barMain = el("div", "row-main");
+      barMain.appendChild(el("div", "row-title", "???"));
+      barMain.appendChild(el("div", "muted", "??? silver each"));
+      bar.appendChild(barMain);
+      var barGroup = el("div", "btn-group");
+      [1, 10].forEach(function (qty) {
+        var b = button("\u00d7" + qty, "mini-btn", function () {});
+        b.disabled = true;
+        barGroup.appendChild(b);
+      });
+      bar.appendChild(barGroup);
+      bar.title = "The shop does not carry this yet.";
+      locked.appendChild(bar);
+    }
     wrap.appendChild(locked);
 
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
