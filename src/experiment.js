@@ -26,20 +26,40 @@
   // Recipes are bought outright with schematics, molds and metal; once the
   // bench has worked one out it stays in the book.
   function recipesTab(ctx, wrap) {
-    var open = G.unlearned(ctx.state);
-    if (!open.length) {
-      wrap.appendChild(el("p", "empty", "Every recipe on the bench is worked out."));
+    // Worked-out recipes stay on the bench as a record, below the open ones.
+    var all = G.RECIPES.filter(function (recipe) { return !!recipe.research; });
+    var open = all.filter(function (recipe) { return !G.known(ctx.state, recipe); });
+    var done = all.filter(function (recipe) { return G.known(ctx.state, recipe); });
+    if (!all.length) {
+      wrap.appendChild(el("p", "empty", "Nothing on the bench to work out."));
       return;
     }
+    if (!open.length) {
+      wrap.appendChild(el("p", "empty", "Every recipe on the bench is worked out."));
+    }
+
     var rows = el("div", "rows");
-    open.forEach(function (recipe) {
-      var row = el("div", "row");
+    open.concat(done).forEach(function (recipe) {
+      var found = G.known(ctx.state, recipe);
+      var row = el("div", "row" + (found ? " done" : ""));
       row.appendChild(I.make(recipe.icon));
       var main = el("div", "row-main");
-      main.appendChild(el("div", "row-title", recipe.name));
+      var title = el("div", "row-title", recipe.name);
+      if (found) title.appendChild(el("span", "chip-stat found", "Discovered"));
+      main.appendChild(title);
       main.appendChild(global.Panels.recipeStats(recipe));
-      main.appendChild(costLine(ctx.state, G.researchCost(recipe)));
+      // What it cost is only worth showing while it is still owed.
+      if (!found) main.appendChild(costLine(ctx.state, G.researchCost(recipe)));
       row.appendChild(main);
+
+      if (found) {
+        var kept = button("ON THE ANVIL", "mini-btn", function () {});
+        kept.disabled = true;
+        kept.title = "Already worked out \u2014 forge it at the anvil.";
+        row.appendChild(kept);
+        rows.appendChild(row);
+        return;
+      }
 
       var missing = G.missingResearch(ctx.state, recipe);
       var b = button("DISCOVER", "mini-btn strong", function () {
