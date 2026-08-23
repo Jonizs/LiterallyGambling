@@ -215,6 +215,7 @@
       takeEnchant: takeEnchant,
       buyUpgrade: buyUpgrade,
       saveInfo: saveInfo,
+      devBoost: devBoost,
       wipeSave: wipeSave,
       refresh: refresh
     };
@@ -483,6 +484,15 @@
     renderBuffs();
     renderSlots();
     drawPanel();
+  }
+
+  // Dev shortcut from the options panel: straight to a rich, high-level smith.
+  function devBoost() {
+    state.level = 100;
+    state.xp = 0;
+    state.silver = 100000;
+    view.notice = "Dev boost: level 100, 100,000 silver.";
+    refresh();
   }
 
   // Options panel readout: whether the save is working and how old it is.

@@ -376,6 +376,17 @@
     });
     wrap.appendChild(list);
 
+    // Dev shortcut: skips the grind so the later rooms can be tested.
+    var dev = el("div", "row");
+    var devMain = el("div", "row-main");
+    devMain.appendChild(el("div", "row-title", "Dev boost"));
+    devMain.appendChild(el("div", "muted", "Sets the smith to level 100 with 100,000 silver."));
+    dev.appendChild(devMain);
+    dev.appendChild(button("BOOST", "mini-btn strong", function () {
+      ctx.devBoost();
+    }));
+    wrap.appendChild(dev);
+
     var info = ctx.saveInfo();
     wrap.appendChild(el("p", "muted", info.text));
     if (!info.supported) return wrap;
