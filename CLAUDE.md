@@ -40,6 +40,12 @@ PowerShell commands — every window they need, in order, copy-pasteable, no
 placeholders, no "and then do the usual". Never answer with a single line and
 never assume they already have a window running. Assume nothing is open.
 
+TRIGGER — the moment the user says anything like "I'm back on PC", "back at my
+computer", "on my desktop now", or otherwise signals they are starting up
+locally in a new session: immediately post the full two-window PowerShell block
+below, unprompted, before anything else. Do not wait for them to ask how to run
+it, and do not ask which parts they need — give all of it every time.
+
 Standard local launch — two PowerShell windows:
 
 ```powershell
