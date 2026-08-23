@@ -4,6 +4,22 @@
 
   var el = global.Panels.el, button = global.Panels.button;
 
+  // The two bars an alloy is poured from, in cost order.
+  function alloyMetals(alloy) { return Object.keys(alloy.cost); }
+
+  function alloyIcon(alloy, className) {
+    var metals = alloyMetals(alloy);
+    return global.Icons.alloyBar(metals[0], metals[1], className);
+  }
+
+  // A stock chip with its bar sitting in front of the count.
+  function stockChip(icon, text, className) {
+    var chip = el("span", className);
+    chip.appendChild(icon);
+    chip.appendChild(el("span", null, text));
+    return chip;
+  }
+
   // --- resource ------------------------------------------------------------
   // The tab lives outside the builder so it survives a panel redraw.
   var resourceTab = "gather";
@@ -80,8 +96,9 @@
 
     var stock = el("div", "stock");
     Re.ORES.forEach(function (ore) {
-      stock.appendChild(el("span", "mat" + (state.bars[ore.key] ? "" : " none"),
-        ore.label + " bar " + state.bars[ore.key]));
+      stock.appendChild(stockChip(global.Icons.bar(ore.key, "icon tiny"),
+        ore.label + " bar " + state.bars[ore.key],
+        "mat" + (state.bars[ore.key] ? "" : " none")));
     });
     wrap.appendChild(stock);
 
@@ -93,7 +110,9 @@
       var row = el("div", "row");
 
       var main = el("div", "row-main");
-      var title = el("div", "row-title", ore.label + " bar");
+      var title = el("div", "row-title");
+      title.appendChild(global.Icons.bar(ore.key, "icon tiny"));
+      title.appendChild(el("span", null, ore.label + " bar"));
       title.appendChild(el("span", "chip-stat tier", Re.durationText(ore.seconds) + " each"));
       main.appendChild(title);
       main.appendChild(el("div", "muted", "1 " + Ga.RESOURCES[ore.key].label.toLowerCase() +
@@ -130,13 +149,14 @@
 
     var stock = el("div", "stock");
     Re.ORES.forEach(function (ore) {
-      stock.appendChild(el("span", "mat" + (state.bars[ore.key] ? "" : " none"),
-        ore.label + " bar " + state.bars[ore.key]));
+      stock.appendChild(stockChip(global.Icons.bar(ore.key, "icon tiny"),
+        ore.label + " bar " + state.bars[ore.key],
+        "mat" + (state.bars[ore.key] ? "" : " none")));
     });
     Co.ALLOYS.forEach(function (alloy) {
       if (!state.alloys[alloy.key]) return;
-      stock.appendChild(el("span", "coin",
-        alloy.name.replace(" Alloy", "") + " " + state.alloys[alloy.key]));
+      stock.appendChild(stockChip(alloyIcon(alloy, "icon tiny"),
+        alloy.name.replace(" Alloy", "") + " " + state.alloys[alloy.key], "coin"));
     });
     wrap.appendChild(stock);
 
@@ -150,7 +170,10 @@
           cell.appendChild(el("div", "row-title", "Crucible " + (index + 1)));
           cell.appendChild(el("div", "muted", "Cold"));
         } else {
-          cell.appendChild(el("div", "row-title", job.alloy.name.replace(" Alloy", "")));
+          var lit = el("div", "row-title");
+          lit.appendChild(alloyIcon(job.alloy, "icon tiny"));
+          lit.appendChild(el("span", null, job.alloy.name.replace(" Alloy", "")));
+          cell.appendChild(lit);
           cell.appendChild(el("div", "muted", "\u00d7" + job.qty));
           if (Date.now() >= job.endsAt) {
             cell.appendChild(button("COLLECT", "mini-btn strong",
@@ -168,15 +191,18 @@
     Co.ALLOYS.forEach(function (alloy) {
       var row = el("div", "row");
       var main = el("div", "row-main");
-      var title = el("div", "row-title", alloy.name);
+      var title = el("div", "row-title");
+      title.appendChild(alloyIcon(alloy, "icon tiny"));
+      title.appendChild(el("span", null, alloy.name));
       title.appendChild(el("span", "chip-stat tier", Re.durationText(alloy.seconds) + " each"));
       main.appendChild(title);
       var line = el("div", "cost-line");
       Object.keys(alloy.cost).forEach(function (bar) {
         var need = alloy.cost[bar];
         var have = state.bars[bar];
-        line.appendChild(el("span", "cost " + (have >= need ? "ok" : "short"),
-          Re.find(bar).label + " bar " + have + "/" + need));
+        line.appendChild(stockChip(global.Icons.bar(bar, "icon tiny"),
+          Re.find(bar).label + " bar " + have + "/" + need,
+          "cost " + (have >= need ? "ok" : "short")));
       });
       main.appendChild(line);
       row.appendChild(main);
