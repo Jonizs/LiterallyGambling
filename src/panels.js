@@ -300,6 +300,44 @@
     return wrap;
   }
 
+  // --- resource ------------------------------------------------------------
+  // The tab lives outside the builder so it survives a panel redraw.
+  var resourceTab = "gather";
+
+  var RESOURCE_TABS = [
+    { key: "gather", label: "Gather",
+      blurb: "Pull raw stock out of the ground." },
+    { key: "refine", label: "Refine",
+      blurb: "Cook raw stock down into forge-grade material." },
+    { key: "compound", label: "Compound",
+      blurb: "Bind refined material into the higher alloys." }
+  ];
+
+  function resourcePanel(ctx) {
+    var wrap = el("div");
+
+    var strip = el("div", "tabs");
+    RESOURCE_TABS.forEach(function (tab) {
+      var b = button(tab.label, "tab" + (tab.key === resourceTab ? " on" : ""),
+        function () {
+          resourceTab = tab.key;
+          ctx.setNotice("");
+          ctx.refresh();
+        });
+      strip.appendChild(b);
+    });
+    wrap.appendChild(strip);
+
+    var current = RESOURCE_TABS.filter(function (tab) {
+      return tab.key === resourceTab;
+    })[0];
+    wrap.appendChild(el("p", null, current.blurb));
+    wrap.appendChild(el("p", "empty", current.label + " is not built yet."));
+
+    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+    return wrap;
+  }
+
   function soonPanel(what) {
     return function () {
       var wrap = el("div");
@@ -353,7 +391,7 @@
     enchant: { title: "Enchant", build: enchantPanel, level: 4 },
     upgrades: { title: "Upgrades", build: upgradesPanel },
     display: { title: "Display", build: soonPanel("The display case") },
-    resource: { title: "Resource", build: soonPanel("The resource yard"), level: 2 },
+    resource: { title: "Resource", build: resourcePanel, level: 2 },
     experimentation: { title: "Experimentation", build: soonPanel("Experimentation"), level: 2 },
     awaken: { title: "Awaken", build: soonPanel("Awakening"), level: 12 },
     options: { title: "Options", build: optionsPanel }
