@@ -170,7 +170,7 @@
       state.upgrades[def.key] = tier;
       // The upgrade's lift lives on the rolled base, so it is re-applied
       // here rather than trusting whatever base the save carried.
-      state.base[def.stat] = S.clamp(def.stat, state.base[def.stat] + tier * def.per);
+      U.apply(state, def, tier);
     });
   }
 
