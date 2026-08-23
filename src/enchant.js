@@ -9,6 +9,76 @@
   // The odds stay folded away until asked for, and survive a redraw.
   var showOdds = false;
 
+  // The piece being picked over, and which of its enchants are marked to go.
+  var reforgeId = null;
+  var picked = {};
+
+  function startReforge(id) {
+    reforgeId = id;
+    picked = {};
+  }
+
+  function endReforge() {
+    reforgeId = null;
+    picked = {};
+  }
+
+  function pickedList() {
+    return Object.keys(picked).filter(function (i) { return picked[i]; })
+      .map(Number);
+  }
+
+  // The strip menu: every enchant on the piece, any number of them marked.
+  function reforgeMenu(ctx, item) {
+    var wrap = el("div");
+    wrap.appendChild(el("p", null,
+      "Pick what comes off " + item.name + ". Everything left stays on the " +
+      "piece, and each freed slot can be rolled again."));
+
+    var rows = el("div", "rows");
+    item.enchants.forEach(function (entry, i) {
+      var on = !!picked[i];
+      var row = el("div", "row offer " + entry.rarity + (on ? " picked" : ""));
+      var main = el("div", "row-main");
+      var title = el("div", "row-title", E.label(entry));
+      title.appendChild(el("span", "chip-stat rarity-" + entry.rarity, entry.rarity));
+      main.appendChild(title);
+      main.appendChild(el("div", "muted", entry.text));
+      row.appendChild(main);
+      row.appendChild(button(on ? "PICKED" : "PICK",
+        "mini-btn" + (on ? " strong" : ""), function () {
+          picked[i] = !picked[i];
+          ctx.refresh();
+        }));
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+
+    var chosen = pickedList();
+    var cost = E.reforgeCost(item);
+    var actions = el("div", "btn-group");
+    var go = button("STRIP " + chosen.length + " \u00b7 " + cost, "mini-btn strong",
+      function () {
+        ctx.reforge(item, chosen);
+        endReforge();
+        ctx.refresh();
+      });
+    go.disabled = !chosen.length || ctx.state.silver < cost;
+    go.title = !chosen.length ? "Pick at least one enchant."
+      : ctx.state.silver < cost
+        ? "Short " + (cost - ctx.state.silver) + " silver."
+        : "The next reforge of this piece costs " +
+          Math.round(cost * E.REFORGE_GROWTH) + ".";
+    actions.appendChild(go);
+    actions.appendChild(button("CANCEL", "mini-btn", function () {
+      endReforge();
+      ctx.refresh();
+    }));
+    wrap.appendChild(actions);
+    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+    return wrap;
+  }
+
   var FIRST_REVEAL = 0.35; // seconds after the panel lands
   var REVEAL_GAP = 0.5;    // between one enchant and the next
 
@@ -80,6 +150,16 @@
     }
 
     var items = ctx.state.inventory;
+
+    // A piece being picked over holds the panel until it is done.
+    if (reforgeId !== null) {
+      var picking = items.filter(function (entry) {
+        return entry.id === reforgeId && entry.enchants.length;
+      })[0];
+      if (picking) return reforgeMenu(ctx, picking);
+      endReforge();
+    }
+
     if (!items.length) {
       wrap.appendChild(el("p", "empty", "Nothing on the rack to enchant yet."));
       if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
@@ -118,15 +198,15 @@
       // Strip what is on it and start over, dearer every time.
       if (item.enchants.length) {
         var price = E.reforgeCost(item);
-        var again = button("REFORGE " + price, "mini-btn",
-          function () { ctx.reforge(item); });
+        var again = button("REFORGE " + price, "mini-btn", function () {
+          startReforge(item.id);
+          ctx.refresh();
+        });
         again.disabled = ctx.state.silver < price;
         again.title = ctx.state.silver < price
           ? "Short " + (price - ctx.state.silver) + " silver."
-          : "Strips all " + item.enchants.length + " enchant" +
-            (item.enchants.length === 1 ? "" : "s") + " and frees the slots. " +
-            "The next reforge of this piece costs " +
-            Math.round(price * E.REFORGE_GROWTH) + ".";
+          : "Pick which enchants come off. The next reforge of this piece " +
+            "costs " + Math.round(price * E.REFORGE_GROWTH) + ".";
         group.appendChild(again);
       }
       row.appendChild(group);

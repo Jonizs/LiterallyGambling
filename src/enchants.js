@@ -250,22 +250,29 @@
     return copy;
   }
 
-  function reforge(state, item) {
-    if (!item.enchants.length) {
-      return { ok: false, reason: "Nothing on that piece to strip." };
-    }
+  // Strips the chosen enchants and rebuilds the piece: back to the stats it
+  // was forged with, then whatever was kept laid on again.
+  function reforge(state, item, indexes) {
+    var wanted = (indexes || []).filter(function (i) {
+      return i >= 0 && i < item.enchants.length;
+    });
+    if (!wanted.length) return { ok: false, reason: "Nothing picked to strip." };
     var cost = reforgeCost(item);
     if (state.silver < cost) {
       return { ok: false, reason: "Not enough silver. Reforging costs " + cost + "." };
     }
     state.silver -= cost;
+
+    var kept = item.enchants.filter(function (entry, i) {
+      return wanted.indexOf(i) < 0;
+    });
     var stats = G.baseStatsOf(item);
     Object.keys(stats).forEach(function (key) { item[key] = stats[key]; });
-    var count = item.enchants.length;
     item.enchants = [];
     item.awakenable = false;
+    kept.forEach(function (entry) { apply(item, entry); });
     item.reforges = (item.reforges || 0) + 1;
-    return { ok: true, cost: cost, removed: count };
+    return { ok: true, cost: cost, removed: wanted.length, kept: kept.length };
   }
 
   function label(entry) {
