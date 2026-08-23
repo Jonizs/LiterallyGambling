@@ -9,6 +9,8 @@
     silver:  { label: "Silver ore" },
     gold:    { label: "Gold ore" },
     crystal: { label: "Crystal ore" },
+    common:  { label: "Common schematic" },
+    mold:    { label: "Gear mold" },
     rare:    { label: "Rare schematic" },
     epic:    { label: "Epic schematic" }
   };

@@ -70,6 +70,45 @@
       blurb: "Tools and oddments the forge can turn out." }
   ];
 
+  // Utility crafts: bench work, no anvil roll. They hand back a count, not a
+  // piece with stats.
+  var UTILITY = [
+    { key: "common", name: "Common schematic", cost: { paper: 10, wood: 5 } },
+    { key: "mold", name: "Gear mold", cost: { paper: 5, metal: 10 } }
+  ];
+
+  function utilityTab(ctx, wrap) {
+    var state = ctx.state;
+    var rows = el("div", "rows");
+    UTILITY.forEach(function (craft) {
+      var row = el("div", "row");
+      var main = el("div", "row-main");
+      var title = el("div", "row-title", craft.name);
+      title.appendChild(el("span", "chip-stat tier",
+        "you hold " + state.resources[craft.key]));
+      main.appendChild(title);
+      main.appendChild(costLine(state, craft));
+      row.appendChild(main);
+
+      var short = Object.keys(craft.cost).filter(function (key) {
+        return state.materials[key] < craft.cost[key];
+      });
+      var b = button("MAKE", "mini-btn strong", function () {
+        ctx.makeUtility(craft);
+      });
+      b.disabled = short.length > 0;
+      if (short.length) {
+        b.title = "Short " + short.map(function (key) {
+          return (craft.cost[key] - state.materials[key]) + " " +
+            G.MATERIALS[key].label.toLowerCase();
+        }).join(", ");
+      }
+      row.appendChild(b);
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+  }
+
   function forgePanel(ctx) {
     var wrap = el("div");
 
@@ -90,7 +129,8 @@
     wrap.appendChild(el("p", null, current.blurb));
 
     if (forgeTab !== "gear") {
-      wrap.appendChild(el("p", "empty", "Utility is not built yet."));
+      utilityTab(ctx, wrap);
+      if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
       return wrap;
     }
 
@@ -148,9 +188,12 @@
     var rows = el("div", "rows");
     Object.keys(G.MATERIALS).forEach(function (key) {
       var mat = G.MATERIALS[key];
-      var row = el("div", "row");
+      var open = G.stocked(ctx.state, key);
+      var row = el("div", "row" + (open ? "" : " locked"));
       var main = el("div", "row-main");
-      main.appendChild(el("div", "row-title", mat.label));
+      var title = el("div", "row-title", mat.label);
+      if (!open) title.appendChild(el("span", "chip-stat lock", "Level " + mat.level));
+      main.appendChild(title);
       main.appendChild(el("div", "muted",
         mat.price + " silver each · you hold " + ctx.state.materials[key]));
       row.appendChild(main);
@@ -164,7 +207,8 @@
             : result.reason);
           ctx.refresh();
         });
-        b.disabled = ctx.state.silver < G.priceOf(key, qty);
+        b.disabled = !open || ctx.state.silver < G.priceOf(key, qty);
+        if (!open) b.title = "The shop stocks this from level " + mat.level + ".";
         group.appendChild(b);
       });
       row.appendChild(group);

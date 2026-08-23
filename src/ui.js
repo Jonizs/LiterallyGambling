@@ -216,6 +216,7 @@
       buyUpgrade: buyUpgrade,
       saveInfo: saveInfo,
       devBoost: devBoost,
+      makeUtility: makeUtility,
       startGather: startGather,
       claimGather: claimGather,
       startRefine: startRefine,
@@ -490,6 +491,24 @@
     renderBuffs();
     renderSlots();
     drawPanel();
+  }
+
+  // Utility crafts are bench work: materials in, a count out, no strike.
+  function makeUtility(craft) {
+    var short = Object.keys(craft.cost).some(function (key) {
+      return state.materials[key] < craft.cost[key];
+    });
+    if (short) {
+      view.notice = "Not enough materials for a " + craft.name.toLowerCase() + ".";
+      refresh();
+      return;
+    }
+    Object.keys(craft.cost).forEach(function (key) {
+      state.materials[key] -= craft.cost[key];
+    });
+    state.resources[craft.key] += 1;
+    view.notice = "Made a " + craft.name.toLowerCase() + ".";
+    refresh();
   }
 
   // --- resource yard ------------------------------------------------------
