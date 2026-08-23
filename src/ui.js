@@ -220,6 +220,8 @@
       claimGather: claimGather,
       startRefine: startRefine,
       claimRefine: claimRefine,
+      startCompound: startCompound,
+      claimCompound: claimCompound,
       wipeSave: wipeSave,
       refresh: refresh
     };
@@ -534,12 +536,30 @@
     refresh();
   }
 
+  function startCompound(alloy, qty) {
+    var result = window.Compound.start(state, alloy, qty);
+    view.notice = result.ok
+      ? "Crucible " + (result.index + 1) + ": " + result.qty + " \u00d7 " + alloy.name + "."
+      : result.reason;
+    refresh();
+  }
+
+  function claimCompound(index) {
+    var result = window.Compound.claim(state, index);
+    view.notice = result.ok
+      ? "Pulled " + result.qty + " " + result.alloy.name +
+        (result.qty === 1 ? "" : "s") + " out of crucible " + (index + 1) + "."
+      : result.reason;
+    refresh();
+  }
+
   // A run out in the yard counts down in the open panel, and ticks over to
   // COLLECT on its own when the clock runs out.
   function startClock() {
     setInterval(function () {
       if (view.panel !== "resource") return;
-      if (window.Gather.running(state) || window.Refine.running(state)) drawPanel();
+      if (window.Gather.running(state) || window.Refine.running(state) ||
+          window.Compound.running(state)) drawPanel();
     }, 1000);
   }
 

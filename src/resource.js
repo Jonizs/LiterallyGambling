@@ -14,7 +14,7 @@
     { key: "refine", label: "Refine",
       blurb: "Burn ore down into bars, one bar per ore. One batch at a time." },
     { key: "compound", label: "Compound",
-      blurb: "Bind refined material into the higher alloys." }
+      blurb: "Bind bars into alloys. Three crucibles, up to ten per batch." }
   ];
 
   function gatherTab(ctx, wrap) {
@@ -124,6 +124,78 @@
     wrap.appendChild(rows);
   }
 
+  function compoundTab(ctx, wrap) {
+    var Co = global.Compound, Re = global.Refine, Ga = global.Gather;
+    var state = ctx.state;
+
+    var stock = el("div", "stock");
+    Re.ORES.forEach(function (ore) {
+      stock.appendChild(el("span", "mat" + (state.bars[ore.key] ? "" : " none"),
+        ore.label + " bar " + state.bars[ore.key]));
+    });
+    Co.ALLOYS.forEach(function (alloy) {
+      if (!state.alloys[alloy.key]) return;
+      stock.appendChild(el("span", "coin",
+        alloy.name.replace(" Alloy", "") + " " + state.alloys[alloy.key]));
+    });
+    wrap.appendChild(stock);
+
+    // The three crucibles, whatever is in them.
+    var slots = el("div", "crucibles");
+    for (var i = 0; i < Co.CRUCIBLES; i++) {
+      (function (index) {
+        var job = Co.slot(state, index);
+        var cell = el("div", "crucible" + (job ? " lit" : ""));
+        if (!job) {
+          cell.appendChild(el("div", "row-title", "Crucible " + (index + 1)));
+          cell.appendChild(el("div", "muted", "Cold"));
+        } else {
+          cell.appendChild(el("div", "row-title", job.alloy.name.replace(" Alloy", "")));
+          cell.appendChild(el("div", "muted", "\u00d7" + job.qty));
+          if (Date.now() >= job.endsAt) {
+            cell.appendChild(button("COLLECT", "mini-btn strong",
+              function () { ctx.claimCompound(index); }));
+          } else {
+            cell.appendChild(el("div", "muted", Ga.clockText(job.endsAt - Date.now())));
+          }
+        }
+        slots.appendChild(cell);
+      })(i);
+    }
+    wrap.appendChild(slots);
+
+    var rows = el("div", "rows");
+    Co.ALLOYS.forEach(function (alloy) {
+      var row = el("div", "row");
+      var main = el("div", "row-main");
+      var title = el("div", "row-title", alloy.name);
+      title.appendChild(el("span", "chip-stat tier", Re.durationText(alloy.seconds) + " each"));
+      main.appendChild(title);
+      var line = el("div", "cost-line");
+      Object.keys(alloy.cost).forEach(function (bar) {
+        var need = alloy.cost[bar];
+        var have = state.bars[bar];
+        line.appendChild(el("span", "cost " + (have >= need ? "ok" : "short"),
+          Re.find(bar).label + " bar " + have + "/" + need));
+      });
+      main.appendChild(line);
+      row.appendChild(main);
+
+      var most = Co.affordable(state, alloy);
+      var group = el("div", "btn-group");
+      [1, 5, Co.MAX_BATCH].forEach(function (qty) {
+        var b = button("\u00d7" + qty, "mini-btn",
+          function () { ctx.startCompound(alloy, qty); });
+        b.disabled = Co.freeSlot(state) < 0 || most < qty;
+        if (Co.freeSlot(state) < 0) b.title = "Every crucible is full.";
+        group.appendChild(b);
+      });
+      row.appendChild(group);
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+  }
+
   function build(ctx) {
     var wrap = el("div");
 
@@ -149,7 +221,7 @@
     } else if (resourceTab === "refine") {
       refineTab(ctx, wrap);
     } else {
-      wrap.appendChild(el("p", "empty", current.label + " is not built yet."));
+      compoundTab(ctx, wrap);
     }
 
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
