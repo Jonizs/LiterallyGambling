@@ -1,13 +1,12 @@
 /* Compounding: bars go into a crucible and come out as an alloy. Three
-   crucibles run side by side, one batch makes up to ten alloys, and they are
-   poured one per cook rather than all at the end. */
+   crucibles run side by side, a batch is as big as the bars allow, and they
+   are poured one per cook rather than all at the end. */
 (function (global) {
   "use strict";
 
   var B = global.Batch;
 
   var CRUCIBLES = 3;
-  var MAX_BATCH = 10;
   var RUSH_MULTIPLIER = 5;
 
   // cost is bars per alloy; seconds is the burn for one. A batch multiplies
@@ -80,9 +79,9 @@
     return !!job && B.claimable(job, Date.now()) > 0;
   }
 
-  // The most of this alloy the bars on hand will cover, capped at the batch max.
+  // The most of this alloy the bars on hand will cover.
   function affordable(state, alloy) {
-    var most = MAX_BATCH;
+    var most = Infinity;
     Object.keys(alloy.cost).forEach(function (bar) {
       most = Math.min(most, Math.floor(state.bars[bar] / alloy.cost[bar]));
     });
@@ -101,9 +100,6 @@
   function start(state, alloy, qty) {
     qty = Math.floor(qty);
     if (qty <= 0) return { ok: false, reason: "Nothing to compound." };
-    if (qty > MAX_BATCH) {
-      return { ok: false, reason: "A crucible holds " + MAX_BATCH + " at most." };
-    }
     var index = freeSlot(state);
     if (index < 0) return { ok: false, reason: "Every crucible is full." };
     var short = missingFor(state, alloy, qty);
@@ -194,7 +190,6 @@
 
   global.Compound = {
     CRUCIBLES: CRUCIBLES,
-    MAX_BATCH: MAX_BATCH,
     ALLOYS: ALLOYS,
     find: find,
     slot: slot,

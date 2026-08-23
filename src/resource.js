@@ -38,11 +38,10 @@
     { key: "gather", label: "Gather",
       blurb: "Send a crew out. It costs silver and time, and comes back with ore." },
     { key: "refine", label: "Refine",
-      blurb: "Burn ore down into bars, one bar per ore. Two ovens, up to fifty a " +
-        "batch, and a bar drops every burn." },
+      blurb: "Burn ore down into bars, one bar per ore. Two ovens, and a bar " +
+        "drops every burn." },
     { key: "compound", label: "Compound",
-      blurb: "Bind bars into alloys. Three crucibles, up to ten a batch, poured " +
-        "one at a time." }
+      blurb: "Bind bars into alloys. Three crucibles, poured one at a time." }
   ];
 
   function gatherTab(ctx, wrap) {
@@ -178,14 +177,13 @@
         held));
       row.appendChild(main);
 
-      var most = Math.min(held, Re.MAX_BATCH);
       var group = el("div", "btn-group");
-      [1, 10, most].forEach(function (qty, i) {
+      [1, 10, held].forEach(function (qty, i) {
         var label = i === 2 ? "ALL" : "\u00d7" + qty;
         var b = button(label, "mini-btn", function () { ctx.startRefine(ore, qty); });
-        b.disabled = !free || qty <= 0 || held < qty || qty > Re.MAX_BATCH;
+        b.disabled = !free || qty <= 0 || held < qty;
         if (!free) b.title = "Both ovens are burning.";
-        else if (i === 2) b.title = "Up to " + Re.MAX_BATCH + " an oven.";
+        else if (i === 2) b.title = "Every " + ore.label.toLowerCase() + " ore you hold.";
         group.appendChild(b);
       });
       row.appendChild(group);
@@ -274,11 +272,13 @@
 
       var most = Co.affordable(state, alloy);
       var group = el("div", "btn-group");
-      [1, 5, Co.MAX_BATCH].forEach(function (qty) {
-        var b = button("\u00d7" + qty, "mini-btn",
+      [1, 5, most].forEach(function (qty, i) {
+        var label = i === 2 ? "ALL" : "\u00d7" + qty;
+        var b = button(label, "mini-btn",
           function () { ctx.startCompound(alloy, qty); });
-        b.disabled = Co.freeSlot(state) < 0 || most < qty;
+        b.disabled = Co.freeSlot(state) < 0 || qty <= 0 || most < qty;
         if (Co.freeSlot(state) < 0) b.title = "Every crucible is full.";
+        else if (i === 2) b.title = "Everything the bars on hand will cover.";
         group.appendChild(b);
       });
       row.appendChild(group);

@@ -92,14 +92,20 @@
       main.appendChild(costLine(state, craft));
       row.appendChild(main);
 
+      // The most the materials on hand will cover, so a batch has no ceiling.
+      var most = Object.keys(craft.cost).reduce(function (least, key) {
+        return Math.min(least, Math.floor(state.materials[key] / craft.cost[key]));
+      }, Infinity);
+
       var group = el("div", "btn-group");
-      [1, 10].forEach(function (qty) {
+      [1, 10, most].forEach(function (qty, i) {
         var short = Object.keys(craft.cost).filter(function (key) {
           return state.materials[key] < craft.cost[key] * qty;
         });
-        var b = button(qty === 1 ? "FORGE" : "\u00d710", "mini-btn strong",
+        var label = i === 2 ? "ALL" : qty === 1 ? "FORGE" : "\u00d710";
+        var b = button(label, "mini-btn strong",
           function () { ctx.queue({ utility: true, craft: craft, qty: qty }); });
-        b.disabled = short.length > 0;
+        b.disabled = short.length > 0 || qty <= 0;
         if (short.length) {
           b.title = "Short " + short.map(function (key) {
             return (craft.cost[key] * qty - state.materials[key]) + " " +
