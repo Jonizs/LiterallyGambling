@@ -8,6 +8,8 @@
   --gold-dark: #7a5a25;
   --ink: #f4e3c1;
   --ink-dim: #c9ab7c;
+  --purple: #9a5fd0;
+  --purple-lit: #d3a6f5;
   --green: #7fc36b;
   --red: #d4645c;
   --font: "Courier New", ui-monospace, monospace;
@@ -437,7 +439,7 @@ body {
 .chip-stat.pen { color: #d09ad8; }
 .chip-stat.ench { color: var(--ink); border-color: var(--gold-dark); }
 .chip-stat.ench.uncommon, .chip-stat.rarity-uncommon { color: #6fb7d4; border-color: #6fb7d4; }
-.chip-stat.ench.rare, .chip-stat.rarity-rare { color: var(--gold-lit); border-color: var(--gold); }
+.chip-stat.ench.rare, .chip-stat.rarity-rare { color: var(--purple-lit); border-color: var(--purple); }
 .chip-stat.rarity-common { color: var(--ink-dim); }
 .chip-stat.rarity-common, .chip-stat.rarity-uncommon, .chip-stat.rarity-rare {
   margin-left: 6px;
@@ -527,7 +529,7 @@ body {
 .row.offer { position: relative; overflow: hidden; }
 .row.offer.common { --flash: var(--gold); }
 .row.offer.uncommon { --flash: #6fb7d4; }
-.row.offer.rare { --flash: var(--gold-lit); }
+.row.offer.rare { --flash: var(--purple-lit); }
 
 /* A slot waits as a flat dark silhouette of itself. When its turn comes the
    whole thing strikes in at once: the frame punches out and brightens as the
