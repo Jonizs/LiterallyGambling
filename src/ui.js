@@ -227,6 +227,7 @@
       claimCompound: claimCompound,
       stopCompound: stopCompound,
       rushCompound: rushCompound,
+      discover: discover,
       wipeSave: wipeSave,
       refresh: refresh
     };
@@ -413,6 +414,22 @@
     renderStrike();
     $("pop-sell").textContent = "SELL " + G.sellPrice(item);
     $("result-pop").hidden = false;
+  }
+
+  // A discovered recipe closes the bench and turns in a case on the forge.
+  function discover(recipe) {
+    closePanel();
+    view.notice = "";
+    $("discover-name").textContent = recipe.name;
+    var art = $("discover-icon");
+    art.innerHTML = "";
+    art.appendChild(window.Icons.make(recipe.icon, "icon big"));
+    $("discover-pop").hidden = false;
+    refresh();
+  }
+
+  function closeDiscovery() {
+    $("discover-pop").hidden = true;
   }
 
   function closeResult() {
@@ -737,6 +754,10 @@
       }
     );
     $("overlay-close").addEventListener("click", closePanel);
+    $("discover-close").addEventListener("click", closeDiscovery);
+    $("discover-pop").addEventListener("click", function (ev) {
+      if (ev.target === $("discover-pop")) closeDiscovery();
+    });
     $("overlay").addEventListener("click", function (ev) {
       if (ev.target === $("overlay")) closePanel();
     });
@@ -748,7 +769,9 @@
       if (ev.target === $("result-pop")) closeResult();
     });
     document.addEventListener("keydown", function (ev) {
-      if (ev.key === "Escape") { closePanel(); closeResult(); hideTooltip(); }
+      if (ev.key === "Escape") {
+        closePanel(); closeResult(); closeDiscovery(); hideTooltip();
+      }
     });
     document.addEventListener("click", hideTooltip);
     window.addEventListener("resize", hideTooltip);

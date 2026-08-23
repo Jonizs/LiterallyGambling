@@ -366,6 +366,18 @@
     return made.node;
   }
 
+  // The same icon with the light taken out of it: shape only, for a piece
+  // the smith has not discovered yet.
+  function shadow(key, className) {
+    var made = canvas(className);
+    (DRAW[key] || DRAW.sword)(made.ctx);
+    made.ctx.globalCompositeOperation = "source-in";
+    made.ctx.fillStyle = C.silhouette;
+    made.ctx.fillRect(0, 0, 16, 16);
+    made.ctx.globalCompositeOperation = "source-over";
+    return made.node;
+  }
+
   // Returns a 16x16 canvas holding the icon, scaled up by CSS.
   function make(key, className) {
     var canvas = document.createElement("canvas");
@@ -378,5 +390,5 @@
     return canvas;
   }
 
-  global.Icons = { make: make, bar: bar, alloyBar: alloyBar, METAL: METAL, DRAW: DRAW };
+  global.Icons = { make: make, shadow: shadow, bar: bar, alloyBar: alloyBar, METAL: METAL, DRAW: DRAW };
 })(window);

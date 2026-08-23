@@ -21,6 +21,8 @@
       blurb: "Study the strange finds that do not fit any recipe." }
   ];
 
+  var DISCOVER_EXIT = 560; // ms, matches the row's fold-away in the stylesheet
+
   // Recipes are bought outright with schematics, molds and metal; once the
   // bench has worked one out it stays in the book.
   function recipesTab(ctx, wrap) {
@@ -40,12 +42,18 @@
       row.appendChild(main);
 
       var missing = G.missingResearch(ctx.state, recipe);
-      var b = button("WORK OUT", "mini-btn strong", function () {
+      var b = button("DISCOVER", "mini-btn strong", function () {
         var result = G.learn(ctx.state, recipe);
-        ctx.setNotice(result.ok
-          ? result.recipe.name + " worked out \u2014 it is on the bench now."
-          : result.reason);
-        ctx.refresh();
+        if (!result.ok) {
+          ctx.setNotice(result.reason);
+          ctx.refresh();
+          return;
+        }
+        // The slot flares and folds away before the forge takes over, so the
+        // panel is not redrawn from under the animation.
+        b.disabled = true;
+        row.className += " discovered";
+        setTimeout(function () { ctx.discover(recipe); }, DISCOVER_EXIT);
       });
       b.disabled = missing.length > 0;
       if (missing.length) {
