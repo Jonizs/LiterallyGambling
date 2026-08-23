@@ -216,7 +216,6 @@
       buyUpgrade: buyUpgrade,
       saveInfo: saveInfo,
       devBoost: devBoost,
-      makeUtility: makeUtility,
       startGather: startGather,
       claimGather: claimGather,
       startRefine: startRefine,
@@ -334,6 +333,7 @@
   function doStrike() {
     var recipe = view.pending;
     if (!recipe || view.striking) return;
+    if (recipe.utility) { strikeUtility(recipe); return; }
     // The roll happens before the hammer falls: every blow reveals one more
     // thing about the piece already lying on the anvil.
     var result = G.forge(state, recipe);
@@ -493,34 +493,41 @@
     drawPanel();
   }
 
-  // Utility crafts take one blow at the forge: the materials go in on the
-  // click, the piece lands when the hammer does.
-  function makeUtility(craft) {
-    if (view.striking) return;
-    var short = Object.keys(craft.cost).some(function (key) {
-      return state.materials[key] < craft.cost[key];
+  // Utility crafts ride the same queue as a piece: picking one sets it on the
+  // anvil, and the FORGE! button takes the single blow that finishes it.
+  function affordUtility(craft) {
+    return Object.keys(craft.cost).every(function (key) {
+      return state.materials[key] >= craft.cost[key];
     });
-    if (short) {
-      view.notice = "Not enough materials for a " + craft.name.toLowerCase() + ".";
-      refresh();
+  }
+
+  function strikeUtility(craft) {
+    if (!affordUtility(craft)) {
+      view.pending = null;
+      renderStrike();
       return;
     }
     Object.keys(craft.cost).forEach(function (key) {
       state.materials[key] -= craft.cost[key];
     });
-    view.notice = "";
+    view.pending = null;
     view.striking = true;
-    closePanel();
+    renderStrike();
     renderPurse();
     clearReveals();
+
     scene.strike(1, function () {
       state.resources[craft.key] += 1;
       showReveal({ text: craft.name, tone: "tier" }, 0);
       Save.schedule(state);
       renderPurse();
     }, function () {
-      view.striking = false;
-      renderStrike();
+      setTimeout(function () {
+        view.striking = false;
+        // Enough left for another? Keep it on the anvil, same as a piece.
+        if (!view.pending && affordUtility(craft)) view.pending = craft;
+        renderStrike();
+      }, REVEAL_HOLD);
     });
   }
 

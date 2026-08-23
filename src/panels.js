@@ -70,11 +70,13 @@
       blurb: "Tools and oddments the forge can turn out." }
   ];
 
-  // Utility crafts: bench work, no anvil roll. They hand back a count, not a
-  // piece with stats.
+  // Utility crafts go on the anvil like a piece, but take one blow and hand
+  // back a count rather than something with stats.
   var UTILITY = [
-    { key: "common", name: "Common schematic", cost: { paper: 10, wood: 5 } },
-    { key: "mold", name: "Gear mold", cost: { paper: 5, metal: 10 } }
+    { key: "common", name: "Common schematic", utility: true,
+      cost: { paper: 10, wood: 5 } },
+    { key: "mold", name: "Gear mold", utility: true,
+      cost: { paper: 5, metal: 10 } }
   ];
 
   function utilityTab(ctx, wrap) {
@@ -93,8 +95,8 @@
       var short = Object.keys(craft.cost).filter(function (key) {
         return state.materials[key] < craft.cost[key];
       });
-      var b = button("MAKE", "mini-btn strong", function () {
-        ctx.makeUtility(craft);
+      var b = button("FORGE", "mini-btn strong", function () {
+        ctx.queue(craft);
       });
       b.disabled = short.length > 0;
       if (short.length) {
