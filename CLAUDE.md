@@ -32,6 +32,43 @@
   dependencies, spawn agents, or open panels to prove a change works unless the
   user asks or the change is genuinely risky.
 
+## Running Locally (the user is on Windows / PowerShell)
+
+The user runs this project on a Windows PC in PowerShell. Whenever they ask how
+to launch, run, serve, or pull the project locally, give the COMPLETE set of
+PowerShell commands — every window they need, in order, copy-pasteable, no
+placeholders, no "and then do the usual". Never answer with a single line and
+never assume they already have a window running. Assume nothing is open.
+
+Standard local launch — two PowerShell windows:
+
+```powershell
+# Window 1 — get the latest code and keep it current
+cd $HOME
+git clone https://github.com/Jonizs/LiterallyGambling.git   # first time only
+cd $HOME\LiterallyGambling
+git checkout main
+git pull origin main
+claude                                                       # Claude Code, edits files here
+```
+
+```powershell
+# Window 2 — live-reloading dev server, leave it running
+cd $HOME\LiterallyGambling
+npx -y live-server src --port=8000
+```
+
+`live-server` opens http://127.0.0.1:8000 and reloads the browser on every file
+save, so edits appear instantly with no manual refresh. `python -m http.server`
+does NOT auto-reload — do not recommend it as the main option.
+
+Notes to include when relevant:
+- Stop a server with `Ctrl+C` in its window.
+- Port busy: `npx -y live-server src --port=8001`.
+- Game progress lives in browser localStorage; a hard refresh is
+  `Ctrl+Shift+R`.
+- The project is plain HTML/CSS/JS in `src/` — no build step, no `npm install`.
+
 ## Ruflo Capability Brain & Implementation Loop
 
 Ruflo is the coordination ledger and policy decision point. Claude Code is the
