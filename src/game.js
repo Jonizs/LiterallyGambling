@@ -6,7 +6,6 @@
 
   var MATERIALS = {
     wood:   { label: "Wood",   price: 4 },
-    string: { label: "String", price: 3 },
     metal:  { label: "Metal",  price: 5 }
   };
 
@@ -214,7 +213,7 @@
       silver: STARTING_SILVER,
       level: STARTING_LEVEL,
       xp: 0,
-      materials: { wood: 0, string: 0, metal: 0 },
+      materials: { wood: 0, metal: 0 },
       inventory: [],
       upgrades: {},
       // When the guild last covered a broke smith.

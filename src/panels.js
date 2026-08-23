@@ -143,6 +143,18 @@
     });
     wrap.appendChild(rows);
 
+    // Stock the shop does not carry yet: the shape and nothing else.
+    var locked = el("div", "silhouettes");
+    ["mat-silhouette-1", "mat-silhouette-2",
+     "mat-silhouette-3", "mat-silhouette-4"].forEach(function (icon) {
+      var cell = el("div", "silhouette");
+      cell.appendChild(I.make(icon));
+      cell.appendChild(el("span", "muted", "???"));
+      cell.title = "The shop does not carry this yet.";
+      locked.appendChild(cell);
+    });
+    wrap.appendChild(locked);
+
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
     return wrap;
   }
