@@ -179,17 +179,29 @@
     return function (x, y, tone) { return p[tone]; };
   }
 
-  // Left metal fades into the right one across the bar with an ordered dither,
-  // so an alloy reads as the two bars that went into it.
+  function channel(hex, at) { return parseInt(hex.substr(at, 2), 16); }
+
+  function lerp(a, b, t) {
+    var out = "#";
+    for (var i = 1; i < 7; i += 2) {
+      var v = Math.round(channel(a, i) + (channel(b, i) - channel(a, i)) * t);
+      out += (v < 16 ? "0" : "") + v.toString(16);
+    }
+    return out;
+  }
+
+  // How far along the bar a pixel sits, 0 at the near end and 1 at the far one,
+  // measured along the ingot's own axis rather than straight across the tile.
+  function along(x, y) {
+    var t = ((x - 1) * 11 - (y - 6) * 4) / 137;
+    t = (t - 0.12) / 0.76;                    // hold the ends pure
+    return t < 0 ? 0 : t > 1 ? 1 : t;
+  }
+
+  // One metal pours smoothly into the other down the length of the bar.
   function mixed(a, b) {
     var pa = METAL[a] || METAL.silver, pb = METAL[b] || METAL.gold;
-    return function (x, y, tone) {
-      var t = (x - 3) / 10;
-      if (t <= 0.18) return pa[tone];
-      if (t >= 0.82) return pb[tone];
-      var d = ((x & 1) + (y & 1) * 2) / 4;
-      return (d < t ? pb : pa)[tone];
-    };
+    return function (x, y, tone) { return lerp(pa[tone], pb[tone], along(x, y)); };
   }
 
   Object.keys(METAL).forEach(function (metal) {
