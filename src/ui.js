@@ -215,6 +215,13 @@
       takeEnchant: takeEnchant,
       buyUpgrade: buyUpgrade,
       saveInfo: saveInfo,
+      devBoost: devBoost,
+      startGather: startGather,
+      claimGather: claimGather,
+      startRefine: startRefine,
+      claimRefine: claimRefine,
+      startCompound: startCompound,
+      claimCompound: claimCompound,
       wipeSave: wipeSave,
       refresh: refresh
     };
@@ -326,6 +333,7 @@
   function doStrike() {
     var recipe = view.pending;
     if (!recipe || view.striking) return;
+    if (recipe.utility) { strikeUtility(recipe); return; }
     // The roll happens before the hammer falls: every blow reveals one more
     // thing about the piece already lying on the anvil.
     var result = G.forge(state, recipe);
@@ -485,6 +493,129 @@
     drawPanel();
   }
 
+  // Utility crafts ride the same queue as a piece: picking one sets it on the
+  // anvil, and the FORGE! button takes the blows that finish it. A batch of
+  // ten takes two: a working blow, then everything the smith has.
+  function affordUtility(craft, qty) {
+    return Object.keys(craft.cost).every(function (key) {
+      return state.materials[key] >= craft.cost[key] * qty;
+    });
+  }
+
+  function strikeUtility(job) {
+    var craft = job.craft, qty = job.qty;
+    if (!affordUtility(craft, qty)) {
+      view.pending = null;
+      renderStrike();
+      return;
+    }
+    Object.keys(craft.cost).forEach(function (key) {
+      state.materials[key] -= craft.cost[key] * qty;
+    });
+    view.pending = null;
+    view.striking = true;
+    renderStrike();
+    renderPurse();
+    clearReveals();
+
+    var blows = qty > 1 ? 2 : 1;
+    scene.strike(blows, function (blow) {
+      // The haul lands on the blow that finishes the batch.
+      if (blow < blows) return;
+      state.resources[craft.key] += qty;
+      showReveal({ text: qty + " \u00d7 " + craft.name, tone: "tier" }, 0);
+      Save.schedule(state);
+      renderPurse();
+    }, function () {
+      setTimeout(function () {
+        view.striking = false;
+        // Enough left for another? Keep it on the anvil, same as a piece.
+        if (!view.pending && affordUtility(craft, qty)) view.pending = job;
+        renderStrike();
+      }, REVEAL_HOLD);
+    }, qty > 1);
+  }
+
+  // --- resource yard ------------------------------------------------------
+  function startGather(op) {
+    var result = window.Gather.start(state, op);
+    view.notice = result.ok
+      ? op.name + " sent out for " + window.Gather.durationText(op.minutes) + "."
+      : result.reason;
+    refresh();
+  }
+
+  function claimGather() {
+    var Ga = window.Gather;
+    var result = Ga.claim(state);
+    if (!result.ok) {
+      view.notice = result.reason;
+    } else if (!result.haul.length) {
+      view.notice = result.op.name + " came back empty.";
+    } else {
+      view.notice = result.op.name + " brought back " +
+        result.haul.map(function (entry) {
+          return entry.qty + " " + Ga.RESOURCES[entry.key].label.toLowerCase();
+        }).join(", ") + ".";
+    }
+    refresh();
+  }
+
+  function startRefine(ore, qty) {
+    var Re = window.Refine;
+    var result = Re.start(state, ore, qty);
+    view.notice = result.ok
+      ? result.qty + " " + ore.label.toLowerCase() + " ore in the smelter \u2014 " +
+        Re.durationText(Re.batchSeconds(ore, result.qty)) + "."
+      : result.reason;
+    refresh();
+  }
+
+  function claimRefine() {
+    var result = window.Refine.claim(state);
+    view.notice = result.ok
+      ? "Pulled " + result.qty + " " + result.ore.label.toLowerCase() + " bar" +
+        (result.qty === 1 ? "" : "s") + " out of the smelter."
+      : result.reason;
+    refresh();
+  }
+
+  function startCompound(alloy, qty) {
+    var result = window.Compound.start(state, alloy, qty);
+    view.notice = result.ok
+      ? "Crucible " + (result.index + 1) + ": " + result.qty + " \u00d7 " + alloy.name + "."
+      : result.reason;
+    refresh();
+  }
+
+  function claimCompound(index) {
+    var result = window.Compound.claim(state, index);
+    view.notice = result.ok
+      ? "Pulled " + result.qty + " " + result.alloy.name +
+        (result.qty === 1 ? "" : "s") + " out of crucible " + (index + 1) + "."
+      : result.reason;
+    refresh();
+  }
+
+  // A run out in the yard counts down in the open panel, and ticks over to
+  // COLLECT on its own when the clock runs out.
+  function startClock() {
+    setInterval(function () {
+      if (view.panel !== "resource") return;
+      if (window.Gather.running(state) || window.Refine.running(state) ||
+          window.Compound.running(state)) drawPanel();
+    }, 1000);
+  }
+
+  // Dev shortcut from the options panel: straight to a rich, high-level smith.
+  function devBoost() {
+    state.level = 100;
+    state.xp = 0;
+    state.silver = 100000;
+    view.notice = "Dev boost: level 100, 100,000 silver.";
+    refresh();
+  }
+
   // Options panel readout: whether the save is working and how old it is.
   function saveInfo() {
     if (!Save.supported()) {
@@ -587,6 +718,7 @@
       if (document.visibilityState === "hidden") Save.flush(state);
     });
     Save.save(state);
+    startClock();
     scene.start();
   }
 

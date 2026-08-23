@@ -45,6 +45,12 @@
       level: state.level,
       xp: state.xp,
       materials: state.materials,
+      resources: state.resources,
+      gather: state.gather,
+      bars: state.bars,
+      refine: state.refine,
+      alloys: state.alloys,
+      crucibles: state.crucibles,
       inventory: state.inventory,
       upgrades: state.upgrades,
       base: state.base,
@@ -193,6 +199,49 @@
     if (raw.materials && typeof raw.materials === "object") {
       Object.keys(state.materials).forEach(function (key) {
         state.materials[key] = whole(raw.materials[key], 0);
+      });
+    }
+    if (raw.resources && typeof raw.resources === "object") {
+      Object.keys(state.resources).forEach(function (key) {
+        state.resources[key] = whole(raw.resources[key], 0);
+      });
+    }
+    // A run left out finishes on its own clock, so only the end time matters.
+    if (raw.gather && global.Gather.find(raw.gather.key)) {
+      state.gather = {
+        key: raw.gather.key,
+        startedAt: whole(raw.gather.startedAt, 0),
+        endsAt: whole(raw.gather.endsAt, 0)
+      };
+    }
+    if (raw.bars && typeof raw.bars === "object") {
+      Object.keys(state.bars).forEach(function (key) {
+        state.bars[key] = whole(raw.bars[key], 0);
+      });
+    }
+    if (raw.refine && global.Refine.find(raw.refine.key)) {
+      state.refine = {
+        key: raw.refine.key,
+        qty: whole(raw.refine.qty, 0, 1),
+        startedAt: whole(raw.refine.startedAt, 0),
+        endsAt: whole(raw.refine.endsAt, 0)
+      };
+    }
+    if (raw.alloys && typeof raw.alloys === "object") {
+      Object.keys(state.alloys).forEach(function (key) {
+        state.alloys[key] = whole(raw.alloys[key], 0);
+      });
+    }
+    if (Array.isArray(raw.crucibles)) {
+      state.crucibles.forEach(function (_, i) {
+        var job = raw.crucibles[i];
+        if (!job || !global.Compound.find(job.key)) return;
+        state.crucibles[i] = {
+          key: job.key,
+          qty: whole(job.qty, 0, 1),
+          startedAt: whole(job.startedAt, 0),
+          endsAt: whole(job.endsAt, 0)
+        };
       });
     }
     // A clock that has gone backwards must not hand out an extra payout.

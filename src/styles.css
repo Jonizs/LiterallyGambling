@@ -362,7 +362,7 @@ body {
   gap: var(--gap-sm);
   font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
 }
-.purse span {
+.purse span, .stock span {
   padding: var(--gap-xs) var(--pad-x);
   border: 2px solid var(--gold-dark);
   background: rgba(0,0,0,.3);
@@ -370,13 +370,85 @@ body {
   cursor: help;
 }
 .purse .coin { color: var(--gold-lit); border-color: var(--gold); }
-.purse .mat { color: var(--ink-dim); }
+.purse .mat, .stock .mat { color: var(--ink-dim); }
 
 /* ---------- compact display slots ---------- */
 .slot-row.compact .slot {
   aspect-ratio: auto;
   height: clamp(30px, calc(3.6 * var(--s)), 86px);
 }
+
+/* ---------- gathered stock ---------- */
+.stock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-sm);
+  margin: var(--gap-sm) 0;
+  font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
+}
+.stock span { cursor: default; }
+.stock .none { opacity: .45; }
+
+/* ---------- crucibles ---------- */
+.crucibles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-sm);
+  margin: var(--gap-sm) 0 var(--gap);
+}
+.crucible {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: var(--gap-sm);
+  text-align: center;
+  background: rgba(0,0,0,.22);
+  border: 2px solid rgba(0,0,0,.5);
+}
+.crucible.lit { border-color: var(--gold-dark); background: rgba(0,0,0,.34); }
+
+/* ---------- shop silhouettes ---------- */
+/* Unstocked materials: a material bar with the light taken out of it. */
+.silhouettes { margin-top: var(--gap); }
+.silhouette { background: rgba(0,0,0,.5); border-color: rgba(0,0,0,.7); }
+.silhouette .row-title, .silhouette .muted { color: #8a7457; text-shadow: 1px 1px 0 #000; }
+.silhouette .mini-btn:disabled {
+  color: #8a7457;
+  text-shadow: 1px 1px 0 #000;
+  background: rgba(0,0,0,.55);
+  border-color: rgba(0,0,0,.7);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* ---------- panel tab strip ---------- */
+.tabs {
+  display: flex;
+  gap: var(--gap-sm);
+  margin-bottom: var(--gap);
+  border-bottom: 2px solid var(--gold-dark);
+  padding-bottom: var(--gap-sm);
+}
+.tab {
+  flex: 1;
+  font-family: var(--font);
+  font-size: clamp(10px, calc(1.3 * var(--s)), 30px);
+  letter-spacing: 1px;
+  color: var(--ink-dim);
+  text-shadow: 2px 2px 0 #000;
+  padding: var(--gap-xs) var(--gap-sm);
+  background: rgba(0,0,0,.28);
+  border: 2px solid rgba(0,0,0,.5);
+  box-shadow: 0 2px 0 #000;
+  cursor: pointer;
+}
+.tab.on {
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--wood-lit), var(--wood));
+  border-color: var(--gold);
+}
+@media (hover: hover) { .tab:hover { color: var(--ink); } }
 
 /* ---------- panel rows ---------- */
 .rows { display: flex; flex-direction: column; gap: var(--gap-sm); margin: var(--gap-sm) 0; }
@@ -431,6 +503,9 @@ body {
   border: 2px solid var(--gold-dark);
   color: var(--ink-dim);
 }
+/* A chip that trails a row title gets air, so the box never touches the name. */
+.row-title .chip-stat { margin-left: 12px; }
+
 .chip-stat.tier { color: var(--gold-lit); border-color: var(--gold); }
 .chip-stat.dmg { color: #e08a6a; }
 .chip-stat.arm { color: #8ab4d8; }
@@ -724,6 +799,7 @@ body {
   .mini-btn { font-size: 14px; padding: 8px 14px; min-height: 40px; }
   .chip { font-size: 13px; padding: 8px 12px; }
   .tab-btn { font-size: 14px; padding: 8px 14px; }
+  .tab { font-size: 14px; padding: 10px 8px; min-height: 44px; }
   .help { width: 34px; font-size: 15px; }
   .purse { gap: 6px; }
   .purse span { padding: 6px 10px; }

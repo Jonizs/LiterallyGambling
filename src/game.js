@@ -6,8 +6,9 @@
 
   var MATERIALS = {
     wood:   { label: "Wood",   price: 4 },
-    string: { label: "String", price: 3 },
-    metal:  { label: "Metal",  price: 5 }
+    metal:  { label: "Metal",  price: 5 },
+    // level, where it is set, is the smith level the shop starts stocking it.
+    paper:  { label: "Paper",  price: 25, level: 2 }
   };
 
   // perTier is the stat a tier-1 piece carries; tier multiplies it. combat is
@@ -214,7 +215,16 @@
       silver: STARTING_SILVER,
       level: STARTING_LEVEL,
       xp: 0,
-      materials: { wood: 0, string: 0, metal: 0 },
+      materials: { wood: 0, metal: 0, paper: 0 },
+      // Ore and schematics from the resource yard, and the run that is out.
+      resources: global.Gather.emptyResources(),
+      gather: null,
+      // Bars out of the smelter, and the batch that is burning.
+      bars: global.Refine.emptyBars(),
+      refine: null,
+      // Alloys out of the crucibles, and what each of the three is holding.
+      alloys: global.Compound.emptyAlloys(),
+      crucibles: global.Compound.emptyCrucibles(),
       inventory: [],
       upgrades: {},
       // When the guild last covered a broke smith.
@@ -234,7 +244,16 @@
     return MATERIALS[key].price * qty;
   }
 
+  function stocked(state, key) {
+    var mat = MATERIALS[key];
+    return !mat.level || state.level >= mat.level;
+  }
+
   function buy(state, key, qty) {
+    var mat = MATERIALS[key];
+    if (!stocked(state, key)) {
+      return { ok: false, reason: mat.label + " is stocked from level " + mat.level + "." };
+    }
     var cost = priceOf(key, qty);
     if (state.silver < cost) {
       return { ok: false, reason: "Not enough silver. That costs " + cost + "." };
@@ -359,6 +378,7 @@
     saleDamage: saleDamage,
     CRIT_CAP: CRIT_CAP,
     priceOf: priceOf,
+    stocked: stocked,
     buy: buy,
     STIPEND: STIPEND,
     STIPEND_COOLDOWN: STIPEND_COOLDOWN,

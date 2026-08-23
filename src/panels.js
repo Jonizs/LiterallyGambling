@@ -59,11 +59,85 @@
   }
 
   // --- forge ---------------------------------------------------------------
+  // The tab lives outside the builder so it survives a panel redraw.
+  var forgeTab = "gear";
+
+  var FORGE_TABS = [
+    { key: "gear", label: "Gear",
+      blurb: "Pick a piece to set on the anvil. The strike itself happens at " +
+        "the forge \u2014 every value in the luck window is equally likely." },
+    { key: "utility", label: "Utility",
+      blurb: "Tools and oddments the forge can turn out." }
+  ];
+
+  // Utility crafts go on the anvil like a piece, but take one blow and hand
+  // back a count rather than something with stats.
+  var UTILITY = [
+    { key: "common", name: "Common schematic", utility: true,
+      cost: { paper: 10, wood: 5 } },
+    { key: "mold", name: "Gear mold", utility: true,
+      cost: { paper: 5, metal: 10 } }
+  ];
+
+  function utilityTab(ctx, wrap) {
+    var state = ctx.state;
+    var rows = el("div", "rows");
+    UTILITY.forEach(function (craft) {
+      var row = el("div", "row");
+      var main = el("div", "row-main");
+      var title = el("div", "row-title", craft.name);
+      title.appendChild(el("span", "chip-stat tier",
+        "you hold " + state.resources[craft.key]));
+      main.appendChild(title);
+      main.appendChild(costLine(state, craft));
+      row.appendChild(main);
+
+      var group = el("div", "btn-group");
+      [1, 10].forEach(function (qty) {
+        var short = Object.keys(craft.cost).filter(function (key) {
+          return state.materials[key] < craft.cost[key] * qty;
+        });
+        var b = button(qty === 1 ? "FORGE" : "\u00d710", "mini-btn strong",
+          function () { ctx.queue({ utility: true, craft: craft, qty: qty }); });
+        b.disabled = short.length > 0;
+        if (short.length) {
+          b.title = "Short " + short.map(function (key) {
+            return (craft.cost[key] * qty - state.materials[key]) + " " +
+              G.MATERIALS[key].label.toLowerCase();
+          }).join(", ");
+        }
+        group.appendChild(b);
+      });
+      row.appendChild(group);
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+  }
+
   function forgePanel(ctx) {
     var wrap = el("div");
-    wrap.appendChild(el("p", null,
-      "Pick a piece to set on the anvil. The strike itself happens at the " +
-      "forge \u2014 every value in the luck window is equally likely."));
+
+    var strip = el("div", "tabs");
+    FORGE_TABS.forEach(function (tab) {
+      strip.appendChild(button(tab.label, "tab" + (tab.key === forgeTab ? " on" : ""),
+        function () {
+          forgeTab = tab.key;
+          ctx.setNotice("");
+          ctx.refresh();
+        }));
+    });
+    wrap.appendChild(strip);
+
+    var current = FORGE_TABS.filter(function (tab) {
+      return tab.key === forgeTab;
+    })[0];
+    wrap.appendChild(el("p", null, current.blurb));
+
+    if (forgeTab !== "gear") {
+      utilityTab(ctx, wrap);
+      if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+      return wrap;
+    }
 
     var rows = el("div", "rows");
     G.RECIPES.forEach(function (recipe) {
@@ -119,9 +193,12 @@
     var rows = el("div", "rows");
     Object.keys(G.MATERIALS).forEach(function (key) {
       var mat = G.MATERIALS[key];
-      var row = el("div", "row");
+      var open = G.stocked(ctx.state, key);
+      var row = el("div", "row" + (open ? "" : " locked"));
       var main = el("div", "row-main");
-      main.appendChild(el("div", "row-title", mat.label));
+      var title = el("div", "row-title", mat.label);
+      if (!open) title.appendChild(el("span", "chip-stat lock", "Level " + mat.level));
+      main.appendChild(title);
       main.appendChild(el("div", "muted",
         mat.price + " silver each · you hold " + ctx.state.materials[key]));
       row.appendChild(main);
@@ -135,13 +212,34 @@
             : result.reason);
           ctx.refresh();
         });
-        b.disabled = ctx.state.silver < G.priceOf(key, qty);
+        b.disabled = !open || ctx.state.silver < G.priceOf(key, qty);
+        if (!open) b.title = "The shop stocks this from level " + mat.level + ".";
         group.appendChild(b);
       });
       row.appendChild(group);
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
+
+    // Stock the shop does not carry yet: the same bar as a material, inked out.
+    var locked = el("div", "rows silhouettes");
+    for (var i = 0; i < 4; i++) {
+      var bar = el("div", "row silhouette");
+      var barMain = el("div", "row-main");
+      barMain.appendChild(el("div", "row-title", "???"));
+      barMain.appendChild(el("div", "muted", "??? silver each"));
+      bar.appendChild(barMain);
+      var barGroup = el("div", "btn-group");
+      [1, 10].forEach(function (qty) {
+        var b = button("\u00d7" + qty, "mini-btn", function () {});
+        b.disabled = true;
+        barGroup.appendChild(b);
+      });
+      bar.appendChild(barGroup);
+      bar.title = "The shop does not carry this yet.";
+      locked.appendChild(bar);
+    }
+    wrap.appendChild(locked);
 
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
     return wrap;
@@ -300,6 +398,41 @@
     return wrap;
   }
 
+  // --- experimentation -----------------------------------------------------
+  // The tab lives outside the builder so it survives a panel redraw.
+  var experimentTab = "recipes";
+
+  var EXPERIMENT_TABS = [
+    { key: "recipes", label: "Recipes",
+      blurb: "Work out what the smith can learn to make." },
+    { key: "parts", label: "Parts",
+      blurb: "Break pieces down into the parts they are built from." }
+  ];
+
+  function experimentPanel(ctx) {
+    var wrap = el("div");
+
+    var strip = el("div", "tabs");
+    EXPERIMENT_TABS.forEach(function (tab) {
+      strip.appendChild(button(tab.label, "tab" + (tab.key === experimentTab ? " on" : ""),
+        function () {
+          experimentTab = tab.key;
+          ctx.setNotice("");
+          ctx.refresh();
+        }));
+    });
+    wrap.appendChild(strip);
+
+    var current = EXPERIMENT_TABS.filter(function (tab) {
+      return tab.key === experimentTab;
+    })[0];
+    wrap.appendChild(el("p", null, current.blurb));
+    wrap.appendChild(el("p", "empty", current.label + " is not built yet."));
+
+    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+    return wrap;
+  }
+
   function soonPanel(what) {
     return function () {
       var wrap = el("div");
@@ -317,6 +450,17 @@
       list.appendChild(el("li", null, t));
     });
     wrap.appendChild(list);
+
+    // Dev shortcut: skips the grind so the later rooms can be tested.
+    var dev = el("div", "row");
+    var devMain = el("div", "row-main");
+    devMain.appendChild(el("div", "row-title", "Dev boost"));
+    devMain.appendChild(el("div", "muted", "Sets the smith to level 100 with 100,000 silver."));
+    dev.appendChild(devMain);
+    dev.appendChild(button("BOOST", "mini-btn strong", function () {
+      ctx.devBoost();
+    }));
+    wrap.appendChild(dev);
 
     var info = ctx.saveInfo();
     wrap.appendChild(el("p", "muted", info.text));
@@ -353,11 +497,13 @@
     enchant: { title: "Enchant", build: enchantPanel, level: 4 },
     upgrades: { title: "Upgrades", build: upgradesPanel },
     display: { title: "Display", build: soonPanel("The display case") },
-    resource: { title: "Resource", build: soonPanel("The resource yard"), level: 2 },
-    experimentation: { title: "Experimentation", build: soonPanel("Experimentation"), level: 2 },
+    resource: { title: "Resource", build: function (ctx) {
+      return global.Resource.build(ctx);
+    }, level: 2 },
+    experimentation: { title: "Experimentation", build: experimentPanel, level: 2 },
     awaken: { title: "Awaken", build: soonPanel("Awakening"), level: 12 },
     options: { title: "Options", build: optionsPanel }
   };
 
-  global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, el: el };
+  global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, el: el, button: button };
 })(window);
