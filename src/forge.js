@@ -53,11 +53,12 @@
   var SWING_ARC = 1.15;  // radians the hammer turns between rest and lift
 
   // Start a run of hammer blows. onDone fires once the last one settles.
-  Forge.prototype.strike = function (blows, onImpact, onDone) {
+  // heavyLast lands the final blow with everything the smith has.
+  Forge.prototype.strike = function (blows, onImpact, onDone, heavyLast) {
     if (this.swing) return false;
     this.swing = {
       t: 0, blow: 0, blows: blows || 3, hitThisBlow: false,
-      onImpact: onImpact, onDone: onDone
+      onImpact: onImpact, onDone: onDone, heavyLast: !!heavyLast
     };
     return true;
   };
@@ -93,7 +94,7 @@
     var p = sw.t / HIT_TIME;
     if (!sw.hitThisBlow && p >= IMPACT_AT) {
       sw.hitThisBlow = true;
-      this.impact();
+      this.impact(sw.heavyLast && sw.blow + 1 === sw.blows ? 2.4 : 1);
       if (sw.onImpact) sw.onImpact(sw.blow + 1, sw.blows);
     }
     if (p >= 1) {
@@ -108,15 +109,19 @@
     }
   };
 
-  Forge.prototype.impact = function () {
-    this.shake = 0.14;
-    this.glow = 0.9;
-    this.flash = 0.09;
+  // power is 1 for an ordinary blow; a heavier one shakes, flashes and
+  // throws sparks in proportion.
+  Forge.prototype.impact = function (power) {
+    power = power || 1;
+    this.shake = 0.14 * power;
+    this.glow = Math.min(1.6, 0.9 * power);
+    this.flash = 0.09 * power;
     // Sparks fly wide of the fire, otherwise they are lost against it.
-    for (var i = 0; i < 22; i++) {
+    var count = Math.round(22 * power);
+    for (var i = 0; i < count; i++) {
       var side = i % 2 ? 1 : -1;
       var a = -Math.PI / 2 + side * (0.5 + Math.random() * 1.15);
-      var speed = 50 + Math.random() * 80;
+      var speed = (50 + Math.random() * 80) * (1 + (power - 1) * 0.5);
       this.sparks.push({
         x: STRIKE_X + (Math.random() - 0.5) * 12,
         y: ANVIL_TOP - 1,

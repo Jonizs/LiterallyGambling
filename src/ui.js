@@ -494,21 +494,23 @@
   }
 
   // Utility crafts ride the same queue as a piece: picking one sets it on the
-  // anvil, and the FORGE! button takes the single blow that finishes it.
-  function affordUtility(craft) {
+  // anvil, and the FORGE! button takes the blows that finish it. A batch of
+  // ten takes two: a working blow, then everything the smith has.
+  function affordUtility(craft, qty) {
     return Object.keys(craft.cost).every(function (key) {
-      return state.materials[key] >= craft.cost[key];
+      return state.materials[key] >= craft.cost[key] * qty;
     });
   }
 
-  function strikeUtility(craft) {
-    if (!affordUtility(craft)) {
+  function strikeUtility(job) {
+    var craft = job.craft, qty = job.qty;
+    if (!affordUtility(craft, qty)) {
       view.pending = null;
       renderStrike();
       return;
     }
     Object.keys(craft.cost).forEach(function (key) {
-      state.materials[key] -= craft.cost[key];
+      state.materials[key] -= craft.cost[key] * qty;
     });
     view.pending = null;
     view.striking = true;
@@ -516,19 +518,22 @@
     renderPurse();
     clearReveals();
 
-    scene.strike(1, function () {
-      state.resources[craft.key] += 1;
-      showReveal({ text: craft.name, tone: "tier" }, 0);
+    var blows = qty > 1 ? 2 : 1;
+    scene.strike(blows, function (blow) {
+      // The haul lands on the blow that finishes the batch.
+      if (blow < blows) return;
+      state.resources[craft.key] += qty;
+      showReveal({ text: qty + " \u00d7 " + craft.name, tone: "tier" }, 0);
       Save.schedule(state);
       renderPurse();
     }, function () {
       setTimeout(function () {
         view.striking = false;
         // Enough left for another? Keep it on the anvil, same as a piece.
-        if (!view.pending && affordUtility(craft)) view.pending = craft;
+        if (!view.pending && affordUtility(craft, qty)) view.pending = job;
         renderStrike();
       }, REVEAL_HOLD);
-    });
+    }, qty > 1);
   }
 
   // --- resource yard ------------------------------------------------------

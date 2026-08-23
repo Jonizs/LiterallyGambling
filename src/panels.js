@@ -92,20 +92,23 @@
       main.appendChild(costLine(state, craft));
       row.appendChild(main);
 
-      var short = Object.keys(craft.cost).filter(function (key) {
-        return state.materials[key] < craft.cost[key];
+      var group = el("div", "btn-group");
+      [1, 10].forEach(function (qty) {
+        var short = Object.keys(craft.cost).filter(function (key) {
+          return state.materials[key] < craft.cost[key] * qty;
+        });
+        var b = button(qty === 1 ? "FORGE" : "\u00d710", "mini-btn strong",
+          function () { ctx.queue({ utility: true, craft: craft, qty: qty }); });
+        b.disabled = short.length > 0;
+        if (short.length) {
+          b.title = "Short " + short.map(function (key) {
+            return (craft.cost[key] * qty - state.materials[key]) + " " +
+              G.MATERIALS[key].label.toLowerCase();
+          }).join(", ");
+        }
+        group.appendChild(b);
       });
-      var b = button("FORGE", "mini-btn strong", function () {
-        ctx.queue(craft);
-      });
-      b.disabled = short.length > 0;
-      if (short.length) {
-        b.title = "Short " + short.map(function (key) {
-          return (craft.cost[key] - state.materials[key]) + " " +
-            G.MATERIALS[key].label.toLowerCase();
-        }).join(", ");
-      }
-      row.appendChild(b);
+      row.appendChild(group);
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
