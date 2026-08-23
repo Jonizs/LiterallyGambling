@@ -45,6 +45,8 @@
       level: state.level,
       xp: state.xp,
       materials: state.materials,
+      resources: state.resources,
+      gather: state.gather,
       inventory: state.inventory,
       upgrades: state.upgrades,
       base: state.base,
@@ -194,6 +196,19 @@
       Object.keys(state.materials).forEach(function (key) {
         state.materials[key] = whole(raw.materials[key], 0);
       });
+    }
+    if (raw.resources && typeof raw.resources === "object") {
+      Object.keys(state.resources).forEach(function (key) {
+        state.resources[key] = whole(raw.resources[key], 0);
+      });
+    }
+    // A run left out finishes on its own clock, so only the end time matters.
+    if (raw.gather && global.Gather.find(raw.gather.key)) {
+      state.gather = {
+        key: raw.gather.key,
+        startedAt: whole(raw.gather.startedAt, 0),
+        endsAt: whole(raw.gather.endsAt, 0)
+      };
     }
     // A clock that has gone backwards must not hand out an extra payout.
     state.stipendAt = Math.min(whole(raw.stipendAt, 0), Date.now());

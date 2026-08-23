@@ -362,7 +362,7 @@ body {
   gap: var(--gap-sm);
   font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
 }
-.purse span {
+.purse span, .stock span {
   padding: var(--gap-xs) var(--pad-x);
   border: 2px solid var(--gold-dark);
   background: rgba(0,0,0,.3);
@@ -370,13 +370,24 @@ body {
   cursor: help;
 }
 .purse .coin { color: var(--gold-lit); border-color: var(--gold); }
-.purse .mat { color: var(--ink-dim); }
+.purse .mat, .stock .mat { color: var(--ink-dim); }
 
 /* ---------- compact display slots ---------- */
 .slot-row.compact .slot {
   aspect-ratio: auto;
   height: clamp(30px, calc(3.6 * var(--s)), 86px);
 }
+
+/* ---------- gathered stock ---------- */
+.stock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-sm);
+  margin: var(--gap-sm) 0;
+  font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
+}
+.stock span { cursor: default; }
+.stock .none { opacity: .45; }
 
 /* ---------- shop silhouettes ---------- */
 /* Unstocked materials: a material bar with the light taken out of it. */

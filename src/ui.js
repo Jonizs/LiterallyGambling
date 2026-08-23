@@ -216,6 +216,8 @@
       buyUpgrade: buyUpgrade,
       saveInfo: saveInfo,
       devBoost: devBoost,
+      startGather: startGather,
+      claimGather: claimGather,
       wipeSave: wipeSave,
       refresh: refresh
     };
@@ -486,6 +488,39 @@
     drawPanel();
   }
 
+  // --- resource yard ------------------------------------------------------
+  function startGather(op) {
+    var result = window.Gather.start(state, op);
+    view.notice = result.ok
+      ? op.name + " sent out for " + window.Gather.durationText(op.minutes) + "."
+      : result.reason;
+    refresh();
+  }
+
+  function claimGather() {
+    var Ga = window.Gather;
+    var result = Ga.claim(state);
+    if (!result.ok) {
+      view.notice = result.reason;
+    } else if (!result.haul.length) {
+      view.notice = result.op.name + " came back empty.";
+    } else {
+      view.notice = result.op.name + " brought back " +
+        result.haul.map(function (entry) {
+          return entry.qty + " " + Ga.RESOURCES[entry.key].label.toLowerCase();
+        }).join(", ") + ".";
+    }
+    refresh();
+  }
+
+  // A run out in the yard counts down in the open panel, and ticks over to
+  // COLLECT on its own when the clock runs out.
+  function startClock() {
+    setInterval(function () {
+      if (view.panel === "resource" && window.Gather.running(state)) drawPanel();
+    }, 1000);
+  }
+
   // Dev shortcut from the options panel: straight to a rich, high-level smith.
   function devBoost() {
     state.level = 100;
@@ -597,6 +632,7 @@
       if (document.visibilityState === "hidden") Save.flush(state);
     });
     Save.save(state);
+    startClock();
     scene.start();
   }
 

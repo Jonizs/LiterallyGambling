@@ -214,6 +214,9 @@
       level: STARTING_LEVEL,
       xp: 0,
       materials: { wood: 0, metal: 0 },
+      // Ore and schematics from the resource yard, and the run that is out.
+      resources: global.Gather.emptyResources(),
+      gather: null,
       inventory: [],
       upgrades: {},
       // When the guild last covered a broke smith.
