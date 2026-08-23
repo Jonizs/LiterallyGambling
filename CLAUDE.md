@@ -64,6 +64,16 @@ cd $HOME\LiterallyGambling
 npx -y live-server src --port=8000
 ```
 
+```powershell
+# Window 3 — auto-puller, so cloud-session edits arrive without typing git
+cd $HOME\LiterallyGambling
+powershell -ExecutionPolicy Bypass -File .\scripts\autopull.ps1
+```
+
+Window 3 is only needed when Claude is editing from a cloud/web session; when
+`claude` runs locally in Window 1 the files change on disk directly and
+live-server reloads on its own.
+
 `live-server` opens http://127.0.0.1:8000 and reloads the browser on every file
 save, so edits appear instantly with no manual refresh. `python -m http.server`
 does NOT auto-reload — do not recommend it as the main option.
