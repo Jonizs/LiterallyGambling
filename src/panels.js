@@ -406,7 +406,9 @@
     { key: "recipes", label: "Recipes",
       blurb: "Work out what the smith can learn to make." },
     { key: "parts", label: "Parts",
-      blurb: "Break pieces down into the parts they are built from." }
+      blurb: "Break pieces down into the parts they are built from." },
+    { key: "artifacts", label: "Artifacts",
+      blurb: "Study the strange finds that do not fit any recipe." }
   ];
 
   function experimentPanel(ctx) {
