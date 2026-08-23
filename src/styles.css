@@ -763,6 +763,16 @@ body {
 }
 
 /* ---------- enchant odds ---------- */
+.intro-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-sm);
+}
+.intro-row p { flex: 1; margin: 0; }
+.odds-toggle {
+  flex: none;
+  min-width: clamp(24px, calc(2.6 * var(--s)), 62px);
+}
 .odds {
   display: flex;
   flex-direction: column;

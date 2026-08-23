@@ -6,6 +6,9 @@
   var el = global.Panels.el, button = global.Panels.button,
       itemLine = global.Panels.itemLine;
 
+  // The odds stay folded away until asked for, and survive a redraw.
+  var showOdds = false;
+
   var FIRST_REVEAL = 0.35; // seconds after the panel lands
   var REVEAL_GAP = 0.5;    // between one enchant and the next
 
@@ -82,10 +85,18 @@
       if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
       return wrap;
     }
-    wrap.appendChild(el("p", null,
+    var intro = el("div", "intro-row");
+    intro.appendChild(el("p", null,
       "Rolling three enchants for a piece costs half what it sells for. " +
       "Each one takes an enchant slot."));
-    wrap.appendChild(oddsBoard());
+    intro.appendChild(button(showOdds ? "\u00d7" : "?", "chip odds-toggle",
+      function () {
+        showOdds = !showOdds;
+        ctx.refresh();
+      }));
+    intro.lastChild.title = showOdds ? "Hide the odds." : "What am I rolling against?";
+    wrap.appendChild(intro);
+    if (showOdds) wrap.appendChild(oddsBoard());
 
     var rows = el("div", "rows");
     items.forEach(function (item) {
