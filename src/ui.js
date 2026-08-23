@@ -565,17 +565,18 @@
     var Re = window.Refine;
     var result = Re.start(state, ore, qty);
     view.notice = result.ok
-      ? result.qty + " " + ore.label.toLowerCase() + " ore in the smelter \u2014 " +
+      ? "Oven " + (result.index + 1) + ": " + result.qty + " " +
+        ore.label.toLowerCase() + " ore \u2014 " +
         Re.durationText(Re.batchSeconds(ore, result.qty)) + "."
       : result.reason;
     refresh();
   }
 
-  function claimRefine() {
-    var result = window.Refine.claim(state);
+  function claimRefine(index) {
+    var result = window.Refine.claim(state, index);
     view.notice = result.ok
       ? "Pulled " + result.qty + " " + result.ore.label.toLowerCase() + " bar" +
-        (result.qty === 1 ? "" : "s") + " out of the smelter."
+        (result.qty === 1 ? "" : "s") + " out of oven " + (index + 1) + "."
       : result.reason;
     refresh();
   }

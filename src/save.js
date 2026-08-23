@@ -48,7 +48,7 @@
       resources: state.resources,
       gather: state.gather,
       bars: state.bars,
-      refine: state.refine,
+      ovens: state.ovens,
       alloys: state.alloys,
       crucibles: state.crucibles,
       inventory: state.inventory,
@@ -219,14 +219,18 @@
         state.bars[key] = whole(raw.bars[key], 0);
       });
     }
-    if (raw.refine && global.Refine.find(raw.refine.key)) {
-      state.refine = {
-        key: raw.refine.key,
-        qty: whole(raw.refine.qty, 0, 1),
-        startedAt: whole(raw.refine.startedAt, 0),
-        endsAt: whole(raw.refine.endsAt, 0)
+    // Saves from before the second oven kept a single batch under "refine".
+    var ovens = Array.isArray(raw.ovens) ? raw.ovens : [raw.refine];
+    state.ovens.forEach(function (_, i) {
+      var job = ovens[i];
+      if (!job || !global.Refine.find(job.key)) return;
+      state.ovens[i] = {
+        key: job.key,
+        qty: whole(job.qty, 0, 1),
+        startedAt: whole(job.startedAt, 0),
+        endsAt: whole(job.endsAt, 0)
       };
-    }
+    });
     if (raw.alloys && typeof raw.alloys === "object") {
       Object.keys(state.alloys).forEach(function (key) {
         state.alloys[key] = whole(raw.alloys[key], 0);

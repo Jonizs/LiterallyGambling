@@ -7,7 +7,11 @@
     wood: "#8a5a2b", woodDark: "#5c3a1e", woodLit: "#ab7440",
     leather: "#7d4a24", leatherDark: "#4e2d14", leatherLit: "#a36733",
     gold: "#d9ac4f", goldDark: "#8f6d29", goldLit: "#f5dd9a",
-    shadow: "#241a12", string: "#e8dcc0", silhouette: "#1b1712"
+    shadow: "#241a12", string: "#e8dcc0", silhouette: "#1b1712",
+    stone: "#6b6560", stoneDark: "#33302c", stoneLit: "#928a80",
+    brick: "#8a4b34", brickDark: "#41221a", brickLit: "#b06a48",
+    lava: "#ff8a24", lavaLit: "#ffd76a", lavaDark: "#c2450d",
+    cold: "#191310", mortar: "#57504a"
   };
 
   // What each metal looks like as a poured bar, near enough to the real thing.
@@ -207,6 +211,90 @@
   Object.keys(METAL).forEach(function (metal) {
     DRAW["bar-" + metal] = function (c) { ingot(c, solid(metal)); };
   });
+
+  // --- the smelter kit ------------------------------------------------------
+  // Shared shapes: the same mask is drawn cold or lit, so a busy oven is the
+  // idle one with fire in it.
+  var CRUCIBLE = [
+    "................",
+    "................",
+    "..oooooooooooo..",
+    ".oIIIIIIIIIIIIo.",
+    "ooIIIIIIIIIIIIoo",
+    "hoSSSSSSSSSSSSoh",
+    "hoSSSSSSSSSSSSoh",
+    "ooSSSSSSSSSSSSoo",
+    ".oSSSSSSSSSSSSo.",
+    "..oSSSSSSSSSSo..",
+    "...oSSSSSSSSo...",
+    "....oSSSSSSo....",
+    "....oooooooo....",
+    ".....o....o.....",
+    "....ooo..ooo....",
+    "................"
+  ];
+
+  var OVEN = [
+    "................",
+    "..........ccc...",
+    "..........ccc...",
+    ".bbbbbbbbbbbbbb.",
+    ".bmbbmbbmbbmbbb.",
+    ".bbbbbbbbbbbbbb.",
+    ".bbbbmIIIImbbbb.",
+    ".bmbbIIIIIIbbmb.",
+    ".bbbbIIIIIIbbbb.",
+    ".bmbbIIIIIIbbmb.",
+    ".bbbbIIIIIIbbbb.",
+    ".bmbbIIIIIIbbmb.",
+    ".bbbbbbbbbbbbbb.",
+    ".bbmbbbmbbbmbbb.",
+    "oooooooooooooooo",
+    "................"
+  ];
+
+  var COLD_PAINT = {
+    o: C.stoneDark, S: C.stone, h: C.stoneDark, I: C.cold,
+    b: C.brick, m: C.mortar, c: C.brickDark
+  };
+
+  var LIT_PAINT = {
+    o: C.stoneDark, S: C.stoneLit, h: C.stoneDark, I: C.lava,
+    b: C.brickLit, m: C.brick, c: C.brickDark
+  };
+
+  function paint(c, mask, palette) {
+    for (var y = 0; y < mask.length; y++) {
+      var row = mask[y];
+      for (var x = 0; x < row.length; x++) {
+        var color = palette[row.charAt(x)];
+        if (color) px(c, x, y, 1, 1, color);
+      }
+    }
+  }
+
+  // Molten metal is not flat: brighter at the surface, darker at the rim.
+  function molten(c, mask) {
+    for (var y = 0; y < mask.length; y++) {
+      var row = mask[y];
+      for (var x = 0; x < row.length; x++) {
+        if (row.charAt(x) !== "I") continue;
+        var edge = row.charAt(x - 1) !== "I" || row.charAt(x + 1) !== "I";
+        px(c, x, y, 1, 1, edge ? C.lavaDark : ((x + y) % 3 ? C.lava : C.lavaLit));
+      }
+    }
+  }
+
+  DRAW.crucible = function (c) { paint(c, CRUCIBLE, COLD_PAINT); };
+  DRAW["crucible-lit"] = function (c) {
+    paint(c, CRUCIBLE, LIT_PAINT);
+    molten(c, CRUCIBLE);
+  };
+  DRAW.oven = function (c) { paint(c, OVEN, COLD_PAINT); };
+  DRAW["oven-lit"] = function (c) {
+    paint(c, OVEN, LIT_PAINT);
+    molten(c, OVEN);
+  };
 
   function canvas(className) {
     var node = document.createElement("canvas");
