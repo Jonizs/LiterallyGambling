@@ -6,6 +6,8 @@
   var el = global.Panels.el, button = global.Panels.button,
       costLine = global.Panels.costLine;
 
+
+
   // --- experimentation -----------------------------------------------------
   // The tab lives outside the builder so it survives a panel redraw.
   var experimentTab = "recipes";
@@ -32,14 +34,8 @@
       var row = el("div", "row");
       row.appendChild(I.make(recipe.icon));
       var main = el("div", "row-main");
-      var title = el("div", "row-title", recipe.name);
-      title.appendChild(el("span", "chip-stat dmg",
-        recipe.perTier.damage + " dmg"));
-      title.appendChild(el("span", "chip-stat", recipe.perTier.durability + " dur"));
-      if (recipe.combat.pen) {
-        title.appendChild(el("span", "chip-stat pen", recipe.combat.pen + " pen"));
-      }
-      main.appendChild(title);
+      main.appendChild(el("div", "row-title", recipe.name));
+      main.appendChild(global.Panels.recipeStats(recipe));
       main.appendChild(costLine(ctx.state, G.researchCost(recipe)));
       row.appendChild(main);
 
