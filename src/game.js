@@ -221,7 +221,7 @@
       gather: null,
       // Bars out of the smelter, and the batch that is burning.
       bars: global.Refine.emptyBars(),
-      refine: null,
+      ovens: global.Refine.emptyOvens(),
       // Alloys out of the crucibles, and what each of the three is holding.
       alloys: global.Compound.emptyAlloys(),
       crucibles: global.Compound.emptyCrucibles(),

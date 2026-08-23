@@ -28,7 +28,7 @@
     { key: "gather", label: "Gather",
       blurb: "Send a crew out. It costs silver and time, and comes back with ore." },
     { key: "refine", label: "Refine",
-      blurb: "Burn ore down into bars, one bar per ore. One batch at a time." },
+      blurb: "Burn ore down into bars, one bar per ore. Two ovens, up to fifty a batch." },
     { key: "compound", label: "Compound",
       blurb: "Bind bars into alloys. Three crucibles, up to ten per batch." }
   ];
@@ -102,11 +102,35 @@
     });
     wrap.appendChild(stock);
 
-    var job = Re.running(state);
+    // The two ovens, lit while they burn.
+    var kit = el("div", "kit two");
+    for (var i = 0; i < Re.OVENS; i++) {
+      (function (index) {
+        var job = Re.slot(state, index);
+        var cell = el("div", "crucible" + (job ? " lit" : ""));
+        cell.appendChild(global.Icons.make(job ? "oven-lit" : "oven", "icon"));
+        if (!job) {
+          cell.appendChild(el("div", "row-title", "Oven " + (index + 1)));
+          cell.appendChild(el("div", "muted", "Out"));
+        } else {
+          cell.appendChild(el("div", "row-title", job.ore.label));
+          cell.appendChild(el("div", "muted", "\u00d7" + job.qty));
+          if (Re.done(state, index)) {
+            cell.appendChild(button("COLLECT", "mini-btn strong",
+              function () { ctx.claimRefine(index); }));
+          } else {
+            cell.appendChild(el("div", "muted", Ga.clockText(Re.remaining(state, index))));
+          }
+        }
+        kit.appendChild(cell);
+      })(i);
+    }
+    wrap.appendChild(kit);
+
+    var free = Re.freeSlot(state) >= 0;
     var rows = el("div", "rows");
     Re.ORES.forEach(function (ore) {
       var held = state.resources[ore.key];
-      var burning = job && job.ore.key === ore.key;
       var row = el("div", "row");
 
       var main = el("div", "row-main");
@@ -119,25 +143,17 @@
         " per bar \u00b7 you hold " + held));
       row.appendChild(main);
 
-      if (burning && Re.done(state)) {
-        row.appendChild(button("COLLECT " + job.qty, "mini-btn strong",
-          function () { ctx.claimRefine(); }));
-      } else if (burning) {
-        var wait = button(Ga.clockText(Re.remaining(state)), "mini-btn", function () {});
-        wait.disabled = true;
-        wait.title = job.qty + " " + ore.label.toLowerCase() + " ore in the smelter.";
-        row.appendChild(wait);
-      } else {
-        var group = el("div", "btn-group");
-        [1, 10, held].forEach(function (qty, i) {
-          var label = i === 2 ? "ALL" : "\u00d7" + qty;
-          var b = button(label, "mini-btn", function () { ctx.startRefine(ore, qty); });
-          b.disabled = !!job || held < qty || qty <= 0;
-          if (job) b.title = "The smelter is busy.";
-          group.appendChild(b);
-        });
-        row.appendChild(group);
-      }
+      var most = Math.min(held, Re.MAX_BATCH);
+      var group = el("div", "btn-group");
+      [1, 10, most].forEach(function (qty, i) {
+        var label = i === 2 ? "ALL" : "\u00d7" + qty;
+        var b = button(label, "mini-btn", function () { ctx.startRefine(ore, qty); });
+        b.disabled = !free || qty <= 0 || held < qty || qty > Re.MAX_BATCH;
+        if (!free) b.title = "Both ovens are burning.";
+        else if (i === 2) b.title = "Up to " + Re.MAX_BATCH + " an oven.";
+        group.appendChild(b);
+      });
+      row.appendChild(group);
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
@@ -161,11 +177,12 @@
     wrap.appendChild(stock);
 
     // The three crucibles, whatever is in them.
-    var slots = el("div", "crucibles");
+    var slots = el("div", "kit");
     for (var i = 0; i < Co.CRUCIBLES; i++) {
       (function (index) {
         var job = Co.slot(state, index);
         var cell = el("div", "crucible" + (job ? " lit" : ""));
+        cell.appendChild(global.Icons.make(job ? "crucible-lit" : "crucible", "icon"));
         if (!job) {
           cell.appendChild(el("div", "row-title", "Crucible " + (index + 1)));
           cell.appendChild(el("div", "muted", "Cold"));
