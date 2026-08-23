@@ -14,15 +14,15 @@
     { key: "quality-control", name: "Quality Control", stat: "quality", per: 5,
       level: 5,
       costs: [650, 715, 780, 850, 915, 980, 1050, 1120, 1185, 1250] },
-    { key: "good-grip", name: "Good Grip", stats: ["rarity", "quality"], per: 5,
+    { key: "psa-bribery", name: "PSA Bribery", stat: "edition", per: 1,
       level: 1,
-      costs: [3000, 4000, 5000, 6000, 7000] },
+      costs: [5000] },
     { key: "deep-thinking", name: "Deep Thinking", stat: "eslots", per: 1,
       level: 1,
       costs: [3500] },
-    { key: "psa-bribery", name: "PSA Bribery", stat: "edition", per: 1,
+    { key: "good-grip", name: "Good Grip", stats: ["rarity", "quality"], per: 5,
       level: 1,
-      costs: [5000] }
+      costs: [3000, 4000, 5000, 6000, 7000] }
   ];
 
   // Every upgrade reads as a list of stats, whether it lifts one or two.
