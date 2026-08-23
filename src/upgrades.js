@@ -5,15 +5,37 @@
   var S = global.Stats;
 
   // costs is the price of each tier in turn, so the length sets how many
-  // tiers an upgrade has. level is the smith level it unlocks at.
+  // tiers an upgrade has. level is the smith level it unlocks at. stat is
+  // what the tier lifts; an upgrade that lifts two carries stats instead.
   var UPGRADES = [
     { key: "polished-anvil", name: "Polished Anvil", stat: "rarity", per: 10,
       level: 1,
       costs: [400, 480, 540, 600, 680] },
     { key: "quality-control", name: "Quality Control", stat: "quality", per: 5,
       level: 5,
-      costs: [650, 715, 780, 850, 915, 980, 1050, 1120, 1185, 1250] }
+      costs: [650, 715, 780, 850, 915, 980, 1050, 1120, 1185, 1250] },
+    { key: "good-grip", name: "Good Grip", stats: ["rarity", "quality"], per: 5,
+      level: 1,
+      costs: [3000, 4000, 5000, 6000, 7000] },
+    { key: "deep-thinking", name: "Deep Thinking", stat: "eslots", per: 1,
+      level: 1,
+      costs: [3500] },
+    { key: "psa-bribery", name: "PSA Bribery", stat: "edition", per: 1,
+      level: 1,
+      costs: [5000] }
   ];
+
+  // Every upgrade reads as a list of stats, whether it lifts one or two.
+  function statsOf(def) {
+    return def.stats || [def.stat];
+  }
+
+  // Puts a tier's lift on the base the forge rolls around.
+  function apply(state, def, tiers) {
+    statsOf(def).forEach(function (key) {
+      state.base[key] = S.clamp(key, state.base[key] + def.per * tiers);
+    });
+  }
 
   function defFor(key) {
     for (var i = 0; i < UPGRADES.length; i++) {
@@ -41,7 +63,8 @@
   }
 
   function describe(def) {
-    return "+" + def.per + " " + S.STATS[def.stat].label + " per tier";
+    var labels = statsOf(def).map(function (key) { return S.STATS[key].label; });
+    return "+" + def.per + " " + labels.join(" and ") + " per tier";
   }
 
   function built(state, def) {
@@ -63,13 +86,15 @@
     state.upgrades[def.key] = tierOf(state, def) + 1;
     // The lift lands on the base the forge rolls around, so the buff readout
     // and the strike forecast both pick it up for free.
-    state.base[def.stat] = S.clamp(def.stat, state.base[def.stat] + def.per);
+    apply(state, def, 1);
     return { ok: true, cost: cost, tier: state.upgrades[def.key] };
   }
 
   global.Upgrades = {
     UPGRADES: UPGRADES,
     defFor: defFor,
+    statsOf: statsOf,
+    apply: apply,
     unlocked: unlocked,
     maxTier: maxTier,
     tierOf: tierOf,
