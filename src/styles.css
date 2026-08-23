@@ -382,10 +382,10 @@ body {
 /* Unstocked materials: a material bar with the light taken out of it. */
 .silhouettes { margin-top: var(--gap); }
 .silhouette { background: rgba(0,0,0,.5); border-color: rgba(0,0,0,.7); }
-.silhouette .row-title, .silhouette .muted { color: #1b1712; text-shadow: none; }
+.silhouette .row-title, .silhouette .muted { color: #8a7457; text-shadow: 1px 1px 0 #000; }
 .silhouette .mini-btn:disabled {
-  color: #1b1712;
-  text-shadow: none;
+  color: #8a7457;
+  text-shadow: 1px 1px 0 #000;
   background: rgba(0,0,0,.55);
   border-color: rgba(0,0,0,.7);
   opacity: 1;
