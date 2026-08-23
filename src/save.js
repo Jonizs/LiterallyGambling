@@ -35,6 +35,19 @@
     return Math.max(min === undefined ? 0 : min, n);
   }
 
+  // A batch job, as an oven or a crucible keeps it. Saves written before
+  // batches paid out one at a time carry no unit time or taken count.
+  function readJob(job, seconds) {
+    var qty = whole(job.qty, 0, 1);
+    return {
+      key: job.key,
+      qty: qty,
+      taken: Math.min(qty, whole(job.taken, 0)),
+      startedAt: whole(job.startedAt, 0),
+      unitMs: whole(job.unitMs, seconds * 1000, 1)
+    };
+  }
+
   // ---- writing -------------------------------------------------------
 
   function snapshot(state) {
@@ -222,14 +235,9 @@
     // Saves from before the second oven kept a single batch under "refine".
     var ovens = Array.isArray(raw.ovens) ? raw.ovens : [raw.refine];
     state.ovens.forEach(function (_, i) {
-      var job = ovens[i];
-      if (!job || !global.Refine.find(job.key)) return;
-      state.ovens[i] = {
-        key: job.key,
-        qty: whole(job.qty, 0, 1),
-        startedAt: whole(job.startedAt, 0),
-        endsAt: whole(job.endsAt, 0)
-      };
+      var job = ovens[i], ore = job && global.Refine.find(job.key);
+      if (!ore) return;
+      state.ovens[i] = readJob(job, ore.seconds);
     });
     if (raw.alloys && typeof raw.alloys === "object") {
       Object.keys(state.alloys).forEach(function (key) {
@@ -238,14 +246,9 @@
     }
     if (Array.isArray(raw.crucibles)) {
       state.crucibles.forEach(function (_, i) {
-        var job = raw.crucibles[i];
-        if (!job || !global.Compound.find(job.key)) return;
-        state.crucibles[i] = {
-          key: job.key,
-          qty: whole(job.qty, 0, 1),
-          startedAt: whole(job.startedAt, 0),
-          endsAt: whole(job.endsAt, 0)
-        };
+        var job = raw.crucibles[i], alloy = job && global.Compound.find(job.key);
+        if (!alloy) return;
+        state.crucibles[i] = readJob(job, alloy.seconds);
       });
     }
     // A clock that has gone backwards must not hand out an extra payout.

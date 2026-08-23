@@ -1,7 +1,10 @@
 /* Refining: ore goes into an oven and comes back as bars, one for one. Two
-   ovens burn side by side, and one batch holds up to fifty ore. */
+   ovens burn side by side, one batch holds up to fifty ore, and the bars come
+   out one per burn rather than all at the end. */
 (function (global) {
   "use strict";
+
+  var B = global.Batch;
 
   var OVENS = 2;
   var MAX_BATCH = 50;
@@ -21,13 +24,20 @@
     return null;
   }
 
-  // An oven holds {key, qty, endsAt} or null when it is out.
+  // An oven holds a batch job or null when it is out.
   function slot(state, index) {
     var job = state.ovens[index];
     if (!job) return null;
     var ore = find(job.key);
     if (!ore) { state.ovens[index] = null; return null; }
-    return { ore: ore, qty: job.qty, endsAt: job.endsAt };
+    return {
+      ore: ore,
+      qty: job.qty,
+      taken: job.taken,
+      ready: B.claimable(job, Date.now()),
+      startedAt: job.startedAt,
+      endsAt: B.endsAt(job)
+    };
   }
 
   function freeSlot(state) {
@@ -47,19 +57,20 @@
 
   function running(state) { return busy(state) > 0; }
 
+  // Time until the next bar drops, not until the whole batch is through.
   function remaining(state, index) {
-    var job = slot(state, index);
-    return job ? Math.max(0, job.endsAt - Date.now()) : 0;
+    var job = state.ovens[index];
+    return job ? B.nextIn(job, Date.now()) : 0;
   }
 
   function done(state, index) {
-    var job = slot(state, index);
-    return !!job && Date.now() >= job.endsAt;
+    var job = state.ovens[index];
+    return !!job && B.claimable(job, Date.now()) > 0;
   }
 
   function batchSeconds(ore, qty) { return ore.seconds * qty; }
 
-  // The ore is spent going in, so a batch cannot be cancelled for a refund.
+  // The ore is spent going in; stopping hands back only what has not been lit.
   function start(state, ore, qty) {
     qty = Math.floor(qty);
     if (qty <= 0) return { ok: false, reason: "Nothing to refine." };
@@ -76,19 +87,36 @@
     state.ovens[index] = {
       key: ore.key,
       qty: qty,
+      taken: 0,
       startedAt: Date.now(),
-      endsAt: Date.now() + batchSeconds(ore, qty) * 1000
+      unitMs: ore.seconds * 1000
     };
     return { ok: true, index: index, qty: qty };
   }
 
+  // Carry off every bar that has finished so far; the rest keeps burning.
   function claim(state, index) {
-    var job = slot(state, index);
+    var job = state.ovens[index];
     if (!job) return { ok: false, reason: "That oven is out." };
-    if (Date.now() < job.endsAt) return { ok: false, reason: "Still burning." };
-    state.bars[job.ore.key] += job.qty;
-    state.ovens[index] = null;
-    return { ok: true, ore: job.ore, qty: job.qty };
+    var ore = find(job.key);
+    var count = B.claim(job, Date.now());
+    if (!count) return { ok: false, reason: "Still burning." };
+    state.bars[ore.key] += count;
+    var left = job.qty - job.taken;
+    if (!left) state.ovens[index] = null;
+    return { ok: true, ore: ore, qty: count, left: left };
+  }
+
+  // The ore in the fire has to burn through; anything queued behind it comes
+  // back to the yard.
+  function stop(state, index) {
+    var job = state.ovens[index];
+    if (!job) return { ok: false, reason: "That oven is out." };
+    var cancelled = B.stop(job, Date.now());
+    if (!cancelled) return { ok: false, reason: "Only the last one is left." };
+    var ore = find(job.key);
+    state.resources[ore.key] += cancelled;
+    return { ok: true, ore: ore, qty: cancelled };
   }
 
   // 10s, 3m, 1h 40m — the shape a batch is quoted in.
@@ -128,6 +156,7 @@
     batchSeconds: batchSeconds,
     start: start,
     claim: claim,
+    stop: stop,
     durationText: durationText,
     emptyOvens: emptyOvens,
     emptyBars: emptyBars
