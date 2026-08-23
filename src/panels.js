@@ -22,14 +22,29 @@
   var FIRST_REVEAL = 0.35; // seconds after the panel lands
   var REVEAL_GAP = 0.5;    // between one enchant and the next
 
-  function costLine(state, recipe) {
+  // A cost can call on materials, bars, alloys and the yard's own stock, so
+  // the chips are built from wherever each part of it lives.
+  var COST_POOLS = [
+    { on: "cost", from: "materials",
+      label: function (key) { return G.MATERIALS[key].label; } },
+    { on: "resources", from: "resources",
+      label: function (key) { return global.Gather.RESOURCES[key].label; } },
+    { on: "bars", from: "bars",
+      label: function (key) { return global.Refine.find(key).label + " bar"; } },
+    { on: "alloys", from: "alloys",
+      label: function (key) { return global.Compound.find(key).name; } }
+  ];
+
+  function costLine(state, need) {
     var line = el("div", "cost-line");
-    Object.keys(recipe.cost).forEach(function (key) {
-      var need = recipe.cost[key];
-      var have = state.materials[key];
-      var chip = el("span", "cost " + (have >= need ? "ok" : "short"),
-        G.MATERIALS[key].label + " " + have + "/" + need);
-      line.appendChild(chip);
+    COST_POOLS.forEach(function (pool) {
+      var want = need[pool.on];
+      if (!want) return;
+      Object.keys(want).forEach(function (key) {
+        var have = state[pool.from][key];
+        line.appendChild(el("span", "cost " + (have >= want[key] ? "ok" : "short"),
+          pool.label(key) + " " + have + "/" + want[key]));
+      });
     });
     return line;
   }
@@ -165,7 +180,9 @@
       }
       title.appendChild(el("span", "muted",
         recipe.kind === "weapon" ? "  damage" : "  armor"));
-      if (!open) title.appendChild(el("span", "chip-stat lock", "Level " + recipe.level));
+      var unread = recipe.research && !G.known(ctx.state, recipe);
+      if (unread) title.appendChild(el("span", "chip-stat lock", "Not worked out"));
+      else if (!open) title.appendChild(el("span", "chip-stat lock", "Level " + recipe.level));
       main.appendChild(title);
       main.appendChild(costLine(ctx.state, recipe));
       row.appendChild(main);
@@ -175,11 +192,13 @@
         ctx.queue(recipe);
       });
       b.disabled = !ready;
-      if (!open) {
+      if (unread) {
+        b.title = "Work it out at the experimentation bench first.";
+      } else if (!open) {
         b.title = "Unlocks at smith level " + recipe.level + ".";
       } else if (!ready) {
         var missing = G.missingFor(ctx.state, recipe).map(function (m) {
-          return m.short + " " + G.MATERIALS[m.key].label.toLowerCase();
+          return m.short + " " + m.label.toLowerCase();
         });
         b.title = "Short " + missing.join(", ");
       }
@@ -362,43 +381,6 @@
     return wrap;
   }
 
-  // --- experimentation -----------------------------------------------------
-  // The tab lives outside the builder so it survives a panel redraw.
-  var experimentTab = "recipes";
-
-  var EXPERIMENT_TABS = [
-    { key: "recipes", label: "Recipes",
-      blurb: "Work out what the smith can learn to make." },
-    { key: "parts", label: "Parts",
-      blurb: "Break pieces down into the parts they are built from." },
-    { key: "artifacts", label: "Artifacts",
-      blurb: "Study the strange finds that do not fit any recipe." }
-  ];
-
-  function experimentPanel(ctx) {
-    var wrap = el("div");
-
-    var strip = el("div", "tabs");
-    EXPERIMENT_TABS.forEach(function (tab) {
-      strip.appendChild(button(tab.label, "tab" + (tab.key === experimentTab ? " on" : ""),
-        function () {
-          experimentTab = tab.key;
-          ctx.setNotice("");
-          ctx.refresh();
-        }));
-    });
-    wrap.appendChild(strip);
-
-    var current = EXPERIMENT_TABS.filter(function (tab) {
-      return tab.key === experimentTab;
-    })[0];
-    wrap.appendChild(el("p", null, current.blurb));
-    wrap.appendChild(el("p", "empty", current.label + " is not built yet."));
-
-    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
-    return wrap;
-  }
-
   function soonPanel(what) {
     return function () {
       var wrap = el("div");
@@ -468,10 +450,13 @@
     resource: { title: "Resource", build: function (ctx) {
       return global.Resource.build(ctx);
     }, level: 2 },
-    experimentation: { title: "Experimentation", build: experimentPanel, level: 2 },
+    experimentation: { title: "Experimentation", build: function (ctx) {
+      return global.Experiment.build(ctx);
+    }, level: 2 },
     awaken: { title: "Awaken", build: soonPanel("Awakening"), level: 12 },
     options: { title: "Options", build: optionsPanel }
   };
 
-  global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, el: el, button: button };
+  global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, costLine: costLine,
+    el: el, button: button };
 })(window);
