@@ -120,30 +120,31 @@
       px(c, 6, 14, 5, 2, C.gold);             // pommel
       px(c, 7, 15, 1, 1, C.goldLit);
     },
-    crackbolt: (function () {               // kunai: cornered ring, checked
-      var MASK = [                          // wrap, blade split by its ridge
-        "......####......",
+    crackbolt: (function () {               // kunai: ridged blade, ring pommel
+      var MASK = [
+        ".......LD.......",
+        "......#LD#......",
+        ".....#LLDD#.....",
+        ".....#LLDD#.....",
+        "....#LLLDDD#....",
+        "....#LLLDDD#....",
+        "...#LLLLDDDD#...",
+        "...#LLLLDDDD#...",
+        "....#LLLDDD#....",
+        ".....#LLDD#.....",
+        "......#EE#......",
+        "......#WW#......",
+        "......#WW#......",
         ".....#SSSS#.....",
-        "....#S#..#S#....",
-        ".....#SSSS#.....",
-        "......#rW#......",
-        "......#Wr#......",
-        ".....######.....",
-        "....#WWD#DD#....",
-        "..#WWWWD#DDDD#..",
-        "#WWWWWWD#DDDDDD#",
-        "#WWWWWWD#DDDDDD#",
-        "..#WWWWD#DDDD#..",
-        "....#WWD#DD#....",
-        ".....#WD#D#.....",
-        "......#D#D#.....",
-        ".......###......"
+        ".....#S..S#.....",
+        ".....#SSSS#....."
       ];
       var PAINT = {
-        "#": "#111111",                     // outline and the ridge line
-        W: "#ffffff", D: "#666666",         // blade, lit face and shaded face
-        S: "#8c8c8c",                       // ring
-        r: "#a03a2a"                        // wrap between the grip's plates
+        "#": C.shadow,                      // outline
+        L: C.steelLit, D: C.steel,          // blade: lit face, shaded face
+        E: C.gold,                          // electrum collar
+        W: C.dark,                          // cord wrap
+        S: C.steelDark                      // ring pommel
       };
       return function (c) {
         for (var y = 0; y < MASK.length; y++) {
