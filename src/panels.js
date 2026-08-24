@@ -96,11 +96,7 @@
       blurb: "Pick a piece to set on the anvil. The strike itself happens at " +
         "the forge \u2014 every value in the luck window is equally likely." },
     { key: "utility", label: "Utility",
-      blurb: "Tools and oddments the forge can turn out." },
-    { key: "parts", label: "Parts",
-      blurb: "Fittings the better pieces are built from. These are soldered " +
-        "rather than hammered \u2014 the iron is held to the work for a few " +
-        "seconds and the part comes off finished." }
+      blurb: "Tools and oddments the forge can turn out." }
   ];
 
   // How many of each craft was last typed into its box, so a redraw of the
@@ -236,7 +232,7 @@
     wrap.appendChild(el("p", null, current.blurb));
 
     if (forgeTab !== "gear") {
-      if (forgeTab === "parts") partsTab(ctx, wrap); else utilityTab(ctx, wrap);
+      utilityTab(ctx, wrap);
       if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
       return wrap;
     }
