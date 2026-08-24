@@ -421,6 +421,69 @@
 
   DRAW["part-midas"] = function (c) { paint(c, MIDAS, MIDAS_PAINT); };
 
+  // --- living icons ---------------------------------------------------------
+  // Most icons are painted once. An entry here redraws its own tile every
+  // frame instead, so the art can move: step(ctx, dt, bits) owns the whole
+  // 16x16 and keeps whatever it needs on the bits array it is handed.
+  var ANIMATE = {};
+
+  // The outermost lit pixel on each row of the Midas Edge - the cutting side
+  // itself, which is where its sparks come off.
+  var MIDAS_EDGE = (function () {
+    var out = [];
+    for (var y = 0; y < MIDAS.length; y++) {
+      var at = MIDAS[y].lastIndexOf("L");
+      if (at >= 0) out.push({ x: at, y: y });
+    }
+    return out;
+  })();
+
+  var MIDAS_EVERY = 0.11;   // seconds between sparks off the edge
+  var MIDAS_GRAVITY = 13;   // pixels per second per second, in tile pixels
+
+  ANIMATE["part-midas"] = function (ctx, dt, sparks) {
+    paint(ctx, MIDAS, MIDAS_PAINT);
+    sparks.due = (sparks.due || 0) - dt;
+    if (sparks.due <= 0) {
+      sparks.due = MIDAS_EVERY;
+      var from = MIDAS_EDGE[Math.floor(Math.random() * MIDAS_EDGE.length)];
+      sparks.push({
+        x: from.x + 0.5, y: from.y + 0.5,
+        vx: 3 + Math.random() * 7,
+        vy: -9 + Math.random() * 6,
+        life: 0.45 + Math.random() * 0.4
+      });
+    }
+    for (var i = sparks.length - 1; i >= 0; i--) {
+      var s = sparks[i];
+      s.vy += MIDAS_GRAVITY * dt;
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.life -= dt;
+      if (s.life <= 0 || s.x > 16 || s.y > 16) { sparks.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 2.2));
+      px(ctx, Math.round(s.x), Math.round(s.y), 1, 1,
+        s.life > 0.55 ? "#fffdf2" : s.life > 0.25 ? C.goldLit : C.gold);
+      ctx.globalAlpha = 1;
+    }
+  };
+
+  // Runs a living icon until its tile leaves the page. A tile that is drawn
+  // but never mounted gets a moment's grace before the loop lets go.
+  function animate(node, ctx, step) {
+    var bits = [], last = 0, gone = 0;
+    function frame(now) {
+      var dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
+      last = now;
+      gone = node.isConnected ? 0 : gone + dt;
+      if (gone > 1) return;
+      ctx.clearRect(0, 0, 16, 16);
+      step(ctx, dt, bits);
+      global.requestAnimationFrame(frame);
+    }
+    global.requestAnimationFrame(frame);
+  }
+
   DRAW.crucible = function (c) { paint(c, CRUCIBLE, COLD_PAINT); };
   DRAW["crucible-lit"] = function (c) {
     paint(c, CRUCIBLE, LIT_PAINT);
@@ -477,8 +540,10 @@
     var ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false;
     (DRAW[key] || DRAW.sword)(ctx);
+    if (ANIMATE[key]) animate(canvas, ctx, ANIMATE[key]);
     return canvas;
   }
 
-  global.Icons = { make: make, shadow: shadow, bar: bar, alloyBar: alloyBar, METAL: METAL, DRAW: DRAW };
+  global.Icons = { make: make, shadow: shadow, bar: bar, alloyBar: alloyBar,
+    METAL: METAL, DRAW: DRAW, ANIMATE: ANIMATE };
 })(window);
