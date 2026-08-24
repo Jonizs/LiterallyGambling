@@ -470,6 +470,7 @@
     ".....ecccl......",
     ".....ecccl......",
     ".....ecccl......",
+    ".....ecccl......",
     "......eccl......",
     "......eccl......",
     ".......cc.......",
@@ -478,13 +479,12 @@
     "...dGgGmmGgGd...",
     ".......hh.......",
     ".......hh.......",
-    ".......hh.......",
     "......pppp......"
   ];
 
-  // The parts made of light: they glow, pulse and throw motes. The gold does
-  // none of it.
-  var BOLT_LIVE = "cle";
+  // The parts made of light - blade, grip and pommel alike. They glow, pulse
+  // and throw motes; only the gold guard sits out of it.
+  var BOLT_LIVE = "clehp";
 
   var BOLT_PIXELS = (function () {
     var out = [];
@@ -499,7 +499,8 @@
   var BOLT_SURGE_EVERY = 1.5;   // seconds between surges up the blade
   var BOLT_MOTE_EVERY = 0.13;   // seconds between motes coming off it
 
-  // flash 0 is the blade at rest, 1 the instant a surge runs through it.
+  // flash 0 is the weapon at rest, 1 the instant a surge runs through it.
+  // shimmer is where this row sits in the wave travelling down the weapon.
   function boltPaint(flash, shimmer) {
     var lit = 0.35 * shimmer + 0.65 * flash;
     return {
@@ -508,7 +509,8 @@
       e: lerp("#5fb4f5", "#bfe8ff", lit),
       G: C.goldLit, g: C.gold, d: C.goldDark,   // the ornate guard
       m: lerp("#bfe8ff", "#ffffff", flash),     // gem at the heart of it
-      h: "#cfe9ff", p: "#eaf6ff"                // crystal grip and pommel
+      h: lerp("#9fd8ff", "#eaf6ff", lit),       // crystal grip
+      p: lerp("#bfe8ff", "#ffffff", lit)        // pommel
     };
   }
 
@@ -527,13 +529,25 @@
     ctx.globalAlpha = 1;
   }
 
-  function bolt(ctx, flash, shimmer) {
-    halo(ctx, BOLT, BOLT_LIVE, "#7fc9ff", 0.16 + 0.26 * flash + 0.06 * shimmer);
-    paint(ctx, BOLT, boltPaint(flash, shimmer));
+  // The wave runs point to pommel, so the light never sits flat anywhere.
+  var BOLT_WAVE = 0.45;   // radians of the wave per row
+  var BOLT_SPEED = 4.3;   // radians a second
+
+  function bolt(ctx, flash, t) {
+    halo(ctx, BOLT, BOLT_LIVE, "#7fc9ff",
+      0.16 + 0.26 * flash + 0.06 * (0.5 + 0.5 * Math.sin(t * BOLT_SPEED)));
+    for (var y = 0; y < BOLT.length; y++) {
+      var palette = boltPaint(flash, 0.5 + 0.5 * Math.sin(t * BOLT_SPEED - y * BOLT_WAVE));
+      var row = BOLT[y];
+      for (var x = 0; x < row.length; x++) {
+        var color = palette[row.charAt(x)];
+        if (color) px(ctx, x, y, 1, 1, color);
+      }
+    }
   }
 
   // Still frame: caught part-way through a surge, so it reads as lit.
-  DRAW.zeus = function (c) { bolt(c, 0.4, 1); };
+  DRAW.zeus = function (c) { bolt(c, 0.4, 0); };
 
   ANIMATE.zeus = function (ctx, dt, bits) {
     bits.t = (bits.t || 0) + dt;
@@ -543,7 +557,7 @@
       bits.next = BOLT_SURGE_EVERY * (0.7 + Math.random() * 0.7);
       bits.flash = 1;
     }
-    bolt(ctx, bits.flash, 0.5 + 0.5 * Math.sin(bits.t * 4.3));
+    bolt(ctx, bits.flash, bits.t);
 
     // Motes lift off the blade and drift up, the way the light bleeds off it.
     bits.mote = (bits.mote || 0) - dt;
