@@ -16,7 +16,9 @@
     { key: "recipes", label: "Recipes",
       blurb: "Work out what the smith can learn to make." },
     { key: "parts", label: "Parts",
-      blurb: "Break pieces down into the parts they are built from." },
+      blurb: "Fittings the better pieces are built from. They go on the anvil " +
+        "like a piece, but the iron finishes them \u2014 it is held to the work " +
+        "for a few seconds and the part comes off done." },
     { key: "artifacts", label: "Artifacts",
       blurb: "Study the strange finds that do not fit any recipe." }
   ];
@@ -105,6 +107,7 @@
     })[0];
     wrap.appendChild(el("p", null, current.blurb));
     if (experimentTab === "recipes") recipesTab(ctx, wrap);
+    else if (experimentTab === "parts") global.Panels.partsTab(ctx, wrap);
     else wrap.appendChild(el("p", "empty", current.label + " is not built yet."));
 
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
