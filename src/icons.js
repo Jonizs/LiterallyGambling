@@ -120,39 +120,51 @@
       px(c, 6, 14, 5, 2, C.gold);             // pommel
       px(c, 7, 15, 1, 1, C.goldLit);
     },
-    crackbolt: (function () {               // kunai: tapered blade on the
-      var MASK = [                          // diagonal, wrapped grip, ring butt
-        ".............K..",
-        "............KMK.",
-        "...........KWDK.",
-        "..........KWMDK.",
-        ".........KWWMDK.",
-        "........KWWMDK..",
-        ".......KWWMMDK..",
-        "......KWWMMDK...",
-        ".....KWWMMDK....",
-        "....KKrRRKK.....",
-        ".KKKrRRKK.......",
-        "KSSSSKK.........",
-        "Ks..SK..........",
-        "Ks..SK..........",
-        "KSSSSK..........",
-        ".KKKK..........."
+    crackbolt: (function () {               // kunai: ring butt, wrapped grip,
+      var MASK = [                          // a broad blade split by its ridge
+        "...........####...........",
+        "..........#SSSS#..........",
+        ".........#S#..#S#.........",
+        "..........#SSSS#..........",
+        "...........####...........",
+        "...........#rW#...........",
+        "...........#Wr#...........",
+        "...........#rW#...........",
+        "...........#Wr#...........",
+        "...........#rW#...........",
+        "...........#Wr#...........",
+        "..........######..........",
+        ".........#WWD#DD#.........",
+        "........#WWWD#DDD#........",
+        ".......#WWWWD#DDDD#.......",
+        "......#WWWWWD#DDDDD#......",
+        ".....#WWWWWWD#DDDDDD#.....",
+        ".....#WWWWWWD#DDDDDD#.....",
+        "......#WWWWWD#DDDDD#......",
+        ".......#WWWWD#DDDD#.......",
+        "........#WWWD#DDD#........",
+        ".........#WWD#DD#.........",
+        "..........#WD#D#..........",
+        "...........#D#D#..........",
+        "............###...........",
+        ".............#............"
       ];
       var PAINT = {
-        K: "#111111",                       // outline
-        W: "#ffffff", M: "#8c8c8c", D: "#666666",   // spine, bevel, shade
-        R: "#6f2b22", r: "#a03a2a",         // grip wrap
-        S: "#5e5e5e", s: "#9a9a9a"          // ring butt
+        "#": "#111111",                     // outline and the ridge line
+        W: "#ffffff", D: "#666666",         // blade, lit face and shaded face
+        S: "#8c8c8c",                       // ring
+        r: "#a03a2a"                        // wrap between the grip's plates
       };
-      return function (c) {
+      function draw(c) {
         for (var y = 0; y < MASK.length; y++) {
           for (var x = 0; x < MASK[y].length; x++) {
             var color = PAINT[MASK[y].charAt(x)];
             if (color) px(c, x, y, 1, 1, color);
           }
         }
-      };
+      }
+      draw.size = MASK.length;              // drawn on its own, taller grid
+      return draw;
     })(),
     // --- parts: the fittings pieces are built from --------------------------
     "part-blood": function (c) {            // blood orb in a claw setting
@@ -675,7 +687,7 @@
       last = now;
       gone = node.isConnected ? 0 : gone + dt;
       if (gone > 1) return;
-      ctx.clearRect(0, 0, 16, 16);
+      ctx.clearRect(0, 0, node.width, node.height);
       step(ctx, dt, bits);
       global.requestAnimationFrame(frame);
     }
@@ -693,10 +705,16 @@
     molten(c, OVEN);
   };
 
-  function canvas(className) {
+  // Most icons are drawn on a 16x16 grid; one that needs more room says so
+  // with a size of its own, and its canvas is cut to match.
+  function gridOf(key) {
+    return (DRAW[key] || DRAW.sword).size || 16;
+  }
+
+  function canvas(className, size) {
     var node = document.createElement("canvas");
-    node.width = 16;
-    node.height = 16;
+    node.width = size || 16;
+    node.height = size || 16;
     node.className = className || "icon";
     var ctx = node.getContext("2d");
     ctx.imageSmoothingEnabled = false;
@@ -720,20 +738,20 @@
   // The same icon with the light taken out of it: shape only, for a piece
   // the smith has not discovered yet.
   function shadow(key, className) {
-    var made = canvas(className);
+    var made = canvas(className, gridOf(key));
     (DRAW[key] || DRAW.sword)(made.ctx);
     made.ctx.globalCompositeOperation = "source-in";
     made.ctx.fillStyle = C.silhouette;
-    made.ctx.fillRect(0, 0, 16, 16);
+    made.ctx.fillRect(0, 0, made.node.width, made.node.height);
     made.ctx.globalCompositeOperation = "source-over";
     return made.node;
   }
 
-  // Returns a 16x16 canvas holding the icon, scaled up by CSS.
+  // Returns a square canvas holding the icon, scaled up by CSS.
   function make(key, className) {
     var canvas = document.createElement("canvas");
-    canvas.width = 16;
-    canvas.height = 16;
+    canvas.width = gridOf(key);
+    canvas.height = canvas.width;
     canvas.className = className || "icon";
     var ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false;
