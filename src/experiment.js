@@ -26,10 +26,9 @@
   // Recipes are bought outright with schematics, molds and metal; once the
   // bench has worked one out it stays in the book.
   function recipesTab(ctx, wrap) {
-    // Worked-out recipes stay on the bench as a record, below the open ones.
+    // Worked-out recipes stay on the bench as a record, in their own place.
     var all = G.RECIPES.filter(function (recipe) { return !!recipe.research; });
     var open = all.filter(function (recipe) { return !G.known(ctx.state, recipe); });
-    var done = all.filter(function (recipe) { return G.known(ctx.state, recipe); });
     if (!all.length) {
       wrap.appendChild(el("p", "empty", "Nothing on the bench to work out."));
       return;
@@ -39,7 +38,7 @@
     }
 
     var rows = el("div", "rows");
-    open.concat(done).forEach(function (recipe) {
+    all.forEach(function (recipe) {
       var found = G.known(ctx.state, recipe);
       var row = el("div", "row" + (found ? " done" : ""));
       row.appendChild(I.make(recipe.icon));
