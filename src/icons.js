@@ -181,6 +181,28 @@
       px(c, 6, 11, 4, 5, C.steelDark);      // stub shaft
       px(c, 6, 11, 1, 5, C.steel);
     },
+    // A blade with the storm still in it, worked out at the bench.
+    zeus: function (c) {
+      px(c, 7, 0, 2, 1, "#fdfbe6");           // point
+      px(c, 6, 1, 4, 9, C.steel);             // blade
+      px(c, 6, 1, 1, 9, C.steelLit);
+      px(c, 9, 1, 1, 9, C.steelDark);
+      px(c, 8, 2, 1, 2, "#ffe66a");           // bolt down the fuller
+      px(c, 7, 4, 1, 2, "#ffe66a");
+      px(c, 8, 6, 1, 2, "#fff7c0");
+      px(c, 7, 8, 1, 1, "#ffe66a");
+      px(c, 3, 2, 1, 1, "#bff4ff");           // storm off the edges
+      px(c, 12, 4, 1, 1, "#bff4ff");
+      px(c, 2, 6, 1, 1, "#ffe66a");
+      px(c, 13, 8, 1, 1, "#ffe66a");
+      px(c, 2, 10, 12, 1, C.goldLit);         // crossguard, wings out
+      px(c, 2, 11, 12, 2, C.gold);
+      px(c, 1, 10, 1, 3, C.goldDark);
+      px(c, 14, 10, 1, 3, C.goldDark);
+      px(c, 6, 13, 4, 2, C.leatherDark);      // grip
+      px(c, 7, 13, 2, 2, C.leather);
+      px(c, 5, 15, 6, 1, "#ffe66a");          // pommel, charged
+    },
     helmet: function (c) {
       px(c, 5, 0, 6, 1, C.steelLit);          // dome
       px(c, 4, 1, 8, 2, C.steel);
@@ -430,24 +452,30 @@
     return lerp(cold, hot, baneWave(row, phase));
   }
 
+  // The ricasso - the blunt stretch of blade sitting on the guard - takes no
+  // part in it: the wave runs out at RICASSO_Y and the hilt stays as forged.
+  var RICASSO_Y = 8;
+
   function bloodbane(c, phase) {
     px(c, 7, 0, 2, 1, baneShade(0, phase, C.dark, BANE_HOT));      // point
     for (var y = 1; y < 10; y++) {
-      px(c, 6, y, 4, 1, baneShade(y, phase, C.dark, BANE_BODY));   // blade
-      px(c, 6, y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED)); // edge that bleeds
+      var live = y < RICASSO_Y;
+      px(c, 6, y, 4, 1, live ? baneShade(y, phase, C.dark, BANE_BODY) : C.dark);
+      px(c, 6, y, 1, 1, live ? baneShade(y, phase, BANE_COLD, BANE_RED) : C.blood);
       px(c, 9, y, 1, 1, C.darkLit);                                // shaded back
       if (y >= 2 && y <= 8) {                                      // channel down the fuller
-        px(c, 7, y, 1, 1, baneShade(y - 1, phase, BANE_COLD, BANE_HOT));
+        px(c, 7, y, 1, 1, live ? baneShade(y - 1, phase, BANE_COLD, BANE_HOT)
+          : C.bloodLit);
       }
       if (y >= 4 && y <= 7) px(c, 8, y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED));
     }
     px(c, 3, 10, 10, 1, C.darkLit);         // crossguard, swept
     px(c, 3, 11, 10, 2, C.dark);
-    px(c, 2, 10, 2, 2, baneShade(10, phase, C.dark, BANE_RED));
-    px(c, 12, 10, 2, 2, baneShade(10, phase, C.dark, BANE_RED));
+    px(c, 2, 10, 2, 2, C.blood);
+    px(c, 12, 10, 2, 2, C.blood);
     px(c, 6, 13, 4, 2, C.leatherDark);      // wrap
     px(c, 7, 14, 2, 1, C.blood);
-    px(c, 5, 15, 6, 1, baneShade(12, phase, C.blood, BANE_HOT)); // pommel stone
+    px(c, 5, 15, 6, 1, C.bloodLit);         // pommel stone
   }
 
   // Still frame for anything that cannot animate: caught mid-swing, in colour.
