@@ -196,21 +196,6 @@
       px(c, 6, 11, 4, 5, C.steelDark);      // stub shaft
       px(c, 6, 11, 1, 5, C.steel);
     },
-    "part-midas": function (c) {            // golden cutting edge
-      px(c, 12, 0, 3, 1, C.goldLit);
-      px(c, 10, 1, 4, 2, C.goldLit);
-      px(c, 8, 2, 5, 2, C.gold);
-      px(c, 6, 4, 5, 2, C.gold);
-      px(c, 4, 6, 5, 2, C.gold);
-      px(c, 3, 8, 5, 2, C.goldDark);
-      px(c, 9, 3, 3, 1, C.goldLit);         // lit bevel along the edge
-      px(c, 7, 5, 3, 1, C.goldLit);
-      px(c, 5, 7, 3, 1, C.goldLit);
-      px(c, 2, 10, 6, 1, C.goldDark);       // spine
-      px(c, 2, 11, 5, 2, C.dark);           // tang
-      px(c, 1, 13, 4, 2, C.darkLit);
-      px(c, 14, 1, 1, 1, C.goldLit);        // glint
-    },
     helmet: function (c) {
       px(c, 5, 0, 6, 1, C.steelLit);          // dome
       px(c, 4, 1, 8, 2, C.steel);
@@ -406,6 +391,35 @@
       }
     }
   }
+
+  // The Midas Edge: a curved golden cutting edge on a dark tang. Bright along
+  // the cutting side, dull down the spine, so the curve reads at 16px.
+  //   L lit edge   g gold body   d dull spine   b collar   t tang   w glint
+  var MIDAS = [
+    "................",
+    "............LL..",
+    "..........gLLL..",
+    ".........dggLL..",
+    "........dggLLw..",
+    ".......dggLL....",
+    "......dggLL.....",
+    ".....dggLL......",
+    "....dggLL.......",
+    "...dggLL........",
+    "...dggL.........",
+    "..dggL..........",
+    "..bbb...........",
+    ".ttb............",
+    ".tt.............",
+    "................"
+  ];
+
+  var MIDAS_PAINT = {
+    L: C.goldLit, g: C.gold, d: C.goldDark, b: C.goldLit,
+    t: C.dark, w: "#fffdf2"
+  };
+
+  DRAW["part-midas"] = function (c) { paint(c, MIDAS, MIDAS_PAINT); };
 
   DRAW.crucible = function (c) { paint(c, CRUCIBLE, COLD_PAINT); };
   DRAW["crucible-lit"] = function (c) {
