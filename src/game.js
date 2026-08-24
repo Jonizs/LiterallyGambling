@@ -362,7 +362,7 @@
   function researchCost(recipe) {
     var need = recipe.research;
     return { cost: need.materials, bars: need.bars, alloys: need.alloys,
-      resources: need.resources };
+      resources: need.resources, parts: need.parts };
   }
 
   function missingResearch(state, recipe) {
