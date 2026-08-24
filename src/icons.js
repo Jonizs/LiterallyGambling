@@ -181,28 +181,6 @@
       px(c, 6, 11, 4, 5, C.steelDark);      // stub shaft
       px(c, 6, 11, 1, 5, C.steel);
     },
-    // A blade with the storm still in it, worked out at the bench.
-    zeus: function (c) {
-      px(c, 7, 0, 2, 1, "#fdfbe6");           // point
-      px(c, 6, 1, 4, 9, C.steel);             // blade
-      px(c, 6, 1, 1, 9, C.steelLit);
-      px(c, 9, 1, 1, 9, C.steelDark);
-      px(c, 8, 2, 1, 2, "#ffe66a");           // bolt down the fuller
-      px(c, 7, 4, 1, 2, "#ffe66a");
-      px(c, 8, 6, 1, 2, "#fff7c0");
-      px(c, 7, 8, 1, 1, "#ffe66a");
-      px(c, 3, 2, 1, 1, "#bff4ff");           // storm off the edges
-      px(c, 12, 4, 1, 1, "#bff4ff");
-      px(c, 2, 6, 1, 1, "#ffe66a");
-      px(c, 13, 8, 1, 1, "#ffe66a");
-      px(c, 2, 10, 12, 1, C.goldLit);         // crossguard, wings out
-      px(c, 2, 11, 12, 2, C.gold);
-      px(c, 1, 10, 1, 3, C.goldDark);
-      px(c, 14, 10, 1, 3, C.goldDark);
-      px(c, 6, 13, 4, 2, C.leatherDark);      // grip
-      px(c, 7, 13, 2, 2, C.leather);
-      px(c, 5, 15, 6, 1, "#ffe66a");          // pommel, charged
-    },
     helmet: function (c) {
       px(c, 5, 0, 6, 1, C.steelLit);          // dome
       px(c, 4, 1, 8, 2, C.steel);
@@ -480,6 +458,109 @@
 
   // Still frame for anything that cannot animate: caught mid-swing, in colour.
   DRAW.bloodbane = function (c) { bloodbane(c, Math.PI / 2); };
+
+  // --- Zeus' Wrath -----------------------------------------------------------
+  // The bolt itself, struck fresh every frame: a rim, a body and a white core.
+  //   r rim   b body   c core
+  var BOLT = [
+    "........rbcr....",
+    ".......rbcr.....",
+    "......rbcr......",
+    ".....rbcr.......",
+    "....rbccbbbbr...",
+    "...rbccbbbbbr...",
+    ".......rbcbr....",
+    "......rbcbr.....",
+    ".....rbcbr......",
+    "....rbcbr.......",
+    "...rbcbr........",
+    "...rbcr.........",
+    "...rbr..........",
+    "...rr...........",
+    "...r............",
+    "................"
+  ];
+
+  // Every pixel of the bolt, so sparks can jump off any part of it.
+  var BOLT_PIXELS = (function () {
+    var out = [];
+    for (var y = 0; y < BOLT.length; y++) {
+      for (var x = 0; x < BOLT[y].length; x++) {
+        if (BOLT[y].charAt(x) !== ".") out.push({ x: x, y: y });
+      }
+    }
+    return out;
+  })();
+
+  var BOLT_STRIKE_EVERY = 0.85;  // seconds between full-brightness strikes
+  var BOLT_ARC_EVERY = 0.09;     // seconds between arcs jumping off it
+
+  // flash 0 is the bolt idling, 1 is the instant it strikes.
+  function boltPaint(flash, shimmer) {
+    return {
+      r: lerp("#8a5a08", "#ffd75e", flash),
+      b: lerp("#ffb52b", "#fff3a8", 0.3 * shimmer + 0.7 * flash),
+      c: lerp("#fff7c0", "#ffffff", flash)
+    };
+  }
+
+  // The mask laid down again, shifted and faint: a cheap glow around a strike.
+  function halo(ctx, mask, color, alpha) {
+    var offs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+    ctx.globalAlpha = alpha;
+    for (var i = 0; i < offs.length; i++) {
+      for (var y = 0; y < mask.length; y++) {
+        for (var x = 0; x < mask[y].length; x++) {
+          if (mask[y].charAt(x) === ".") continue;
+          px(ctx, x + offs[i][0], y + offs[i][1], 1, 1, color);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function bolt(ctx, flash, shimmer) {
+    if (flash > 0.15) halo(ctx, BOLT, "#9fe8ff", 0.22 * flash);
+    paint(ctx, BOLT, boltPaint(flash, shimmer));
+  }
+
+  // Still frame: caught part-way into a strike, so it reads as charged.
+  DRAW.zeus = function (c) { bolt(c, 0.35, 1); };
+
+  ANIMATE.zeus = function (ctx, dt, bits) {
+    bits.t = (bits.t || 0) + dt;
+    bits.flash = Math.max(0, (bits.flash || 0) - dt * 3.4);
+    bits.next = (bits.next || 0) - dt;
+    if (bits.next <= 0) {
+      bits.next = BOLT_STRIKE_EVERY * (0.6 + Math.random() * 0.8);
+      bits.flash = 1;
+    }
+    bolt(ctx, bits.flash, 0.5 + 0.5 * Math.sin(bits.t * 13));
+
+    bits.arc = (bits.arc || 0) - dt;
+    if (bits.arc <= 0) {
+      bits.arc = BOLT_ARC_EVERY;
+      var from = BOLT_PIXELS[Math.floor(Math.random() * BOLT_PIXELS.length)];
+      var a = Math.random() * Math.PI * 2;
+      bits.push({
+        x: from.x + 0.5, y: from.y + 0.5,
+        vx: Math.cos(a) * (8 + Math.random() * 14),
+        vy: Math.sin(a) * (8 + Math.random() * 14),
+        life: 0.14 + Math.random() * 0.2
+      });
+    }
+    for (var i = bits.length - 1; i >= 0; i--) {
+      var s = bits[i];
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.life -= dt;
+      if (s.life <= 0) { bits.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 4));
+      px(ctx, Math.round(s.x), Math.round(s.y), 1, 1,
+        s.life > 0.14 ? "#ffffff" : "#9fe8ff");
+      ctx.globalAlpha = 1;
+    }
+  };
 
   ANIMATE.bloodbane = function (ctx, dt, bits) {
     bits.t = (bits.t || 0) + dt;
