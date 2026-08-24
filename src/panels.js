@@ -103,59 +103,48 @@
   // panel does not wipe what the smith was in the middle of asking for.
   var typed = {};
 
-  // FORGE one, forge a typed count, or forge everything the stock covers.
-  // make(qty) puts that many on the anvil.
-  function qtyGroup(ctx, key, need, make) {
-    var state = ctx.state;
-    var most = G.mostAffordable(state, need);
+  // Type a count, press the button, get that many. ALL takes everything the
+  // stock covers. shortFor(qty) gives the reason that many cannot be made, or
+  // "" when it can; run(qty) does the work.
+  function batchGroup(ctx, key, label, most, shortFor, run) {
     var group = el("div", "btn-group");
-
-    function add(label, qtyOf, className) {
-      var b = button(label, className || "mini-btn strong", function () {
-        var qty = qtyOf();
-        if (!(qty > 0)) {
-          ctx.setNotice("Type how many to forge.");
-          ctx.refresh();
-          return;
-        }
-        var short = G.shortText(state, need, qty);
-        if (short) {
-          ctx.setNotice(short + ".");
-          ctx.refresh();
-          return;
-        }
-        make(qty);
-      });
-      return b;
-    }
-
-    var one = add("FORGE", function () { return 1; });
-    var shortOne = G.shortText(state, need, 1);
-    one.disabled = !!shortOne;
-    if (shortOne) one.title = shortOne;
-    group.appendChild(one);
 
     var box = el("input", "qty-input");
     box.type = "number";
     box.min = "1";
     box.value = String(typed[key] || 1);
-    box.setAttribute("aria-label", "How many to forge");
+    box.setAttribute("aria-label", "How many");
     box.addEventListener("input", function () { typed[key] = box.value; });
     // The panel closes on a stray click, and a tooltip opens on one, so the
     // box keeps its own clicks to itself.
     box.addEventListener("click", function (ev) { ev.stopPropagation(); });
     group.appendChild(box);
 
-    var custom = add("MAKE", function () {
-      return Math.floor(Number(box.value));
-    }, "mini-btn");
-    custom.title = "Forge the number in the box.";
-    group.appendChild(custom);
+    function fire(qty) {
+      if (!(qty > 0)) {
+        ctx.setNotice("Type how many first.");
+        ctx.refresh();
+        return;
+      }
+      var short = shortFor(qty);
+      if (short) {
+        ctx.setNotice(short + ".");
+        ctx.refresh();
+        return;
+      }
+      run(qty);
+    }
 
-    var all = add("ALL", function () { return most; });
-    all.disabled = most <= 0;
-    all.title = most > 0 ? "Forge " + most + " \u2014 everything the stock covers."
-      : "Nothing on hand to forge with.";
+    var go = button(label, "mini-btn strong", function () {
+      fire(Math.floor(Number(box.value)));
+    });
+    go.title = "Take the number in the box.";
+    group.appendChild(go);
+
+    var all = button("ALL", "mini-btn strong", function () { fire(most); });
+    all.disabled = most <= 0 || !!shortFor(most);
+    all.title = most > 0 ? "Everything the stock covers \u2014 " + most + "."
+      : "Nothing on hand.";
     group.appendChild(all);
     return group;
   }
@@ -181,9 +170,10 @@
       main.appendChild(title);
       main.appendChild(costLine(state, craft));
       row.appendChild(main);
-      row.appendChild(qtyGroup(ctx, "utility-" + craft.key, craft, function (qty) {
-        ctx.queue({ utility: true, craft: craft, qty: qty });
-      }));
+      row.appendChild(batchGroup(ctx, "utility-" + craft.key, "FORGE",
+        G.mostAffordable(state, craft),
+        function (qty) { return G.shortText(state, craft, qty); },
+        function (qty) { ctx.queue({ utility: true, craft: craft, qty: qty }); }));
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
@@ -204,9 +194,10 @@
       main.appendChild(title);
       main.appendChild(costLine(state, part));
       row.appendChild(main);
-      row.appendChild(qtyGroup(ctx, "part-" + part.key, part, function (qty) {
-        ctx.queue({ part: part, qty: qty });
-      }));
+      row.appendChild(batchGroup(ctx, "part-" + part.key, "FORGE",
+        G.mostAffordable(state, part),
+        function (qty) { return G.shortText(state, part, qty); },
+        function (qty) { ctx.queue({ part: part, qty: qty }); }));
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
@@ -473,5 +464,6 @@
   };
 
   global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, costLine: costLine,
-    recipeStats: recipeStats, partsTab: partsTab, el: el, button: button };
+    recipeStats: recipeStats, partsTab: partsTab, batchGroup: batchGroup,
+    el: el, button: button };
 })(window);
