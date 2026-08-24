@@ -65,6 +65,7 @@
       ovens: state.ovens,
       alloys: state.alloys,
       crucibles: state.crucibles,
+      parts: state.parts,
       inventory: state.inventory,
       upgrades: state.upgrades,
       base: state.base,
@@ -259,6 +260,11 @@
         var job = raw.crucibles[i], alloy = job && global.Compound.find(job.key);
         if (!alloy) return;
         state.crucibles[i] = readJob(job, alloy.seconds);
+      });
+    }
+    if (raw.parts && typeof raw.parts === "object") {
+      Object.keys(state.parts).forEach(function (key) {
+        state.parts[key] = whole(raw.parts[key], 0);
       });
     }
     // A clock that has gone backwards must not hand out an extra payout.

@@ -487,6 +487,20 @@ body {
   text-shadow: 1px 1px 0 #000;
 }
 .mini-btn.strong { letter-spacing: 1px; font-weight: 700; }
+
+/* Typed batch size, sat between FORGE and ALL. */
+.qty-input {
+  font-family: var(--font);
+  font-size: clamp(10px, calc(1.2 * var(--s)), 29px);
+  width: 5.5em;
+  min-width: 0;
+  color: var(--ink);
+  background: rgba(0, 0, 0, .45);
+  border: 2px solid var(--gold-dark);
+  padding: var(--gap-xs) 4px;
+  text-align: center;
+}
+.qty-input:focus { outline: none; border-color: var(--gold); }
 @media (hover: hover) { .mini-btn:hover:not(:disabled) { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
 .mini-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 0 0 #000; }
 .mini-btn:disabled { opacity: .45; cursor: not-allowed; border-color: var(--gold-dark); }
@@ -693,6 +707,7 @@ body {
   70% { opacity: .95; transform: translate(calc(-50% + var(--dx) * .8), calc(-250% - var(--push))) scale(.98); }
   100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-330% - var(--push))) scale(.9); }
 }
+.fx .icon { vertical-align: middle; margin-right: .3em; }
 .fx.tier { color: var(--gold-lit); }
 .fx.slots { color: #b9d4e0; }
 .fx.edition { color: #d8b8f0; }

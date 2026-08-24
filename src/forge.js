@@ -38,6 +38,7 @@
     this.t = 0;
     this.raf = null;
     this.swing = null;  // active strike sequence
+    this.iron = null;   // active soldering run
     this.shake = 0;     // seconds of screen shake left
     this.flash = 0;     // white impact flash left
     this.glow = 0;      // hot metal glow left on the anvil
@@ -63,7 +64,88 @@
     return true;
   };
 
-  Forge.prototype.isStriking = function () { return !!this.swing; };
+  Forge.prototype.isStriking = function () { return !!this.swing || !!this.iron; };
+
+  // --- soldering ------------------------------------------------------------
+  // Parts are not hammered: the iron is held to the work for a few seconds and
+  // throws sparks the whole time, then the part is done.
+  var IRON_ANGLE = -0.62;   // radians, the iron comes in over the right shoulder
+  var IRON_LEN = 34;        // tip to the end of the handle
+  var IRON_STEEL = 19;      // how far up the shaft the steel runs
+  var SPARK_EVERY = 0.045;  // seconds between spits of sparks
+
+  Forge.prototype.solder = function (seconds, onDone) {
+    if (this.swing || this.iron) return false;
+    this.iron = { t: 0, dur: seconds || 3, spark: 0, onDone: onDone };
+    return true;
+  };
+
+  Forge.prototype.isSoldering = function () { return !!this.iron; };
+
+  // Where the iron is touching down this instant; the tip wanders along the
+  // work so the seam looks run rather than spot-welded.
+  Forge.prototype.ironTip = function (job) {
+    return {
+      x: STRIKE_X + Math.sin(job.t * 2.6) * 5,
+      y: ANVIL_TOP - 4 + Math.sin(job.t * 9) * 1.2
+    };
+  };
+
+  Forge.prototype.solderSparks = function (tip) {
+    for (var i = 0; i < 3; i++) {
+      var a = -Math.PI / 2 + (Math.random() - 0.5) * 2.2;
+      var speed = 26 + Math.random() * 54;
+      this.sparks.push({
+        x: tip.x + (Math.random() - 0.5) * 3,
+        y: tip.y + 2,
+        vx: Math.cos(a) * speed,
+        vy: Math.sin(a) * speed,
+        life: 0.22 + Math.random() * 0.3
+      });
+    }
+  };
+
+  Forge.prototype.updateSolder = function (dt) {
+    var job = this.iron;
+    if (!job) return;
+    job.t += dt;
+    var tip = this.ironTip(job);
+    this.glow = Math.min(1.1, this.glow + dt * 2.2); // the work stays hot under it
+    job.spark -= dt;
+    if (job.spark <= 0) {
+      job.spark = SPARK_EVERY;
+      this.solderSparks(tip);
+    }
+    if (job.t >= job.dur) {
+      var done = job.onDone;
+      this.iron = null;
+      this.flash = 0.09;   // one last pop as the iron comes off
+      this.shake = 0.06;
+      if (done) done();
+    }
+  };
+
+  Forge.prototype.drawIron = function () {
+    var job = this.iron;
+    if (!job) return;
+    var tip = this.ironTip(job);
+    var ux = Math.cos(IRON_ANGLE), uy = Math.sin(IRON_ANGLE);
+    for (var d = 0; d < IRON_LEN; d++) {
+      var half = d < 3 ? 0 : d < IRON_STEEL ? 1 : 2;
+      for (var v = -half; v <= half; v++) {
+        var color;
+        if (d < 4) color = d < 2 ? "#fffdf2" : FIRE[3];       // hot tip
+        else if (d < IRON_STEEL) color = v < 0 ? "#9d9daa" : v > 0 ? PALETTE.anvilEdge : PALETTE.steel;
+        else color = v < 0 ? "#6f4823" : v > 0 ? PALETTE.woodDark : PALETTE.wood;
+        this.rect(Math.round(tip.x + ux * d - uy * v),
+                  Math.round(tip.y + uy * d + ux * v), 1, 1, color);
+      }
+    }
+    // Pool of heat where the iron meets the work.
+    this.ctx.globalAlpha = 0.5 + 0.3 * Math.sin(job.t * 14);
+    this.rect(tip.x - 3, tip.y + 1, 6, 2, FIRE[4]);
+    this.ctx.globalAlpha = 1;
+  };
 
   // Where the hammer meets the anvil, as fractions of the scene, so the HUD
   // can hang effects on the impact without repeating the layout numbers.
@@ -192,7 +274,7 @@
   };
 
   Forge.prototype.drawWorkpiece = function () {
-    if (!this.swing && this.glow <= 0) return;
+    if (!this.swing && !this.iron && this.glow <= 0) return;
     var heat = Math.max(0, this.glow);
     var color = heat > 0.6 ? "#fff2c0" : heat > 0.3 ? FIRE[4] : FIRE[2];
     this.rect(STRIKE_X - 8, ANVIL_TOP - 2, 16, 3, color);
@@ -373,6 +455,7 @@
   Forge.prototype.frame = function (dt) {
     this.t += dt;
     this.updateSwing(dt);
+    this.updateSolder(dt);
     this.updateSparks(dt);
     this.shake = Math.max(0, this.shake - dt);
     this.flash = Math.max(0, this.flash - dt);
@@ -391,6 +474,7 @@
     this.drawProps();
     this.drawWorkpiece();
     this.drawHammer();
+    this.drawIron();
     this.updateEmbers(dt);
     this.drawEmbers();
     this.drawSparks();
