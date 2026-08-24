@@ -120,6 +120,67 @@
       px(c, 6, 14, 5, 2, C.gold);             // pommel
       px(c, 7, 15, 1, 1, C.goldLit);
     },
+    // --- parts: the fittings pieces are built from --------------------------
+    "part-blood": function (c) {            // blood orb in a claw setting
+      px(c, 6, 1, 4, 1, C.bloodLit);
+      px(c, 4, 2, 8, 2, C.bloodLit);
+      px(c, 3, 4, 10, 6, C.blood);
+      px(c, 4, 3, 8, 1, C.blood);
+      px(c, 5, 3, 3, 2, C.bloodLit);        // highlight
+      px(c, 6, 3, 1, 1, "#ffd7dd");
+      px(c, 4, 8, 8, 2, "#5c0b18");         // heavy blood pooled low
+      px(c, 4, 10, 8, 2, C.blood);
+      px(c, 6, 12, 4, 1, C.bloodLit);
+      px(c, 2, 5, 1, 5, C.darkLit);         // setting claws
+      px(c, 13, 5, 1, 5, C.darkLit);
+      px(c, 4, 13, 8, 1, C.dark);
+      px(c, 5, 14, 6, 2, C.darkLit);        // stand
+    },
+    "part-handle": function (c) {           // banded metal grip
+      px(c, 6, 0, 4, 2, C.steelLit);        // pommel cap
+      px(c, 5, 2, 6, 1, C.steel);
+      px(c, 6, 3, 4, 10, C.steelDark);      // core
+      px(c, 6, 3, 1, 10, C.steel);
+      px(c, 9, 3, 1, 10, "#3d4049");
+      px(c, 5, 5, 6, 1, C.steelLit);        // grip bands
+      px(c, 5, 8, 6, 1, C.steelLit);
+      px(c, 5, 11, 6, 1, C.steelLit);
+      px(c, 4, 13, 8, 1, C.gold);           // collar
+      px(c, 4, 14, 8, 2, C.goldDark);
+      px(c, 5, 14, 1, 1, C.goldLit);
+    },
+    "part-electric": function (c) {         // blade with current running it
+      px(c, 7, 0, 2, 1, "#dffbff");
+      px(c, 6, 1, 4, 10, C.steel);
+      px(c, 6, 1, 1, 10, C.steelLit);
+      px(c, 9, 1, 1, 10, C.steelDark);
+      px(c, 8, 2, 1, 2, "#5fe3ff");         // arc down the fuller
+      px(c, 7, 4, 1, 2, "#5fe3ff");
+      px(c, 8, 6, 1, 2, "#bff4ff");
+      px(c, 7, 8, 1, 2, "#5fe3ff");
+      px(c, 3, 3, 1, 1, "#5fe3ff");         // loose sparks
+      px(c, 12, 6, 1, 1, "#5fe3ff");
+      px(c, 2, 8, 1, 1, "#bff4ff");
+      px(c, 4, 11, 8, 1, "#2f7f96");        // guard
+      px(c, 5, 12, 6, 2, C.steelDark);
+      px(c, 6, 14, 4, 2, "#2f7f96");
+    },
+    "part-thunder": function (c) {          // spearhead with a bolt cut in it
+      px(c, 7, 0, 2, 1, C.steelLit);
+      px(c, 6, 1, 4, 2, C.steel);
+      px(c, 5, 3, 6, 5, C.steel);
+      px(c, 5, 3, 1, 5, C.steelLit);
+      px(c, 10, 3, 1, 5, C.steelDark);
+      px(c, 8, 2, 2, 2, "#ffe66a");         // bolt
+      px(c, 7, 4, 2, 2, "#ffe66a");
+      px(c, 8, 6, 2, 1, "#fff7c0");
+      px(c, 4, 8, 8, 1, C.steelDark);       // wings
+      px(c, 3, 9, 3, 2, C.steel);
+      px(c, 10, 9, 3, 2, C.steel);
+      px(c, 6, 9, 4, 2, C.gold);            // socket
+      px(c, 6, 11, 4, 5, C.steelDark);      // stub shaft
+      px(c, 6, 11, 1, 5, C.steel);
+    },
     helmet: function (c) {
       px(c, 5, 0, 6, 1, C.steelLit);          // dome
       px(c, 4, 1, 8, 2, C.steel);
