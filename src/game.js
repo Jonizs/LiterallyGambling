@@ -189,6 +189,8 @@
       // Alloys out of the crucibles, and what each of the three is holding.
       alloys: global.Compound.emptyAlloys(),
       crucibles: global.Compound.emptyCrucibles(),
+      // Fittings soldered on the anvil, spent by the pieces that call for them.
+      parts: global.Parts.emptyParts(),
       inventory: [],
       upgrades: {},
       // When the guild last covered a broke smith.
@@ -227,16 +229,56 @@
     return { ok: true, spent: cost };
   }
 
-  // A cost draws on three pools: shop materials, refined bars and alloys.
-  // POOLS names where each lives and what it is called on screen.
+  // A cost draws on five pools: shop materials, the yard's own stock, refined
+  // bars, alloys and finished parts. POOLS names where each lives and what it
+  // is called on screen.
   var POOLS = [
     { on: "cost", from: "materials",
       label: function (key) { return MATERIALS[key].label; } },
+    { on: "resources", from: "resources",
+      label: function (key) { return global.Gather.RESOURCES[key].label; } },
     { on: "bars", from: "bars",
       label: function (key) { return global.Refine.find(key).label + " bar"; } },
     { on: "alloys", from: "alloys",
-      label: function (key) { return global.Compound.find(key).name; } }
+      label: function (key) { return global.Compound.find(key).name; } },
+    { on: "parts", from: "parts",
+      label: function (key) { return global.Parts.find(key).name; } }
   ];
+
+  // The same cost taken qty times over, so a batch is priced off one entry.
+  function scaleNeed(need, qty) {
+    var out = {};
+    POOLS.forEach(function (pool) {
+      var want = need[pool.on];
+      if (!want) return;
+      var copy = {};
+      Object.keys(want).forEach(function (key) { copy[key] = want[key] * qty; });
+      out[pool.on] = copy;
+    });
+    return out;
+  }
+
+  // How many of a craft the stock on hand covers.
+  function mostAffordable(state, need) {
+    var most = Infinity;
+    POOLS.forEach(function (pool) {
+      var want = need[pool.on];
+      if (!want) return;
+      Object.keys(want).forEach(function (key) {
+        most = Math.min(most, Math.floor(state[pool.from][key] / want[key]));
+      });
+    });
+    return most === Infinity ? 0 : most;
+  }
+
+  // What a batch is still short of, as one line of plain text.
+  function shortText(state, need, qty) {
+    var missing = missingFor(state, scaleNeed(need, qty || 1));
+    if (!missing.length) return "";
+    return "Short " + missing.map(function (gap) {
+      return gap.short + " " + gap.label.toLowerCase();
+    }).join(", ");
+  }
 
   // Everything a recipe still needs, as {pool, key, short, label} entries.
   function missingFor(state, recipe) {
@@ -324,15 +366,7 @@
   }
 
   function missingResearch(state, recipe) {
-    var need = researchCost(recipe), out = missingFor(state, need);
-    Object.keys(need.resources || {}).forEach(function (key) {
-      var short = need.resources[key] - state.resources[key];
-      if (short > 0) {
-        out.push({ pool: "resources", key: key, short: short,
-          label: global.Gather.RESOURCES[key].label });
-      }
-    });
-    return out;
+    return missingFor(state, researchCost(recipe));
   }
 
   function known(state, recipe) {
@@ -349,11 +383,7 @@
         return gap.short + " " + gap.label.toLowerCase();
       }).join(", ") + "." };
     }
-    var need = researchCost(recipe);
-    spend(state, need);
-    Object.keys(need.resources || {}).forEach(function (key) {
-      state.resources[key] -= need.resources[key];
-    });
+    spend(state, researchCost(recipe));
     state.known.push(recipe.key);
     return { ok: true, recipe: recipe };
   }
@@ -436,6 +466,10 @@
     stipend: stipend,
     stipendWait: stipendWait,
     missingFor: missingFor,
+    scaleNeed: scaleNeed,
+    mostAffordable: mostAffordable,
+    shortText: shortText,
+    spend: spend,
     canForge: canForge,
     known: known,
     learn: learn,

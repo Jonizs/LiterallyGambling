@@ -29,7 +29,9 @@
     { on: "bars", from: "bars",
       label: function (key) { return global.Refine.find(key).label + " bar"; } },
     { on: "alloys", from: "alloys",
-      label: function (key) { return global.Compound.find(key).name; } }
+      label: function (key) { return global.Compound.find(key).name; } },
+    { on: "parts", from: "parts",
+      label: function (key) { return global.Parts.find(key).name; } }
   ];
 
   function costLine(state, need) {
@@ -94,8 +96,73 @@
       blurb: "Pick a piece to set on the anvil. The strike itself happens at " +
         "the forge \u2014 every value in the luck window is equally likely." },
     { key: "utility", label: "Utility",
-      blurb: "Tools and oddments the forge can turn out." }
+      blurb: "Tools and oddments the forge can turn out." },
+    { key: "parts", label: "Parts",
+      blurb: "Fittings the better pieces are built from. These are soldered " +
+        "rather than hammered \u2014 the iron is held to the work for a few " +
+        "seconds and the part comes off finished." }
   ];
+
+  // How many of each craft was last typed into its box, so a redraw of the
+  // panel does not wipe what the smith was in the middle of asking for.
+  var typed = {};
+
+  // FORGE one, forge a typed count, or forge everything the stock covers.
+  // make(qty) puts that many on the anvil.
+  function qtyGroup(ctx, key, need, make) {
+    var state = ctx.state;
+    var most = G.mostAffordable(state, need);
+    var group = el("div", "btn-group");
+
+    function add(label, qtyOf, className) {
+      var b = button(label, className || "mini-btn strong", function () {
+        var qty = qtyOf();
+        if (!(qty > 0)) {
+          ctx.setNotice("Type how many to forge.");
+          ctx.refresh();
+          return;
+        }
+        var short = G.shortText(state, need, qty);
+        if (short) {
+          ctx.setNotice(short + ".");
+          ctx.refresh();
+          return;
+        }
+        make(qty);
+      });
+      return b;
+    }
+
+    var one = add("FORGE", function () { return 1; });
+    var shortOne = G.shortText(state, need, 1);
+    one.disabled = !!shortOne;
+    if (shortOne) one.title = shortOne;
+    group.appendChild(one);
+
+    var box = el("input", "qty-input");
+    box.type = "number";
+    box.min = "1";
+    box.value = String(typed[key] || 1);
+    box.setAttribute("aria-label", "How many to forge");
+    box.addEventListener("input", function () { typed[key] = box.value; });
+    // The panel closes on a stray click, and a tooltip opens on one, so the
+    // box keeps its own clicks to itself.
+    box.addEventListener("click", function (ev) { ev.stopPropagation(); });
+    group.appendChild(box);
+
+    var custom = add("MAKE", function () {
+      return Math.floor(Number(box.value));
+    }, "mini-btn");
+    custom.title = "Forge the number in the box.";
+    group.appendChild(custom);
+
+    var all = add("ALL", function () { return most; });
+    all.disabled = most <= 0;
+    all.title = most > 0 ? "Forge " + most + " \u2014 everything the stock covers."
+      : "Nothing on hand to forge with.";
+    group.appendChild(all);
+    return group;
+  }
 
   // Utility crafts go on the anvil like a piece, but take one blow and hand
   // back a count rather than something with stats.
@@ -118,30 +185,31 @@
       main.appendChild(title);
       main.appendChild(costLine(state, craft));
       row.appendChild(main);
+      row.appendChild(qtyGroup(ctx, "utility-" + craft.key, craft, function (qty) {
+        ctx.queue({ utility: true, craft: craft, qty: qty });
+      }));
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+  }
 
-      // The most the materials on hand will cover, so a batch has no ceiling.
-      var most = Object.keys(craft.cost).reduce(function (least, key) {
-        return Math.min(least, Math.floor(state.materials[key] / craft.cost[key]));
-      }, Infinity);
-
-      var group = el("div", "btn-group");
-      [1, 10, most].forEach(function (qty, i) {
-        var short = Object.keys(craft.cost).filter(function (key) {
-          return state.materials[key] < craft.cost[key] * qty;
-        });
-        var label = i === 2 ? "ALL" : qty === 1 ? "FORGE" : "\u00d710";
-        var b = button(label, "mini-btn strong",
-          function () { ctx.queue({ utility: true, craft: craft, qty: qty }); });
-        b.disabled = short.length > 0 || qty <= 0;
-        if (short.length) {
-          b.title = "Short " + short.map(function (key) {
-            return (craft.cost[key] * qty - state.materials[key]) + " " +
-              G.MATERIALS[key].label.toLowerCase();
-          }).join(", ");
-        }
-        group.appendChild(b);
-      });
-      row.appendChild(group);
+  // Parts sit on the anvil like anything else, but the iron finishes them.
+  function partsTab(ctx, wrap) {
+    var state = ctx.state;
+    var rows = el("div", "rows");
+    global.Parts.LIST.forEach(function (part) {
+      var row = el("div", "row");
+      row.appendChild(I.make(part.icon));
+      var main = el("div", "row-main");
+      var title = el("div", "row-title", part.name);
+      title.appendChild(el("span", "chip-stat tier",
+        "you hold " + state.parts[part.key]));
+      main.appendChild(title);
+      main.appendChild(costLine(state, part));
+      row.appendChild(main);
+      row.appendChild(qtyGroup(ctx, "part-" + part.key, part, function (qty) {
+        ctx.queue({ part: part, qty: qty });
+      }));
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
@@ -167,7 +235,7 @@
     wrap.appendChild(el("p", null, current.blurb));
 
     if (forgeTab !== "gear") {
-      utilityTab(ctx, wrap);
+      if (forgeTab === "parts") partsTab(ctx, wrap); else utilityTab(ctx, wrap);
       if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
       return wrap;
     }

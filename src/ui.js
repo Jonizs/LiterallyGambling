@@ -326,6 +326,8 @@
   function showReveal(reveal, index) {
     if (!reveal) return;
     var fx = P.el("div", "fx " + reveal.tone, reveal.text);
+    // A craft that hands back something with a face shows it off the anvil.
+    if (reveal.icon) fx.insertBefore(window.Icons.make(reveal.icon), fx.firstChild);
     var at = scene.impactPoint();
     fx.style.left = (at.x * 100) + "%";
     fx.style.top = (at.y * 100) + "%";
@@ -351,6 +353,7 @@
     var recipe = view.pending;
     if (!recipe || view.striking) return;
     if (recipe.utility) { strikeUtility(recipe); return; }
+    if (recipe.part) { strikePart(recipe); return; }
     // The roll happens before the hammer falls: every blow reveals one more
     // thing about the piece already lying on the anvil.
     var result = G.forge(state, recipe);
@@ -526,25 +529,21 @@
     drawPanel();
   }
 
-  // Utility crafts ride the same queue as a piece: picking one sets it on the
-  // anvil, and the FORGE! button takes the blows that finish it. A batch of
-  // ten takes two: a working blow, then everything the smith has.
-  function affordUtility(craft, qty) {
-    return Object.keys(craft.cost).every(function (key) {
-      return state.materials[key] >= craft.cost[key] * qty;
-    });
+  // Utility crafts and parts ride the same queue as a piece: picking one sets
+  // it on the anvil, and the FORGE! button finishes it. A batch of more than
+  // one takes two blows: a working blow, then everything the smith has.
+  function afford(need, qty) {
+    return G.missingFor(state, G.scaleNeed(need, qty)).length === 0;
   }
 
   function strikeUtility(job) {
     var craft = job.craft, qty = job.qty;
-    if (!affordUtility(craft, qty)) {
+    if (!afford(craft, qty)) {
       view.pending = null;
       renderStrike();
       return;
     }
-    Object.keys(craft.cost).forEach(function (key) {
-      state.materials[key] -= craft.cost[key] * qty;
-    });
+    G.spend(state, G.scaleNeed(craft, qty));
     view.pending = null;
     view.striking = true;
     renderStrike();
@@ -563,10 +562,42 @@
       setTimeout(function () {
         view.striking = false;
         // Enough left for another? Keep it on the anvil, same as a piece.
-        if (!view.pending && affordUtility(craft, qty)) view.pending = job;
+        if (!view.pending && afford(craft, qty)) view.pending = job;
         renderStrike();
       }, REVEAL_HOLD);
     }, qty > 1);
+  }
+
+  // Parts take the iron rather than the hammer: it is held to the work for
+  // SOLDER_SECONDS, throwing sparks, and the part is there when it lifts.
+  var SOLDER_SECONDS = 3;
+
+  function strikePart(job) {
+    var part = job.part, qty = job.qty;
+    if (!afford(part, qty)) {
+      view.pending = null;
+      renderStrike();
+      return;
+    }
+    G.spend(state, G.scaleNeed(part, qty));
+    view.pending = null;
+    view.striking = true;
+    renderStrike();
+    renderPurse();
+    clearReveals();
+
+    scene.solder(SOLDER_SECONDS, function () {
+      state.parts[part.key] += qty;
+      showReveal({ text: qty + " \u00d7 " + part.name, tone: "tier",
+        icon: part.icon }, 0);
+      Save.schedule(state);
+      renderPurse();
+      setTimeout(function () {
+        view.striking = false;
+        if (!view.pending && afford(part, qty)) view.pending = job;
+        renderStrike();
+      }, REVEAL_HOLD);
+    });
   }
 
   // --- resource yard ------------------------------------------------------
