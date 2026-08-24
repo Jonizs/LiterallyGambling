@@ -460,20 +460,22 @@
   DRAW.bloodbane = function (c) { bloodbane(c, Math.PI / 2); };
 
   // --- Zeus' Wrath -----------------------------------------------------------
-  // The bolt itself, struck fresh every frame, on a plain gold hilt.
-  //   r rim   b body   c core   G/g crossguard   h grip   p pommel
+  // A jagged blade forged around a live bolt: the steel is ordinary, the
+  // channel running down its middle is not.
+  //   r lit edge   b shaded edge   c the bolt itself
+  //   G/g crossguard   h grip   p pommel
   var BOLT = [
-    "........rbcr....",
-    ".......rbcr.....",
-    "......rbcr......",
-    ".....rbcr.......",
-    "....rbccbbbbr...",
-    "...rbccbbbbbr...",
-    "......rbcbr.....",
-    ".....rbcbr......",
-    ".....rbcr.......",
-    "......rcr.......",
-    "......rcr.......",
+    ".........c......",
+    "........rcb.....",
+    "........rccb....",
+    ".......rccb.....",
+    "......rccb......",
+    "......rcb.......",
+    ".......rcb......",
+    "......rccb......",
+    ".....rccb.......",
+    "......rcb.......",
+    "......rcb.......",
     "..GGGGGGGGGG....",
     "..gggggggggg....",
     "......hhh.......",
@@ -481,8 +483,8 @@
     ".....ppppp......"
   ];
 
-  // Only the bolt arcs and glows; the hilt below it is ordinary metal.
-  var BOLT_LIVE = "rbc";
+  // Only the bolt down the fuller arcs and glows; the steel around it does not.
+  var BOLT_LIVE = "c";
 
   var BOLT_PIXELS = (function () {
     var out = [];
@@ -500,11 +502,10 @@
   // flash 0 is the bolt idling, 1 is the instant it strikes.
   function boltPaint(flash, shimmer) {
     return {
-      r: lerp("#8a5a08", "#ffd75e", flash),
-      b: lerp("#ffb52b", "#fff3a8", 0.3 * shimmer + 0.7 * flash),
-      c: lerp("#fff7c0", "#ffffff", flash),
-      G: C.goldLit, g: C.gold,             // crossguard
-      h: C.leatherDark, p: C.goldLit       // grip and pommel
+      r: C.steelLit, b: C.steelDark,        // the steel either side
+      c: lerp(lerp("#ffb52b", "#ffe66a", shimmer), "#ffffff", flash),
+      G: C.goldLit, g: C.gold,              // crossguard
+      h: C.leatherDark, p: C.goldLit        // grip and pommel
     };
   }
 
