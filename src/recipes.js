@@ -33,12 +33,12 @@
     { key: "bloodbane", name: "Blood Bane", kind: "weapon", icon: "bloodbane",
       level: 1, xp: 90,
       research: { resources: { rare: 3, common: 25, mold: 10 },
-        alloys: { argentaurum: 10, corinthium: 3, electrum: 1 } },
+        alloys: { argentaurum: 10, corinthium: 3, electrum: 1 },
+        parts: { bloodinfusion: 1 } },
       perTier: { damage: 151.7, durability: 396 },
       combat: { speed: 1.06, crit: 5.5, critDamage: 165, pen: 10 },
       cost: { wood: 30, metal: 20 },
-      alloys: { argentaurum: 5, corinthium: 1 },
-      parts: { bloodinfusion: 1 } },
+      alloys: { argentaurum: 5, corinthium: 1 } },
     // Blades the smith has not learned yet: the bench shows the shape and
     // nothing else. mystery keeps them off the anvil whatever the level is.
     { key: "mystery-1", name: "???", kind: "weapon", icon: "sword-silhouette-1",
