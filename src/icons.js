@@ -460,32 +460,33 @@
   DRAW.bloodbane = function (c) { bloodbane(c, Math.PI / 2); };
 
   // --- Zeus' Wrath -----------------------------------------------------------
-  // A broad blade of white light, heavy where it meets the guard and cut
-  // back to a steep point, on an ornate gold guard with a gem at its heart
-  // and a crystal grip. The steel is the light; the gold is not.
-  //   c core   l lit flat   e blue rim   G/g/d guard   m gem   h grip   p pommel
+  // A long, narrow blade of light - pale on one edge, deep blue on the other -
+  // set in a gold guard with upswept tips and two dark stones, over a red
+  // wrapped grip. Only the blade is lit; the fittings are ordinary.
+  //   e pale edge   c core   l deep edge
+  //   G/g guard   m stone   R/r grip   P pommel
   var BOLT = [
     ".......cc.......",
     "......eccl......",
     "......eccl......",
     "......eccl......",
-    ".....eccccl.....",
-    ".....eccccl.....",
-    ".....eccccl.....",
-    "....eccccccl....",
-    "....eccccccl....",
-    "....eccccccl....",
-    "...eccccccccl...",
-    "...eccccccccl...",
-    "..dGGgGGGGgGGd..",
-    "...dGgGmmGgGd...",
-    ".......hh.......",
-    "......pppp......"
+    "......eccl......",
+    "......eccl......",
+    "......eccl......",
+    "......eccl......",
+    "......eccl......",
+    "......eccl......",
+    "......eccl......",
+    "..G..........G..",
+    "..GggGGmmGGggG..",
+    "......RrrR......",
+    "......RrrR......",
+    "......PPPP......"
   ];
 
-  // The parts made of light - blade, grip and pommel alike. They glow, pulse
-  // and throw motes; only the gold guard sits out of it.
-  var BOLT_LIVE = "clehp";
+  // The parts made of light. They glow, pulse and throw motes; the guard,
+  // grip and pommel sit out of it.
+  var BOLT_LIVE = "cle";
 
   var BOLT_PIXELS = (function () {
     var out = [];
@@ -505,13 +506,13 @@
   function boltPaint(flash, shimmer) {
     var lit = 0.35 * shimmer + 0.65 * flash;
     return {
-      c: lerp("#eaf6ff", "#ffffff", lit),
-      l: lerp("#a9dcff", "#eaf6ff", lit),
-      e: lerp("#5fb4f5", "#bfe8ff", lit),
-      G: C.goldLit, g: C.gold, d: C.goldDark,   // the ornate guard
-      m: lerp("#bfe8ff", "#ffffff", flash),     // gem at the heart of it
-      h: lerp("#9fd8ff", "#eaf6ff", lit),       // crystal grip
-      p: lerp("#bfe8ff", "#ffffff", lit)        // pommel
+      c: lerp("#cfe9ff", "#ffffff", lit),        // core
+      e: lerp("#9fd8ff", "#eaf6ff", lit),        // pale edge
+      l: lerp("#2a4d6b", "#6ba6cd", lit),        // deep edge
+      G: C.goldLit, g: C.gold,                   // guard and its upswept tips
+      m: "#23406b",                              // stones set in it
+      R: "#6e1a1a", r: "#a52a2a",                // wrapped grip
+      P: "#e08a3c"                               // pommel
     };
   }
 
