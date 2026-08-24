@@ -120,31 +120,30 @@
       px(c, 6, 14, 5, 2, C.gold);             // pommel
       px(c, 7, 15, 1, 1, C.goldLit);
     },
-    crackbolt: (function () {               // kunai: blade on the diagonal,
-      var MASK = [                          // wrapped grip, ring butt
-        "............KKK.",
-        "...........KKLK.",
-        "..........KKLDK.",
-        ".........KKLYDK.",
-        "........KKLYDKK.",
-        ".......KKLMYDK..",
-        "......KKLMYDKK..",
-        ".....KKLMYDKK...",
-        "....KKLMMDKK....",
-        "...KKrRRKKK.....",
-        "KKKKrRRKK.......",
-        "KGGGGKKK........",
-        "Kg..GK..........",
-        "Kg..GK..........",
-        "KGGGGK..........",
-        "KKKKKK.........."
+    crackbolt: (function () {               // kunai: tapered blade on the
+      var MASK = [                          // diagonal, wrapped grip, ring butt
+        ".............K..",
+        "............KMK.",
+        "...........KWDK.",
+        "..........KWMDK.",
+        ".........KWWMDK.",
+        "........KWWMDK..",
+        ".......KWWMMDK..",
+        "......KWWMMDK...",
+        ".....KWWMMDK....",
+        "....KKrRRKK.....",
+        ".KKKrRRKK.......",
+        "KSSSSKK.........",
+        "Ks..SK..........",
+        "Ks..SK..........",
+        "KSSSSK..........",
+        ".KKKK..........."
       ];
       var PAINT = {
-        K: C.silhouette,                    // outline
-        L: "#eef1f8", M: C.steel, D: C.steelDark,   // blade, lit side to shade
-        Y: "#ffe66a",                       // the crack up the ridge
-        R: "#7a2b22", r: "#a53a2c",         // grip wrap
-        G: C.steelDark, g: C.steel          // ring
+        K: "#111111",                       // outline
+        W: "#ffffff", M: "#8c8c8c", D: "#666666",   // spine, bevel, shade
+        R: "#6f2b22", r: "#a03a2a",         // grip wrap
+        S: "#5e5e5e", s: "#9a9a9a"          // ring butt
       };
       return function (c) {
         for (var y = 0; y < MASK.length; y++) {
