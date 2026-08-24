@@ -14,6 +14,10 @@
 - NEVER take or send screenshots — the user tests visual changes themselves.
   Verify with headless checks (no errors, no overflow, expected DOM/state) and
   say what was checked; do not render, read back, or attach images.
+- ALWAYS push finished work straight to `main` — commit and `git push origin main`
+  as soon as a request is done. No feature branch, no PR, no waiting. Only fall
+  back to a branch + PR if pushing to `main` is blocked (protection rule, or the
+  user asks for a PR).
 - ALWAYS merge your own pull requests yourself — the user should never have to
   do it. Once the PR is mergeable and CI (if any) is green, merge it to `main`
   without asking. Do not wait for review or approval on your own PRs. If it is
