@@ -120,35 +120,41 @@
       px(c, 6, 14, 5, 2, C.gold);             // pommel
       px(c, 7, 15, 1, 1, C.goldLit);
     },
-    crackbolt: function (c) {               // kunai: diamond blade, ring butt
-      px(c, 7, 0, 2, 1, C.steelLit);        // point
-      px(c, 7, 1, 2, 1, C.steel);
-      px(c, 6, 2, 4, 2, C.steel);           // blade swells to its widest
-      px(c, 5, 4, 6, 3, C.steel);
-      px(c, 6, 7, 4, 1, C.steel);           // and draws back to the tang
-      px(c, 7, 8, 2, 1, C.steel);
-      px(c, 6, 2, 1, 2, C.steelLit);        // lit edge down the left
-      px(c, 5, 4, 1, 3, C.steelLit);
-      px(c, 6, 7, 1, 1, C.steelLit);
-      px(c, 9, 2, 1, 2, C.steelDark);       // shaded edge down the right
-      px(c, 10, 4, 1, 3, C.steelDark);
-      px(c, 9, 7, 1, 1, C.steelDark);
-      px(c, 8, 1, 1, 2, "#ffe66a");         // the crack running the ridge
-      px(c, 7, 3, 1, 2, "#fff7c0");
-      px(c, 8, 5, 1, 2, "#ffe66a");
-      px(c, 5, 9, 6, 1, C.goldDark);        // collar over the tang
-      px(c, 5, 10, 6, 1, C.gold);
-      px(c, 5, 10, 1, 1, C.goldLit);
-      px(c, 7, 11, 2, 2, C.leather);        // wrapped grip
-      px(c, 7, 11, 1, 2, C.leatherDark);
-      px(c, 6, 13, 4, 1, C.steelDark);      // ring butt
-      px(c, 6, 14, 1, 1, C.steel);
-      px(c, 9, 14, 1, 1, C.steel);
-      px(c, 6, 15, 4, 1, C.steelDark);
-      px(c, 3, 5, 1, 1, "#ffe66a");         // sparks thrown off the edge
-      px(c, 12, 3, 1, 1, "#fff7c0");
-      px(c, 13, 8, 1, 1, "#ffe66a");
-    },
+    crackbolt: (function () {               // kunai: blade on the diagonal,
+      var MASK = [                          // wrapped grip, ring butt
+        "............KKK.",
+        "...........KKLK.",
+        "..........KKLDK.",
+        ".........KKLYDK.",
+        "........KKLYDKK.",
+        ".......KKLMYDK..",
+        "......KKLMYDKK..",
+        ".....KKLMYDKK...",
+        "....KKLMMDKK....",
+        "...KKrRRKKK.....",
+        "KKKKrRRKK.......",
+        "KGGGGKKK........",
+        "Kg..GK..........",
+        "Kg..GK..........",
+        "KGGGGK..........",
+        "KKKKKK.........."
+      ];
+      var PAINT = {
+        K: C.silhouette,                    // outline
+        L: "#eef1f8", M: C.steel, D: C.steelDark,   // blade, lit side to shade
+        Y: "#ffe66a",                       // the crack up the ridge
+        R: "#7a2b22", r: "#a53a2c",         // grip wrap
+        G: C.steelDark, g: C.steel          // ring
+      };
+      return function (c) {
+        for (var y = 0; y < MASK.length; y++) {
+          for (var x = 0; x < MASK[y].length; x++) {
+            var color = PAINT[MASK[y].charAt(x)];
+            if (color) px(c, x, y, 1, 1, color);
+          }
+        }
+      };
+    })(),
     // --- parts: the fittings pieces are built from --------------------------
     "part-blood": function (c) {            // blood orb in a claw setting
       px(c, 6, 1, 4, 1, C.bloodLit);
