@@ -464,7 +464,7 @@
   // set in a gold guard with upswept tips and two dark stones, over a red
   // wrapped grip. Only the blade is lit; the fittings are ordinary.
   //   e pale edge   c core   l deep edge
-  //   G/g guard   m stone   R/r grip   P pommel
+  //   G/g guard and the gold ricasso   m stone   R/r grip   P pommel
   var BOLT = [
     ".......cc.......",
     "......eccl......",
@@ -477,9 +477,9 @@
     "......eccl......",
     "......eccl......",
     "......eccl......",
-    "..G..........G..",
-    "..GggGGmmGGggG..",
-    "......RrrR......",
+    "......eccl......",
+    "......gGGg......",
+    ".GGggGGmmGGggGG.",
     "......RrrR......",
     "......PPPP......"
   ];
