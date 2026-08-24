@@ -460,31 +460,31 @@
   DRAW.bloodbane = function (c) { bloodbane(c, Math.PI / 2); };
 
   // --- Zeus' Wrath -----------------------------------------------------------
-  // A jagged blade forged around a live bolt: the steel is ordinary, the
-  // channel running down its middle is not.
-  //   r lit edge   b shaded edge   c the bolt itself
-  //   G/g crossguard   h grip   p pommel
+  // A leaf blade of white light on an ornate gold guard, with a gem at its
+  // heart and a crystal grip. The steel is the light; the gold is not.
+  //   c core   l lit flat   e blue rim   G/g/d guard   m gem   h grip   p pommel
   var BOLT = [
-    ".........c......",
-    "........rcb.....",
-    "........rccb....",
-    ".......rccb.....",
-    "......rccb......",
-    "......rcb.......",
-    ".......rcb......",
-    "......rccb......",
-    ".....rccb.......",
-    "......rcb.......",
-    "......rcb.......",
-    "..GGGGGGGGGG....",
-    "..gggggggggg....",
-    "......hhh.......",
-    "......hhh.......",
-    ".....ppppp......"
+    ".......cc.......",
+    "......eccl......",
+    "......eccl......",
+    ".....ecccl......",
+    ".....ecccl......",
+    ".....ecccl......",
+    "......eccl......",
+    "......eccl......",
+    ".......cc.......",
+    ".......cc.......",
+    "..dGGgGGGGgGGd..",
+    "...dGgGmmGgGd...",
+    ".......hh.......",
+    ".......hh.......",
+    ".......hh.......",
+    "......pppp......"
   ];
 
-  // Only the bolt down the fuller arcs and glows; the steel around it does not.
-  var BOLT_LIVE = "c";
+  // The parts made of light: they glow, pulse and throw motes. The gold does
+  // none of it.
+  var BOLT_LIVE = "cle";
 
   var BOLT_PIXELS = (function () {
     var out = [];
@@ -496,20 +496,23 @@
     return out;
   })();
 
-  var BOLT_STRIKE_EVERY = 0.85;  // seconds between full-brightness strikes
-  var BOLT_ARC_EVERY = 0.09;     // seconds between arcs jumping off it
+  var BOLT_SURGE_EVERY = 1.5;   // seconds between surges up the blade
+  var BOLT_MOTE_EVERY = 0.13;   // seconds between motes coming off it
 
-  // flash 0 is the bolt idling, 1 is the instant it strikes.
+  // flash 0 is the blade at rest, 1 the instant a surge runs through it.
   function boltPaint(flash, shimmer) {
+    var lit = 0.35 * shimmer + 0.65 * flash;
     return {
-      r: C.steelLit, b: C.steelDark,        // the steel either side
-      c: lerp(lerp("#ffb52b", "#ffe66a", shimmer), "#ffffff", flash),
-      G: C.goldLit, g: C.gold,              // crossguard
-      h: C.leatherDark, p: C.goldLit        // grip and pommel
+      c: lerp("#eaf6ff", "#ffffff", lit),
+      l: lerp("#a9dcff", "#eaf6ff", lit),
+      e: lerp("#5fb4f5", "#bfe8ff", lit),
+      G: C.goldLit, g: C.gold, d: C.goldDark,   // the ornate guard
+      m: lerp("#bfe8ff", "#ffffff", flash),     // gem at the heart of it
+      h: "#cfe9ff", p: "#eaf6ff"                // crystal grip and pommel
     };
   }
 
-  // The mask laid down again, shifted and faint: a cheap glow around a strike.
+  // The mask laid down again, shifted and faint: the light coming off it.
   function halo(ctx, mask, chars, color, alpha) {
     var offs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
     ctx.globalAlpha = alpha;
@@ -525,33 +528,33 @@
   }
 
   function bolt(ctx, flash, shimmer) {
-    if (flash > 0.15) halo(ctx, BOLT, BOLT_LIVE, "#9fe8ff", 0.22 * flash);
+    halo(ctx, BOLT, BOLT_LIVE, "#7fc9ff", 0.16 + 0.26 * flash + 0.06 * shimmer);
     paint(ctx, BOLT, boltPaint(flash, shimmer));
   }
 
-  // Still frame: caught part-way into a strike, so it reads as charged.
-  DRAW.zeus = function (c) { bolt(c, 0.35, 1); };
+  // Still frame: caught part-way through a surge, so it reads as lit.
+  DRAW.zeus = function (c) { bolt(c, 0.4, 1); };
 
   ANIMATE.zeus = function (ctx, dt, bits) {
     bits.t = (bits.t || 0) + dt;
-    bits.flash = Math.max(0, (bits.flash || 0) - dt * 3.4);
+    bits.flash = Math.max(0, (bits.flash || 0) - dt * 2.2);
     bits.next = (bits.next || 0) - dt;
     if (bits.next <= 0) {
-      bits.next = BOLT_STRIKE_EVERY * (0.6 + Math.random() * 0.8);
+      bits.next = BOLT_SURGE_EVERY * (0.7 + Math.random() * 0.7);
       bits.flash = 1;
     }
-    bolt(ctx, bits.flash, 0.5 + 0.5 * Math.sin(bits.t * 13));
+    bolt(ctx, bits.flash, 0.5 + 0.5 * Math.sin(bits.t * 4.3));
 
-    bits.arc = (bits.arc || 0) - dt;
-    if (bits.arc <= 0) {
-      bits.arc = BOLT_ARC_EVERY;
+    // Motes lift off the blade and drift up, the way the light bleeds off it.
+    bits.mote = (bits.mote || 0) - dt;
+    if (bits.mote <= 0) {
+      bits.mote = BOLT_MOTE_EVERY;
       var from = BOLT_PIXELS[Math.floor(Math.random() * BOLT_PIXELS.length)];
-      var a = Math.random() * Math.PI * 2;
       bits.push({
         x: from.x + 0.5, y: from.y + 0.5,
-        vx: Math.cos(a) * (8 + Math.random() * 14),
-        vy: Math.sin(a) * (8 + Math.random() * 14),
-        life: 0.14 + Math.random() * 0.2
+        vx: (Math.random() - 0.5) * 7,
+        vy: -3 - Math.random() * 7,
+        life: 0.35 + Math.random() * 0.45
       });
     }
     for (var i = bits.length - 1; i >= 0; i--) {
@@ -559,10 +562,10 @@
       s.x += s.vx * dt;
       s.y += s.vy * dt;
       s.life -= dt;
-      if (s.life <= 0) { bits.splice(i, 1); continue; }
-      ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 4));
+      if (s.life <= 0 || s.y < -1) { bits.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.8));
       px(ctx, Math.round(s.x), Math.round(s.y), 1, 1,
-        s.life > 0.14 ? "#ffffff" : "#9fe8ff");
+        s.life > 0.4 ? "#ffffff" : "#9fd8ff");
       ctx.globalAlpha = 1;
     }
   };
