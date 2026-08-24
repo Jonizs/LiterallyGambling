@@ -460,21 +460,22 @@
   DRAW.bloodbane = function (c) { bloodbane(c, Math.PI / 2); };
 
   // --- Zeus' Wrath -----------------------------------------------------------
-  // A straight blade of white light on an ornate gold guard, with a gem at
-  // its heart and a crystal grip. The steel is the light; the gold is not.
+  // A broad blade of white light, heavy where it meets the guard and cut
+  // back to a steep point, on an ornate gold guard with a gem at its heart
+  // and a crystal grip. The steel is the light; the gold is not.
   //   c core   l lit flat   e blue rim   G/g/d guard   m gem   h grip   p pommel
   var BOLT = [
     ".......cc.......",
     "......eccl......",
     "......eccl......",
-    "......eccl......",
-    "......eccl......",
-    "......eccl......",
-    "......eccl......",
-    "......eccl......",
-    ".....ecccl......",
-    ".....ecccl......",
     ".....eccccl.....",
+    ".....eccccl.....",
+    "....eccccccl....",
+    "....eccccccl....",
+    "...ecccccccccl..",
+    "...ecccccccccl..",
+    "...ecccccccccl..",
+    "..eccccccccccl..",
     "..dGGgGGGGgGGd..",
     "...dGgGmmGgGd...",
     ".......hh.......",
