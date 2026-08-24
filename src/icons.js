@@ -120,29 +120,34 @@
       px(c, 6, 14, 5, 2, C.gold);             // pommel
       px(c, 7, 15, 1, 1, C.goldLit);
     },
-    crackbolt: function (c) {               // kunai with a thunder head on it
-      px(c, 7, 0, 2, 1, C.steelLit);        // spearhead point
-      px(c, 6, 1, 4, 2, C.steel);
-      px(c, 5, 3, 6, 4, C.steel);
-      px(c, 5, 3, 1, 4, C.steelLit);
-      px(c, 10, 3, 1, 4, C.steelDark);
-      px(c, 8, 2, 2, 2, "#ffe66a");         // bolt cut into it
-      px(c, 7, 4, 2, 2, "#ffe66a");
-      px(c, 8, 6, 1, 1, "#fff7c0");
-      px(c, 4, 7, 8, 1, C.steelDark);       // wings
-      px(c, 3, 8, 3, 1, C.steel);
-      px(c, 10, 8, 3, 1, C.steel);
-      px(c, 6, 8, 4, 1, C.gold);            // socket onto the handle
-      px(c, 6, 9, 4, 4, C.steelDark);       // metal grip
-      px(c, 6, 9, 1, 4, C.steel);
-      px(c, 5, 10, 6, 1, C.steelLit);       // grip bands
-      px(c, 5, 12, 6, 1, C.steelLit);
-      px(c, 6, 13, 4, 1, C.gold);           // collar
-      px(c, 6, 14, 1, 2, C.steel);          // ring pommel
-      px(c, 9, 14, 1, 2, C.steel);
-      px(c, 7, 15, 2, 1, C.steelDark);
-      px(c, 2, 4, 1, 1, "#ffe66a");         // loose sparks
-      px(c, 13, 6, 1, 1, "#fff7c0");
+    crackbolt: function (c) {               // kunai: diamond blade, ring butt
+      px(c, 7, 0, 2, 1, C.steelLit);        // point
+      px(c, 7, 1, 2, 1, C.steel);
+      px(c, 6, 2, 4, 2, C.steel);           // blade swells to its widest
+      px(c, 5, 4, 6, 3, C.steel);
+      px(c, 6, 7, 4, 1, C.steel);           // and draws back to the tang
+      px(c, 7, 8, 2, 1, C.steel);
+      px(c, 6, 2, 1, 2, C.steelLit);        // lit edge down the left
+      px(c, 5, 4, 1, 3, C.steelLit);
+      px(c, 6, 7, 1, 1, C.steelLit);
+      px(c, 9, 2, 1, 2, C.steelDark);       // shaded edge down the right
+      px(c, 10, 4, 1, 3, C.steelDark);
+      px(c, 9, 7, 1, 1, C.steelDark);
+      px(c, 8, 1, 1, 2, "#ffe66a");         // the crack running the ridge
+      px(c, 7, 3, 1, 2, "#fff7c0");
+      px(c, 8, 5, 1, 2, "#ffe66a");
+      px(c, 5, 9, 6, 1, C.goldDark);        // collar over the tang
+      px(c, 5, 10, 6, 1, C.gold);
+      px(c, 5, 10, 1, 1, C.goldLit);
+      px(c, 7, 11, 2, 2, C.leather);        // wrapped grip
+      px(c, 7, 11, 1, 2, C.leatherDark);
+      px(c, 6, 13, 4, 1, C.steelDark);      // ring butt
+      px(c, 6, 14, 1, 1, C.steel);
+      px(c, 9, 14, 1, 1, C.steel);
+      px(c, 6, 15, 4, 1, C.steelDark);
+      px(c, 3, 5, 1, 1, "#ffe66a");         // sparks thrown off the edge
+      px(c, 12, 3, 1, 1, "#fff7c0");
+      px(c, 13, 8, 1, 1, "#ffe66a");
     },
     // --- parts: the fittings pieces are built from --------------------------
     "part-blood": function (c) {            // blood orb in a claw setting
