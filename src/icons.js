@@ -460,8 +460,8 @@
   DRAW.bloodbane = function (c) { bloodbane(c, Math.PI / 2); };
 
   // --- Zeus' Wrath -----------------------------------------------------------
-  // The bolt itself, struck fresh every frame: a rim, a body and a white core.
-  //   r rim   b body   c core
+  // The bolt itself, struck fresh every frame, on a plain gold hilt.
+  //   r rim   b body   c core   G/g crossguard   h grip   p pommel
   var BOLT = [
     "........rbcr....",
     ".......rbcr.....",
@@ -469,24 +469,26 @@
     ".....rbcr.......",
     "....rbccbbbbr...",
     "...rbccbbbbbr...",
-    ".......rbcbr....",
     "......rbcbr.....",
     ".....rbcbr......",
-    "....rbcbr.......",
-    "...rbcbr........",
-    "...rbcr.........",
-    "...rbr..........",
-    "...rr...........",
-    "...r............",
-    "................"
+    ".....rbcr.......",
+    "......rcr.......",
+    "......rcr.......",
+    "..GGGGGGGGGG....",
+    "..gggggggggg....",
+    "......hhh.......",
+    "......hhh.......",
+    ".....ppppp......"
   ];
 
-  // Every pixel of the bolt, so sparks can jump off any part of it.
+  // Only the bolt arcs and glows; the hilt below it is ordinary metal.
+  var BOLT_LIVE = "rbc";
+
   var BOLT_PIXELS = (function () {
     var out = [];
     for (var y = 0; y < BOLT.length; y++) {
       for (var x = 0; x < BOLT[y].length; x++) {
-        if (BOLT[y].charAt(x) !== ".") out.push({ x: x, y: y });
+        if (BOLT_LIVE.indexOf(BOLT[y].charAt(x)) >= 0) out.push({ x: x, y: y });
       }
     }
     return out;
@@ -500,18 +502,20 @@
     return {
       r: lerp("#8a5a08", "#ffd75e", flash),
       b: lerp("#ffb52b", "#fff3a8", 0.3 * shimmer + 0.7 * flash),
-      c: lerp("#fff7c0", "#ffffff", flash)
+      c: lerp("#fff7c0", "#ffffff", flash),
+      G: C.goldLit, g: C.gold,             // crossguard
+      h: C.leatherDark, p: C.goldLit       // grip and pommel
     };
   }
 
   // The mask laid down again, shifted and faint: a cheap glow around a strike.
-  function halo(ctx, mask, color, alpha) {
+  function halo(ctx, mask, chars, color, alpha) {
     var offs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
     ctx.globalAlpha = alpha;
     for (var i = 0; i < offs.length; i++) {
       for (var y = 0; y < mask.length; y++) {
         for (var x = 0; x < mask[y].length; x++) {
-          if (mask[y].charAt(x) === ".") continue;
+          if (chars.indexOf(mask[y].charAt(x)) < 0) continue;
           px(ctx, x + offs[i][0], y + offs[i][1], 1, 1, color);
         }
       }
@@ -520,7 +524,7 @@
   }
 
   function bolt(ctx, flash, shimmer) {
-    if (flash > 0.15) halo(ctx, BOLT, "#9fe8ff", 0.22 * flash);
+    if (flash > 0.15) halo(ctx, BOLT, BOLT_LIVE, "#9fe8ff", 0.22 * flash);
     paint(ctx, BOLT, boltPaint(flash, shimmer));
   }
 
