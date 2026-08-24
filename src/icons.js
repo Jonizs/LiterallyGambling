@@ -120,82 +120,6 @@
       px(c, 6, 14, 5, 2, C.gold);             // pommel
       px(c, 7, 15, 1, 1, C.goldLit);
     },
-    bloodbane: function (c) {
-      px(c, 7, 0, 2, 1, C.bloodLit);          // point, already wet
-      px(c, 6, 1, 4, 9, C.dark);              // blade
-      px(c, 6, 1, 1, 9, C.blood);             // the edge that bleeds
-      px(c, 9, 1, 1, 9, C.darkLit);
-      px(c, 7, 2, 1, 7, C.bloodLit);          // channel down the fuller
-      px(c, 8, 4, 1, 4, C.blood);
-      px(c, 3, 10, 10, 1, C.darkLit);         // crossguard, swept
-      px(c, 3, 11, 10, 2, C.dark);
-      px(c, 2, 10, 2, 2, C.blood);
-      px(c, 12, 10, 2, 2, C.blood);
-      px(c, 6, 13, 4, 2, C.leatherDark);      // wrap
-      px(c, 7, 14, 2, 1, C.blood);
-      px(c, 5, 15, 6, 1, C.bloodLit);         // pommel stone
-    },
-    // --- parts: the fittings pieces are built from --------------------------
-    "part-blood": function (c) {            // blood orb in a claw setting
-      px(c, 6, 1, 4, 1, C.bloodLit);
-      px(c, 4, 2, 8, 2, C.bloodLit);
-      px(c, 3, 4, 10, 6, C.blood);
-      px(c, 4, 3, 8, 1, C.blood);
-      px(c, 5, 3, 3, 2, C.bloodLit);        // highlight
-      px(c, 6, 3, 1, 1, "#ffd7dd");
-      px(c, 4, 8, 8, 2, "#5c0b18");         // heavy blood pooled low
-      px(c, 4, 10, 8, 2, C.blood);
-      px(c, 6, 12, 4, 1, C.bloodLit);
-      px(c, 2, 5, 1, 5, C.darkLit);         // setting claws
-      px(c, 13, 5, 1, 5, C.darkLit);
-      px(c, 4, 13, 8, 1, C.dark);
-      px(c, 5, 14, 6, 2, C.darkLit);        // stand
-    },
-    "part-handle": function (c) {           // banded metal grip
-      px(c, 6, 0, 4, 2, C.steelLit);        // pommel cap
-      px(c, 5, 2, 6, 1, C.steel);
-      px(c, 6, 3, 4, 10, C.steelDark);      // core
-      px(c, 6, 3, 1, 10, C.steel);
-      px(c, 9, 3, 1, 10, "#3d4049");
-      px(c, 5, 5, 6, 1, C.steelLit);        // grip bands
-      px(c, 5, 8, 6, 1, C.steelLit);
-      px(c, 5, 11, 6, 1, C.steelLit);
-      px(c, 4, 13, 8, 1, C.gold);           // collar
-      px(c, 4, 14, 8, 2, C.goldDark);
-      px(c, 5, 14, 1, 1, C.goldLit);
-    },
-    "part-electric": function (c) {         // blade with current running it
-      px(c, 7, 0, 2, 1, "#dffbff");
-      px(c, 6, 1, 4, 10, C.steel);
-      px(c, 6, 1, 1, 10, C.steelLit);
-      px(c, 9, 1, 1, 10, C.steelDark);
-      px(c, 8, 2, 1, 2, "#5fe3ff");         // arc down the fuller
-      px(c, 7, 4, 1, 2, "#5fe3ff");
-      px(c, 8, 6, 1, 2, "#bff4ff");
-      px(c, 7, 8, 1, 2, "#5fe3ff");
-      px(c, 3, 3, 1, 1, "#5fe3ff");         // loose sparks
-      px(c, 12, 6, 1, 1, "#5fe3ff");
-      px(c, 2, 8, 1, 1, "#bff4ff");
-      px(c, 4, 11, 8, 1, "#2f7f96");        // guard
-      px(c, 5, 12, 6, 2, C.steelDark);
-      px(c, 6, 14, 4, 2, "#2f7f96");
-    },
-    "part-thunder": function (c) {          // spearhead with a bolt cut in it
-      px(c, 7, 0, 2, 1, C.steelLit);
-      px(c, 6, 1, 4, 2, C.steel);
-      px(c, 5, 3, 6, 5, C.steel);
-      px(c, 5, 3, 1, 5, C.steelLit);
-      px(c, 10, 3, 1, 5, C.steelDark);
-      px(c, 8, 2, 2, 2, "#ffe66a");         // bolt
-      px(c, 7, 4, 2, 2, "#ffe66a");
-      px(c, 8, 6, 2, 1, "#fff7c0");
-      px(c, 4, 8, 8, 1, C.steelDark);       // wings
-      px(c, 3, 9, 3, 2, C.steel);
-      px(c, 10, 9, 3, 2, C.steel);
-      px(c, 6, 9, 4, 2, C.gold);            // socket
-      px(c, 6, 11, 4, 5, C.steelDark);      // stub shaft
-      px(c, 6, 11, 1, 5, C.steel);
-    },
     helmet: function (c) {
       px(c, 5, 0, 6, 1, C.steelLit);          // dome
       px(c, 4, 1, 8, 2, C.steel);
@@ -419,13 +343,59 @@
     t: C.dark, w: "#fffdf2"
   };
 
-  DRAW["part-midas"] = function (c) { paint(c, MIDAS, MIDAS_PAINT); };
-
   // --- living icons ---------------------------------------------------------
   // Most icons are painted once. An entry here redraws its own tile every
   // frame instead, so the art can move: step(ctx, dt, bits) owns the whole
   // 16x16 and keeps whatever it needs on the bits array it is handed.
   var ANIMATE = {};
+
+  DRAW["part-midas"] = function (c) { paint(c, MIDAS, MIDAS_PAINT); };
+
+  // --- the blade that drinks -------------------------------------------------
+  // The Blood Bane never settles: its steel runs from black up through deep
+  // red and back down, and the wave travels from the point to the guard, so
+  // the blade looks like it is swallowing what it has drunk.
+  var BANE_COLD = "#150d12";   // the blade at its blackest
+  var BANE_BODY = "#3a1420";   // the flat, at the top of the swing
+  var BANE_RED = "#a3172a";
+  var BANE_HOT = "#e0384a";
+
+  // Where a given row sits in the wave, 0 black and 1 full colour.
+  function baneWave(row, phase) {
+    return 0.5 + 0.5 * Math.sin(phase - row * 0.55);
+  }
+
+  function baneShade(row, phase, cold, hot) {
+    return lerp(cold, hot, baneWave(row, phase));
+  }
+
+  function bloodbane(c, phase) {
+    px(c, 7, 0, 2, 1, baneShade(0, phase, C.dark, BANE_HOT));      // point
+    for (var y = 1; y < 10; y++) {
+      px(c, 6, y, 4, 1, baneShade(y, phase, C.dark, BANE_BODY));   // blade
+      px(c, 6, y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED)); // edge that bleeds
+      px(c, 9, y, 1, 1, C.darkLit);                                // shaded back
+      if (y >= 2 && y <= 8) {                                      // channel down the fuller
+        px(c, 7, y, 1, 1, baneShade(y - 1, phase, BANE_COLD, BANE_HOT));
+      }
+      if (y >= 4 && y <= 7) px(c, 8, y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED));
+    }
+    px(c, 3, 10, 10, 1, C.darkLit);         // crossguard, swept
+    px(c, 3, 11, 10, 2, C.dark);
+    px(c, 2, 10, 2, 2, baneShade(10, phase, C.dark, BANE_RED));
+    px(c, 12, 10, 2, 2, baneShade(10, phase, C.dark, BANE_RED));
+    px(c, 6, 13, 4, 2, C.leatherDark);      // wrap
+    px(c, 7, 14, 2, 1, C.blood);
+    px(c, 5, 15, 6, 1, baneShade(12, phase, C.blood, BANE_HOT)); // pommel stone
+  }
+
+  // Still frame for anything that cannot animate: caught mid-swing, in colour.
+  DRAW.bloodbane = function (c) { bloodbane(c, Math.PI / 2); };
+
+  ANIMATE.bloodbane = function (ctx, dt, bits) {
+    bits.t = (bits.t || 0) + dt;
+    bloodbane(ctx, bits.t * 2.1);
+  };
 
   // The outermost lit pixel on each row of the Midas Edge - the cutting side
   // itself, which is where its sparks come off.
