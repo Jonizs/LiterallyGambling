@@ -51,32 +51,32 @@
     // of the rack: 32 half-pixels across and 48 down, so a blade has the length
     // to look like one.
     sword: function (c) {
-      hpx(c, 15, 0, 2, 2, C.steelLit);        // point
-      hpx(c, 14, 2, 4, 2, C.steel);
-      hpx(c, 14, 2, 1, 2, C.steelLit);
-      hpx(c, 17, 2, 1, 2, C.steelDark);
-      hpx(c, 13, 4, 6, 2, C.steel);           // shoulders of the taper
-      hpx(c, 13, 4, 1, 2, C.steelLit);
-      hpx(c, 18, 4, 1, 2, C.steelDark);
-      hpx(c, 12, 6, 8, 30, C.steel);          // blade
-      hpx(c, 12, 6, 2, 30, C.steelLit);       // lit edge
-      hpx(c, 18, 6, 2, 30, C.steelDark);      // shaded edge
-      hpx(c, 15, 3, 2, 32, C.steelLit);       // fuller
-      hpx(c, 16, 4, 1, 30, C.steel);
-      hpx(c, 6, 36, 20, 2, C.goldDark);       // crossguard
-      hpx(c, 6, 38, 20, 2, C.gold);
-      hpx(c, 4, 37, 2, 2, C.goldDark);        // swept tips
-      hpx(c, 26, 37, 2, 2, C.goldDark);
-      hpx(c, 7, 38, 4, 1, C.goldLit);
-      hpx(c, 21, 38, 4, 1, C.goldLit);
-      hpx(c, 13, 40, 6, 5, C.leather);        // grip
-      hpx(c, 13, 40, 1, 5, C.leatherLit);
-      hpx(c, 18, 40, 1, 5, C.leatherDark);
-      hpx(c, 13, 41, 6, 1, C.leatherDark);    // wrap
-      hpx(c, 13, 43, 6, 1, C.leatherDark);
-      hpx(c, 11, 45, 10, 2, C.gold);          // pommel
-      hpx(c, 12, 47, 8, 1, C.goldDark);
-      hpx(c, 12, 45, 3, 1, C.goldLit);
+      hpx(c, 15, 8, 2, 2, C.steelLit);        // point
+      hpx(c, 14, 10, 4, 2, C.steel);
+      hpx(c, 14, 10, 1, 2, C.steelLit);
+      hpx(c, 17, 10, 1, 2, C.steelDark);
+      hpx(c, 13, 12, 6, 2, C.steel);          // shoulders of the taper
+      hpx(c, 13, 12, 1, 2, C.steelLit);
+      hpx(c, 18, 12, 1, 2, C.steelDark);
+      hpx(c, 12, 14, 8, 14, C.steel);         // blade
+      hpx(c, 12, 14, 2, 14, C.steelLit);      // lit edge
+      hpx(c, 18, 14, 2, 14, C.steelDark);     // shaded edge
+      hpx(c, 15, 11, 2, 16, C.steelLit);      // fuller
+      hpx(c, 16, 12, 1, 14, C.steel);
+      hpx(c, 6, 28, 20, 2, C.goldDark);       // crossguard
+      hpx(c, 6, 30, 20, 2, C.gold);
+      hpx(c, 4, 29, 2, 2, C.goldDark);        // swept tips
+      hpx(c, 26, 29, 2, 2, C.goldDark);
+      hpx(c, 7, 30, 4, 1, C.goldLit);
+      hpx(c, 21, 30, 4, 1, C.goldLit);
+      hpx(c, 13, 32, 6, 5, C.leather);        // grip
+      hpx(c, 13, 32, 1, 5, C.leatherLit);
+      hpx(c, 18, 32, 1, 5, C.leatherDark);
+      hpx(c, 13, 33, 6, 1, C.leatherDark);    // wrap
+      hpx(c, 13, 35, 6, 1, C.leatherDark);
+      hpx(c, 11, 37, 10, 2, C.gold);          // pommel
+      hpx(c, 12, 39, 8, 1, C.goldDark);
+      hpx(c, 12, 37, 3, 1, C.goldLit);
     },
     // Midas' Anduril: the same longsword geometry, forged in gold, with the
     // rune line down the fuller left white-hot.
@@ -164,56 +164,53 @@
       hpx(c, 12, 44, 8, 4, C.silhouette);
     },
     // Worked out at the bench: a lance, a dagger and a blade that drinks.
-    // The lance and the dagger are the length they always were; on the taller
-    // tile they simply sit on its foot, 16 half-pixels down.
+    // The lance and the dagger are the length they always were; anything
+    // shorter than the tile is centred on it, so here that is 8 rows down.
     lance: function (c) {
-      hpx(c, 26, 16, 3, 2, C.steelLit);       // head, laid along the diagonal
-      hpx(c, 24, 18, 5, 2, C.steel);
-      hpx(c, 24, 18, 2, 2, C.steelLit);
-      hpx(c, 22, 20, 5, 2, C.steel);
-      hpx(c, 22, 20, 2, 2, C.steelLit);
-      hpx(c, 20, 22, 5, 2, C.steel);
-      hpx(c, 20, 22, 2, 2, C.steelLit);
-      hpx(c, 18, 24, 5, 2, C.steelDark);
-      hpx(c, 18, 24, 2, 2, C.steel);
-      hpx(c, 16, 26, 6, 3, C.gold);           // vamplate
-      hpx(c, 16, 26, 2, 3, C.goldLit);
-      hpx(c, 16, 28, 6, 1, C.goldDark);
+      hpx(c, 26, 8, 3, 2, C.steelLit);       // head, laid along the diagonal
+      hpx(c, 24, 10, 5, 2, C.steel);
+      hpx(c, 24, 10, 2, 2, C.steelLit);
+      hpx(c, 22, 12, 5, 2, C.steel);
+      hpx(c, 22, 12, 2, 2, C.steelLit);
+      hpx(c, 20, 14, 5, 2, C.steel);
+      hpx(c, 20, 14, 2, 2, C.steelLit);
+      hpx(c, 18, 16, 5, 2, C.steelDark);
+      hpx(c, 18, 16, 2, 2, C.steel);
+      hpx(c, 16, 18, 6, 3, C.gold);           // vamplate
+      hpx(c, 16, 18, 2, 3, C.goldLit);
+      hpx(c, 16, 20, 6, 1, C.goldDark);
       for (var i = 0; i < 15; i++) {          // shaft, down to the butt
-        hpx(c, 15 - i, 29 + i, 3, 1, C.wood);
-        hpx(c, 15 - i, 29 + i, 1, 1, C.woodLit);
-        hpx(c, 17 - i, 29 + i, 1, 1, C.woodDark);
+        hpx(c, 15 - i, 21 + i, 3, 1, C.wood);
+        hpx(c, 15 - i, 21 + i, 1, 1, C.woodLit);
+        hpx(c, 17 - i, 21 + i, 1, 1, C.woodDark);
       }
-      hpx(c, 0, 44, 4, 1, C.leather);         // grip end
-      hpx(c, 0, 45, 4, 3, C.leatherDark);
+      hpx(c, 0, 36, 4, 1, C.leather);         // grip end
+      hpx(c, 0, 37, 4, 3, C.leatherDark);
     },
     dagger: function (c) {
-      hpx(c, 15, 17, 2, 2, C.steelLit);       // point
-      hpx(c, 14, 19, 4, 2, C.steel);
-      hpx(c, 14, 19, 1, 2, C.steelLit);
-      hpx(c, 17, 19, 1, 2, C.steelDark);
-      hpx(c, 13, 21, 6, 13, C.steel);         // blade
-      hpx(c, 13, 21, 2, 13, C.steelLit);
-      hpx(c, 17, 21, 2, 13, C.steelDark);
-      hpx(c, 15, 20, 2, 13, C.steelLit);      // fuller
-      hpx(c, 16, 21, 1, 11, C.steel);
-      hpx(c, 10, 34, 12, 2, C.goldDark);      // guard
-      hpx(c, 10, 36, 12, 2, C.gold);
-      hpx(c, 11, 36, 3, 1, C.goldLit);
-      hpx(c, 13, 38, 6, 6, C.leather);        // grip
-      hpx(c, 13, 38, 1, 6, C.leatherLit);
-      hpx(c, 18, 38, 1, 6, C.leatherDark);
-      hpx(c, 13, 40, 6, 1, C.leatherDark);    // wrap
-      hpx(c, 13, 42, 6, 1, C.leatherDark);
-      hpx(c, 11, 44, 10, 2, C.gold);          // pommel
-      hpx(c, 12, 44, 3, 1, C.goldLit);
-      hpx(c, 12, 46, 8, 2, C.goldDark);
+      hpx(c, 15, 9, 2, 2, C.steelLit);       // point
+      hpx(c, 14, 11, 4, 2, C.steel);
+      hpx(c, 14, 11, 1, 2, C.steelLit);
+      hpx(c, 17, 11, 1, 2, C.steelDark);
+      hpx(c, 13, 13, 6, 13, C.steel);         // blade
+      hpx(c, 13, 13, 2, 13, C.steelLit);
+      hpx(c, 17, 13, 2, 13, C.steelDark);
+      hpx(c, 15, 12, 2, 13, C.steelLit);      // fuller
+      hpx(c, 16, 13, 1, 11, C.steel);
+      hpx(c, 10, 26, 12, 2, C.goldDark);      // guard
+      hpx(c, 10, 28, 12, 2, C.gold);
+      hpx(c, 11, 28, 3, 1, C.goldLit);
+      hpx(c, 13, 30, 6, 6, C.leather);        // grip
+      hpx(c, 13, 30, 1, 6, C.leatherLit);
+      hpx(c, 18, 30, 1, 6, C.leatherDark);
+      hpx(c, 13, 32, 6, 1, C.leatherDark);    // wrap
+      hpx(c, 13, 34, 6, 1, C.leatherDark);
+      hpx(c, 11, 36, 10, 2, C.gold);          // pommel
+      hpx(c, 12, 36, 3, 1, C.goldLit);
+      hpx(c, 12, 38, 8, 2, C.goldDark);
     },
     crackbolt: (function () {               // kunai: straight edges, no curves
       var MASK = [
-        "................................",
-        "................................",
-        "................................",
         "................................",
         "................................",
         "................................",
@@ -259,6 +256,9 @@
         "............LLLLSSSS............",
         "..............LLSS..............",
         "...............LS...............",
+        "................................",
+        "................................",
+        "................................",
       ];
       var PAINT = {
         L: C.steelLit, S: C.steel, D: C.steelDark,   // blade, lit edge to shade
@@ -579,36 +579,36 @@
 
   // The ricasso - the blunt stretch of blade sitting on the guard - takes no
   // part in it: the wave runs out at RICASSO_Y and the hilt stays as forged.
-  var RICASSO_Y = 16;
+  var RICASSO_Y = 17;
 
   // Rows are counted from the point; BANE_TOP drops the whole blade onto the
   // foot of the taller tile without touching the wave running down it.
-  var BANE_TOP = 16;
+  var BANE_TOP = 7;
 
   function bloodbane(c, phase) {
     var top = BANE_TOP;
     hpx(c, 15, top, 2, 2, baneShade(0, phase, C.dark, BANE_HOT));   // point
     hpx(c, 14, top + 2, 4, 2, baneShade(2, phase, C.dark, BANE_BODY));
     hpx(c, 14, top + 2, 1, 2, baneShade(2, phase, BANE_COLD, BANE_RED));
-    for (var y = 4; y < 20; y++) {
+    for (var y = 4; y < 21; y++) {
       var live = y < RICASSO_Y;
       hpx(c, 12, top + y, 8, 1, live ? baneShade(y, phase, C.dark, BANE_BODY) : C.dark);
       hpx(c, 12, top + y, 2, 1, live ? baneShade(y, phase, BANE_COLD, BANE_RED) : C.blood);
       hpx(c, 18, top + y, 2, 1, C.darkLit);                         // shaded back
-      if (y <= 17) {                                                // channel down the fuller
+      if (y <= 18) {                                                // channel down the fuller
         hpx(c, 14, top + y, 2, 1, live ? baneShade(y - 2, phase, BANE_COLD, BANE_HOT)
           : C.bloodLit);
       }
-      if (y >= 8 && y <= 15) {
+      if (y >= 8 && y <= 16) {
         hpx(c, 16, top + y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED));
       }
     }
-    hpx(c, 6, top + 20, 20, 2, C.darkLit);  // crossguard, swept
-    hpx(c, 6, top + 22, 20, 3, C.dark);
-    hpx(c, 4, top + 20, 3, 4, C.blood);
-    hpx(c, 25, top + 20, 3, 4, C.blood);
-    hpx(c, 13, top + 25, 6, 5, C.leatherDark);   // grip, one flat colour
-    hpx(c, 11, top + 30, 10, 2, C.bloodLit);     // pommel stone
+    hpx(c, 6, top + 21, 20, 2, C.darkLit);  // crossguard, swept
+    hpx(c, 6, top + 23, 20, 3, C.dark);
+    hpx(c, 4, top + 21, 3, 4, C.blood);
+    hpx(c, 25, top + 21, 3, 4, C.blood);
+    hpx(c, 13, top + 26, 6, 5, C.leatherDark);   // grip, one flat colour
+    hpx(c, 11, top + 31, 10, 2, C.bloodLit);     // pommel stone
   }
 
   // Still frame for anything that cannot animate: caught mid-swing, in colour.
@@ -621,9 +621,6 @@
   //   e pale edge   c core   l deep edge
   //   G/g guard and the gold ricasso   m stone   R/r grip   P pommel
   var BOLT = [
-    "................................",
-    "................................",
-    "................................",
     "................................",
     "................................",
     "................................",
@@ -669,6 +666,9 @@
     ".............RrrrrR.............",
     ".............RrrrrR.............",
     "............PPPPPPPP............",
+    "................................",
+    "................................",
+    "................................",
   ];
 
   // The parts made of light. They glow, pulse and throw motes; the guard,
@@ -866,7 +866,7 @@
 
   // A strike is worked out once, as a short jagged run of half-pixels, and then
   // just held on screen until its life runs out.
-  var CRACK_TIP = 6;            // the row the point sits on
+  var CRACK_TIP = 3;            // the row the point sits on
 
   function crackle() {
     var pts = [], x = 15 + Math.floor(Math.random() * 2), y = CRACK_TIP;
