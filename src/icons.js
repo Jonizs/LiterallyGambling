@@ -568,10 +568,6 @@
     return lerp(cold, hot, baneWave(row, phase));
   }
 
-  // The ricasso - the blunt stretch of blade sitting on the guard - takes no
-  // part in it: the wave runs out at RICASSO_Y and the hilt stays as forged.
-  var RICASSO_Y = 17;
-
   // Rows are counted from the point; BANE_TOP drops the whole blade onto the
   // foot of the taller tile without touching the wave running down it.
   var BANE_TOP = 7;
@@ -581,18 +577,14 @@
     hpx(c, 15, top, 2, 2, baneShade(0, phase, C.dark, BANE_HOT));   // point
     hpx(c, 14, top + 2, 4, 2, baneShade(2, phase, C.dark, BANE_BODY));
     hpx(c, 14, top + 2, 1, 2, baneShade(2, phase, BANE_COLD, BANE_RED));
+    // The wave runs the whole blade, right down onto the guard - no stretch of
+    // it sits out of the swing.
     for (var y = 4; y < 21; y++) {
-      var live = y < RICASSO_Y;
-      hpx(c, 12, top + y, 8, 1, live ? baneShade(y, phase, C.dark, BANE_BODY) : C.dark);
-      hpx(c, 12, top + y, 2, 1, live ? baneShade(y, phase, BANE_COLD, BANE_RED) : C.blood);
+      hpx(c, 12, top + y, 8, 1, baneShade(y, phase, C.dark, BANE_BODY));
+      hpx(c, 12, top + y, 2, 1, baneShade(y, phase, BANE_COLD, BANE_RED));
       hpx(c, 18, top + y, 2, 1, C.darkLit);                         // shaded back
-      if (y <= 18) {                                                // channel down the fuller
-        hpx(c, 14, top + y, 2, 1, live ? baneShade(y - 2, phase, BANE_COLD, BANE_HOT)
-          : C.bloodLit);
-      }
-      if (y >= 8 && y <= 16) {
-        hpx(c, 16, top + y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED));
-      }
+      hpx(c, 14, top + y, 2, 1, baneShade(y - 2, phase, BANE_COLD, BANE_HOT));
+      if (y >= 8) hpx(c, 16, top + y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED));
     }
     hpx(c, 6, top + 21, 20, 2, C.darkLit);  // crossguard, swept
     hpx(c, 6, top + 23, 20, 3, C.dark);
