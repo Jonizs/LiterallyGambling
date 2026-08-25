@@ -47,8 +47,9 @@
 
   var DRAW = {
     // --- weapons ------------------------------------------------------------
-    // Weapons are drawn on the fine grid (hpx, 0-31), so their edges, fullers
-    // and wrappings can hold detail a whole tile square could not.
+    // Weapons are drawn on the fine grid (hpx), on a taller tile than the rest
+    // of the rack: 32 half-pixels across and 48 down, so a blade has the length
+    // to look like one.
     sword: function (c) {
       hpx(c, 15, 0, 2, 2, C.steelLit);        // point
       hpx(c, 14, 2, 4, 2, C.steel);
@@ -57,25 +58,25 @@
       hpx(c, 13, 4, 6, 2, C.steel);           // shoulders of the taper
       hpx(c, 13, 4, 1, 2, C.steelLit);
       hpx(c, 18, 4, 1, 2, C.steelDark);
-      hpx(c, 12, 6, 8, 14, C.steel);          // blade
-      hpx(c, 12, 6, 2, 14, C.steelLit);       // lit edge
-      hpx(c, 18, 6, 2, 14, C.steelDark);      // shaded edge
-      hpx(c, 15, 3, 2, 16, C.steelLit);       // fuller
-      hpx(c, 16, 4, 1, 14, C.steel);
-      hpx(c, 6, 20, 20, 2, C.goldDark);       // crossguard
-      hpx(c, 6, 22, 20, 2, C.gold);
-      hpx(c, 4, 21, 2, 2, C.goldDark);        // swept tips
-      hpx(c, 26, 21, 2, 2, C.goldDark);
-      hpx(c, 7, 22, 4, 1, C.goldLit);
-      hpx(c, 21, 22, 4, 1, C.goldLit);
-      hpx(c, 13, 24, 6, 5, C.leather);        // grip
-      hpx(c, 13, 24, 1, 5, C.leatherLit);
-      hpx(c, 18, 24, 1, 5, C.leatherDark);
-      hpx(c, 13, 25, 6, 1, C.leatherDark);    // wrap
-      hpx(c, 13, 27, 6, 1, C.leatherDark);
-      hpx(c, 11, 29, 10, 2, C.gold);          // pommel
-      hpx(c, 12, 31, 8, 1, C.goldDark);
-      hpx(c, 12, 29, 3, 1, C.goldLit);
+      hpx(c, 12, 6, 8, 30, C.steel);          // blade
+      hpx(c, 12, 6, 2, 30, C.steelLit);       // lit edge
+      hpx(c, 18, 6, 2, 30, C.steelDark);      // shaded edge
+      hpx(c, 15, 3, 2, 32, C.steelLit);       // fuller
+      hpx(c, 16, 4, 1, 30, C.steel);
+      hpx(c, 6, 36, 20, 2, C.goldDark);       // crossguard
+      hpx(c, 6, 38, 20, 2, C.gold);
+      hpx(c, 4, 37, 2, 2, C.goldDark);        // swept tips
+      hpx(c, 26, 37, 2, 2, C.goldDark);
+      hpx(c, 7, 38, 4, 1, C.goldLit);
+      hpx(c, 21, 38, 4, 1, C.goldLit);
+      hpx(c, 13, 40, 6, 5, C.leather);        // grip
+      hpx(c, 13, 40, 1, 5, C.leatherLit);
+      hpx(c, 18, 40, 1, 5, C.leatherDark);
+      hpx(c, 13, 41, 6, 1, C.leatherDark);    // wrap
+      hpx(c, 13, 43, 6, 1, C.leatherDark);
+      hpx(c, 11, 45, 10, 2, C.gold);          // pommel
+      hpx(c, 12, 47, 8, 1, C.goldDark);
+      hpx(c, 12, 45, 3, 1, C.goldLit);
     },
     // Midas' Anduril: the same longsword geometry, forged in gold, with the
     // rune line down the fuller left white-hot.
@@ -87,120 +88,122 @@
       hpx(c, 13, 4, 6, 2, C.gold);
       hpx(c, 13, 4, 1, 2, C.goldLit);
       hpx(c, 18, 4, 1, 2, C.goldDark);
-      hpx(c, 12, 6, 8, 16, C.gold);           // blade
-      hpx(c, 12, 6, 2, 16, C.goldLit);        // lit edge
-      hpx(c, 18, 6, 2, 16, C.goldDark);       // shaded edge
-      hpx(c, 15, 3, 2, 18, "#fffdf2");        // rune line down the fuller
-      hpx(c, 16, 5, 1, 16, C.goldLit);
-      hpx(c, 15, 8, 2, 1, C.goldDark);        // runes cut into it
-      hpx(c, 15, 12, 2, 1, C.goldDark);
-      hpx(c, 15, 16, 2, 1, C.goldDark);
-      hpx(c, 6, 22, 20, 2, C.goldDark);       // crossguard
-      hpx(c, 6, 24, 20, 2, C.gold);
-      hpx(c, 4, 22, 2, 3, C.gold);            // swept tips
-      hpx(c, 26, 22, 2, 3, C.gold);
-      hpx(c, 7, 24, 4, 1, "#fffdf2");
-      hpx(c, 21, 24, 4, 1, "#fffdf2");
-      hpx(c, 13, 26, 6, 4, C.dark);           // grip
-      hpx(c, 13, 26, 1, 4, C.darkLit);
-      hpx(c, 13, 27, 6, 1, C.gold);           // gold wire wrap
-      hpx(c, 13, 29, 6, 1, C.gold);
-      hpx(c, 11, 30, 10, 1, C.goldLit);       // pommel
-      hpx(c, 12, 31, 8, 1, C.goldDark);
+      hpx(c, 12, 6, 8, 32, C.gold);           // blade
+      hpx(c, 12, 6, 2, 32, C.goldLit);        // lit edge
+      hpx(c, 18, 6, 2, 32, C.goldDark);       // shaded edge
+      hpx(c, 15, 3, 2, 34, "#fffdf2");        // rune line down the fuller
+      hpx(c, 16, 5, 1, 32, C.goldLit);
+      hpx(c, 15, 10, 2, 1, C.goldDark);       // runes cut into it
+      hpx(c, 15, 18, 2, 1, C.goldDark);
+      hpx(c, 15, 26, 2, 1, C.goldDark);
+      hpx(c, 15, 33, 2, 1, C.goldDark);
+      hpx(c, 6, 38, 20, 2, C.goldDark);       // crossguard
+      hpx(c, 6, 40, 20, 2, C.gold);
+      hpx(c, 4, 38, 2, 3, C.gold);            // swept tips
+      hpx(c, 26, 38, 2, 3, C.gold);
+      hpx(c, 7, 40, 4, 1, "#fffdf2");
+      hpx(c, 21, 40, 4, 1, "#fffdf2");
+      hpx(c, 13, 42, 6, 4, C.dark);           // grip
+      hpx(c, 13, 42, 1, 4, C.darkLit);
+      hpx(c, 13, 43, 6, 1, C.gold);           // gold wire wrap
+      hpx(c, 13, 45, 6, 1, C.gold);
+      hpx(c, 11, 46, 10, 1, C.goldLit);       // pommel
+      hpx(c, 12, 47, 8, 1, C.goldDark);
     },
     // Blades the smith has not learned yet: shape only, no detail.
     "sword-silhouette-1": function (c) {   // broadsword
       hpx(c, 14, 0, 4, 2, C.silhouette);
       hpx(c, 13, 2, 6, 2, C.silhouette);
-      hpx(c, 12, 4, 8, 16, C.silhouette);
-      hpx(c, 6, 20, 20, 4, C.silhouette);
-      hpx(c, 14, 24, 4, 6, C.silhouette);
-      hpx(c, 12, 30, 8, 2, C.silhouette);
+      hpx(c, 12, 4, 8, 32, C.silhouette);
+      hpx(c, 6, 36, 20, 4, C.silhouette);
+      hpx(c, 14, 40, 4, 6, C.silhouette);
+      hpx(c, 12, 46, 8, 2, C.silhouette);
     },
     "sword-silhouette-2": function (c) {   // rapier
-      hpx(c, 15, 0, 2, 4, C.silhouette);
-      hpx(c, 14, 4, 4, 14, C.silhouette);
-      hpx(c, 8, 18, 16, 2, C.silhouette);
-      hpx(c, 8, 20, 2, 6, C.silhouette);
-      hpx(c, 22, 20, 2, 6, C.silhouette);
-      hpx(c, 8, 26, 16, 2, C.silhouette);
-      hpx(c, 14, 20, 4, 6, C.silhouette);
-      hpx(c, 12, 28, 8, 4, C.silhouette);
+      hpx(c, 15, 0, 2, 6, C.silhouette);
+      hpx(c, 14, 6, 4, 26, C.silhouette);
+      hpx(c, 8, 32, 16, 2, C.silhouette);
+      hpx(c, 8, 34, 2, 6, C.silhouette);
+      hpx(c, 22, 34, 2, 6, C.silhouette);
+      hpx(c, 8, 40, 16, 2, C.silhouette);
+      hpx(c, 14, 34, 4, 8, C.silhouette);
+      hpx(c, 12, 42, 8, 6, C.silhouette);
     },
     "sword-silhouette-3": function (c) {   // greatsword
       hpx(c, 14, 0, 4, 2, C.silhouette);
       hpx(c, 12, 2, 8, 2, C.silhouette);
-      hpx(c, 10, 4, 12, 14, C.silhouette);
-      hpx(c, 2, 18, 28, 4, C.silhouette);
-      hpx(c, 13, 22, 6, 6, C.silhouette);
-      hpx(c, 10, 28, 12, 4, C.silhouette);
+      hpx(c, 10, 4, 12, 30, C.silhouette);
+      hpx(c, 2, 34, 28, 4, C.silhouette);
+      hpx(c, 13, 38, 6, 6, C.silhouette);
+      hpx(c, 10, 44, 12, 4, C.silhouette);
     },
     "sword-silhouette-4": function (c) {   // curved saber
       hpx(c, 23, 0, 4, 2, C.silhouette);
-      hpx(c, 20, 2, 5, 2, C.silhouette);
-      hpx(c, 17, 4, 5, 2, C.silhouette);
-      hpx(c, 15, 6, 5, 2, C.silhouette);
-      hpx(c, 13, 8, 5, 2, C.silhouette);
-      hpx(c, 11, 10, 5, 2, C.silhouette);
-      hpx(c, 10, 12, 5, 2, C.silhouette);
-      hpx(c, 9, 14, 5, 2, C.silhouette);
-      hpx(c, 8, 16, 5, 2, C.silhouette);
-      hpx(c, 4, 18, 12, 2, C.silhouette);     // guard
-      hpx(c, 5, 20, 6, 6, C.silhouette);      // grip
-      hpx(c, 3, 26, 8, 5, C.silhouette);      // pommel
+      hpx(c, 21, 2, 5, 3, C.silhouette);
+      hpx(c, 19, 5, 5, 3, C.silhouette);
+      hpx(c, 17, 8, 5, 3, C.silhouette);
+      hpx(c, 16, 11, 5, 3, C.silhouette);
+      hpx(c, 14, 14, 5, 3, C.silhouette);
+      hpx(c, 13, 17, 5, 3, C.silhouette);
+      hpx(c, 12, 20, 5, 3, C.silhouette);
+      hpx(c, 11, 23, 5, 3, C.silhouette);
+      hpx(c, 10, 26, 5, 3, C.silhouette);
+      hpx(c, 9, 29, 5, 3, C.silhouette);
+      hpx(c, 8, 32, 5, 2, C.silhouette);
+      hpx(c, 4, 34, 12, 2, C.silhouette);     // guard
+      hpx(c, 5, 36, 6, 7, C.silhouette);      // grip
+      hpx(c, 3, 43, 8, 5, C.silhouette);      // pommel
     },
     "sword-silhouette-5": function (c) {   // falchion
       hpx(c, 12, 2, 10, 2, C.silhouette);
-      hpx(c, 12, 4, 12, 6, C.silhouette);
-      hpx(c, 12, 10, 10, 4, C.silhouette);
-      hpx(c, 12, 14, 8, 6, C.silhouette);
-      hpx(c, 8, 20, 16, 2, C.silhouette);
-      hpx(c, 14, 22, 4, 6, C.silhouette);
-      hpx(c, 12, 28, 8, 4, C.silhouette);
+      hpx(c, 12, 4, 12, 10, C.silhouette);
+      hpx(c, 12, 14, 10, 10, C.silhouette);
+      hpx(c, 12, 24, 8, 10, C.silhouette);
+      hpx(c, 8, 34, 16, 2, C.silhouette);
+      hpx(c, 14, 36, 4, 8, C.silhouette);
+      hpx(c, 12, 44, 8, 4, C.silhouette);
     },
     // Worked out at the bench: a lance, a dagger and a blade that drinks.
     lance: function (c) {
-      hpx(c, 26, 0, 3, 2, C.steelLit);        // head, laid along the diagonal
-      hpx(c, 24, 2, 5, 2, C.steel);
-      hpx(c, 24, 2, 2, 2, C.steelLit);
-      hpx(c, 22, 4, 5, 2, C.steel);
-      hpx(c, 22, 4, 2, 2, C.steelLit);
-      hpx(c, 20, 6, 5, 2, C.steel);
-      hpx(c, 20, 6, 2, 2, C.steelLit);
-      hpx(c, 18, 8, 5, 2, C.steelDark);
-      hpx(c, 18, 8, 2, 2, C.steel);
-      hpx(c, 16, 10, 6, 3, C.gold);           // vamplate
-      hpx(c, 16, 10, 2, 3, C.goldLit);
-      hpx(c, 16, 12, 6, 1, C.goldDark);
-      for (var i = 0; i < 15; i++) {          // shaft, down to the butt
-        hpx(c, 15 - i, 13 + i, 3, 1, C.wood);
-        hpx(c, 15 - i, 13 + i, 1, 1, C.woodLit);
-        hpx(c, 17 - i, 13 + i, 1, 1, C.woodDark);
+      for (var j = 0; j < 20; j++) {          // head: point at the top, widening
+        var hx = 24 - Math.floor(j / 2), w = 2 + Math.floor(j / 4);
+        hpx(c, hx, j, w, 1, j < 3 ? C.steelLit : C.steel);
+        hpx(c, hx, j, 1, 1, C.steelLit);
+        hpx(c, hx + w - 1, j, 1, 1, C.steelDark);
       }
-      hpx(c, 0, 28, 4, 1, C.leather);         // grip end
-      hpx(c, 0, 29, 4, 3, C.leatherDark);
+      hpx(c, 14, 20, 6, 3, C.gold);           // vamplate
+      hpx(c, 14, 20, 2, 3, C.goldLit);
+      hpx(c, 14, 22, 6, 1, C.goldDark);
+      for (var i = 0; i < 25; i++) {          // shaft, down to the butt
+        var x = 14 - Math.floor(i / 2);
+        hpx(c, x, 23 + i, 4, 1, C.wood);
+        hpx(c, x, 23 + i, 1, 1, C.woodLit);
+        hpx(c, x + 3, 23 + i, 1, 1, C.woodDark);
+      }
+      hpx(c, 1, 46, 5, 1, C.leather);         // grip end
+      hpx(c, 0, 47, 5, 1, C.leatherDark);
     },
     dagger: function (c) {
       hpx(c, 15, 1, 2, 2, C.steelLit);        // point
       hpx(c, 14, 3, 4, 2, C.steel);
       hpx(c, 14, 3, 1, 2, C.steelLit);
       hpx(c, 17, 3, 1, 2, C.steelDark);
-      hpx(c, 13, 5, 6, 13, C.steel);          // blade
-      hpx(c, 13, 5, 2, 13, C.steelLit);
-      hpx(c, 17, 5, 2, 13, C.steelDark);
-      hpx(c, 15, 4, 2, 13, C.steelLit);       // fuller
-      hpx(c, 16, 5, 1, 11, C.steel);
-      hpx(c, 10, 18, 12, 2, C.goldDark);      // guard
-      hpx(c, 10, 20, 12, 2, C.gold);
-      hpx(c, 11, 20, 3, 1, C.goldLit);
-      hpx(c, 13, 22, 6, 6, C.leather);        // grip
-      hpx(c, 13, 22, 1, 6, C.leatherLit);
-      hpx(c, 18, 22, 1, 6, C.leatherDark);
-      hpx(c, 13, 24, 6, 1, C.leatherDark);    // wrap
-      hpx(c, 13, 26, 6, 1, C.leatherDark);
-      hpx(c, 11, 28, 10, 2, C.gold);          // pommel
-      hpx(c, 12, 28, 3, 1, C.goldLit);
-      hpx(c, 12, 30, 8, 2, C.goldDark);
+      hpx(c, 13, 5, 6, 25, C.steel);          // blade
+      hpx(c, 13, 5, 2, 25, C.steelLit);
+      hpx(c, 17, 5, 2, 25, C.steelDark);
+      hpx(c, 15, 4, 2, 25, C.steelLit);       // fuller
+      hpx(c, 16, 5, 1, 23, C.steel);
+      hpx(c, 10, 30, 12, 2, C.goldDark);      // guard
+      hpx(c, 10, 32, 12, 2, C.gold);
+      hpx(c, 11, 32, 3, 1, C.goldLit);
+      hpx(c, 13, 34, 6, 8, C.leather);        // grip
+      hpx(c, 13, 34, 1, 8, C.leatherLit);
+      hpx(c, 18, 34, 1, 8, C.leatherDark);
+      hpx(c, 13, 36, 6, 1, C.leatherDark);    // wrap
+      hpx(c, 13, 39, 6, 1, C.leatherDark);
+      hpx(c, 11, 42, 10, 3, C.gold);          // pommel
+      hpx(c, 12, 42, 3, 1, C.goldLit);
+      hpx(c, 12, 45, 8, 2, C.goldDark);
     },
     crackbolt: (function () {               // kunai: straight edges, no curves
       var MASK = [
@@ -208,34 +211,50 @@
         "...............LL...............",
         "..............LLDD..............",
         "..............LLDD..............",
+        "..............LLDD..............",
+        "..............LLDD..............",
         ".............LLSSDD.............",
         ".............LLSSDD.............",
         ".............LLSSDD.............",
         "............LLSLSSDD............",
         "............LLSLSSDD............",
+        "............LLSLSSDD............",
+        "............LLSLSSDD............",
         "...........LLSSLSSSDD...........",
         "...........LLSSLSSSDD...........",
         "...........LLSSLSSSDD...........",
+        "...........LLSSLSSSDD...........",
+        "..........LLSSSLSSSSDD..........",
         "..........LLSSSLSSSSDD..........",
         "..........LLSSSLSSSSDD..........",
         ".........LLSSSSLSSSSSDD.........",
         "..........LLSSSLSSSSDD..........",
+        "..........LLSSSLSSSSDD..........",
         "...........LLSSLSSSDD...........",
+        "............LLSLSSDD............",
         "............LLSLSSDD............",
         ".............LLSSDD.............",
         ".............LLSSDD.............",
         "..............LLDD..............",
+        "..............LLDD..............",
+        "...............LL...............",
         "...............LL...............",
         "............gGGggggg............",
         "............dddddddd............",
         ".............Wwwwwk.............",
         ".............Wwwwwk.............",
+        ".............Wwwwwk.............",
+        ".............Wwwwwk.............",
+        "...............LS...............",
         "..............LLSS..............",
-        ".............LLLSSS.............",
-        "...........LLL....SSS...........",
-        "...........LLL....SSS...........",
-        ".............LLLSSS.............",
+        "............LLLLSSSS............",
+        "..........LLLL....SSSS..........",
+        ".........LLLL......SSSS.........",
+        ".........LLLL......SSSS.........",
+        "..........LLLL....SSSS..........",
+        "............LLLLSSSS............",
         "..............LLSS..............",
+        "...............LS...............",
       ];
       var PAINT = {
         L: C.steelLit, S: C.steel, D: C.steelDark,   // blade, lit edge to shade
@@ -547,7 +566,7 @@
 
   // Where a given row sits in the wave, 0 black and 1 full colour.
   function baneWave(row, phase) {
-    return 0.5 + 0.5 * Math.sin(phase - row * 0.275);
+    return 0.5 + 0.5 * Math.sin(phase - row * 0.17);
   }
 
   function baneShade(row, phase, cold, hot) {
@@ -556,29 +575,29 @@
 
   // The ricasso - the blunt stretch of blade sitting on the guard - takes no
   // part in it: the wave runs out at RICASSO_Y and the hilt stays as forged.
-  var RICASSO_Y = 16;
+  var RICASSO_Y = 30;
 
   function bloodbane(c, phase) {
     hpx(c, 15, 0, 2, 2, baneShade(0, phase, C.dark, BANE_HOT));     // point
     hpx(c, 14, 2, 4, 2, baneShade(2, phase, C.dark, BANE_BODY));
     hpx(c, 14, 2, 1, 2, baneShade(2, phase, BANE_COLD, BANE_RED));
-    for (var y = 4; y < 20; y++) {
+    for (var y = 4; y < 36; y++) {
       var live = y < RICASSO_Y;
       hpx(c, 12, y, 8, 1, live ? baneShade(y, phase, C.dark, BANE_BODY) : C.dark);
       hpx(c, 12, y, 2, 1, live ? baneShade(y, phase, BANE_COLD, BANE_RED) : C.blood);
       hpx(c, 18, y, 2, 1, C.darkLit);                               // shaded back
-      if (y <= 17) {                                                // channel down the fuller
+      if (y <= 33) {                                                // channel down the fuller
         hpx(c, 14, y, 2, 1, live ? baneShade(y - 2, phase, BANE_COLD, BANE_HOT)
           : C.bloodLit);
       }
-      if (y >= 8 && y <= 15) hpx(c, 16, y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED));
+      if (y >= 8 && y <= 29) hpx(c, 16, y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED));
     }
-    hpx(c, 6, 20, 20, 2, C.darkLit);        // crossguard, swept
-    hpx(c, 6, 22, 20, 3, C.dark);
-    hpx(c, 4, 20, 3, 4, C.blood);
-    hpx(c, 25, 20, 3, 4, C.blood);
-    hpx(c, 13, 25, 6, 5, C.leatherDark);    // grip, one flat colour
-    hpx(c, 11, 30, 10, 2, C.bloodLit);      // pommel stone
+    hpx(c, 6, 36, 20, 2, C.darkLit);        // crossguard, swept
+    hpx(c, 6, 38, 20, 3, C.dark);
+    hpx(c, 4, 36, 3, 4, C.blood);
+    hpx(c, 25, 36, 3, 4, C.blood);
+    hpx(c, 13, 41, 6, 5, C.leatherDark);    // grip, one flat colour
+    hpx(c, 11, 46, 10, 2, C.bloodLit);      // pommel stone
   }
 
   // Still frame for anything that cannot animate: caught mid-swing, in colour.
@@ -595,6 +614,21 @@
     "...............cc...............",
     "..............eccl..............",
     "..............eccl..............",
+    "..............eccl..............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
+    ".............eeccll.............",
     ".............eeccll.............",
     ".............eeccll.............",
     ".............eeccll.............",
@@ -616,6 +650,7 @@
     ".............ggGGgg.............",
     "....GggGGGGGGGmmmmGGGGGGGggG....",
     "....GggGGGGGGGmmmmGGGGGGGggG....",
+    ".............RrrrrR.............",
     ".............RrrrrR.............",
     ".............RrrrrR.............",
     ".............RrrrrR.............",
@@ -673,7 +708,7 @@
   }
 
   // The wave runs point to pommel, so the light never sits flat anywhere.
-  var BOLT_WAVE = 0.225;  // radians of the wave per row
+  var BOLT_WAVE = 0.14;   // radians of the wave per row
   var BOLT_SPEED = 4.3;   // radians a second
 
   function bolt(ctx, flash, t) {
@@ -778,7 +813,7 @@
   // lit edge of the blade and fall away from it.
   var ANDURIL_EDGE = (function () {
     var out = [{ x: 14, y: 2 }, { x: 14, y: 3 }, { x: 13, y: 4 }, { x: 13, y: 5 }];
-    for (var y = 6; y < 22; y++) out.push({ x: 12, y: y });
+    for (var y = 6; y < 38; y++) out.push({ x: 12, y: y });
     return out;
   })();
 
@@ -804,7 +839,7 @@
       s.x += s.vx * dt;
       s.y += s.vy * dt;
       s.life -= dt;
-      if (s.life <= 0 || s.x < 0 || s.y > 32) { sparks.splice(i, 1); continue; }
+      if (s.life <= 0 || s.x < 0 || s.y > 48) { sparks.splice(i, 1); continue; }
       ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 2.2));
       hpx(ctx, Math.round(s.x), Math.round(s.y), 1, 1,
         s.life > 0.55 ? "#fffdf2" : s.life > 0.25 ? C.goldLit : C.gold);
@@ -865,7 +900,7 @@
       last = now;
       gone = node.isConnected ? 0 : gone + dt;
       if (gone > 1) return;
-      ctx.clearRect(0, 0, GRID, GRID);
+      ctx.clearRect(0, 0, node.width, node.height);
       step(ctx, dt, bits);
       global.requestAnimationFrame(frame);
     }
@@ -883,10 +918,12 @@
     molten(c, OVEN);
   };
 
-  // Weapons paint on a 32x32 canvas, everything else on 16x16. The context is
-  // scaled either way, so every DRAW function still works in 16-unit space -
-  // a weapon just gets to place half-units with hpx().
+  // Weapons paint on a taller tile than the rest of the rack: 16 units across
+  // and 24 down, at two subpixels to the unit, so 32x48 pixels. Everything else
+  // stays a square 16x16. The context is scaled either way, so a draw function
+  // works in units and a weapon reaches for half-units with hpx().
   var GRID = 16;
+  var WEAPON_H = 24;            // units down the tile a weapon gets
   var WEAPON = {
     sword: 1, lance: 1, dagger: 1, crackbolt: 1, bloodbane: 1, zeus: 1,
     anduril: 1,
@@ -895,11 +932,13 @@
   };
 
   function canvas(className, key) {
+    var weapon = !!WEAPON[key];
+    var step = weapon ? 2 : 1;              // subpixels to a unit
     var node = document.createElement("canvas");
-    var step = WEAPON[key] ? 2 : 1;         // subpixels to a tile square
     node.width = GRID * step;
-    node.height = GRID * step;
-    node.className = className || "icon";
+    node.height = (weapon ? WEAPON_H : GRID) * step;
+    // .tall carries the taller aspect ratio through to the CSS.
+    node.className = (className || "icon") + (weapon ? " tall" : "");
     var ctx = node.getContext("2d");
     ctx.imageSmoothingEnabled = false;
     ctx.scale(step, step);
@@ -927,7 +966,7 @@
     (DRAW[key] || DRAW.sword)(made.ctx);
     made.ctx.globalCompositeOperation = "source-in";
     made.ctx.fillStyle = C.silhouette;
-    made.ctx.fillRect(0, 0, GRID, GRID);
+    made.ctx.fillRect(0, 0, made.node.width, made.node.height);
     made.ctx.globalCompositeOperation = "source-over";
     return made.node;
   }

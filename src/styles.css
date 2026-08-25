@@ -869,6 +869,8 @@ body {
   flex: none;
 }
 .icon.big { width: clamp(44px, calc(5.6 * var(--s)), 134px); }
+/* Weapons are drawn on a taller tile - 16 units across, 24 down. */
+.icon.tall { aspect-ratio: 2 / 3; }
 /* Bars sit inline with their count, so they ride the text size. */
 .icon.tiny { width: clamp(14px, calc(1.8 * var(--s)), 40px); }
 .stock span, .cost { display: inline-flex; align-items: center; gap: var(--gap-xs); }
