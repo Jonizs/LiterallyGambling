@@ -81,12 +81,13 @@
     // Midas' Anduril: the same longsword geometry, forged in gold, with the
     // rune line down the fuller left white-hot.
     anduril: function (c) {
-      hpx(c, 15, 0, 2, 2, C.gold);            // point
-      hpx(c, 14, 2, 4, 2, C.gold);
-      hpx(c, 13, 4, 6, 2, C.gold);
-      hpx(c, 12, 6, 8, 32, C.gold);           // blade, one flat colour
-      hpx(c, 13, 4, 1, 2, C.goldLit);         // the edge the sparks come off
-      hpx(c, 12, 6, 2, 32, C.goldLit);
+      // The blade runs the way the Midas Edge does: brightest at the cutting
+      // edge and falling away to the back of the blade.
+      var i;
+      hpx(c, 15, 0, 2, 2, C.goldLit);         // point
+      for (i = 0; i < 4; i++) hpx(c, 14 + i, 2, 1, 2, lerp(C.goldLit, C.goldDark, i / 3));
+      for (i = 0; i < 6; i++) hpx(c, 13 + i, 4, 1, 2, lerp(C.goldLit, C.goldDark, i / 5));
+      for (i = 0; i < 8; i++) hpx(c, 12 + i, 6, 1, 32, lerp(C.goldLit, C.goldDark, i / 7));
       hpx(c, 6, 38, 20, 2, C.goldDark);       // crossguard
       hpx(c, 6, 40, 20, 2, C.gold);
       hpx(c, 4, 38, 2, 3, C.gold);            // swept tips
@@ -894,7 +895,7 @@
         var p = b.pts[j];
         if (p.x < 0 || p.x > 31 || p.y < 0 || p.y > 31) continue;
         hpx(ctx, p.x, p.y, 2, 2,
-          j < 2 ? "#ffffff" : j < 10 ? "#dffbff" : "#5fe3ff");
+          j < 2 ? METAL.crystal.lit : j < 10 ? METAL.crystal.base : METAL.crystal.dark);
       }
       ctx.globalAlpha = 1;
     }
