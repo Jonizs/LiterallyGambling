@@ -158,25 +158,28 @@
     // The lance and the dagger are the length they always were; anything
     // shorter than the tile is centred on it, so here that is 8 rows down.
     lance: function (c) {
-      hpx(c, 26, 8, 3, 2, C.steelLit);       // head, laid along the diagonal
-      hpx(c, 24, 10, 5, 2, C.steel);
-      hpx(c, 24, 10, 2, 2, C.steelLit);
-      hpx(c, 22, 12, 5, 2, C.steel);
-      hpx(c, 22, 12, 2, 2, C.steelLit);
-      hpx(c, 20, 14, 5, 2, C.steel);
-      hpx(c, 20, 14, 2, 2, C.steelLit);
-      hpx(c, 18, 16, 5, 2, C.steelDark);
-      hpx(c, 18, 16, 2, 2, C.steel);
-      hpx(c, 16, 18, 6, 3, C.gold);           // vamplate
-      hpx(c, 16, 18, 2, 3, C.goldLit);
-      hpx(c, 16, 20, 6, 1, C.goldDark);
-      for (var i = 0; i < 15; i++) {          // shaft, down to the butt
-        hpx(c, 15 - i, 21 + i, 3, 1, C.wood);
-        hpx(c, 15 - i, 21 + i, 1, 1, C.woodLit);
-        hpx(c, 17 - i, 21 + i, 1, 1, C.woodDark);
+      var i;
+      hpx(c, 15, 8, 2, 2, C.steelLit);        // head, couched straight up
+      for (i = 0; i < 2; i++) hpx(c, 14 + i * 2, 10, 2, 2, i ? C.steelDark : C.steelLit);
+      for (i = 0; i < 3; i++) {
+        hpx(c, 13 + i * 2, 12, 2, 3, i === 0 ? C.steelLit : i === 1 ? C.steel : C.steelDark);
       }
-      hpx(c, 0, 36, 4, 1, C.leather);         // grip end
-      hpx(c, 0, 37, 4, 3, C.leatherDark);
+      for (i = 0; i < 4; i++) {
+        hpx(c, 12 + i * 2, 15, 2, 4, i === 0 ? C.steelLit : i < 3 ? C.steel : C.steelDark);
+      }
+      for (i = 0; i < 3; i++) {               // shoulders back down to the socket
+        hpx(c, 13 + i * 2, 19, 2, 2, i === 0 ? C.steelLit : i === 1 ? C.steel : C.steelDark);
+      }
+      hpx(c, 11, 21, 10, 3, C.gold);          // vamplate
+      hpx(c, 11, 21, 3, 3, C.goldLit);
+      hpx(c, 11, 23, 10, 1, C.goldDark);
+      hpx(c, 13, 24, 6, 14, C.wood);          // shaft
+      hpx(c, 13, 24, 2, 14, C.woodLit);
+      hpx(c, 18, 24, 1, 14, C.woodDark);
+      hpx(c, 13, 28, 6, 1, C.leatherDark);    // binding
+      hpx(c, 13, 33, 6, 1, C.leatherDark);
+      hpx(c, 12, 38, 8, 1, C.leather);        // grip end
+      hpx(c, 12, 39, 8, 1, C.leatherDark);
     },
     dagger: function (c) {
       hpx(c, 15, 9, 2, 2, C.steelLit);       // point
