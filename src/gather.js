@@ -41,6 +41,13 @@
         { key: "rare", low: 1, high: 3 },
         { key: "crystal", low: 1, high: 2 },
         { key: "epic", low: 1, high: 1, chance: 0.3 }
+      ] },
+    { key: "crystal", name: "Crystal excavation", level: 22,
+      cost: 75000, minutes: 240,
+      yields: [
+        { key: "crystal", low: 6, high: 8 },
+        { key: "rare", low: 1, high: 3 },
+        { key: "epic", low: 1, high: 1 }
       ] }
   ];
 
