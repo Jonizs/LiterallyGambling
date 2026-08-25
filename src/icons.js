@@ -831,17 +831,53 @@
   var ANDURIL_EVERY = 0.12;     // seconds between sparks off the edge
   var ANDURIL_GRAVITY = 26;     // half-pixels per second per second
 
+  var SHINE_EVERY = 1.9;        // seconds between glints down the blade
+  var SHINE_SPEED = 70;         // half-pixels a second the glint travels
+  var BLADE_TOP = 3, BLADE_END = 38;
+
+  // The glint: a bright band running point to guard, brightest at its middle,
+  // with the blade glowing a half-pixel wider while it passes.
+  function glint(ctx, at) {
+    for (var d = -4; d <= 4; d++) {
+      var row = Math.round(at) + d;
+      if (row < BLADE_TOP || row > BLADE_END) continue;
+      var near = 1 - Math.abs(d) / 5;
+      ctx.globalAlpha = near * 0.9;
+      hpx(ctx, 12, row, 8, 1, Math.abs(d) < 2 ? "#ffffff" : "#fffdf2");
+      ctx.globalAlpha = near * 0.45;
+      hpx(ctx, 11, row, 1, 1, C.goldLit);
+      hpx(ctx, 20, row, 1, 1, C.goldLit);
+      ctx.globalAlpha = 1;
+    }
+  }
+
   ANIMATE.anduril = function (ctx, dt, sparks) {
     DRAW.anduril(ctx);
+
+    sparks.shine = sparks.shine === undefined ? -1 : sparks.shine;
+    sparks.next = (sparks.next || 0) - dt;
+    if (sparks.shine < 0 && sparks.next <= 0) {
+      sparks.shine = BLADE_TOP;
+      sparks.next = SHINE_EVERY * (0.75 + Math.random() * 0.5);
+    }
+    if (sparks.shine >= 0) {
+      glint(ctx, sparks.shine);
+      sparks.shine += SHINE_SPEED * dt;
+      if (sparks.shine > BLADE_END + 4) sparks.shine = -1;
+    }
+
+    // Sparks come off the lit edge, and come off it hard while a glint passes.
     sparks.due = (sparks.due || 0) - dt;
     if (sparks.due <= 0) {
-      sparks.due = ANDURIL_EVERY;
-      var from = ANDURIL_EDGE[Math.floor(Math.random() * ANDURIL_EDGE.length)];
+      sparks.due = sparks.shine >= 0 ? ANDURIL_EVERY / 3 : ANDURIL_EVERY;
+      var from = sparks.shine >= 0
+        ? { x: 12, y: Math.max(BLADE_TOP, Math.min(BLADE_END, Math.round(sparks.shine))) }
+        : ANDURIL_EDGE[Math.floor(Math.random() * ANDURIL_EDGE.length)];
       sparks.push({
         x: from.x + 0.5, y: from.y + 0.5,
-        vx: -(5 + Math.random() * 13),
-        vy: -16 + Math.random() * 11,
-        life: 0.45 + Math.random() * 0.4
+        vx: -(5 + Math.random() * 15),
+        vy: -18 + Math.random() * 13,
+        life: 0.45 + Math.random() * 0.45
       });
     }
     for (var i = sparks.length - 1; i >= 0; i--) {
@@ -853,7 +889,7 @@
       if (s.life <= 0 || s.x < 0 || s.y > 48) { sparks.splice(i, 1); continue; }
       ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 2.2));
       hpx(ctx, Math.round(s.x), Math.round(s.y), 1, 1,
-        s.life > 0.55 ? "#fffdf2" : s.life > 0.25 ? C.goldLit : C.gold);
+        s.life > 0.55 ? "#ffffff" : s.life > 0.25 ? C.goldLit : C.gold);
       ctx.globalAlpha = 1;
     }
   };
@@ -863,6 +899,7 @@
   // down the blade before they go out.
   var CRACK_EVERY = 0.22;       // seconds between strikes
   var CRACK_LIFE = 0.2;         // how long one stays lit
+  var CRACK_FORKS = 3;          // strikes thrown at once
 
   // A strike is worked out once, as a short jagged run of half-pixels, and then
   // just held on screen until its life runs out.
@@ -890,8 +927,8 @@
     DRAW.crackbolt(ctx);
     bolts.due = (bolts.due || 0) - dt;
     if (bolts.due <= 0) {
-      bolts.due = CRACK_EVERY * (0.5 + Math.random());
-      bolts.push(crackle());
+      bolts.due = CRACK_LIFE + CRACK_EVERY * (0.5 + Math.random());
+      for (var n = 0; n < CRACK_FORKS; n++) bolts.push(crackle());
     }
     for (var i = bolts.length - 1; i >= 0; i--) {
       var b = bolts[i];
