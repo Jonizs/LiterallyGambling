@@ -574,7 +574,7 @@
 
   function bloodbane(c, phase) {
     var top = BANE_TOP;
-    hpx(c, 15, top, 2, 2, baneShade(0, phase, C.dark, BANE_HOT));   // point
+    hpx(c, 15, top, 2, 2, baneShade(0, phase, BANE_COLD, BANE_RED));  // point
     hpx(c, 14, top + 2, 4, 2, baneShade(2, phase, C.dark, BANE_BODY));
     hpx(c, 14, top + 2, 1, 2, baneShade(2, phase, BANE_COLD, BANE_RED));
     // The wave runs the whole blade, right down onto the guard - no stretch of
