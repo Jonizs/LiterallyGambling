@@ -414,6 +414,16 @@
     }));
     wrap.appendChild(dev);
 
+    var unlock = el("div", "row");
+    var unlockMain = el("div", "row-main");
+    unlockMain.appendChild(el("div", "row-title", "Dev unlock"));
+    unlockMain.appendChild(el("div", "muted", "Works out every recipe in the book."));
+    unlock.appendChild(unlockMain);
+    unlock.appendChild(button("UNLOCK", "mini-btn strong", function () {
+      ctx.devUnlockAll();
+    }));
+    wrap.appendChild(unlock);
+
     var info = ctx.saveInfo();
     wrap.appendChild(el("p", "muted", info.text));
     if (!info.supported) return wrap;

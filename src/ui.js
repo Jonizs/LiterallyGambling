@@ -217,6 +217,7 @@
       buyUpgrade: buyUpgrade,
       saveInfo: saveInfo,
       devBoost: devBoost,
+      devUnlockAll: devUnlockAll,
       startGather: startGather,
       claimGather: claimGather,
       rushGather: rushGather,
@@ -726,6 +727,19 @@
     state.xp = 0;
     state.silver = 10000000;
     view.notice = "Dev boost: level 100, 10,000,000 silver.";
+    refresh();
+  }
+
+  // Dev shortcut: writes every researchable recipe straight into the book.
+  function devUnlockAll() {
+    var added = 0;
+    window.Game.RECIPES.forEach(function (recipe) {
+      if (!recipe.research || state.known.indexOf(recipe.key) >= 0) return;
+      state.known.push(recipe.key);
+      added++;
+    });
+    view.notice = added ? "Dev unlock: " + added + " recipe" + (added === 1 ? "" : "s") +
+      " worked out." : "Dev unlock: every recipe is already known.";
     refresh();
   }
 
