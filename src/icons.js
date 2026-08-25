@@ -77,6 +77,37 @@
       hpx(c, 12, 31, 8, 1, C.goldDark);
       hpx(c, 12, 29, 3, 1, C.goldLit);
     },
+    // Midas' Anduril: the same longsword geometry, forged in gold, with the
+    // rune line down the fuller left white-hot.
+    anduril: function (c) {
+      hpx(c, 15, 0, 2, 2, "#fffdf2");         // point
+      hpx(c, 14, 2, 4, 2, C.gold);
+      hpx(c, 14, 2, 1, 2, C.goldLit);
+      hpx(c, 17, 2, 1, 2, C.goldDark);
+      hpx(c, 13, 4, 6, 2, C.gold);
+      hpx(c, 13, 4, 1, 2, C.goldLit);
+      hpx(c, 18, 4, 1, 2, C.goldDark);
+      hpx(c, 12, 6, 8, 14, C.gold);           // blade
+      hpx(c, 12, 6, 2, 14, C.goldLit);        // lit edge
+      hpx(c, 18, 6, 2, 14, C.goldDark);       // shaded edge
+      hpx(c, 15, 3, 2, 16, "#fffdf2");        // rune line down the fuller
+      hpx(c, 16, 5, 1, 14, C.goldLit);
+      hpx(c, 15, 8, 2, 1, C.goldDark);        // runes cut into it
+      hpx(c, 15, 12, 2, 1, C.goldDark);
+      hpx(c, 15, 16, 2, 1, C.goldDark);
+      hpx(c, 6, 20, 20, 2, C.goldDark);       // crossguard
+      hpx(c, 6, 22, 20, 2, C.gold);
+      hpx(c, 4, 20, 2, 3, C.gold);            // swept tips
+      hpx(c, 26, 20, 2, 3, C.gold);
+      hpx(c, 7, 22, 4, 1, "#fffdf2");
+      hpx(c, 21, 22, 4, 1, "#fffdf2");
+      hpx(c, 13, 24, 6, 5, C.dark);           // grip
+      hpx(c, 13, 24, 1, 5, C.darkLit);
+      hpx(c, 13, 25, 6, 1, C.gold);           // gold wire wrap
+      hpx(c, 13, 27, 6, 1, C.gold);
+      hpx(c, 11, 29, 10, 2, C.goldLit);       // pommel
+      hpx(c, 12, 31, 8, 1, C.goldDark);
+    },
     // Blades the smith has not learned yet: shape only, no detail.
     "sword-silhouette-1": function (c) {   // broadsword
       hpx(c, 14, 0, 4, 2, C.silhouette);
@@ -775,6 +806,7 @@
   var GRID = 16;
   var WEAPON = {
     sword: 1, lance: 1, dagger: 1, crackbolt: 1, bloodbane: 1, zeus: 1,
+    anduril: 1,
     "sword-silhouette-1": 1, "sword-silhouette-2": 1, "sword-silhouette-3": 1,
     "sword-silhouette-4": 1, "sword-silhouette-5": 1
   };

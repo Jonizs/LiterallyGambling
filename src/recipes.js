@@ -59,6 +59,16 @@
       cost: { metal: 35 },
       alloys: { electrum: 5, corinthium: 10, argentaurum: 25 },
       parts: { metalhandle: 1 } },
+    { key: "anduril", name: "Midas' Anduril", kind: "weapon", icon: "anduril",
+      level: 1, xp: 340,
+      research: { resources: { mold: 30 },
+        alloys: { midas: 3, lunite: 3, corinthium: 75, argentaurum: 125 },
+        parts: { midasedge: 1, electricblade: 1, metalhandle: 2 } },
+      perTier: { damage: 540, durability: 980 },
+      combat: { speed: 1.2, crit: 10, critDamage: 220, pen: 25 },
+      cost: { metal: 85 },
+      alloys: { lunite: 1, chrono: 1, corinthium: 25, argentaurum: 55 },
+      parts: { metalhandle: 2 } },
     // Blades the smith has not learned yet: the bench shows the shape and
     // nothing else. mystery keeps them off the anvil whatever the level is.
     { key: "mystery-3", name: "???", kind: "weapon", icon: "sword-silhouette-3",
