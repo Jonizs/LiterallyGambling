@@ -171,46 +171,46 @@
       hpx(c, 12, 28, 3, 1, C.goldLit);
       hpx(c, 12, 30, 8, 2, C.goldDark);
     },
-    crackbolt: (function () {               // kunai: round ring, wrapped grip
+    crackbolt: (function () {               // kunai: laid along the diagonal
       var MASK = [
-      "............########............",
-      "...........#SSSSSSSS#...........",
-      "..........#SSSSSSSSSS#..........",
-      ".........#SSSS####SSSS#.........",
-      ".........#SSS#....#SSS#.........",
-      ".........#SSS#....#SSS#.........",
-      ".........#SSS#....#SSS#.........",
-      ".........#SSSS####SSSS#.........",
-      "..........#SSSSSSSSSS#..........",
-      "...........#SSSSSSSS#...........",
-      "............#SSSSSS#............",
-      "............#SrrrrS#............",
-      "............#SrrrrS#............",
-      "............#SrrrrS#............",
-      "............#WW##DD#............",
-      "..........##WWW##DDD##..........",
-      "........##WWWWW##DDDDD##........",
-      "......##WWWWWWW##DDDDDDD##......",
-      "....##WWWWWWWWW##DDDDDDDDD##....",
-      "...#WWWWWWWWWWW##DDDDDDDDDDD#...",
-      "....#WWWWWWWWWW##DDDDDDDDDD#....",
-      ".....#WWWWWWWWW##DDDDDDDDD#.....",
-      "......#WWWWWWWW##DDDDDDDD#......",
-      ".......#WWWWWWW##DDDDDDD#.......",
-      "........#WWWWWW##DDDDDD#........",
-      ".........#WWWWW##DDDDD#.........",
-      "..........#WWWW##DDDD#..........",
-      "...........#WWW##DDD#...........",
-      "............#WW##DD#............",
-      ".............#W##D#.............",
-      "..............####..............",
-      "...............##...............",
+        "................................",
+        "........................#######.",
+        ".....................####SWWWS#.",
+        "...................###SSWWWWWS#.",
+        ".................###SWWWWWWWWS#.",
+        "...............##SSWWWWWWW#SSS#.",
+        "..............##SWWWWWWWW#SSSS#.",
+        ".............##SWWWWWWWW#SSSS#..",
+        "............##SWWWWWWWW#SSSSS#..",
+        "...........##SWSSWWWWW#SSSSSS#..",
+        "...........#SWSSSWWSW#SSSSSS#...",
+        "..........#SWSSSSSSW#SSSSSSS#...",
+        ".........##WSSSSSSW#DSSSSSSD#...",
+        ".......###WSSSSSSW#DDSSSSSS#....",
+        "......#r##SSSSSSS#DDDDDSSSD#....",
+        ".....#rrr##SSSSS#DDDDDDDSS#.....",
+        "......#rrr##SSS#DDDDDDDSS##.....",
+        "......##rrr##S#DDDDDDDSS##......",
+        ".......#rrrr##DDDDDDDSS##.......",
+        ".......#rrrrr##DDDDSSS##........",
+        "......##rrrrrr##DDSS##..........",
+        ".....###rrrrrrr##S###...........",
+        "....##rrrrrrrrrr###.............",
+        "..####rrrr####rrr#..............",
+        "##SSD##rrr##.##rr#..............",
+        "#SWWWD##r##....##...............",
+        "#WD#WSD###......................",
+        "#WD##WDD#.......................",
+        "#SSD##SD#.......................",
+        ".#SSDDS##.......................",
+        ".##SSS##........................",
+        "...####.........................",
       ];
       var PAINT = {
         "#": "#111111",                     // outline and the ridge line
         W: "#ffffff", D: "#666666",         // blade, lit face and shaded face
-        S: "#8c8c8c",                       // ring and collar
-        r: "#a03a2a"                        // wrap between the grip's plates
+        S: "#8c8c8c",                       // ring, and the blade's flat
+        r: "#a03a2a"                        // cloth wrap over the tang
       };
       return function (c) { paintFine(c, MASK, PAINT); };
     })(),
@@ -547,9 +547,7 @@
     hpx(c, 6, 22, 20, 3, C.dark);
     hpx(c, 4, 20, 3, 4, C.blood);
     hpx(c, 25, 20, 3, 4, C.blood);
-    hpx(c, 13, 25, 6, 5, C.leatherDark);    // wrap
-    hpx(c, 14, 26, 4, 1, C.blood);
-    hpx(c, 14, 28, 4, 1, C.blood);
+    hpx(c, 13, 25, 6, 5, C.leatherDark);    // grip, one flat colour
     hpx(c, 11, 30, 10, 2, C.bloodLit);      // pommel stone
   }
 
@@ -583,7 +581,7 @@
     ".............eeccll.............",
     ".............eeccll.............",
     ".............eeccll.............",
-    ".............ggGGgg.............",
+    ".............eeccll.............",
     ".............ggGGgg.............",
     ".............ggGGgg.............",
     "....GggGGGGGGGmmmmGGGGGGGggG....",
