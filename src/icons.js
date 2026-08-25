@@ -171,46 +171,45 @@
       hpx(c, 12, 28, 3, 1, C.goldLit);
       hpx(c, 12, 30, 8, 2, C.goldDark);
     },
-    crackbolt: (function () {               // kunai: laid along the diagonal
+    crackbolt: (function () {               // kunai: straight edges, no curves
       var MASK = [
-        "................................",
-        "........................#######.",
-        ".....................####SWWWS#.",
-        "...................###SSWWWWWS#.",
-        ".................###SWWWWWWWWS#.",
-        "...............##SSWWWWWWW#SSS#.",
-        "..............##SWWWWWWWW#SSSS#.",
-        ".............##SWWWWWWWW#SSSS#..",
-        "............##SWWWWWWWW#SSSSS#..",
-        "...........##SWSSWWWWW#SSSSSS#..",
-        "...........#SWSSSWWSW#SSSSSS#...",
-        "..........#SWSSSSSSW#SSSSSSS#...",
-        ".........##WSSSSSSW#DSSSSSSD#...",
-        ".......###WSSSSSSW#DDSSSSSS#....",
-        "......#r##SSSSSSS#DDDDDSSSD#....",
-        ".....#rrr##SSSSS#DDDDDDDSS#.....",
-        "......#rrr##SSS#DDDDDDDSS##.....",
-        "......##rrr##S#DDDDDDDSS##......",
-        ".......#rrrr##DDDDDDDSS##.......",
-        ".......#rrrrr##DDDDSSS##........",
-        "......##rrrrrr##DDSS##..........",
-        ".....###rrrrrrr##S###...........",
-        "....##rrrrrrrrrr###.............",
-        "..####rrrr####rrr#..............",
-        "##SSD##rrr##.##rr#..............",
-        "#SWWWD##r##....##...............",
-        "#WD#WSD###......................",
-        "#WD##WDD#.......................",
-        "#SSD##SD#.......................",
-        ".#SSDDS##.......................",
-        ".##SSS##........................",
-        "...####.........................",
+        "...............LL...............",
+        "..............LLDD..............",
+        "..............LLDD..............",
+        ".............LLLSDD.............",
+        ".............LLLSDD.............",
+        "............LLSLSSDD............",
+        "...........LLSSLSSSDD...........",
+        "...........LLSSLSSSDD...........",
+        "..........LLSSSLSSSSDD..........",
+        ".........LLSSSSLSSSSSDD.........",
+        ".........LLSSSSLSSSSSDD.........",
+        "........LLSSSSSLSSSSSSDD........",
+        "........LLSSSSSLSSSSSSDD........",
+        ".......LLSSSSSSLSSSSSSSDD.......",
+        "........LLSSSSSLSSSSSSDD........",
+        "..........LLSSSLSSSSDD..........",
+        "...........LLSSLSSSDD...........",
+        "............LLSLSSDD............",
+        "..............LLDD..............",
+        "...............LL...............",
+        "............gGGggggg............",
+        "............dddddddd............",
+        ".............Wwwwwk.............",
+        ".............kkkkkk.............",
+        ".............Wwwwwk.............",
+        "..............LLSS..............",
+        ".............LLLSSS.............",
+        "...........LLL....SSS...........",
+        ".........LLLL......SSSS.........",
+        "...........LLL....SSS...........",
+        ".............LLLSSS.............",
+        "..............LLSS..............",
       ];
       var PAINT = {
-        "#": "#111111",                     // outline and the ridge line
-        W: "#ffffff", D: "#666666",         // blade, lit face and shaded face
-        S: "#8c8c8c",                       // ring, and the blade's flat
-        r: "#a03a2a"                        // cloth wrap over the tang
+        L: C.steelLit, S: C.steel, D: C.steelDark,   // blade, lit edge to shade
+        g: C.gold, G: C.goldLit, d: C.goldDark,      // collar over the tang
+        w: C.leather, W: C.leatherLit, k: C.leatherDark
       };
       return function (c) { paintFine(c, MASK, PAINT); };
     })(),
