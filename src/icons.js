@@ -607,7 +607,7 @@
     hpx(c, 6, top + 23, 20, 3, C.dark);
     hpx(c, 4, top + 21, 3, 4, C.blood);
     hpx(c, 25, top + 21, 3, 4, C.blood);
-    hpx(c, 13, top + 26, 6, 5, C.leatherDark);   // grip, one flat colour
+    hpx(c, 13, top + 25, 6, 6, C.bloodLit);      // grip, one flat colour
     hpx(c, 11, top + 31, 10, 2, C.bloodLit);     // pommel stone
   }
 
@@ -862,7 +862,7 @@
   // The point never settles: tiny strikes come off it and crawl a little way
   // down the blade before they go out.
   var CRACK_EVERY = 0.22;       // seconds between strikes
-  var CRACK_LIFE = 0.16;        // how long one stays lit
+  var CRACK_LIFE = 0.2;         // how long one stays lit
 
   // A strike is worked out once, as a short jagged run of half-pixels, and then
   // just held on screen until its life runs out.
@@ -871,14 +871,18 @@
   function crackle() {
     var pts = [], x = 15 + Math.floor(Math.random() * 2), y = CRACK_TIP;
     var lean = Math.random() < 0.5 ? -1 : 1;
-    var steps = 3 + Math.floor(Math.random() * 2);
+    var steps = 6 + Math.floor(Math.random() * 4);
     for (var i = 0; i < steps; i++) {
       pts.push({ x: x, y: y });
-      x += lean * (1 + Math.floor(Math.random() * 2));
-      y += Math.floor(Math.random() * 3);   // sometimes sideways, sometimes down
+      // Each leg is drawn out, so the strike carries well down the blade.
+      var run = 2 + Math.floor(Math.random() * 3);
+      for (var k = 0; k < run; k++) {
+        x += lean;
+        if (Math.random() < 0.6) y += 1;
+        pts.push({ x: x, y: y });
+      }
       lean = -lean;
     }
-    pts.push({ x: x, y: y });
     return { pts: pts, life: CRACK_LIFE };
   }
 
@@ -898,7 +902,7 @@
         var p = b.pts[j];
         if (p.x < 0 || p.x > 31 || p.y < 0 || p.y > 31) continue;
         hpx(ctx, p.x, p.y, 1, 1,
-          j === 0 ? "#ffffff" : j < 3 ? "#dffbff" : "#5fe3ff");
+          j === 0 ? "#ffffff" : j < 6 ? "#dffbff" : "#5fe3ff");
       }
       ctx.globalAlpha = 1;
     }
