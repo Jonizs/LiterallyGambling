@@ -85,6 +85,8 @@
       hpx(c, 14, 2, 4, 2, C.gold);
       hpx(c, 13, 4, 6, 2, C.gold);
       hpx(c, 12, 6, 8, 32, C.gold);           // blade, one flat colour
+      hpx(c, 13, 4, 1, 2, C.goldLit);         // the edge the sparks come off
+      hpx(c, 12, 6, 2, 32, C.goldLit);
       hpx(c, 6, 38, 20, 2, C.goldDark);       // crossguard
       hpx(c, 6, 40, 20, 2, C.gold);
       hpx(c, 4, 38, 2, 3, C.gold);            // swept tips
@@ -816,7 +818,7 @@
     return out;
   })();
 
-  var ANDURIL_EVERY = 0.12;     // seconds between sparks off the edge
+  var ANDURIL_EVERY = 0.05;     // seconds between sparks off the edge
   var ANDURIL_GRAVITY = 26;     // half-pixels per second per second
 
   ANIMATE.anduril = function (ctx, dt, sparks) {
@@ -852,7 +854,7 @@
   // down the blade before they go out.
   var CRACK_EVERY = 0.22;       // seconds between strikes
   var CRACK_LIFE = 0.2;         // how long one stays lit
-  var CRACK_END = 44;           // the bottom of the ring
+  var CRACK_END = 27;           // the foot of the blade - it never reaches the grip
 
   // A strike is worked out once, as a short jagged run of half-pixels, and then
   // just held on screen until its life runs out.
@@ -891,7 +893,7 @@
       for (var j = 0; j < b.pts.length; j++) {
         var p = b.pts[j];
         if (p.x < 0 || p.x > 31 || p.y < 0 || p.y > 31) continue;
-        hpx(ctx, p.x, p.y, 1, 1,
+        hpx(ctx, p.x, p.y, 2, 2,
           j < 2 ? "#ffffff" : j < 10 ? "#dffbff" : "#5fe3ff");
       }
       ctx.globalAlpha = 1;
