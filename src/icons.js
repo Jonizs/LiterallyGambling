@@ -87,25 +87,25 @@
       hpx(c, 13, 4, 6, 2, C.gold);
       hpx(c, 13, 4, 1, 2, C.goldLit);
       hpx(c, 18, 4, 1, 2, C.goldDark);
-      hpx(c, 12, 6, 8, 14, C.gold);           // blade
-      hpx(c, 12, 6, 2, 14, C.goldLit);        // lit edge
-      hpx(c, 18, 6, 2, 14, C.goldDark);       // shaded edge
-      hpx(c, 15, 3, 2, 16, "#fffdf2");        // rune line down the fuller
-      hpx(c, 16, 5, 1, 14, C.goldLit);
+      hpx(c, 12, 6, 8, 16, C.gold);           // blade
+      hpx(c, 12, 6, 2, 16, C.goldLit);        // lit edge
+      hpx(c, 18, 6, 2, 16, C.goldDark);       // shaded edge
+      hpx(c, 15, 3, 2, 18, "#fffdf2");        // rune line down the fuller
+      hpx(c, 16, 5, 1, 16, C.goldLit);
       hpx(c, 15, 8, 2, 1, C.goldDark);        // runes cut into it
       hpx(c, 15, 12, 2, 1, C.goldDark);
       hpx(c, 15, 16, 2, 1, C.goldDark);
-      hpx(c, 6, 20, 20, 2, C.goldDark);       // crossguard
-      hpx(c, 6, 22, 20, 2, C.gold);
-      hpx(c, 4, 20, 2, 3, C.gold);            // swept tips
-      hpx(c, 26, 20, 2, 3, C.gold);
-      hpx(c, 7, 22, 4, 1, "#fffdf2");
-      hpx(c, 21, 22, 4, 1, "#fffdf2");
-      hpx(c, 13, 24, 6, 5, C.dark);           // grip
-      hpx(c, 13, 24, 1, 5, C.darkLit);
-      hpx(c, 13, 25, 6, 1, C.gold);           // gold wire wrap
-      hpx(c, 13, 27, 6, 1, C.gold);
-      hpx(c, 11, 29, 10, 2, C.goldLit);       // pommel
+      hpx(c, 6, 22, 20, 2, C.goldDark);       // crossguard
+      hpx(c, 6, 24, 20, 2, C.gold);
+      hpx(c, 4, 22, 2, 3, C.gold);            // swept tips
+      hpx(c, 26, 22, 2, 3, C.gold);
+      hpx(c, 7, 24, 4, 1, "#fffdf2");
+      hpx(c, 21, 24, 4, 1, "#fffdf2");
+      hpx(c, 13, 26, 6, 4, C.dark);           // grip
+      hpx(c, 13, 26, 1, 4, C.darkLit);
+      hpx(c, 13, 27, 6, 1, C.gold);           // gold wire wrap
+      hpx(c, 13, 29, 6, 1, C.gold);
+      hpx(c, 11, 30, 10, 1, C.goldLit);       // pommel
       hpx(c, 12, 31, 8, 1, C.goldDark);
     },
     // Blades the smith has not learned yet: shape only, no detail.
@@ -769,6 +769,89 @@
       ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 2.2));
       px(ctx, Math.round(s.x), Math.round(s.y), 1, 1,
         s.life > 0.55 ? "#fffdf2" : s.life > 0.25 ? C.goldLit : C.gold);
+      ctx.globalAlpha = 1;
+    }
+  };
+
+  // --- Midas' Anduril --------------------------------------------------------
+  // The gold catches the light the way the Midas Edge does: sparks come off the
+  // lit edge of the blade and fall away from it.
+  var ANDURIL_EDGE = (function () {
+    var out = [{ x: 14, y: 2 }, { x: 14, y: 3 }, { x: 13, y: 4 }, { x: 13, y: 5 }];
+    for (var y = 6; y < 22; y++) out.push({ x: 12, y: y });
+    return out;
+  })();
+
+  var ANDURIL_EVERY = 0.12;     // seconds between sparks off the edge
+  var ANDURIL_GRAVITY = 26;     // half-pixels per second per second
+
+  ANIMATE.anduril = function (ctx, dt, sparks) {
+    DRAW.anduril(ctx);
+    sparks.due = (sparks.due || 0) - dt;
+    if (sparks.due <= 0) {
+      sparks.due = ANDURIL_EVERY;
+      var from = ANDURIL_EDGE[Math.floor(Math.random() * ANDURIL_EDGE.length)];
+      sparks.push({
+        x: from.x + 0.5, y: from.y + 0.5,
+        vx: -(5 + Math.random() * 13),
+        vy: -16 + Math.random() * 11,
+        life: 0.45 + Math.random() * 0.4
+      });
+    }
+    for (var i = sparks.length - 1; i >= 0; i--) {
+      var s = sparks[i];
+      s.vy += ANDURIL_GRAVITY * dt;
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.life -= dt;
+      if (s.life <= 0 || s.x < 0 || s.y > 32) { sparks.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 2.2));
+      hpx(ctx, Math.round(s.x), Math.round(s.y), 1, 1,
+        s.life > 0.55 ? "#fffdf2" : s.life > 0.25 ? C.goldLit : C.gold);
+      ctx.globalAlpha = 1;
+    }
+  };
+
+  // --- Crackbolt -------------------------------------------------------------
+  // The point never settles: tiny strikes come off it and crawl a little way
+  // down the blade before they go out.
+  var CRACK_EVERY = 0.22;       // seconds between strikes
+  var CRACK_LIFE = 0.16;        // how long one stays lit
+
+  // A strike is worked out once, as a short jagged run of half-pixels, and then
+  // just held on screen until its life runs out.
+  function crackle() {
+    var pts = [], x = 15 + Math.floor(Math.random() * 2), y = 0;
+    var lean = Math.random() < 0.5 ? -1 : 1;
+    var steps = 3 + Math.floor(Math.random() * 2);
+    for (var i = 0; i < steps; i++) {
+      pts.push({ x: x, y: y });
+      x += lean * (1 + Math.floor(Math.random() * 2));
+      y += Math.floor(Math.random() * 3);   // sometimes sideways, sometimes down
+      lean = -lean;
+    }
+    pts.push({ x: x, y: y });
+    return { pts: pts, life: CRACK_LIFE };
+  }
+
+  ANIMATE.crackbolt = function (ctx, dt, bolts) {
+    DRAW.crackbolt(ctx);
+    bolts.due = (bolts.due || 0) - dt;
+    if (bolts.due <= 0) {
+      bolts.due = CRACK_EVERY * (0.5 + Math.random());
+      bolts.push(crackle());
+    }
+    for (var i = bolts.length - 1; i >= 0; i--) {
+      var b = bolts[i];
+      b.life -= dt;
+      if (b.life <= 0) { bolts.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.max(0, Math.min(1, b.life / CRACK_LIFE + 0.2));
+      for (var j = 0; j < b.pts.length; j++) {
+        var p = b.pts[j];
+        if (p.x < 0 || p.x > 31 || p.y < 0 || p.y > 31) continue;
+        hpx(ctx, p.x, p.y, 1, 1,
+          j === 0 ? "#ffffff" : j < 3 ? "#dffbff" : "#5fe3ff");
+      }
       ctx.globalAlpha = 1;
     }
   };
