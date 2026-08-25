@@ -287,38 +287,6 @@
       px(c, 4, 14, 8, 2, C.goldDark);
       px(c, 5, 14, 1, 1, C.goldLit);
     },
-    "part-electric": function (c) {         // blade with current running it
-      px(c, 7, 0, 2, 1, "#dffbff");
-      px(c, 6, 1, 4, 10, C.steel);
-      px(c, 6, 1, 1, 10, C.steelLit);
-      px(c, 9, 1, 1, 10, C.steelDark);
-      px(c, 8, 2, 1, 2, "#5fe3ff");         // arc down the fuller
-      px(c, 7, 4, 1, 2, "#5fe3ff");
-      px(c, 8, 6, 1, 2, "#bff4ff");
-      px(c, 7, 8, 1, 2, "#5fe3ff");
-      px(c, 3, 3, 1, 1, "#5fe3ff");         // loose sparks
-      px(c, 12, 6, 1, 1, "#5fe3ff");
-      px(c, 2, 8, 1, 1, "#bff4ff");
-      px(c, 4, 11, 8, 1, "#2f7f96");        // guard
-      px(c, 5, 12, 6, 2, C.steelDark);
-      px(c, 6, 14, 4, 2, "#2f7f96");
-    },
-    "part-thunder": function (c) {          // spearhead with a bolt cut in it
-      px(c, 7, 0, 2, 1, C.steelLit);
-      px(c, 6, 1, 4, 2, C.steel);
-      px(c, 5, 3, 6, 5, C.steel);
-      px(c, 5, 3, 1, 5, C.steelLit);
-      px(c, 10, 3, 1, 5, C.steelDark);
-      px(c, 8, 2, 2, 2, "#ffe66a");         // bolt
-      px(c, 7, 4, 2, 2, "#ffe66a");
-      px(c, 8, 6, 2, 1, "#fff7c0");
-      px(c, 4, 8, 8, 1, C.steelDark);       // wings
-      px(c, 3, 9, 3, 2, C.steel);
-      px(c, 10, 9, 3, 2, C.steel);
-      px(c, 6, 9, 4, 2, C.gold);            // socket
-      px(c, 6, 11, 4, 5, C.steelDark);      // stub shaft
-      px(c, 6, 11, 1, 5, C.steel);
-    },
     helmet: function (c) {
       px(c, 5, 0, 6, 1, C.steelLit);          // dome
       px(c, 4, 1, 8, 2, C.steel);
@@ -547,6 +515,78 @@
   // frame instead, so the art can move: step(ctx, dt, bits) owns the whole
   // 16x16 and keeps whatever it needs on the bits array it is handed.
   var ANIMATE = {};
+
+  // --- the Electric Blade ----------------------------------------------------
+  // The current never sits still: a charge runs down the fuller and the loose
+  // sparks around the blade come and go.
+  var ARC = [[8, 2], [7, 3], [8, 4], [7, 5], [8, 6], [7, 7], [8, 8], [7, 9]];
+  var LOOSE = [[3, 3], [12, 6], [2, 8], [12, 3], [3, 10], [11, 9]];
+
+  function electric(c, t) {
+    px(c, 7, 0, 2, 1, "#dffbff");
+    px(c, 6, 1, 4, 10, C.steel);            // blade
+    px(c, 6, 1, 1, 10, C.steelLit);
+    px(c, 9, 1, 1, 10, C.steelDark);
+    for (var i = 0; i < ARC.length; i++) {  // the charge, running point to guard
+      var lit = 0.5 + 0.5 * Math.sin(t * 7 - i * 0.9);
+      px(c, ARC[i][0], ARC[i][1], 1, 1,
+        lit > 0.75 ? "#ffffff" : lit > 0.35 ? "#bff4ff" : "#5fe3ff");
+    }
+    for (var j = 0; j < LOOSE.length; j++) { // loose sparks, coming and going
+      var on = Math.sin(t * (5 + j) + j * 2.1);
+      if (on > 0.55) px(c, LOOSE[j][0], LOOSE[j][1], 1, 1, on > 0.85 ? "#ffffff" : "#5fe3ff");
+    }
+    px(c, 4, 11, 8, 1, "#2f7f96");          // guard
+    px(c, 5, 12, 6, 2, C.steelDark);
+    px(c, 6, 14, 4, 2, "#2f7f96");
+  }
+
+  DRAW["part-electric"] = function (c) { electric(c, 0.6); };
+
+  ANIMATE["part-electric"] = function (ctx, dt, bits) {
+    bits.t = (bits.t || 0) + dt;
+    electric(ctx, bits.t);
+  };
+
+  // --- the Thunder Spearhead -------------------------------------------------
+  // The bolt cut into the head charges until it is white, then lets go.
+  var THUNDER_DULL = "#8f6d29";
+
+  function thunder(c, t) {
+    var charge = Math.pow(0.5 + 0.5 * Math.sin(t * 3.4), 3);
+    var bolt = lerp(THUNDER_DULL, "#ffe66a", charge);
+    var core = lerp("#ffe66a", "#fff7c0", charge);
+    px(c, 7, 0, 2, 1, C.steelLit);
+    px(c, 6, 1, 4, 2, C.steel);
+    px(c, 5, 3, 6, 5, C.steel);
+    px(c, 5, 3, 1, 5, C.steelLit);
+    px(c, 10, 3, 1, 5, C.steelDark);
+    px(c, 8, 2, 2, 2, bolt);                // bolt
+    px(c, 7, 4, 2, 2, bolt);
+    px(c, 8, 6, 2, 1, core);
+    if (charge > 0.7) {                     // it lets go over the wings
+      px(c, 4, 2, 1, 1, core);
+      px(c, 11, 5, 1, 1, core);
+    }
+    if (charge > 0.9) {
+      px(c, 7, 0, 2, 1, "#fff7c0");
+      px(c, 12, 2, 1, 1, core);
+      px(c, 3, 6, 1, 1, core);
+    }
+    px(c, 4, 8, 8, 1, C.steelDark);         // wings
+    px(c, 3, 9, 3, 2, C.steel);
+    px(c, 10, 9, 3, 2, C.steel);
+    px(c, 6, 9, 4, 2, C.gold);              // socket
+    px(c, 6, 11, 4, 5, C.steelDark);        // stub shaft
+    px(c, 6, 11, 1, 5, C.steel);
+  }
+
+  DRAW["part-thunder"] = function (c) { thunder(c, 0.45); };
+
+  ANIMATE["part-thunder"] = function (ctx, dt, bits) {
+    bits.t = (bits.t || 0) + dt;
+    thunder(ctx, bits.t);
+  };
 
   DRAW["part-midas"] = function (c) { paint(c, MIDAS, MIDAS_PAINT); };
 
