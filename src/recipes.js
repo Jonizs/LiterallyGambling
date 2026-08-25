@@ -61,7 +61,7 @@
       parts: { metalhandle: 1 } },
     { key: "anduril", name: "Midas' Anduril", kind: "weapon", icon: "anduril",
       level: 1, xp: 340,
-      research: { resources: { mold: 30 },
+      research: { resources: { epic: 3, rare: 10, mold: 30 },
         alloys: { midas: 3, lunite: 3, corinthium: 75, argentaurum: 125 },
         parts: { midasedge: 1, electricblade: 1, metalhandle: 2 } },
       perTier: { damage: 540, durability: 980 },
