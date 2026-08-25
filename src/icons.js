@@ -81,22 +81,10 @@
     // Midas' Anduril: the same longsword geometry, forged in gold, with the
     // rune line down the fuller left white-hot.
     anduril: function (c) {
-      hpx(c, 15, 0, 2, 2, "#fffdf2");         // point
+      hpx(c, 15, 0, 2, 2, C.gold);            // point
       hpx(c, 14, 2, 4, 2, C.gold);
-      hpx(c, 14, 2, 1, 2, C.goldLit);
-      hpx(c, 17, 2, 1, 2, C.goldDark);
       hpx(c, 13, 4, 6, 2, C.gold);
-      hpx(c, 13, 4, 1, 2, C.goldLit);
-      hpx(c, 18, 4, 1, 2, C.goldDark);
-      hpx(c, 12, 6, 8, 32, C.gold);           // blade
-      hpx(c, 12, 6, 2, 32, C.goldLit);        // lit edge
-      hpx(c, 18, 6, 2, 32, C.goldDark);       // shaded edge
-      hpx(c, 15, 3, 2, 34, "#fffdf2");        // rune line down the fuller
-      hpx(c, 16, 5, 1, 32, C.goldLit);
-      hpx(c, 15, 10, 2, 1, C.goldDark);       // runes cut into it
-      hpx(c, 15, 18, 2, 1, C.goldDark);
-      hpx(c, 15, 26, 2, 1, C.goldDark);
-      hpx(c, 15, 33, 2, 1, C.goldDark);
+      hpx(c, 12, 6, 8, 32, C.gold);           // blade, one flat colour
       hpx(c, 6, 38, 20, 2, C.goldDark);       // crossguard
       hpx(c, 6, 40, 20, 2, C.gold);
       hpx(c, 4, 38, 2, 3, C.gold);            // swept tips
@@ -831,48 +819,12 @@
   var ANDURIL_EVERY = 0.12;     // seconds between sparks off the edge
   var ANDURIL_GRAVITY = 26;     // half-pixels per second per second
 
-  var SHINE_EVERY = 1.9;        // seconds between glints down the blade
-  var SHINE_SPEED = 70;         // half-pixels a second the glint travels
-  var BLADE_TOP = 3, BLADE_END = 38;
-
-  // The glint: a bright band running point to guard, brightest at its middle,
-  // with the blade glowing a half-pixel wider while it passes.
-  function glint(ctx, at) {
-    for (var d = -4; d <= 4; d++) {
-      var row = Math.round(at) + d;
-      if (row < BLADE_TOP || row > BLADE_END) continue;
-      var near = 1 - Math.abs(d) / 5;
-      ctx.globalAlpha = near * 0.9;
-      hpx(ctx, 12, row, 8, 1, Math.abs(d) < 2 ? "#ffffff" : "#fffdf2");
-      ctx.globalAlpha = near * 0.45;
-      hpx(ctx, 11, row, 1, 1, C.goldLit);
-      hpx(ctx, 20, row, 1, 1, C.goldLit);
-      ctx.globalAlpha = 1;
-    }
-  }
-
   ANIMATE.anduril = function (ctx, dt, sparks) {
     DRAW.anduril(ctx);
-
-    sparks.shine = sparks.shine === undefined ? -1 : sparks.shine;
-    sparks.next = (sparks.next || 0) - dt;
-    if (sparks.shine < 0 && sparks.next <= 0) {
-      sparks.shine = BLADE_TOP;
-      sparks.next = SHINE_EVERY * (0.75 + Math.random() * 0.5);
-    }
-    if (sparks.shine >= 0) {
-      glint(ctx, sparks.shine);
-      sparks.shine += SHINE_SPEED * dt;
-      if (sparks.shine > BLADE_END + 4) sparks.shine = -1;
-    }
-
-    // Sparks come off the lit edge, and come off it hard while a glint passes.
     sparks.due = (sparks.due || 0) - dt;
     if (sparks.due <= 0) {
-      sparks.due = sparks.shine >= 0 ? ANDURIL_EVERY / 3 : ANDURIL_EVERY;
-      var from = sparks.shine >= 0
-        ? { x: 12, y: Math.max(BLADE_TOP, Math.min(BLADE_END, Math.round(sparks.shine))) }
-        : ANDURIL_EDGE[Math.floor(Math.random() * ANDURIL_EDGE.length)];
+      sparks.due = ANDURIL_EVERY;
+      var from = ANDURIL_EDGE[Math.floor(Math.random() * ANDURIL_EDGE.length)];
       sparks.push({
         x: from.x + 0.5, y: from.y + 0.5,
         vx: -(5 + Math.random() * 15),
@@ -888,7 +840,8 @@
       s.life -= dt;
       if (s.life <= 0 || s.x < 0 || s.y > 48) { sparks.splice(i, 1); continue; }
       ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 2.2));
-      hpx(ctx, Math.round(s.x), Math.round(s.y), 1, 1,
+      // Two half-pixels to a side, the weight the Midas Edge throws.
+      hpx(ctx, Math.round(s.x), Math.round(s.y), 2, 2,
         s.life > 0.55 ? "#ffffff" : s.life > 0.25 ? C.goldLit : C.gold);
       ctx.globalAlpha = 1;
     }
@@ -899,23 +852,23 @@
   // down the blade before they go out.
   var CRACK_EVERY = 0.22;       // seconds between strikes
   var CRACK_LIFE = 0.2;         // how long one stays lit
-  var CRACK_FORKS = 3;          // strikes thrown at once
+  var CRACK_END = 44;           // the bottom of the ring
 
   // A strike is worked out once, as a short jagged run of half-pixels, and then
   // just held on screen until its life runs out.
   var CRACK_TIP = 3;            // the row the point sits on
 
   function crackle() {
-    var pts = [], x = 15 + Math.floor(Math.random() * 2), y = CRACK_TIP;
+    var pts = [{ x: 15, y: CRACK_TIP }, { x: 16, y: CRACK_TIP }];
+    var x = 15 + Math.floor(Math.random() * 2), y = CRACK_TIP;
     var lean = Math.random() < 0.5 ? -1 : 1;
-    var steps = 6 + Math.floor(Math.random() * 4);
-    for (var i = 0; i < steps; i++) {
-      pts.push({ x: x, y: y });
-      // Each leg is drawn out, so the strike carries well down the blade.
+    while (y < CRACK_END) {                 // zigzag the whole way down
       var run = 2 + Math.floor(Math.random() * 3);
-      for (var k = 0; k < run; k++) {
+      for (var k = 0; k < run && y < CRACK_END; k++) {
         x += lean;
-        if (Math.random() < 0.6) y += 1;
+        if (x < 11) x = 11;
+        if (x > 20) x = 20;
+        y += 1;
         pts.push({ x: x, y: y });
       }
       lean = -lean;
@@ -928,7 +881,7 @@
     bolts.due = (bolts.due || 0) - dt;
     if (bolts.due <= 0) {
       bolts.due = CRACK_LIFE + CRACK_EVERY * (0.5 + Math.random());
-      for (var n = 0; n < CRACK_FORKS; n++) bolts.push(crackle());
+      bolts.push(crackle());
     }
     for (var i = bolts.length - 1; i >= 0; i--) {
       var b = bolts[i];
@@ -939,7 +892,7 @@
         var p = b.pts[j];
         if (p.x < 0 || p.x > 31 || p.y < 0 || p.y > 31) continue;
         hpx(ctx, p.x, p.y, 1, 1,
-          j === 0 ? "#ffffff" : j < 6 ? "#dffbff" : "#5fe3ff");
+          j < 2 ? "#ffffff" : j < 10 ? "#dffbff" : "#5fe3ff");
       }
       ctx.globalAlpha = 1;
     }
