@@ -164,70 +164,76 @@
       hpx(c, 12, 44, 8, 4, C.silhouette);
     },
     // Worked out at the bench: a lance, a dagger and a blade that drinks.
+    // The lance and the dagger are the length they always were; on the taller
+    // tile they simply sit on its foot, 16 half-pixels down.
     lance: function (c) {
-      for (var j = 0; j < 20; j++) {          // head: point at the top, widening
-        var hx = 24 - Math.floor(j / 2), w = 2 + Math.floor(j / 4);
-        hpx(c, hx, j, w, 1, j < 3 ? C.steelLit : C.steel);
-        hpx(c, hx, j, 1, 1, C.steelLit);
-        hpx(c, hx + w - 1, j, 1, 1, C.steelDark);
+      hpx(c, 26, 16, 3, 2, C.steelLit);       // head, laid along the diagonal
+      hpx(c, 24, 18, 5, 2, C.steel);
+      hpx(c, 24, 18, 2, 2, C.steelLit);
+      hpx(c, 22, 20, 5, 2, C.steel);
+      hpx(c, 22, 20, 2, 2, C.steelLit);
+      hpx(c, 20, 22, 5, 2, C.steel);
+      hpx(c, 20, 22, 2, 2, C.steelLit);
+      hpx(c, 18, 24, 5, 2, C.steelDark);
+      hpx(c, 18, 24, 2, 2, C.steel);
+      hpx(c, 16, 26, 6, 3, C.gold);           // vamplate
+      hpx(c, 16, 26, 2, 3, C.goldLit);
+      hpx(c, 16, 28, 6, 1, C.goldDark);
+      for (var i = 0; i < 15; i++) {          // shaft, down to the butt
+        hpx(c, 15 - i, 29 + i, 3, 1, C.wood);
+        hpx(c, 15 - i, 29 + i, 1, 1, C.woodLit);
+        hpx(c, 17 - i, 29 + i, 1, 1, C.woodDark);
       }
-      hpx(c, 14, 20, 6, 3, C.gold);           // vamplate
-      hpx(c, 14, 20, 2, 3, C.goldLit);
-      hpx(c, 14, 22, 6, 1, C.goldDark);
-      for (var i = 0; i < 25; i++) {          // shaft, down to the butt
-        var x = 14 - Math.floor(i / 2);
-        hpx(c, x, 23 + i, 4, 1, C.wood);
-        hpx(c, x, 23 + i, 1, 1, C.woodLit);
-        hpx(c, x + 3, 23 + i, 1, 1, C.woodDark);
-      }
-      hpx(c, 1, 46, 5, 1, C.leather);         // grip end
-      hpx(c, 0, 47, 5, 1, C.leatherDark);
+      hpx(c, 0, 44, 4, 1, C.leather);         // grip end
+      hpx(c, 0, 45, 4, 3, C.leatherDark);
     },
     dagger: function (c) {
-      hpx(c, 15, 1, 2, 2, C.steelLit);        // point
-      hpx(c, 14, 3, 4, 2, C.steel);
-      hpx(c, 14, 3, 1, 2, C.steelLit);
-      hpx(c, 17, 3, 1, 2, C.steelDark);
-      hpx(c, 13, 5, 6, 25, C.steel);          // blade
-      hpx(c, 13, 5, 2, 25, C.steelLit);
-      hpx(c, 17, 5, 2, 25, C.steelDark);
-      hpx(c, 15, 4, 2, 25, C.steelLit);       // fuller
-      hpx(c, 16, 5, 1, 23, C.steel);
-      hpx(c, 10, 30, 12, 2, C.goldDark);      // guard
-      hpx(c, 10, 32, 12, 2, C.gold);
-      hpx(c, 11, 32, 3, 1, C.goldLit);
-      hpx(c, 13, 34, 6, 8, C.leather);        // grip
-      hpx(c, 13, 34, 1, 8, C.leatherLit);
-      hpx(c, 18, 34, 1, 8, C.leatherDark);
-      hpx(c, 13, 36, 6, 1, C.leatherDark);    // wrap
-      hpx(c, 13, 39, 6, 1, C.leatherDark);
-      hpx(c, 11, 42, 10, 3, C.gold);          // pommel
-      hpx(c, 12, 42, 3, 1, C.goldLit);
-      hpx(c, 12, 45, 8, 2, C.goldDark);
+      hpx(c, 15, 17, 2, 2, C.steelLit);       // point
+      hpx(c, 14, 19, 4, 2, C.steel);
+      hpx(c, 14, 19, 1, 2, C.steelLit);
+      hpx(c, 17, 19, 1, 2, C.steelDark);
+      hpx(c, 13, 21, 6, 13, C.steel);         // blade
+      hpx(c, 13, 21, 2, 13, C.steelLit);
+      hpx(c, 17, 21, 2, 13, C.steelDark);
+      hpx(c, 15, 20, 2, 13, C.steelLit);      // fuller
+      hpx(c, 16, 21, 1, 11, C.steel);
+      hpx(c, 10, 34, 12, 2, C.goldDark);      // guard
+      hpx(c, 10, 36, 12, 2, C.gold);
+      hpx(c, 11, 36, 3, 1, C.goldLit);
+      hpx(c, 13, 38, 6, 6, C.leather);        // grip
+      hpx(c, 13, 38, 1, 6, C.leatherLit);
+      hpx(c, 18, 38, 1, 6, C.leatherDark);
+      hpx(c, 13, 40, 6, 1, C.leatherDark);    // wrap
+      hpx(c, 13, 42, 6, 1, C.leatherDark);
+      hpx(c, 11, 44, 10, 2, C.gold);          // pommel
+      hpx(c, 12, 44, 3, 1, C.goldLit);
+      hpx(c, 12, 46, 8, 2, C.goldDark);
     },
     crackbolt: (function () {               // kunai: straight edges, no curves
       var MASK = [
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
         "...............LL...............",
         "...............LL...............",
         "..............LLDD..............",
         "..............LLDD..............",
         "..............LLDD..............",
-        "..............LLDD..............",
         ".............LLSSDD.............",
         ".............LLSSDD.............",
         ".............LLSSDD.............",
+        ".............LLSSDD.............",
         "............LLSLSSDD............",
         "............LLSLSSDD............",
         "............LLSLSSDD............",
-        "............LLSLSSDD............",
-        "...........LLSSLSSSDD...........",
         "...........LLSSLSSSDD...........",
         "...........LLSSLSSSDD...........",
         "...........LLSSLSSSDD...........",
         "..........LLSSSLSSSSDD..........",
         "..........LLSSSLSSSSDD..........",
-        "..........LLSSSLSSSSDD..........",
-        ".........LLSSSSLSSSSSDD.........",
         "..........LLSSSLSSSSDD..........",
         "..........LLSSSLSSSSDD..........",
         "...........LLSSLSSSDD...........",
@@ -237,8 +243,6 @@
         ".............LLSSDD.............",
         "..............LLDD..............",
         "..............LLDD..............",
-        "...............LL...............",
-        "...............LL...............",
         "............gGGggggg............",
         "............dddddddd............",
         ".............Wwwwwk.............",
@@ -566,7 +570,7 @@
 
   // Where a given row sits in the wave, 0 black and 1 full colour.
   function baneWave(row, phase) {
-    return 0.5 + 0.5 * Math.sin(phase - row * 0.17);
+    return 0.5 + 0.5 * Math.sin(phase - row * 0.275);
   }
 
   function baneShade(row, phase, cold, hot) {
@@ -575,29 +579,36 @@
 
   // The ricasso - the blunt stretch of blade sitting on the guard - takes no
   // part in it: the wave runs out at RICASSO_Y and the hilt stays as forged.
-  var RICASSO_Y = 30;
+  var RICASSO_Y = 16;
+
+  // Rows are counted from the point; BANE_TOP drops the whole blade onto the
+  // foot of the taller tile without touching the wave running down it.
+  var BANE_TOP = 16;
 
   function bloodbane(c, phase) {
-    hpx(c, 15, 0, 2, 2, baneShade(0, phase, C.dark, BANE_HOT));     // point
-    hpx(c, 14, 2, 4, 2, baneShade(2, phase, C.dark, BANE_BODY));
-    hpx(c, 14, 2, 1, 2, baneShade(2, phase, BANE_COLD, BANE_RED));
-    for (var y = 4; y < 36; y++) {
+    var top = BANE_TOP;
+    hpx(c, 15, top, 2, 2, baneShade(0, phase, C.dark, BANE_HOT));   // point
+    hpx(c, 14, top + 2, 4, 2, baneShade(2, phase, C.dark, BANE_BODY));
+    hpx(c, 14, top + 2, 1, 2, baneShade(2, phase, BANE_COLD, BANE_RED));
+    for (var y = 4; y < 20; y++) {
       var live = y < RICASSO_Y;
-      hpx(c, 12, y, 8, 1, live ? baneShade(y, phase, C.dark, BANE_BODY) : C.dark);
-      hpx(c, 12, y, 2, 1, live ? baneShade(y, phase, BANE_COLD, BANE_RED) : C.blood);
-      hpx(c, 18, y, 2, 1, C.darkLit);                               // shaded back
-      if (y <= 33) {                                                // channel down the fuller
-        hpx(c, 14, y, 2, 1, live ? baneShade(y - 2, phase, BANE_COLD, BANE_HOT)
+      hpx(c, 12, top + y, 8, 1, live ? baneShade(y, phase, C.dark, BANE_BODY) : C.dark);
+      hpx(c, 12, top + y, 2, 1, live ? baneShade(y, phase, BANE_COLD, BANE_RED) : C.blood);
+      hpx(c, 18, top + y, 2, 1, C.darkLit);                         // shaded back
+      if (y <= 17) {                                                // channel down the fuller
+        hpx(c, 14, top + y, 2, 1, live ? baneShade(y - 2, phase, BANE_COLD, BANE_HOT)
           : C.bloodLit);
       }
-      if (y >= 8 && y <= 29) hpx(c, 16, y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED));
+      if (y >= 8 && y <= 15) {
+        hpx(c, 16, top + y, 1, 1, baneShade(y, phase, BANE_COLD, BANE_RED));
+      }
     }
-    hpx(c, 6, 36, 20, 2, C.darkLit);        // crossguard, swept
-    hpx(c, 6, 38, 20, 3, C.dark);
-    hpx(c, 4, 36, 3, 4, C.blood);
-    hpx(c, 25, 36, 3, 4, C.blood);
-    hpx(c, 13, 41, 6, 5, C.leatherDark);    // grip, one flat colour
-    hpx(c, 11, 46, 10, 2, C.bloodLit);      // pommel stone
+    hpx(c, 6, top + 20, 20, 2, C.darkLit);  // crossguard, swept
+    hpx(c, 6, top + 22, 20, 3, C.dark);
+    hpx(c, 4, top + 20, 3, 4, C.blood);
+    hpx(c, 25, top + 20, 3, 4, C.blood);
+    hpx(c, 13, top + 25, 6, 5, C.leatherDark);   // grip, one flat colour
+    hpx(c, 11, top + 30, 10, 2, C.bloodLit);     // pommel stone
   }
 
   // Still frame for anything that cannot animate: caught mid-swing, in colour.
@@ -610,17 +621,17 @@
   //   e pale edge   c core   l deep edge
   //   G/g guard and the gold ricasso   m stone   R/r grip   P pommel
   var BOLT = [
+    "................................",
+    "................................",
+    "................................",
+    "................................",
+    "................................",
+    "................................",
     "...............cc...............",
     "...............cc...............",
     "..............eccl..............",
     "..............eccl..............",
     "..............eccl..............",
-    ".............eeccll.............",
-    ".............eeccll.............",
-    ".............eeccll.............",
-    ".............eeccll.............",
-    ".............eeccll.............",
-    ".............eeccll.............",
     ".............eeccll.............",
     ".............eeccll.............",
     ".............eeccll.............",
@@ -855,8 +866,10 @@
 
   // A strike is worked out once, as a short jagged run of half-pixels, and then
   // just held on screen until its life runs out.
+  var CRACK_TIP = 6;            // the row the point sits on
+
   function crackle() {
-    var pts = [], x = 15 + Math.floor(Math.random() * 2), y = 0;
+    var pts = [], x = 15 + Math.floor(Math.random() * 2), y = CRACK_TIP;
     var lean = Math.random() < 0.5 ? -1 : 1;
     var steps = 3 + Math.floor(Math.random() * 2);
     for (var i = 0; i < steps; i++) {
