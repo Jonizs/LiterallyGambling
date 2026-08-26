@@ -67,13 +67,20 @@
     rect(ctx, box.x + box.w, box.y - 2, 1, box.h + 3, color);
   }
 
+  // The slot the pointer is over while a pick is waiting: a warm wash over
+  // the tile, so it is plain which one is about to be swapped out.
+  function drawHover(ctx, box) {
+    ctx.fillStyle = "rgba(255, 215, 106, 0.22)";
+    ctx.fillRect(box.x - 1, box.y - 2, box.w + 2, box.h + 3);
+  }
+
   function drawPeg(ctx, key, index) {
     var x = PEG_X - index * STEP;
     rect(ctx, x + SIZE / 2 - 1, PEG_Y - 3, 2, 3, WOOD_DARK);
     ctx.drawImage(tile(key), x, PEG_Y);
   }
 
-  // view: { keys: [artifact keys on the shelf], permanent: [keys], picking }
+  // view: { keys: [on the shelf], permanent: [keys], picking, hover }
   function draw(ctx, view, t) {
     if (!view) return;
     drawPlank(ctx);
@@ -82,7 +89,10 @@
       var key = view.keys[i];
       if (key) ctx.drawImage(tile(key), box.x, box.y);
       else drawEmpty(ctx, box);
-      if (view.picking) drawPick(ctx, box, t);
+      if (view.picking) {
+        drawPick(ctx, box, t);
+        if (view.hover === i) drawHover(ctx, box);
+      }
     }
     (view.permanent || []).forEach(function (key, at) { drawPeg(ctx, key, at); });
   }

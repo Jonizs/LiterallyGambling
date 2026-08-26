@@ -617,6 +617,7 @@
       return def.permanent && A.owns(state, def.key);
     }).map(function (def) { return def.icon; });
     scene.shelf.picking = !!view.replacing;
+    if (!view.replacing) sceneLeave();
   }
 
   function rollArtifact() {
@@ -681,15 +682,35 @@
     hint.hidden = !def;
   }
 
-  // Scene clicks only mean something while the shelf is waiting on a pick.
-  function sceneClick(ev) {
-    if (!view.replacing) return;
+  // Which shelf slot a pointer event is over, or -1. Only slots with an
+  // artifact in them count.
+  function slotUnder(ev) {
     var canvas = $("forge-canvas");
     var box = canvas.getBoundingClientRect();
     var x = (ev.clientX - box.left) / box.width * canvas.width;
     var y = (ev.clientY - box.top) / box.height * canvas.height;
     var slot = window.Shelf.slotAt(x, y);
-    if (slot >= 0 && slot < A.equippedDefs(state).length) replaceAt(slot);
+    return slot >= 0 && slot < A.equippedDefs(state).length ? slot : -1;
+  }
+
+  // The slot under the pointer lights up while a pick is waiting.
+  function sceneMove(ev) {
+    if (!scene) return;
+    var slot = view.replacing ? slotUnder(ev) : -1;
+    scene.shelf.hover = slot;
+    $("forge-canvas").style.cursor = slot >= 0 ? "pointer" : "";
+  }
+
+  function sceneLeave() {
+    if (scene) scene.shelf.hover = -1;
+    $("forge-canvas").style.cursor = "";
+  }
+
+  // Scene clicks only mean something while the shelf is waiting on a pick.
+  function sceneClick(ev) {
+    if (!view.replacing) return;
+    var slot = slotUnder(ev);
+    if (slot >= 0) replaceAt(slot);
   }
 
   // --- resource yard ------------------------------------------------------
@@ -914,6 +935,8 @@
     $("btn-profile").addEventListener("click", openProfile);
     $("strike-btn").addEventListener("click", doStrike);
     $("forge-canvas").addEventListener("click", sceneClick);
+    $("forge-canvas").addEventListener("pointermove", sceneMove);
+    $("forge-canvas").addEventListener("pointerleave", sceneLeave);
     $("pop-close").addEventListener("click", closeResult);
     $("pop-sell").addEventListener("click", sellShown);
     $("result-pop").addEventListener("click", function (ev) {

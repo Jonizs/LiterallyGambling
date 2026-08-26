@@ -43,7 +43,7 @@
     this.flash = 0;     // white impact flash left
     this.glow = 0;      // hot metal glow left on the anvil
     // What the artifact shelf is holding, kept by the HUD.
-    this.shelf = { keys: [], permanent: [], picking: false };
+    this.shelf = { keys: [], permanent: [], picking: false, hover: -1 };
   }
 
   var ANVIL_TOP = 104, STRIKE_X = 128;
