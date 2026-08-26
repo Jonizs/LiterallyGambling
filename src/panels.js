@@ -367,8 +367,7 @@
       if (!open) title.appendChild(el("span", "chip-stat lock", "lvl " + def.level));
       main.appendChild(title);
       main.appendChild(el("div", "muted", U.describe(def) +
-        " \u00b7 built " + (U.built(ctx.state, def) > 0 ? "+" : "") +
-        U.built(ctx.state, def)));
+        " \u00b7 built " + U.builtText(ctx.state, def)));
       row.appendChild(main);
 
       var b = button(cost === null ? "FINISHED" : "BUILD " + cost,

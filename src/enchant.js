@@ -84,9 +84,9 @@
 
   // What each slot of an offer is rolling against, so the odds are on the
   // table rather than folklore.
-  function oddsBoard() {
+  function oddsBoard(state) {
     var board = el("div", "odds");
-    E.odds().forEach(function (band) {
+    E.odds(state).forEach(function (band) {
       var group = el("div", "odds-band " + band.rarity);
       var head = el("div", "row-title", band.rarity);
       head.appendChild(el("span", "chip-stat rarity-" + band.rarity,
@@ -176,7 +176,7 @@
       }));
     intro.lastChild.title = showOdds ? "Hide the odds." : "What am I rolling against?";
     wrap.appendChild(intro);
-    if (showOdds) wrap.appendChild(oddsBoard());
+    if (showOdds) wrap.appendChild(oddsBoard(ctx.state));
 
     var rows = el("div", "rows");
     items.forEach(function (item) {
