@@ -22,12 +22,18 @@
       costs: [3500] },
     { key: "good-grip", name: "Good Grip", stats: ["rarity", "quality"], per: 5,
       level: 1,
-      costs: [3000, 4000, 5000, 6000, 7000] }
+      costs: [3000, 4000, 5000, 6000, 7000] },
+    // A luck upgrade weights the enchant rarity roll instead of lifting a
+    // stat: each tier multiplies those bands' odds, so common thins out.
+    { key: "deep-luck", name: "Deep Luck", luck: { uncommon: 1.2, rare: 1.3 },
+      level: 1,
+      costs: [2500, 4000, 6000, 8500, 12000] }
   ];
 
   // Every upgrade reads as a list of stats, whether it lifts one or two.
   function statsOf(def) {
-    return def.stats || [def.stat];
+    if (def.stats) return def.stats;
+    return def.stat ? [def.stat] : [];
   }
 
   // Puts a tier's lift on the base the forge rolls around.
@@ -62,13 +68,44 @@
     return tier >= maxTier(def) ? null : def.costs[tier];
   }
 
+  // How much an upgrade bends one enchant rarity's odds at its current tier.
+  function luckMult(state, rarity) {
+    var out = 1;
+    UPGRADES.forEach(function (def) {
+      if (!def.luck || !def.luck[rarity]) return;
+      out *= Math.pow(def.luck[rarity], tierOf(state, def));
+    });
+    return out;
+  }
+
+  function trim(value) {
+    return String(Math.round(value * 100) / 100);
+  }
+
+  function luckText(def, tiers) {
+    return Object.keys(def.luck).map(function (rarity) {
+      return rarity + " \u00d7" + trim(Math.pow(def.luck[rarity], tiers));
+    }).join(", ");
+  }
+
   function describe(def) {
+    if (def.luck) {
+      return "Enchant odds " + luckText(def, 1) + " per tier";
+    }
     var labels = statsOf(def).map(function (key) { return S.STATS[key].label; });
     return "+" + def.per + " " + labels.join(" and ") + " per tier";
   }
 
   function built(state, def) {
     return tierOf(state, def) * def.per;
+  }
+
+  // What the tiers already bought add up to, as the panel says it.
+  function builtText(state, def) {
+    var tiers = tierOf(state, def);
+    if (def.luck) return tiers ? luckText(def, tiers) : "nothing yet";
+    var value = built(state, def);
+    return (value > 0 ? "+" : "") + value;
   }
 
   function buy(state, def) {
@@ -101,6 +138,8 @@
     nextCost: nextCost,
     describe: describe,
     built: built,
+    builtText: builtText,
+    luckMult: luckMult,
     buy: buy
   };
 })(window);

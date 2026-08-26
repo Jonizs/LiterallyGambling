@@ -121,8 +121,24 @@
     return odds[odds.length - 1].value;
   }
 
-  function rollOne(taken) {
-    var rarity = pick(RARITY_ODDS);
+  // The table's odds bent by whatever luck upgrades have been built. The
+  // multiplied bands take their share out of common, which is left alone.
+  function rarityOdds(state) {
+    var U = global.Upgrades;
+    if (!state || !U || !U.luckMult) return RARITY_ODDS;
+    var sum = 0;
+    var bent = RARITY_ODDS.map(function (band) {
+      var chance = band.chance * U.luckMult(state, band.value);
+      sum += chance;
+      return { value: band.value, chance: chance };
+    });
+    return bent.map(function (band) {
+      return { value: band.value, chance: band.chance / sum * 100 };
+    });
+  }
+
+  function rollOne(taken, state) {
+    var rarity = pick(rarityOdds(state));
     var pool = DEFS.filter(function (def) {
       return def.rarity === rarity && taken.indexOf(def.key) < 0;
     });
@@ -138,10 +154,10 @@
     };
   }
 
-  function rollOffer() {
+  function rollOffer(state) {
     var taken = [], out = [];
     for (var i = 0; i < OFFER_SIZE; i++) {
-      var entry = rollOne(taken);
+      var entry = rollOne(taken, state);
       taken.push(entry.key);
       out.push(entry);
     }
@@ -171,7 +187,7 @@
       return { ok: false, reason: "Not enough silver. That roll costs " + cost + "." };
     }
     state.silver -= cost;
-    return { ok: true, cost: cost, choices: rollOffer() };
+    return { ok: true, cost: cost, choices: rollOffer(state) };
   }
 
   function round(value, places) {
@@ -202,12 +218,12 @@
 
   // What one slot of an offer is worth landing on: a rarity's odds split
   // evenly between the enchants in it, since the pick inside a rarity is even.
-  function odds() {
-    return RARITY_ODDS.map(function (band) {
+  function odds(state) {
+    return rarityOdds(state).map(function (band) {
       var pool = DEFS.filter(function (def) { return def.rarity === band.value; });
       return {
         rarity: band.value,
-        chance: band.chance,
+        chance: Math.round(band.chance * 10) / 10,
         each: Math.round(band.chance / pool.length * 10) / 10,
         entries: pool.map(function (def) {
           return {
@@ -283,6 +299,7 @@
   global.Enchants = {
     DEFS: DEFS,
     RARITY_ODDS: RARITY_ODDS,
+    rarityOdds: rarityOdds,
     TIER_ODDS: TIER_ODDS,
     COST_SHARE: COST_SHARE,
     OFFER_SIZE: OFFER_SIZE,
