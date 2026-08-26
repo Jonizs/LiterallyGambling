@@ -13,7 +13,10 @@
     { key: "resources", label: "Resources",
       blurb: "Materials, ore, bars and alloys on hand." },
     { key: "utility", label: "Utility",
-      blurb: "Schematics and molds the forge has stamped." }
+      blurb: "Schematics and molds the forge has stamped." },
+    { key: "artifacts", label: "Artifacts",
+      blurb: "Trinkets the basic slot has handed over. The shelf by the forge " +
+        "holds three." }
   ];
 
   // Utility crafts are kept alongside ore, so they are named out rather than
@@ -118,6 +121,27 @@
     group(wrap, "Stamped", chips);
   }
 
+  // Everything found so far, each with the button that puts it on the shelf
+  // or takes it off again.
+  function artifactsTab(ctx, wrap) {
+    var A = global.Artifacts, Panel = global.Artifact;
+    var held = A.DEFS.filter(function (def) { return A.owns(ctx.state, def.key); });
+    if (!held.length) {
+      wrap.appendChild(el("p", "empty",
+        "Nothing found yet. Roll the basic slot at the artifact table."));
+      return;
+    }
+    wrap.appendChild(el("div", "row-title",
+      A.equippedDefs(ctx.state).length + "/" + A.MAX + " on the shelf"));
+    var rows = el("div", "rows");
+    held.forEach(function (def) {
+      rows.appendChild(Panel.artifactRow(ctx, def, {
+        action: function (d, owned, on) { return Panel.shelfButton(ctx, d, owned, on); }
+      }));
+    });
+    wrap.appendChild(rows);
+  }
+
   function build(ctx) {
     var wrap = el("div");
 
@@ -139,6 +163,7 @@
 
     if (inventoryTab === "weapons") weaponsTab(ctx, wrap);
     else if (inventoryTab === "resources") resourcesTab(ctx, wrap);
+    else if (inventoryTab === "artifacts") artifactsTab(ctx, wrap);
     else utilityTab(ctx, wrap);
 
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));

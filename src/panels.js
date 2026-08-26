@@ -461,6 +461,9 @@
       return global.Enchant.build(ctx);
     }, level: 4 },
     upgrades: { title: "Upgrades", build: upgradesPanel },
+    artifacts: { title: "Artifacts", build: function (ctx) {
+      return global.Artifact.build(ctx);
+    } },
     display: { title: "Display", build: soonPanel("The display case") },
     resource: { title: "Resource", build: function (ctx) {
       return global.Resource.build(ctx);

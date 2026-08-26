@@ -36,10 +36,17 @@
     return Math.max(s.min, Math.min(s.max, value));
   }
 
-  // The window a roll can land in: value plus the full luck swing, clamped.
-  function rollRange(key, value) {
+  // The luck swing a stat rolls in: the table's own, unless something has
+  // widened it (an artifact on the shelf) and hands one in.
+  function luckOf(key, luck) {
     var s = STATS[key];
-    return { low: clamp(key, value + s.down), high: clamp(key, value + s.up) };
+    return luck || { up: s.up, down: s.down };
+  }
+
+  // The window a roll can land in: value plus the full luck swing, clamped.
+  function rollRange(key, value, luck) {
+    var win = luckOf(key, luck);
+    return { low: clamp(key, value + win.down), high: clamp(key, value + win.up) };
   }
 
   function tierAt(rarity) {
@@ -66,11 +73,13 @@
   }
 
   // What the current stats could produce, as label/value pairs for the UI.
-  function forecast(values) {
-    var r = rollRange("rarity", values.rarity);
-    var q = rollRange("quality", values.quality);
-    var e = rollRange("eslots", values.eslots);
-    var d = rollRange("edition", values.edition);
+  // luckFn, when handed in, gives the swing each stat is really rolling in.
+  function forecast(values, luckFn) {
+    function win(key) { return luckFn ? luckFn(key) : null; }
+    var r = rollRange("rarity", values.rarity, win("rarity"));
+    var q = rollRange("quality", values.quality, win("quality"));
+    var e = rollRange("eslots", values.eslots, win("eslots"));
+    var d = rollRange("edition", values.edition, win("edition"));
     return [
       { label: "Tier", value: span(tierAt(r.low).name, tierAt(r.high).name),
         detail: "rarity " + r.low + " to " + r.high },
@@ -89,6 +98,7 @@
     EDITIONS: EDITIONS,
     STATS: STATS,
     clamp: clamp,
+    luckOf: luckOf,
     rollRange: rollRange,
     tierAt: tierAt,
     qualityBandAt: qualityBandAt,

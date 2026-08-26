@@ -513,6 +513,171 @@
     t: C.dark, w: "#fffdf2"
   };
 
+  // --- artifacts ------------------------------------------------------------
+  // Shelf trinkets, one flat 16x16 mask each so they read at thumbnail size
+  // and again as pixels on the forge shelf.
+  var ARTIFACTS = {
+    "artifact-candle": { mask: [
+      ".......ff.......",
+      "......fFf.......",
+      "......fFF.......",
+      ".......ww.......",
+      "......wwww......",
+      "......wwww......",
+      "......wLww......",
+      "......wLww......",
+      "......wLww......",
+      "......wLww......",
+      ".....wwwww......",
+      "....dddddddd....",
+      "...dpppppppd....",
+      "...dppppppdd....",
+      "....dddddd......",
+      "................"
+    ], paint: { f: "#ffd76a", F: "#fffdf2", w: "#e8dcc0", L: "#c9b98f",
+      d: "#8f6d29", p: "#d9ac4f" } },
+
+    "artifact-boot": { mask: [
+      "................",
+      "................",
+      "....LLLL........",
+      "....LllL........",
+      "....LllL........",
+      "....LllL........",
+      "....LllL........",
+      "....LllLbb......",
+      "....LllLbbbb....",
+      "....LlllllbbB...",
+      "...LllllllllB...",
+      "...Llllllllll...",
+      "...ssssssssss...",
+      "....ssssssss....",
+      "................",
+      "................"
+    ], paint: { L: "#4e2d14", l: "#7d4a24", s: "#33302c",
+      b: "#a3172a", B: "#e0384a" } },
+
+    "artifact-rock": { mask: [
+      "................",
+      "................",
+      "......oooo......",
+      ".....oSSSSo.....",
+      "....oSSSSSSo....",
+      "...oSSLLSSSSo...",
+      "...oSSLLSSSSo...",
+      "..oSSSSSSSSSSo..",
+      "..oSSSSccSSSSo..",
+      "..oSSSSccSSSSo..",
+      "..oSSSSSSSSSSo..",
+      "...oSSSSSSSSo...",
+      "....oooooooo....",
+      "................",
+      "................",
+      "................"
+    ], paint: { o: "#33302c", S: "#6b6560", L: "#928a80", c: "#4a453f" } },
+
+    "artifact-ring": { mask: [
+      "................",
+      "................",
+      ".......cc.......",
+      "......cCCc......",
+      ".......cc.......",
+      ".....gggggg.....",
+      "....gg....gg....",
+      "...gg......gg...",
+      "...gg......gg...",
+      "...gg......gg...",
+      "....gg....gg....",
+      ".....gggggg.....",
+      "................",
+      "................",
+      "................",
+      "................"
+    ], paint: { g: "#d9ac4f", c: "#69c6d8", C: "#dffbff" } },
+
+    "artifact-amulet": { mask: [
+      "................",
+      "..kk........kk..",
+      "...kk......kk...",
+      "....kk....kk....",
+      ".....kk..kk.....",
+      "......kkkk......",
+      ".....gggggg.....",
+      "....ggpppPgg....",
+      "....gpppppPg....",
+      "....gppPpppg....",
+      "....ggppppgg....",
+      ".....gggggg.....",
+      "......gggg......",
+      "................",
+      "................",
+      "................"
+    ], paint: { k: "#4a3f52", g: "#8f6d29", p: "#7a3fa8", P: "#c98cf0" } },
+
+    "artifact-doll": { mask: [
+      "................",
+      "......tttt......",
+      ".....thhhht.....",
+      ".....hEhhEh.....",
+      ".....hhhhhh.....",
+      "......hmmh......",
+      "....sssssss.....",
+      "...ssSsssSss....",
+      "...ssSsssSss....",
+      "....sssssss.....",
+      "....ss...ss.....",
+      "....ss...ss.....",
+      "....tt...tt.....",
+      "................",
+      "................",
+      "................"
+    ], paint: { t: "#5c3a1e", h: "#c9a97e", E: "#241a12", m: "#a3172a",
+      s: "#3f5f7a", S: "#263a4d" } },
+
+    "artifact-way": { mask: [
+      "................",
+      "......wwww......",
+      "....ww....ww....",
+      "...w........w...",
+      "...w..bbbb..w...",
+      "..w..bbbbbb..w..",
+      "..w..bbwwww..w..",
+      "..w..wwwwbb..w..",
+      "..w..wwwwbb..w..",
+      "..w...bbbb...w..",
+      "...w........w...",
+      "...w........w...",
+      "....ww....ww....",
+      "......wwww......",
+      "................",
+      "................"
+    ], paint: { w: "#e8dcc0", b: "#241a12" } },
+
+    "artifact-scroll": { mask: [
+      "................",
+      "................",
+      "..gg........gg..",
+      ".gggppppppppggg.",
+      ".gggpiiiiiipggg.",
+      ".gggppppppppggg.",
+      ".gggpiiiiiipggg.",
+      ".gggppppppppggg.",
+      ".gggpiiiipppggg.",
+      ".gggppppppppggg.",
+      ".gggpiiiiiipggg.",
+      ".gggppppppppggg.",
+      "..gg........gg..",
+      "................",
+      "................",
+      "................"
+    ], paint: { p: "#e8dcc0", i: "#8f6d29", g: "#d9ac4f" } }
+  };
+
+  Object.keys(ARTIFACTS).forEach(function (key) {
+    var art = ARTIFACTS[key];
+    DRAW[key] = function (c) { paint(c, art.mask, art.paint); };
+  });
+
   // --- living icons ---------------------------------------------------------
   // Most icons are painted once. An entry here redraws its own tile every
   // frame instead, so the art can move: step(ctx, dt, bits) owns the whole

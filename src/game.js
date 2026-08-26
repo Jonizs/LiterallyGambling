@@ -143,7 +143,8 @@
                 item.armor * VALUE_PER.armor +
                 item.durability * VALUE_PER.durability +
                 item.armorPen * VALUE_PER.armorPen;
-    return Math.max(1, Math.round(value * PRICE_SCALE));
+    // A piece forged under The Way carries its premium for good.
+    return Math.max(1, Math.round(value * PRICE_SCALE * (item.value || 1)));
   }
 
   function inventoryValue(state) {
@@ -191,6 +192,8 @@
       crucibles: global.Compound.emptyCrucibles(),
       // Fittings soldered on the anvil, spent by the pieces that call for them.
       parts: global.Parts.emptyParts(),
+      // What the shelf holds, what has been found and how many rolls in.
+      artifacts: global.Artifacts.emptyArtifacts(),
       inventory: [],
       upgrades: {},
       // When the guild last covered a broke smith.
@@ -333,16 +336,22 @@
     return unlocked(state, recipe) && missingFor(state, recipe).length === 0;
   }
 
-  // Every value in the luck window is equally likely, so a wider negative
-  // side simply means bad results come up more often.
-  function rollLuck(key) {
-    var stat = S.STATS[key];
-    var span = stat.up - stat.down + 1;
-    return stat.down + Math.floor(Math.random() * span);
+  // The swing a stat is really rolling in: the table's own, widened by
+  // whatever is on the artifact shelf.
+  function luckWindow(state, key) {
+    return state ? global.Artifacts.luck(state, key) : S.luckOf(key);
   }
 
-  function rollStat(key, base) {
-    return S.clamp(key, base + rollLuck(key));
+  // Every value in the luck window is equally likely, so a wider negative
+  // side simply means bad results come up more often.
+  function rollLuck(key, state) {
+    var win = luckWindow(state, key);
+    var span = win.up - win.down + 1;
+    return win.down + Math.floor(Math.random() * span);
+  }
+
+  function rollStat(key, base, state) {
+    return S.clamp(key, base + rollLuck(key, state));
   }
 
   // Takes a cost out of whichever pools it draws on. source picks between a
@@ -411,11 +420,11 @@
     }
     spend(state, recipe);
 
-    var rarity = rollStat("rarity", state.base.rarity);
-    var quality = rollStat("quality", state.base.quality);
+    var rarity = rollStat("rarity", state.base.rarity, state);
+    var quality = rollStat("quality", state.base.quality, state);
     var tier = S.tierAt(rarity);
     var band = S.qualityBandAt(quality).name;
-    var edition = rollStat("edition", state.base.edition);
+    var edition = rollStat("edition", state.base.edition, state);
     var stats = statsFor(recipe, tier.index, band, edition);
     var item = {
       id: state.nextId++,
@@ -427,7 +436,7 @@
       tier: tier.name,
       quality: quality,
       band: band,
-      slots: rollStat("eslots", state.base.eslots),
+      slots: rollStat("eslots", state.base.eslots, state),
       edition: edition,
       editionName: S.editionAt(edition),
       damage: stats.damage,
@@ -439,6 +448,10 @@
       armorPen: stats.armorPen,
       enchants: []
     };
+    // The Way is worked into the piece as it comes off the anvil, so it keeps
+    // the premium even once the artifact comes off the shelf.
+    var premium = global.Artifacts.valueMult(state);
+    if (premium !== 1) item.value = premium;
     state.inventory.unshift(item);
     return { ok: true, item: item, xp: grantXp(state, xpFor(recipe, tier.index, band)) };
   }
@@ -485,6 +498,7 @@
     sell: sell,
     sellAll: sellAll,
     inventoryValue: inventoryValue,
+    luckWindow: luckWindow,
     rollLuck: rollLuck,
     rollStat: rollStat,
     forge: forge

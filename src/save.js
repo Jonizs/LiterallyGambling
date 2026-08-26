@@ -66,6 +66,7 @@
       alloys: state.alloys,
       crucibles: state.crucibles,
       parts: state.parts,
+      artifacts: state.artifacts,
       inventory: state.inventory,
       upgrades: state.upgrades,
       base: state.base,
@@ -143,6 +144,9 @@
       enchants: readEnchants(raw.enchants, slots)
     };
     if (raw.awakenable) item.awakenable = true;
+    // The premium The Way worked into the piece, kept as it was forged.
+    var value = num(raw.value, 1);
+    if (value > 1) item.value = Math.min(4, value);
     // How many times this piece has been stripped, so the next reforge is
     // priced where it left off.
     if (raw.reforges) item.reforges = whole(raw.reforges, 0);
@@ -176,6 +180,31 @@
       // here rather than trusting whatever base the save carried.
       U.apply(state, def, tier);
     });
+  }
+
+  // What has been found, what is on the shelf, and how many rolls have been
+  // paid for. A permanent piece re-applies its lift, the same way an upgrade
+  // does, rather than trusting the base the save carried.
+  function readArtifacts(raw, state) {
+    var A = global.Artifacts;
+    if (!raw || typeof raw !== "object") return;
+    if (Array.isArray(raw.owned)) {
+      raw.owned.forEach(function (key) {
+        var def = A.defFor(key);
+        if (!def || A.owns(state, key)) return;
+        state.artifacts.owned.push(key);
+        A.applyBase(state, def);
+      });
+    }
+    if (Array.isArray(raw.equipped)) {
+      raw.equipped.forEach(function (key) {
+        var def = A.defFor(key);
+        if (!def || def.permanent || !A.owns(state, key)) return;
+        if (state.artifacts.equipped.length >= A.MAX) return;
+        if (state.artifacts.equipped.indexOf(key) < 0) state.artifacts.equipped.push(key);
+      });
+    }
+    state.artifacts.rolls = whole(raw.rolls, 0);
   }
 
   function readBase(raw, state) {
@@ -270,6 +299,7 @@
     // A clock that has gone backwards must not hand out an extra payout.
     state.stipendAt = Math.min(whole(raw.stipendAt, 0), Date.now());
     readUpgrades(raw.upgrades, state);
+    readArtifacts(raw.artifacts, state);
     readBase(raw.base, state);
 
     state.nextId = whole(raw.nextId, 1, 1);

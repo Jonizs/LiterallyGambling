@@ -3,7 +3,8 @@
   "use strict";
 
   var S = window.Stats, G = window.Game, P = window.Panels,
-      E = window.Enchants, U = window.Upgrades, Save = window.Save;
+      E = window.Enchants, U = window.Upgrades, A = window.Artifacts,
+      Save = window.Save;
 
   var player = {
     name: "JONIS",
@@ -15,7 +16,7 @@
   // just starts a fresh smith.
   var state = Save.load() || G.createState();
   var view = { panel: null, notice: "", pending: null, striking: false,
-               shown: null, offer: null };
+               shown: null, offer: null, replacing: null };
   var scene = null;
 
   // Per-stat help text; the live roll window is appended at render time.
@@ -80,6 +81,7 @@
     Object.keys(S.STATS).forEach(function (key) {
       var stat = S.STATS[key];
       var value = state.base[key];
+      var win = A.luck(state, key);
       var cell = P.el("div", "buff");
 
       var text = P.el("div");
@@ -87,16 +89,16 @@
       name.innerHTML = stat.label + ": <b>" + value + "</b>";
       var delta = P.el("div", "buff-delta");
       delta.innerHTML =
-        '<span class="up">+' + stat.up + '</span> ' +
+        '<span class="up">+' + win.up + '</span> ' +
         '<span class="sep">#</span> ' +
-        '<span class="down">' + stat.down + "</span>";
+        '<span class="down">' + win.down + "</span>";
       text.appendChild(name);
       text.appendChild(delta);
 
       var help = P.el("button", "help", "?");
       help.type = "button";
       help.setAttribute("aria-label", stat.label + " info");
-      bindTooltip(help, buffTooltip(key, stat, value));
+      bindTooltip(help, buffTooltip(key, stat, value, win));
 
       cell.appendChild(text);
       cell.appendChild(help);
@@ -105,8 +107,8 @@
   }
 
   // Tooltip: the rule for the stat, then the window it can roll into now.
-  function buffTooltip(key, stat, value) {
-    var range = S.rollRange(key, value);
+  function buffTooltip(key, stat, value, win) {
+    var range = S.rollRange(key, value, win);
     var lands;
     if (key === "rarity") {
       lands = bracketSpan(S.tierAt(range.low).name, S.tierAt(range.high).name);
@@ -215,6 +217,9 @@
       takeEnchant: takeEnchant,
       reforge: reforge,
       buyUpgrade: buyUpgrade,
+      rollArtifact: rollArtifact,
+      equipArtifact: equipArtifact,
+      unequipArtifact: unequipArtifact,
       saveInfo: saveInfo,
       devBoost: devBoost,
       devUnlockAll: devUnlockAll,
@@ -527,6 +532,7 @@
     renderPurse();
     renderBuffs();
     renderSlots();
+    syncShelf();
     drawPanel();
   }
 
@@ -599,6 +605,91 @@
         renderStrike();
       }, REVEAL_HOLD);
     });
+  }
+
+  // --- artifacts ----------------------------------------------------------
+  // What the shelf in the scene is holding. Permanent pieces hang on their
+  // own peg, so they never cost a slot.
+  function syncShelf() {
+    if (!scene) return;
+    scene.shelf.keys = A.equippedDefs(state).map(function (def) { return def.icon; });
+    scene.shelf.permanent = A.DEFS.filter(function (def) {
+      return def.permanent && A.owns(state, def.key);
+    }).map(function (def) { return def.icon; });
+    scene.shelf.picking = !!view.replacing;
+  }
+
+  function rollArtifact() {
+    var result = A.roll(state);
+    view.notice = result.ok
+      ? "Found " + result.def.name + " for " + result.cost.toLocaleString() +
+        " silver — " + result.def.text + "."
+      : result.reason;
+    refresh();
+  }
+
+  // A full shelf sends the smith to the scene to pick what comes off.
+  function equipArtifact(key) {
+    var result = A.equip(state, key);
+    if (result.full) {
+      view.replacing = key;
+      closePanel();
+      renderPickHint();
+      syncShelf();
+      return;
+    }
+    view.notice = result.ok
+      ? result.def.name + " is on the shelf." : result.reason;
+    refresh();
+  }
+
+  function unequipArtifact(key) {
+    var result = A.unequip(state, key);
+    view.notice = result.ok
+      ? result.def.name + " is back in the drawer." : result.reason;
+    refresh();
+  }
+
+  // The slot picked in the scene decides what the new artifact replaces.
+  function replaceAt(index) {
+    var coming = A.defFor(view.replacing);
+    var shelf = A.equippedDefs(state);
+    var going = shelf[index];
+    if (!coming || !going) return;
+    var result = A.equip(state, coming.key, going.key);
+    view.replacing = null;
+    renderPickHint();
+    view.notice = result.ok
+      ? coming.name + " takes " + going.name + "'s place on the shelf."
+      : result.reason;
+    refresh();
+  }
+
+  function cancelReplace() {
+    if (!view.replacing) return;
+    view.replacing = null;
+    renderPickHint();
+    syncShelf();
+  }
+
+  function renderPickHint() {
+    var hint = $("pick-hint");
+    var def = view.replacing ? A.defFor(view.replacing) : null;
+    hint.textContent = def
+      ? "Pick what " + def.name + " replaces on the shelf. Esc to cancel."
+      : "";
+    hint.hidden = !def;
+  }
+
+  // Scene clicks only mean something while the shelf is waiting on a pick.
+  function sceneClick(ev) {
+    if (!view.replacing) return;
+    var canvas = $("forge-canvas");
+    var box = canvas.getBoundingClientRect();
+    var x = (ev.clientX - box.left) / box.width * canvas.width;
+    var y = (ev.clientY - box.top) / box.height * canvas.height;
+    var slot = window.Shelf.slotAt(x, y);
+    if (slot >= 0 && slot < A.equippedDefs(state).length) replaceAt(slot);
   }
 
   // --- resource yard ------------------------------------------------------
@@ -770,6 +861,8 @@
     view.pending = null;
     view.offer = null;
     view.shown = null;
+    view.replacing = null;
+    renderPickHint();
     closeResult();
     closePanel();
     clearReveals();
@@ -792,7 +885,8 @@
     });
     body.appendChild(P.el("p", null, "Next strike can land:"));
     var list = P.el("ul");
-    S.forecast(state.base).forEach(function (row) {
+    S.forecast(state.base, function (key) { return A.luck(state, key); })
+      .forEach(function (row) {
       var li = P.el("li", null, row.label + ": ");
       li.appendChild(P.el("b", null, row.value));
       li.appendChild(P.el("span", "muted", " (" + row.detail + ")"));
@@ -819,6 +913,7 @@
     });
     $("btn-profile").addEventListener("click", openProfile);
     $("strike-btn").addEventListener("click", doStrike);
+    $("forge-canvas").addEventListener("click", sceneClick);
     $("pop-close").addEventListener("click", closeResult);
     $("pop-sell").addEventListener("click", sellShown);
     $("result-pop").addEventListener("click", function (ev) {
@@ -826,6 +921,7 @@
     });
     document.addEventListener("keydown", function (ev) {
       if (ev.key === "Escape") {
+        cancelReplace();
         closePanel(); closeResult(); closeDiscovery(); hideTooltip();
       }
     });
@@ -844,6 +940,7 @@
     renderSlots();
     bindTooltip(document.querySelector(".xp-row"), xpTooltip);
     scene = new window.Forge(document.getElementById("forge-canvas"));
+    syncShelf();
     bindControls();
     // A tab closed mid-swing still keeps its progress.
     window.addEventListener("beforeunload", function () { Save.flush(state); });

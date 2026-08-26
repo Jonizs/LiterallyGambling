@@ -42,6 +42,8 @@
     this.shake = 0;     // seconds of screen shake left
     this.flash = 0;     // white impact flash left
     this.glow = 0;      // hot metal glow left on the anvil
+    // What the artifact shelf is holding, kept by the HUD.
+    this.shelf = { keys: [], permanent: [], picking: false };
   }
 
   var ANVIL_TOP = 104, STRIKE_X = 128;
@@ -472,6 +474,7 @@
     this.drawFloor();
     this.drawAnvil();
     this.drawProps();
+    if (global.Shelf) global.Shelf.draw(this.ctx, this.shelf, this.t);
     this.drawWorkpiece();
     this.drawHammer();
     this.drawIron();

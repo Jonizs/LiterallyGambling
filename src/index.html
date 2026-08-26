@@ -53,6 +53,9 @@
         <button class="wood-btn small" data-panel="enchant">ENCHANT</button>
         <button class="wood-btn small" data-panel="awaken">AWAKEN</button>
       </div>
+      <div class="btn-row">
+        <button class="wood-btn small" data-panel="artifacts">ARTIFACTS</button>
+      </div>
 
       <div class="display-block">
         <button class="tab-btn" data-panel="display">Display</button>
@@ -72,6 +75,8 @@
       <button class="strike-btn idle" id="strike-btn" type="button" disabled>FORGE!</button>
 
       <div class="reveals" id="reveals" aria-live="polite"></div>
+
+      <div class="pick-hint" id="pick-hint" hidden></div>
 
       <div class="popup" id="result-pop" hidden>
         <div class="plate popup-card">
@@ -117,6 +122,7 @@
 </div>
 <script src="stats.js"></script>
 <script src="icons.js"></script>
+<script src="artifacts.js"></script>
 <script src="parts.js"></script>
 <script src="recipes.js"></script>
 <script src="game.js"></script>
@@ -132,7 +138,9 @@
 <script src="inventory.js"></script>
 <script src="experiment.js"></script>
 <script src="enchant.js"></script>
+<script src="artifact.js"></script>
 <script src="forge.js"></script>
+<script src="shelf.js"></script>
 <script src="ui.js"></script>
 </body>
 </html>

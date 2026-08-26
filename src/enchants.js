@@ -137,8 +137,37 @@
     });
   }
 
+  // The Shapeshifter Doll makes Awakened come up more often. The extra share
+  // is taken out of common, so nothing else in the table moves.
+  function awakenedBonus(state) {
+    var A = global.Artifacts;
+    if (!state || !A) return 0;
+    var mult = A.enchantMult(state, "awakened");
+    if (mult <= 1) return 0;
+    var band = rarityOdds(state).filter(function (entry) {
+      return entry.value === "uncommon";
+    })[0];
+    var pool = DEFS.filter(function (def) { return def.rarity === "uncommon"; });
+    return band.chance / pool.length * (mult - 1);
+  }
+
+  // Common's share, less whatever the doll has taken out of it.
+  function bentOdds(state, bonus) {
+    return rarityOdds(state).map(function (band) {
+      return band.value === "common"
+        ? { value: band.value, chance: Math.max(0, band.chance - bonus) }
+        : band;
+    });
+  }
+
   function rollOne(taken, state) {
-    var rarity = pick(rarityOdds(state));
+    var bonus = awakenedBonus(state);
+    if (bonus > 0 && taken.indexOf("awakened") < 0 && Math.random() * 100 < bonus) {
+      var doll = defFor("awakened");
+      return { key: doll.key, name: doll.name, rarity: doll.rarity,
+        tier: 1, tiered: false, text: describe(doll, 1) };
+    }
+    var rarity = pick(bentOdds(state, bonus));
     var pool = DEFS.filter(function (def) {
       return def.rarity === rarity && taken.indexOf(def.key) < 0;
     });
