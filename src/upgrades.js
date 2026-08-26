@@ -25,7 +25,7 @@
       costs: [3000, 4000, 5000, 6000, 7000] },
     // A luck upgrade weights the enchant rarity roll instead of lifting a
     // stat: each tier multiplies those bands' odds, so common thins out.
-    { key: "deep-luck", name: "Deep Luck", luck: { uncommon: 1.2, rare: 1.3 },
+    { key: "deep-luck", name: "Deep Luck", luck: { uncommon: 1.2, rare: 1.2 },
       level: 1,
       costs: [2500, 4000, 6000, 8500, 12000] }
   ];
