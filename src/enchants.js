@@ -63,11 +63,11 @@
       effect: function (t) {
         return { damage: per(0.55, t), durability: per(0.55, t) };
       } },
-
-    // --- rare --------------------------------------------------------------
-    { key: "awakened", name: "Awakened", rarity: "rare", maxTier: 1,
+    { key: "awakened", name: "Awakened", rarity: "uncommon", maxTier: 1,
       note: "Lets the piece be awakened.",
       effect: function () { return {}; } },
+
+    // --- rare --------------------------------------------------------------
     { key: "godly", name: "Godly", rarity: "rare", maxTier: 3,
       effect: function (t) { return { all: per(0.33, t) }; } },
     { key: "reinforced", name: "Reinforced", rarity: "rare", maxTier: 3,
