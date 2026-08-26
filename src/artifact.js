@@ -83,42 +83,19 @@
     return row;
   }
 
+  // The bench tab: the basic slot and, folded away behind ?, everything it
+  // can hand over. What has been found lives in the inventory.
   function build(ctx) {
-    var state = ctx.state;
     var wrap = el("div");
-    wrap.appendChild(el("p", null,
-      "Artifacts bend what the forge rolls. The shelf holds " + A.MAX +
-      "; a permanent one takes no space on it."));
-
     wrap.appendChild(rollBox(ctx));
 
     if (showAll) {
       wrap.appendChild(el("div", "row-title", "In the basic slot"));
       var all = el("div", "rows");
-      A.DEFS.forEach(function (def) {
-        all.appendChild(artifactRow(ctx, def, {
-          action: function (d, owned, on) { return shelfButton(ctx, d, owned, on); }
-        }));
-      });
+      // The catalogue is a read: equipping happens in the inventory.
+      A.DEFS.forEach(function (def) { all.appendChild(artifactRow(ctx, def)); });
       wrap.appendChild(all);
     }
-
-    var held = A.DEFS.filter(function (def) { return A.owns(state, def.key); });
-    wrap.appendChild(el("div", "row-title",
-      "Yours · " + A.equippedDefs(state).length + "/" + A.MAX + " on the shelf"));
-    if (!held.length) {
-      wrap.appendChild(el("p", "empty", "Nothing found yet. Roll the slot."));
-    } else {
-      var rows = el("div", "rows");
-      held.forEach(function (def) {
-        rows.appendChild(artifactRow(ctx, def, {
-          action: function (d, owned, on) { return shelfButton(ctx, d, owned, on); }
-        }));
-      });
-      wrap.appendChild(rows);
-    }
-
-    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
     return wrap;
   }
 
