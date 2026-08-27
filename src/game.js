@@ -88,6 +88,8 @@
   // The lean is measured against a piece rolled dead on the smith's own bench,
   // so improving the bench raises what a roll has to beat: forging is reliably
   // profitable at the start and drifts to break-even as the bench gets good.
+  // A recipe can carry a margin of its own; the Weak Sword does, so the
+  // opening loop pays at a pace worth standing at.
   var MARGIN = 1.1;
   var SALE_POW = 0.3;
   var OPENING_LEAN = 1.354; // average lean an opening smith rolls, so MARGIN reads true
@@ -182,7 +184,8 @@
     var worked = powerOf(item) / rolled;
     // A piece forged under The Way carries its premium for good.
     return Math.max(1, Math.round(
-      recipeValue(recipe) * MARGIN * lean * worked * (item.value || 1)));
+      recipeValue(recipe) * (recipe.margin || MARGIN) * lean * worked *
+      (item.value || 1)));
   }
 
   function inventoryValue(state) {

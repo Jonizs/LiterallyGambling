@@ -8,8 +8,11 @@
   // level is the smith level the recipe unlocks at; xp is what a tier-1
   // Normal piece is worth at the bench.
   var RECIPES = [
+    // The starting blade sells above the 110% every other recipe turns: with
+    // nothing else to forge and no enchant bench yet, the opening loop has to
+    // pay for the first upgrades on its own.
     { key: "sword", name: "Weak Sword", kind: "weapon", icon: "sword",
-      level: 1, xp: 15,
+      level: 1, xp: 15, margin: 1.35,
       perTier: { damage: 6, durability: 20 },
       combat: { speed: 0.85, crit: 5, critDamage: 150, pen: 0 },
       cost: { wood: 5, metal: 10 } },
