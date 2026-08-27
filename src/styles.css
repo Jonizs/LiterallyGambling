@@ -1040,3 +1040,23 @@ body {
   .btn-row { gap: 6px; }
   .tab-btn { padding: 4px 12px; font-size: 12px; }
 }
+
+/* ---------- phones ---------- */
+/* Two columns need a 280px sidebar; on a phone that leaves the forge a
+   strip. Below 760px the scene sits on top at a workable height and the
+   sidebar runs underneath, the whole frame scrolling as one column. */
+@media (max-width: 760px) {
+  body { padding: 6px; padding-bottom: max(6px, env(safe-area-inset-bottom)); }
+  .frame {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    height: auto;
+    min-height: calc(100vh - 12px);
+    min-height: calc(100dvh - 12px);
+    container-type: inline-size;
+  }
+  :root { --s: min(1cqw, 1.7778cqh); }
+  .scene { order: -1; height: 46vh; height: 46dvh; min-height: 220px; }
+  .sidebar { overflow: visible; }
+  .wood-btn.options { margin-top: var(--gap-sm); }
+}

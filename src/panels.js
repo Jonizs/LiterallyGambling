@@ -468,6 +468,7 @@
     experimentation: { title: "Experimentation", build: function (ctx) {
       return global.Experiment.build(ctx);
     }, level: 2 },
+    polish: { title: "Polish", build: soonPanel("Polishing"), level: 8 },
     awaken: { title: "Awaken", build: soonPanel("Awakening"), level: 12 },
     options: { title: "Options", build: optionsPanel }
   };
