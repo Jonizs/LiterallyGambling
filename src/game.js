@@ -80,19 +80,22 @@
   var VALUE_PER = { dps: 5, armor: 5, durability: 1.2, armorPen: 2 };
 
   // The sale is anchored to what the piece cost to build rather than to the
-  // stats it happens to carry: an average forge turns MARGIN of its materials
-  // back, and the roll only leans that a little. SALE_POW compresses the lean,
-  // so an UNGODLY T7 blade fetches a couple of times a plain one instead of a
-  // hundred times — the gamble pays off in what a good piece can be enchanted,
-  // awakened and polished into, not in what it fetches straight off the anvil.
-  // The lean is measured against a piece rolled dead on the smith's own bench,
-  // so improving the bench raises what a roll has to beat: forging is reliably
-  // profitable at the start and drifts to break-even as the bench gets good.
-  // A recipe can carry a margin of its own; the Weak Sword does, so the
-  // opening loop pays at a pace worth standing at.
+  // stats it happens to carry: a forge on a bare bench turns the recipe's
+  // margin of its materials back, and the roll leans that a little. SALE_POW
+  // compresses the lean, so an UNGODLY T7 blade fetches a couple of times a
+  // plain one instead of a hundred times — the gamble pays off in what a good
+  // piece can be enchanted, awakened and polished into, not in what it fetches
+  // straight off the anvil.
+  //
+  // The bar a roll is measured against never moves: it is a piece rolled dead
+  // on the bench a smith starts at. Upgrades therefore raise what every forge
+  // returns — they are bought with silver and paid back in margin. A recipe's
+  // own margin is what it turns on a bare bench, so the late blades are quoted
+  // low: by the time one is worked out its smith has most of the upgrade tree
+  // built, and the tree is what lifts them to a living wage.
   var MARGIN = 1.1;
   var SALE_POW = 0.3;
-  var OPENING_LEAN = 1.354; // average lean an opening smith rolls, so MARGIN reads true
+  var OPENING_LEAN = 1.354; // average lean a bare bench rolls, so a margin reads true
 
   // Buyers pay for a piece that crits far beyond the damage a crit actually
   // adds, so crit chance is a real slice of the price rather than a rounding
@@ -166,17 +169,26 @@
       S.qualityBandAt(base.quality).name, base.edition));
   }
 
-  // The bench a smith starts at, for pieces saved before anchors were written
-  // onto them.
+  // The bench a smith starts at: every piece is priced against a roll that
+  // landed dead on it, whatever the smith's own bench has grown into.
   var OPENING_BASE = {
     rarity: S.STATS.rarity.start,
     quality: S.STATS.quality.start,
     edition: S.STATS.edition.start
   };
 
+  var anchorCache = {};
+
+  function openingAnchor(recipe) {
+    if (anchorCache[recipe.key] === undefined) {
+      anchorCache[recipe.key] = anchorFor(recipe, OPENING_BASE);
+    }
+    return anchorCache[recipe.key];
+  }
+
   function sellPrice(item) {
     var recipe = recipeFor(item.recipe);
-    var anchor = item.anchor || anchorFor(recipe, OPENING_BASE);
+    var anchor = openingAnchor(recipe);
     var rolled = powerOf(baseStatsOf(item));
     // How the roll came out, compressed — then the work laid on since, which
     // is not: enchanting, awakening and polishing pay in full.
@@ -524,10 +536,6 @@
       armorPen: stats.armorPen,
       enchants: []
     };
-    // What the piece is priced against: a roll that landed dead on the bench
-    // it was forged at. It is kept on the piece so a later upgrade cannot
-    // re-price what is already in the inventory.
-    item.anchor = anchorFor(recipe, state.base);
     // The Way is worked into the piece as it comes off the anvil, so it keeps
     // the premium even once the artifact comes off the shelf.
     var premium = global.Artifacts.valueMult(state);
