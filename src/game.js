@@ -87,15 +87,23 @@
   // piece can be enchanted, awakened and polished into, not in what it fetches
   // straight off the anvil.
   //
-  // The bar a roll is measured against never moves: it is a piece rolled dead
-  // on the bench a smith starts at. Upgrades therefore raise what every forge
-  // returns — they are bought with silver and paid back in margin. A recipe's
-  // own margin is what it turns on a bare bench, so the late blades are quoted
-  // low: by the time one is worked out its smith has most of the upgrade tree
-  // built, and the tree is what lifts them to a living wage.
+  // Only two things set what a piece fetches: which blade it is, and the tier
+  // it came out at. Quality docks the price when the work is bad and is
+  // otherwise silent, and edition does not touch it at all — those two rolls
+  // decide what the piece can be polished and awakened into instead.
+  //
+  // The bar a tier is measured against never moves — it is T1, where a bare
+  // bench sits. Upgrades therefore raise what every forge returns: they are
+  // bought with silver and paid back in margin. A recipe's own margin is what
+  // it turns on a bare bench, so the late blades are quoted low: by the time
+  // one is worked out its smith has most of the upgrade tree built, and the
+  // tree is what lifts them to a living wage.
   var MARGIN = 1.1;
-  var SALE_POW = 0.3;
-  var OPENING_LEAN = 1.354; // average lean a bare bench rolls, so a margin reads true
+  // Tier is the only roll that prices a piece now, so it carries the whole
+  // curve: at 0.5 a T7 blade fetches about two and a half times a T1.
+  var SALE_POW = 0.5;
+  var BAD_QUALITY_PRICE = 0.9; // bad work sells short; every other band is level
+  var OPENING_LEAN = 1.295; // average lean a bare bench rolls, so a margin reads true
 
   // Buyers pay for a piece that crits far beyond the damage a crit actually
   // adds, so crit chance is a real slice of the price rather than a rounding
@@ -162,41 +170,23 @@
            item.armorPen * VALUE_PER.armorPen;
   }
 
-  // A piece rolled dead on the given bench: what a forge there is priced
-  // against.
-  function anchorFor(recipe, base) {
-    return powerOf(statsFor(recipe, S.tierAt(base.rarity).index,
-      S.qualityBandAt(base.quality).name, base.edition));
-  }
-
-  // The bench a smith starts at: every piece is priced against a roll that
-  // landed dead on it, whatever the smith's own bench has grown into.
-  var OPENING_BASE = {
-    rarity: S.STATS.rarity.start,
-    quality: S.STATS.quality.start,
-    edition: S.STATS.edition.start
-  };
-
-  var anchorCache = {};
-
-  function openingAnchor(recipe) {
-    if (anchorCache[recipe.key] === undefined) {
-      anchorCache[recipe.key] = anchorFor(recipe, OPENING_BASE);
-    }
-    return anchorCache[recipe.key];
+  // What the roll is worth at the counter: the tier it came out at, compressed
+  // against T1, docked if the work was bad. Nothing else about the roll is
+  // priced.
+  function rollLean(item) {
+    var tier = S.tierAt(item.rarity).index;
+    var bad = item.band === "Bad" ? BAD_QUALITY_PRICE : 1;
+    return Math.pow(tier, SALE_POW) * bad / OPENING_LEAN;
   }
 
   function sellPrice(item) {
     var recipe = recipeFor(item.recipe);
-    var anchor = openingAnchor(recipe);
-    var rolled = powerOf(baseStatsOf(item));
-    // How the roll came out, compressed — then the work laid on since, which
-    // is not: enchanting, awakening and polishing pay in full.
-    var lean = Math.pow(rolled / anchor, SALE_POW) / OPENING_LEAN;
-    var worked = powerOf(item) / rolled;
+    // The roll, compressed — then the work laid on since, which is not:
+    // enchanting, awakening and polishing pay in full.
+    var worked = powerOf(item) / powerOf(baseStatsOf(item));
     // A piece forged under The Way carries its premium for good.
     return Math.max(1, Math.round(
-      recipeValue(recipe) * (recipe.margin || MARGIN) * lean * worked *
+      recipeValue(recipe) * (recipe.margin || MARGIN) * rollLean(item) * worked *
       (item.value || 1)));
   }
 

@@ -10,7 +10,7 @@
   //
   // margin is what a forge returns of its own materials on a *bare* bench, and
   // the upgrade tree lifts every recipe by the same factor on top of it — from
-  // 1.00 with nothing built to 1.44 with the tree finished. So each blade is
+  // 1.00 with nothing built to 1.33 with the tree finished. So each blade is
   // quoted against the bench its smith will actually be standing at when they
   // work it out: all seven turn about 1.35 there, and the late ones read low
   // here because nobody forges an Anduril off a bare anvil.
@@ -18,7 +18,7 @@
     // Tuned for a bare bench: it is the only thing to forge, and there is no
     // enchant panel yet to make up a thin margin.
     { key: "sword", name: "Weak Sword", kind: "weapon", icon: "sword",
-      level: 1, xp: 15, margin: 1.35,
+      level: 1, xp: 15, margin: 1.36,
       perTier: { damage: 6, durability: 20 },
       combat: { speed: 0.85, crit: 5, critDamage: 150, pen: 0 },
       cost: { wood: 5, metal: 10 } },
@@ -27,14 +27,14 @@
     // Every one of them is quoted against the Weak Sword.
     // Tuned for a bare bench: it is worked out within the first hour.
     { key: "lance", name: "Knight's Lance", kind: "weapon", icon: "lance",
-      level: 1, xp: 25, margin: 1.32,
+      level: 1, xp: 25, margin: 1.36,
       research: { resources: { common: 5, mold: 3 }, bars: { bronze: 5 } },
       perTier: { damage: 10.3, durability: 29 },
       combat: { speed: 0.94, crit: 5, critDamage: 150, pen: 0 },
       cost: { wood: 5, metal: 10 }, bars: { bronze: 2 } },
     // Tuned for a finished Polished Anvil.
     { key: "dagger", name: "Dagger", kind: "weapon", icon: "dagger",
-      level: 1, xp: 45, margin: 1.21,
+      level: 1, xp: 45, margin: 1.18,
       research: { resources: { rare: 1, common: 10, mold: 3 },
         alloys: { argentaurum: 3 } },
       perTier: { damage: 30.6, durability: 83 },
@@ -43,7 +43,7 @@
       alloys: { argentaurum: 1 } },
     // Tuned for the anvil and Good Grip both finished.
     { key: "bloodbane", name: "Blood Bane", kind: "weapon", icon: "bloodbane",
-      level: 1, xp: 90, margin: 1.11,
+      level: 1, xp: 90, margin: 1.07,
       research: { resources: { rare: 3, common: 25, mold: 10 },
         alloys: { argentaurum: 10, corinthium: 3, electrum: 1 },
         parts: { bloodinfusion: 1 } },
@@ -53,7 +53,7 @@
       alloys: { argentaurum: 5, corinthium: 1 } },
     // Tuned for Quality Control on top of those.
     { key: "zeus", name: "Zeus' Wrath", kind: "weapon", icon: "zeus",
-      level: 1, xp: 160, margin: 1.02,
+      level: 1, xp: 160, margin: 1.04,
       research: { resources: { rare: 6, common: 30, mold: 15 },
         alloys: { electrum: 15, chrono: 3 },
         parts: { electricblade: 1, metalhandle: 1 } },
@@ -64,7 +64,7 @@
       parts: { metalhandle: 1 } },
     // Tuned for the whole upgrade tree built.
     { key: "crackbolt", name: "Crackbolt", kind: "weapon", icon: "crackbolt",
-      level: 1, xp: 240, margin: 0.93,
+      level: 1, xp: 240, margin: 1.04,
       research: { resources: { epic: 1, rare: 8, mold: 10 },
         alloys: { electrum: 45, lunite: 3, argentaurum: 100 },
         parts: { thunderspearhead: 1, metalhandle: 1 } },
@@ -76,7 +76,7 @@
     // Tuned for the tree finished and the Midas Scroll found — nobody forges
     // one off a bare anvil, so it reads under break-even here.
     { key: "anduril", name: "Midas' Anduril", kind: "weapon", icon: "anduril",
-      level: 1, xp: 340, margin: 0.91,
+      level: 1, xp: 340, margin: 1.02,
       research: { resources: { epic: 3, rare: 10, mold: 30 },
         alloys: { midas: 3, lunite: 3, corinthium: 75, argentaurum: 125 },
         parts: { midasedge: 1, electricblade: 1, metalhandle: 2 } },
