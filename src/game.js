@@ -74,16 +74,27 @@
   };
   var EDITION_MULT = [1, 2, 3.5, 6, 10, 20];
 
-  // Sale value is read off the stats the piece actually carries. Damage,
-  // speed and crit are priced together as the damage a piece actually puts
-  // out, so a fast piece and a hard-hitting one can be worth the same.
+  // What a stat sheet is worth on the market. Damage, speed and crit are
+  // priced together as the damage a piece actually puts out, so a fast piece
+  // and a hard-hitting one can be worth the same.
   var VALUE_PER = { dps: 5, armor: 5, durability: 1.2, armorPen: 2 };
-  var PRICE_SCALE = 1.31; // one knob over the whole sale curve
+
+  // The sale is anchored to what the piece cost to build rather than to the
+  // stats it happens to carry: an average forge turns MARGIN of its materials
+  // back, and the roll only leans that a little. SALE_POW compresses the lean,
+  // so an UNGODLY T7 blade fetches a couple of times a plain one instead of a
+  // hundred times — the gamble pays off in what a good piece can be enchanted,
+  // awakened and polished into, not in what it fetches straight off the anvil.
+  // The lean is measured against a piece rolled dead on the smith's own bench,
+  // so improving the bench raises what a roll has to beat: forging is reliably
+  // profitable at the start and drifts to break-even as the bench gets good.
+  var MARGIN = 1.1;
+  var SALE_POW = 0.3;
+  var OPENING_LEAN = 1.354; // average lean an opening smith rolls, so MARGIN reads true
 
   // Buyers pay for a piece that crits far beyond the damage a crit actually
   // adds, so crit chance is a real slice of the price rather than a rounding
-  // error. PRICE_SCALE is set against it to keep a plain piece worth what it
-  // was before.
+  // error.
   // The premium saturates rather than climbing forever: a piece that already
   // crits hard still gains from more crit, but never runs away with the
   // price. HALF is the crit weight that buys half of what is on offer.
@@ -138,13 +149,40 @@
     return item.damage * item.attackSpeed * premium;
   }
 
+  // What a stat sheet fetches before the margin is worked out.
+  function powerOf(item) {
+    return saleDamage(item) * VALUE_PER.dps +
+           item.armor * VALUE_PER.armor +
+           item.durability * VALUE_PER.durability +
+           item.armorPen * VALUE_PER.armorPen;
+  }
+
+  // A piece rolled dead on the given bench: what a forge there is priced
+  // against.
+  function anchorFor(recipe, base) {
+    return powerOf(statsFor(recipe, S.tierAt(base.rarity).index,
+      S.qualityBandAt(base.quality).name, base.edition));
+  }
+
+  // The bench a smith starts at, for pieces saved before anchors were written
+  // onto them.
+  var OPENING_BASE = {
+    rarity: S.STATS.rarity.start,
+    quality: S.STATS.quality.start,
+    edition: S.STATS.edition.start
+  };
+
   function sellPrice(item) {
-    var value = saleDamage(item) * VALUE_PER.dps +
-                item.armor * VALUE_PER.armor +
-                item.durability * VALUE_PER.durability +
-                item.armorPen * VALUE_PER.armorPen;
+    var recipe = recipeFor(item.recipe);
+    var anchor = item.anchor || anchorFor(recipe, OPENING_BASE);
+    var rolled = powerOf(baseStatsOf(item));
+    // How the roll came out, compressed — then the work laid on since, which
+    // is not: enchanting, awakening and polishing pay in full.
+    var lean = Math.pow(rolled / anchor, SALE_POW) / OPENING_LEAN;
+    var worked = powerOf(item) / rolled;
     // A piece forged under The Way carries its premium for good.
-    return Math.max(1, Math.round(value * PRICE_SCALE * (item.value || 1)));
+    return Math.max(1, Math.round(
+      recipeValue(recipe) * MARGIN * lean * worked * (item.value || 1)));
   }
 
   function inventoryValue(state) {
@@ -247,6 +285,41 @@
     { on: "parts", from: "parts",
       label: function (key) { return global.Parts.find(key).name; } }
   ];
+
+  // Schematics are not sold anywhere, so they are worth what stamping one on
+  // the anvil costs — the same two crafts the forge bench offers.
+  var SCHEMATIC_WORTH = { common: 270, mold: 175, rare: 2500, epic: 12000 };
+
+  // What one of a thing is reckoned to be worth in silver: shop goods at what
+  // the shop charges, ore at what the bar it burns down to is worth, alloys
+  // and parts at whatever went into them.
+  function worthOf(from, key) {
+    if (from === "materials") return MATERIALS[key].price;
+    if (from === "bars") return global.Refine.find(key).value;
+    if (from === "alloys") return global.Compound.value(global.Compound.find(key));
+    if (from === "parts") return recipeValue(global.Parts.find(key));
+    var ore = global.Refine.find(key);
+    return ore ? ore.value : SCHEMATIC_WORTH[key] || 0;
+  }
+
+  // What a cost is worth in silver, whichever pools it draws on. Recipes and
+  // parts never change once loaded, so each is worked out once and kept.
+  var worthCache = {};
+
+  function recipeValue(recipe) {
+    if (worthCache[recipe.key] === undefined) {
+      var total = 0;
+      POOLS.forEach(function (pool) {
+        var want = recipe[pool.on];
+        if (!want) return;
+        Object.keys(want).forEach(function (key) {
+          total += worthOf(pool.from, key) * want[key];
+        });
+      });
+      worthCache[recipe.key] = total;
+    }
+    return worthCache[recipe.key];
+  }
 
   // The same cost taken qty times over, so a batch is priced off one entry.
   function scaleNeed(need, qty) {
@@ -448,6 +521,10 @@
       armorPen: stats.armorPen,
       enchants: []
     };
+    // What the piece is priced against: a roll that landed dead on the bench
+    // it was forged at. It is kept on the piece so a later upgrade cannot
+    // re-price what is already in the inventory.
+    item.anchor = anchorFor(recipe, state.base);
     // The Way is worked into the piece as it comes off the anvil, so it keeps
     // the premium even once the artifact comes off the shelf.
     var premium = global.Artifacts.valueMult(state);
@@ -490,6 +567,7 @@
     researchCost: researchCost,
     missingResearch: missingResearch,
     sellPrice: sellPrice,
+    recipeValue: recipeValue,
     statsFor: statsFor,
     baseStatsOf: baseStatsOf,
     recipeFor: recipeFor,

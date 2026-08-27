@@ -144,6 +144,10 @@
       enchants: readEnchants(raw.enchants, slots)
     };
     if (raw.awakenable) item.awakenable = true;
+    // What the piece is priced against: the bench it was forged at. Pieces
+    // saved before anchors existed fall back to an opening bench.
+    var anchor = num(raw.anchor, 0);
+    if (anchor > 0) item.anchor = anchor;
     // The premium The Way worked into the piece, kept as it was forged.
     var value = num(raw.value, 1);
     if (value > 1) item.value = Math.min(4, value);
