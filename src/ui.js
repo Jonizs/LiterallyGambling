@@ -510,13 +510,31 @@
     syncRoomButtons();
   }
 
+  // Which tab of a panel's strip is lit, so a redraw can tell that the
+  // player moved along the strip rather than just refreshed in place.
+  function tabIndex(root) {
+    var tabs = root.querySelectorAll(".tabs .tab");
+    for (var i = 0; i < tabs.length; i++) {
+      if (tabs[i].classList.contains("on")) return i;
+    }
+    return -1;
+  }
+
   function drawPanel() {
     if (!view.panel) return;
     var panel = P.BUILDERS[view.panel];
     $("overlay-title").textContent = panel.title;
     var body = $("overlay-body");
+    var was = tabIndex(body);
     body.innerHTML = "";
     body.appendChild(panel.build(context()));
+    // Stepping right along the strip brings the new page in from the right,
+    // stepping left brings it in from the left.
+    var now = tabIndex(body);
+    if (was >= 0 && now >= 0 && now !== was) {
+      var page = body.firstElementChild;
+      if (page) page.classList.add(now > was ? "swipe-right" : "swipe-left");
+    }
     if (view.offer) view.offer.fresh = false;
   }
 

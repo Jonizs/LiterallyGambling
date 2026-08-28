@@ -372,6 +372,28 @@ body {
   overflow: auto;
   will-change: transform;
   animation: menuUp .26s cubic-bezier(.16, .84, .34, 1);
+  overflow-x: hidden;
+}
+
+/* Moving along a panel's tab strip swipes the page under it across, while
+   the strip itself stays put. */
+@keyframes swipeFromRight {
+  from { transform: translateX(12%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes swipeFromLeft {
+  from { transform: translateX(-12%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.swipe-right > *:not(.tabs),
+.swipe-left > *:not(.tabs) {
+  will-change: transform;
+}
+.swipe-right > *:not(.tabs) {
+  animation: swipeFromRight .2s cubic-bezier(.16, .84, .34, 1);
+}
+.swipe-left > *:not(.tabs) {
+  animation: swipeFromLeft .2s cubic-bezier(.16, .84, .34, 1);
 }
 .overlay-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .overlay-body {
@@ -924,6 +946,7 @@ body {
   .popup-card { animation: none; }
   .discover-spin { animation: none; }
   .overlay-card { animation: none; }
+  .swipe-right > *:not(.tabs), .swipe-left > *:not(.tabs) { animation: none; }
   .wood-btn::before, .wood-btn::after, .tab::before, .tab::after {
     animation: none;
   }
