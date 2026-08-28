@@ -1075,8 +1075,14 @@
         if (ev.key === "Enter") takeName();
       });
     }
-    $("anvil-hit").addEventListener("click", function () {
-      openPanel("forge");
+    var anvil = $("anvil-hit");
+    anvil.addEventListener("click", function () { openPanel("forge"); });
+    // The lit anvil is drawn in the scene; the patch only reports the hover.
+    anvil.addEventListener("pointerenter", function () {
+      if (scene) scene.anvilHover = true;
+    });
+    anvil.addEventListener("pointerleave", function () {
+      if (scene) scene.anvilHover = false;
     });
     $("overlay-close").addEventListener("click", closePanel);
     $("discover-close").addEventListener("click", closeDiscovery);

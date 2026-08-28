@@ -47,6 +47,7 @@
     this.room = "forge";  // which room the scene is showing
     // What the other rooms need to know: which ovens and crucibles are lit.
     this.work = { ovens: [], crucibles: [] };
+    this.anvilHover = false;  // the pointer is over the anvil
     this.wipe = null;     // the pixel dissolve mid-swap
   }
 
@@ -413,6 +414,13 @@
     this.rect(x, y + 6, 10, 6, PALETTE.anvil);
     this.rect(x + 52, y + 5, 6, 8, PALETTE.anvil);
     this.rect(x + 14, y + 44, 32, 4, PALETTE.anvilEdge);
+    // Under the pointer the whole anvil takes the forge's light, the same
+    // wash the shelf slots take when one is waiting to be picked.
+    if (this.anvilHover) {
+      this.ctx.fillStyle = "rgba(255, 215, 106, 0.22)";
+      this.ctx.fillRect(x - 1, y + 3, 60, 46);
+      this.rect(x + 8, y + 4, 44, 2, "#ffd76a");
+    }
   };
 
   Forge.prototype.drawProps = function () {
