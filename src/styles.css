@@ -839,6 +839,8 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    /* em, so the pointers grow and sit with whatever button they mark. */
+    font-size: .95em;
     color: var(--gold-lit);
     text-shadow: 1px 1px 0 #000;
     pointer-events: none;
@@ -849,13 +851,13 @@ body {
   .tab:hover:not(:disabled)::before,
   .tab-btn:hover:not(:disabled)::before,
   .chip:hover:not(:disabled)::before,
-  .strike-btn:hover:not(:disabled)::before { content: ">"; left: 4px; }
+  .strike-btn:hover:not(:disabled)::before { content: ">"; left: .4em; }
   .wood-btn:hover:not(:disabled)::after,
   .mini-btn:hover:not(:disabled)::after,
   .tab:hover:not(:disabled)::after,
   .tab-btn:hover:not(:disabled)::after,
   .chip:hover:not(:disabled)::after,
-  .strike-btn:hover:not(:disabled)::after { content: "<"; right: 4px; }
+  .strike-btn:hover:not(:disabled)::after { content: "<"; right: .4em; }
 }
 
 @media (prefers-reduced-motion: reduce) {
