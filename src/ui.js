@@ -992,10 +992,12 @@
         btn.addEventListener("click", function () { walkTo(btn.dataset.room); });
       }
     );
-    $("name-go").addEventListener("click", takeName);
-    $("name-input").addEventListener("keydown", function (ev) {
-      if (ev.key === "Enter") takeName();
-    });
+    if ($("name-go")) {
+      $("name-go").addEventListener("click", takeName);
+      $("name-input").addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter") takeName();
+      });
+    }
     $("overlay-close").addEventListener("click", closePanel);
     $("discover-close").addEventListener("click", closeDiscovery);
     $("discover-pop").addEventListener("click", function (ev) {
@@ -1030,13 +1032,16 @@
   // before the first strike. An empty answer keeps the default.
   function askName() {
     var pop = $("name-pop"), input = $("name-input");
+    // An old cached page may not carry the card; the smith just keeps the
+    // default rather than the whole boot falling over.
+    if (!pop || !input) { state.smith = state.smith || "SMITH"; return; }
     pop.hidden = false;
     input.value = "";
     input.focus();
   }
 
   function takeName() {
-    var typed = $("name-input").value.trim().slice(0, 14);
+    var typed = ($("name-input").value || "").trim().slice(0, 14);
     state.smith = typed || "SMITH";
     $("name-pop").hidden = true;
     Save.save(state);
