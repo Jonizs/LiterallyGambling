@@ -12,10 +12,10 @@
   // value is what one bar of the metal is reckoned to be worth in silver,
   // which is what rushing the burn is priced from.
   var ORES = [
-    { key: "bronze",  label: "Bronze",  seconds: 10,  value: 25 },
-    { key: "silver",  label: "Silver",  seconds: 30,  value: 90 },
-    { key: "gold",    label: "Gold",    seconds: 60,  value: 220 },
-    { key: "crystal", label: "Crystal", seconds: 180, value: 900 }
+    { key: "bronze",  label: "Bronze",  seconds: 5,  value: 25 },
+    { key: "silver",  label: "Silver",  seconds: 15, value: 90 },
+    { key: "gold",    label: "Gold",    seconds: 24, value: 220 },
+    { key: "crystal", label: "Crystal", seconds: 90, value: 900 }
   ];
 
   var RUSH_MULTIPLIER = 5;
