@@ -9,13 +9,15 @@
   var OVENS = 2;
 
   // seconds is what a single ore takes; a batch is that times the count.
-  // value is what one bar of the metal is reckoned to be worth in silver,
-  // which is what rushing the burn is priced from.
+  // value is what one bar of the metal is reckoned to be worth in silver:
+  // what it actually costs to dig one up on the cheapest operation that
+  // yields it, charging that run in full. Rushing a burn is priced from it,
+  // and so, through the recipe book, is everything the forge turns out.
   var ORES = [
-    { key: "bronze",  label: "Bronze",  seconds: 5,  value: 25 },
-    { key: "silver",  label: "Silver",  seconds: 15, value: 90 },
-    { key: "gold",    label: "Gold",    seconds: 24, value: 140 },
-    { key: "crystal", label: "Crystal", seconds: 90, value: 11500 }
+    { key: "bronze",  label: "Bronze",  seconds: 5,  value: 40 },
+    { key: "silver",  label: "Silver",  seconds: 15, value: 133 },
+    { key: "gold",    label: "Gold",    seconds: 24, value: 500 },
+    { key: "crystal", label: "Crystal", seconds: 90, value: 10700 }
   ];
 
   var RUSH_MULTIPLIER = 5;
