@@ -842,7 +842,9 @@ body {
   align-items: center;
   justify-content: center;
   gap: .7em;
-  border-color: var(--gold-dark);
+  /* The frame takes the room's own wall colour, so the button reads as one
+     piece of art rather than a picture in a gold frame. */
+  border-color: var(--room-edge, var(--wood-edge));
   background-color: #140b07;
   background-size: cover;
   background-position: center;
@@ -851,7 +853,7 @@ body {
 }
 @media (hover: hover) {
   .wood-btn[data-home]:hover:not(:disabled) {
-    border-color: var(--gold);
+    border-color: var(--room-edge, var(--wood-edge));
     filter: brightness(1.25);
     /* The plain wood hover sets `background` shorthand, which would reset the
        cutout's sizing; say it again here so the art never jumps. */
@@ -861,6 +863,13 @@ body {
     background-repeat: no-repeat;
   }
 }
+/* Each room's wall, for the frame around its cutout. */
+.wood-btn[data-home="forge"]   { --room-edge: #2f2321; }
+.wood-btn[data-home="lab"]     { --room-edge: #1d2a22; }
+.wood-btn[data-home="enchant"] { --room-edge: #251d33; }
+.wood-btn[data-home="polish"]  { --room-edge: #332615; }
+.wood-btn[data-home="awaken"]  { --room-edge: #181a26; }
+
 /* Where the smith is standing right now. */
 .wood-btn[data-home].here {
   border-color: var(--gold-lit);
