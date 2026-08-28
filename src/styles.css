@@ -283,7 +283,7 @@ body {
 /* The level requirement rides on the same line as the name. */
 .btn-lock {
   display: inline;
-  margin-left: .7em;
+  flex: none;
   font-size: .72em;
   letter-spacing: 1px;
   color: var(--gold);
@@ -837,6 +837,11 @@ body {
    The button wears a real cutout of its room, painted by the same code that
    draws the scene and handed over as an image at boot. */
 .wood-btn[data-home] {
+  /* Name and LVL badge share one row. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .7em;
   border-color: var(--gold-dark);
   background-color: #140b07;
   background-size: cover;
@@ -848,6 +853,12 @@ body {
   .wood-btn[data-home]:hover:not(:disabled) {
     border-color: var(--gold);
     filter: brightness(1.25);
+    /* The plain wood hover sets `background` shorthand, which would reset the
+       cutout's sizing; say it again here so the art never jumps. */
+    background-color: #140b07;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 }
 /* Where the smith is standing right now. */

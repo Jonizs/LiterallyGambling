@@ -559,7 +559,10 @@
         // A workstation button always says where it goes; the one you are
         // standing in is simply marked as where you are.
         btn.dataset.room = home;
-        btn.textContent = ROOM_UI[home].label;
+        // Name and level requirement are their own spans on one row, so a
+        // long name wraps inside itself rather than pushing the badge down.
+        btn.textContent = "";
+        btn.appendChild(P.el("span", "btn-name", ROOM_UI[home].label));
         btn.classList.toggle("here", here);
         btn.disabled = locked;
         btn.classList.toggle("locked", locked);
