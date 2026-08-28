@@ -400,8 +400,14 @@
     this.rect(0, FLOOR_Y - 1, W, 1, PALETTE.floorLine);
   };
 
+  var ANVIL = { x: 100, y: 103, w: 58, h: 46 };
+  Forge.prototype.anvilAt = function (px, py) {
+    return px >= ANVIL.x && px <= ANVIL.x + ANVIL.w &&
+      py >= ANVIL.y && py <= ANVIL.y + ANVIL.h;
+  };
+
   Forge.prototype.drawAnvil = function () {
-    var x = 100, y = 100;
+    var x = ANVIL.x, y = 100;
     // Stump base.
     this.rect(x + 16, y + 26, 28, 22, PALETTE.woodDark);
     this.rect(x + 18, y + 26, 24, 3, PALETTE.wood);
@@ -414,12 +420,24 @@
     this.rect(x, y + 6, 10, 6, PALETTE.anvil);
     this.rect(x + 52, y + 5, 6, 8, PALETTE.anvil);
     this.rect(x + 14, y + 44, 32, 4, PALETTE.anvilEdge);
-    // Under the pointer the whole anvil takes the forge's light, the same
-    // wash the shelf slots take when one is waiting to be picked.
+    // Under the pointer the whole anvil takes the forge's light, and a pair
+    // of chevrons blink either side of it, the same mark the menus use.
     if (this.anvilHover) {
       this.ctx.fillStyle = "rgba(255, 215, 106, 0.22)";
       this.ctx.fillRect(x - 1, y + 3, 60, 46);
       this.rect(x + 8, y + 4, 44, 2, "#ffd76a");
+      if ((this.t * 1.6) % 1 < 0.55) {
+        this.chevron(x - 12, y + 20, 1);
+        this.chevron(x + 70, y + 20, -1);
+      }
+    }
+  };
+
+  // A pointing mark, ">" when dir is 1 and "<" when it is -1.
+  Forge.prototype.chevron = function (cx, cy, dir) {
+    for (var i = 0; i < 4; i++) {
+      this.rect(cx + dir * i * 2, cy - 6 + i * 2, 2, 2, "#ffd76a");
+      this.rect(cx + dir * i * 2, cy + 6 - i * 2, 2, 2, "#ffd76a");
     }
   };
 

@@ -543,8 +543,6 @@
   function syncBoard() {
     var home = scene && scene.room === "forge" && !scene.wipe;
     $("buff-board").hidden = !home || !!view.panel;
-    // The anvil only answers while it is the thing on screen.
-    $("anvil-hit").hidden = !home || !!view.panel || !!view.shown;
   }
 
   // The lab draws its ovens and crucibles lit or cold, so it needs to know
@@ -821,13 +819,29 @@
 
   // Which shelf slot a pointer event is over, or -1. Only slots with an
   // artifact in them count.
-  function slotUnder(ev) {
+  // Where a pointer event lands in the scene's own 256x160 pixels.
+  function scenePoint(ev) {
     var canvas = $("forge-canvas");
     var box = canvas.getBoundingClientRect();
-    var x = (ev.clientX - box.left) / box.width * canvas.width;
-    var y = (ev.clientY - box.top) / box.height * canvas.height;
-    var slot = window.Shelf.slotAt(x, y);
+    return {
+      x: (ev.clientX - box.left) / box.width * canvas.width,
+      y: (ev.clientY - box.top) / box.height * canvas.height
+    };
+  }
+
+  function slotUnder(ev) {
+    var at = scenePoint(ev);
+    var slot = window.Shelf.slotAt(at.x, at.y);
     return slot >= 0 && slot < A.equippedDefs(state).length ? slot : -1;
+  }
+
+  // The anvil answers the pointer while the forge is the room on screen and
+  // nothing else is waiting on a click.
+  function anvilUnder(ev) {
+    if (!scene || scene.room !== "forge" || scene.wipe) return false;
+    if (view.replacing || view.panel || view.shown) return false;
+    var at = scenePoint(ev);
+    return scene.anvilAt(at.x, at.y);
   }
 
   // The slot under the pointer lights up while a pick is waiting.
@@ -835,19 +849,26 @@
     if (!scene) return;
     var slot = view.replacing ? slotUnder(ev) : -1;
     scene.shelf.hover = slot;
-    $("forge-canvas").style.cursor = slot >= 0 ? "pointer" : "";
+    scene.anvilHover = anvilUnder(ev);
+    $("forge-canvas").style.cursor =
+      slot >= 0 || scene.anvilHover ? "pointer" : "";
   }
 
   function sceneLeave() {
-    if (scene) scene.shelf.hover = -1;
+    if (!scene) return;
+    scene.shelf.hover = -1;
+    scene.anvilHover = false;
     $("forge-canvas").style.cursor = "";
   }
 
-  // Scene clicks only mean something while the shelf is waiting on a pick.
+  // A click means the shelf while a pick is waiting, and the anvil otherwise.
   function sceneClick(ev) {
-    if (!view.replacing) return;
-    var slot = slotUnder(ev);
-    if (slot >= 0) replaceAt(slot);
+    if (view.replacing) {
+      var slot = slotUnder(ev);
+      if (slot >= 0) replaceAt(slot);
+      return;
+    }
+    if (anvilUnder(ev)) openPanel("forge");
   }
 
   // --- resource yard ------------------------------------------------------
@@ -1075,15 +1096,6 @@
         if (ev.key === "Enter") takeName();
       });
     }
-    var anvil = $("anvil-hit");
-    anvil.addEventListener("click", function () { openPanel("forge"); });
-    // The lit anvil is drawn in the scene; the patch only reports the hover.
-    anvil.addEventListener("pointerenter", function () {
-      if (scene) scene.anvilHover = true;
-    });
-    anvil.addEventListener("pointerleave", function () {
-      if (scene) scene.anvilHover = false;
-    });
     $("overlay-close").addEventListener("click", closePanel);
     $("discover-close").addEventListener("click", closeDiscovery);
     $("discover-pop").addEventListener("click", function (ev) {
