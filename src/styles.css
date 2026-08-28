@@ -360,17 +360,18 @@ body {
   background: rgba(10,5,2,.72);
   padding: 6%;
 }
-/* A menu slides up out of the bottom of the frame, in steps so it reads as
-   pixel art rather than a smooth panel. */
+/* A menu slides up out of the bottom of the frame, running on the compositor
+   so it holds a full frame rate whatever the scene is doing. */
 @keyframes menuUp {
-  from { transform: translateY(105%); }
-  to { transform: translateY(0); }
+  from { transform: translateY(105%); opacity: .6; }
+  to { transform: translateY(0); opacity: 1; }
 }
 .overlay-card {
   width: 100%;
   max-height: 100%;
   overflow: auto;
-  animation: menuUp .22s steps(6);
+  will-change: transform;
+  animation: menuUp .26s cubic-bezier(.16, .84, .34, 1);
 }
 .overlay-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .overlay-body {
