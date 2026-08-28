@@ -500,15 +500,23 @@
     if (btn && scene && (scene.wipe ? scene.wipe.next : scene.room) !== "forge") {
       return;
     }
+    // Swapping one open menu for another is its own move: the card is not
+    // coming up off the floor, so it steps over instead.
+    var swapping = !$("overlay").hidden && view.panel && view.panel !== key;
     view.panel = key;
     view.notice = "";
     hideTooltip();
     if (key !== "forge") view.lastItem = null;
     // A menu opening cuts short any slide still on its way out.
     clearTimeout(closing);
-    if (menuCard()) menuCard().classList.remove("closing");
+    var card = menuCard();
+    if (card) card.classList.remove("closing", "swapping");
     drawPanel();
     $("overlay").hidden = false;
+    if (swapping && card) {
+      void card.offsetWidth;   // let the class land as a fresh animation
+      card.classList.add("swapping");
+    }
     renderStrike();
     syncRoomButtons();
   }

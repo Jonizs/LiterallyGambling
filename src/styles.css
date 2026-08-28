@@ -387,6 +387,16 @@ body {
   animation: menuDown .19s cubic-bezier(.45, 0, .9, .5) forwards;
 }
 
+/* One open menu traded for another: the card steps aside and back rather
+   than sliding up off the floor. */
+@keyframes menuSwap {
+  from { transform: translateY(5%) scale(.985); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.overlay-card.swapping {
+  animation: menuSwap .17s cubic-bezier(.16, .84, .34, 1);
+}
+
 @keyframes swipeFromRight {
   from { transform: translateX(12%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
@@ -964,7 +974,9 @@ body {
   .strike-btn { animation: none; }
   .popup-card { animation: none; }
   .discover-spin { animation: none; }
-  .overlay-card, .overlay-card.closing { animation: none; }
+  .overlay-card, .overlay-card.closing, .overlay-card.swapping {
+    animation: none;
+  }
   .swipe-right > *:not(.tabs), .swipe-left > *:not(.tabs) { animation: none; }
   .wood-btn::before, .wood-btn::after, .tab::before, .tab::after {
     animation: none;
