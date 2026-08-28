@@ -584,8 +584,9 @@
   function forgeBanner() {
     var canvas = $("forge-canvas");
     if (!canvas || !scene || scene.room !== "forge") return "";
-    // Straight down the hearth mouth: fire, coals and the lip under it.
-    var x = 70, y = 52, w = 116, h = 42;
+    // The whole width of the room at the height of the fire, so the flames
+    // stand full height in the middle with the brick running off either side.
+    var x = 0, y = 42, w = 256, h = 76;
     var out = document.createElement("canvas");
     out.width = w;
     out.height = h;

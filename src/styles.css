@@ -837,7 +837,8 @@ body {
 .wood-btn[data-home] {
   border-color: var(--gold-dark);
   background-color: #140b07;
-  background-size: cover;
+  /* Fill the button rather than crop it: the whole cutout stays visible. */
+  background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
   image-rendering: pixelated;
