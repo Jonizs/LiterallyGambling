@@ -261,7 +261,9 @@
       var sx = pivotX + ux * d, sy = pivotY + uy * d;
       for (var v = -1; v <= 1; v++) {
         var shade = v < 0 ? "#6f4823" : v > 0 ? PALETTE.woodDark : PALETTE.wood;
-        this.rect(Math.round(sx - uy * v), Math.round(sy + ux * v), 1, 1, shade);
+        // 2x2 rather than single pixels: at an angle the rounded positions
+        // leave gaps between them and the tool goes see-through.
+        this.rect(Math.round(sx - uy * v), Math.round(sy + ux * v), 2, 2, shade);
       }
     }
 
@@ -272,7 +274,7 @@
         var color = w <= -edge ? "#9d9daa" : w >= edge ? PALETTE.anvilEdge : PALETTE.steel;
         if (u <= -HEAD_LONG + 2) color = w <= -edge ? "#8a8a95" : "#5f5f6a"; // face
         this.rect(Math.round(hx + ux * u - uy * w),
-                  Math.round(hy + uy * u + ux * w), 1, 1, color);
+                  Math.round(hy + uy * u + ux * w), 2, 2, color);
       }
     }
   };
