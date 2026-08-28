@@ -310,6 +310,7 @@
     btn.classList.toggle("idle", !ready);
     btn.disabled = !ready;
     btn.setAttribute("aria-hidden", ready ? "false" : "true");
+    syncBoard();
   }
 
   function revealsFor(item) {
@@ -542,6 +543,8 @@
   function syncBoard() {
     var home = scene && scene.room === "forge" && !scene.wipe;
     $("buff-board").hidden = !home || !!view.panel;
+    // The anvil only answers while it is the thing on screen.
+    $("anvil-hit").hidden = !home || !!view.panel || !!view.shown;
   }
 
   // The lab draws its ovens and crucibles lit or cold, so it needs to know
@@ -598,7 +601,9 @@
         else btn.removeAttribute("title");
       }
     );
+    // At the forge the anvil is the way in, so the tab has nothing to say.
     var menu = $("scene-btn");
+    menu.hidden = at === "forge";
     menu.dataset.panel = ROOM_UI[at].panel;
     // renderPanelButtons redraws from the cached label, so move that too.
     menu.dataset.label = ROOM_UI[at].short;
@@ -1070,6 +1075,9 @@
         if (ev.key === "Enter") takeName();
       });
     }
+    $("anvil-hit").addEventListener("click", function () {
+      openPanel("forge");
+    });
     $("overlay-close").addEventListener("click", closePanel);
     $("discover-close").addEventListener("click", closeDiscovery);
     $("discover-pop").addEventListener("click", function (ev) {
