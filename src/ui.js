@@ -65,14 +65,8 @@
     purse.innerHTML = "";
     var coins = P.el("span", "coin", state.silver + " silver");
     bindTooltip(coins, "<b>Silver</b><br>Spent at the shop on materials.");
+    // Stock itself is counted in the inventory, not carried in the purse.
     purse.appendChild(coins);
-    Object.keys(G.MATERIALS).forEach(function (key) {
-      var mat = G.MATERIALS[key];
-      var chip = P.el("span", "mat", mat.label + " " + state.materials[key]);
-      bindTooltip(chip, "<b>" + mat.label + "</b><br>" + mat.price +
-        " silver each in the shop.");
-      purse.appendChild(chip);
-    });
   }
 
   function renderBuffs() {
