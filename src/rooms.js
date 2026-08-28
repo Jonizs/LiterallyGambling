@@ -403,10 +403,22 @@
     }
   }
 
+  // Which axis a sweep runs along, so the same one cannot be drawn twice in
+  // a row along that axis. The edges-in wipe has no axis and only rules
+  // itself out.
+  var AXIS = { down: "rows", up: "rows", right: "cols", left: "cols" };
+  var lastStyle = null;
+
   // One of the sweeps, picked at random: walking between rooms should not
-  // always look the same.
+  // always look the same, and never the same way twice running.
   function anyStyle() {
-    return STYLES[Math.random() * STYLES.length | 0];
+    var barred = lastStyle === null ? "" : (AXIS[lastStyle] || lastStyle);
+    var pool = STYLES.filter(function (style) {
+      return lastStyle === null ||
+        (style !== lastStyle && (AXIS[style] || style) !== barred);
+    });
+    lastStyle = pool[Math.random() * pool.length | 0];
+    return lastStyle;
   }
 
   /* A banner is a real cutout of the room: the room is drawn to an offscreen
