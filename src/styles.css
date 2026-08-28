@@ -818,24 +818,17 @@ body {
 }
 
 /* ---------- hover pointers ----------
-   Hovering anything you can press puts a blinking > <  around it, the way an
-   old menu marks the line the cursor is on. Absolutely placed, so nothing
-   in the button shifts when they appear. */
-.wood-btn, .mini-btn, .tab, .tab-btn, .chip, .strike-btn { position: relative; }
+   Only the main navigation and the category tabs get marked: the sidebar
+   buttons and a panel's tab strip. Actions inside a panel (forge, send, sell,
+   the profile chip) are left alone, so the pointers always mean "where you
+   are", never "what this does". Absolutely placed, so nothing shifts. */
+.wood-btn, .tab { position: relative; }
 @keyframes pickBlink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
 @media (hover: hover) {
   .wood-btn:hover:not(:disabled)::before,
   .wood-btn:hover:not(:disabled)::after,
-  .mini-btn:hover:not(:disabled)::before,
-  .mini-btn:hover:not(:disabled)::after,
   .tab:hover:not(:disabled)::before,
-  .tab:hover:not(:disabled)::after,
-  .tab-btn:hover:not(:disabled)::before,
-  .tab-btn:hover:not(:disabled)::after,
-  .chip:hover:not(:disabled)::before,
-  .chip:hover:not(:disabled)::after,
-  .strike-btn:hover:not(:disabled)::before,
-  .strike-btn:hover:not(:disabled)::after {
+  .tab:hover:not(:disabled)::after {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -847,17 +840,9 @@ body {
     animation: pickBlink .62s steps(1) infinite;
   }
   .wood-btn:hover:not(:disabled)::before,
-  .mini-btn:hover:not(:disabled)::before,
-  .tab:hover:not(:disabled)::before,
-  .tab-btn:hover:not(:disabled)::before,
-  .chip:hover:not(:disabled)::before,
-  .strike-btn:hover:not(:disabled)::before { content: ">"; left: .4em; }
+  .tab:hover:not(:disabled)::before { content: ">"; left: .4em; }
   .wood-btn:hover:not(:disabled)::after,
-  .mini-btn:hover:not(:disabled)::after,
-  .tab:hover:not(:disabled)::after,
-  .tab-btn:hover:not(:disabled)::after,
-  .chip:hover:not(:disabled)::after,
-  .strike-btn:hover:not(:disabled)::after { content: "<"; right: .4em; }
+  .tab:hover:not(:disabled)::after { content: "<"; right: .4em; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -867,9 +852,7 @@ body {
   .strike-btn { animation: none; }
   .popup-card { animation: none; }
   .discover-spin { animation: none; }
-  .wood-btn::before, .wood-btn::after, .mini-btn::before, .mini-btn::after,
-  .tab::before, .tab::after, .tab-btn::before, .tab-btn::after,
-  .chip::before, .chip::after, .strike-btn::before, .strike-btn::after {
+  .wood-btn::before, .wood-btn::after, .tab::before, .tab::after {
     animation: none;
   }
   .row.discovered { animation: none; opacity: 0; }
