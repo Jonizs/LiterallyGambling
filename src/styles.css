@@ -163,45 +163,46 @@ body {
 }
 .tab-title.small { font-size: clamp(10px, calc(1.4 * var(--s)), 34px); }
 
-/* The buff board hangs on the forge wall, top left of the scene: two nailed
-   planks with the four stats burned into them. */
+/* The buffs are not a sign hung on the wall but chiselled into it: a shallow
+   recess in the brick at the left edge, the letters cut and catching the light
+   from the forge. No frame, so it reads as part of the room. */
 .billboard {
   position: absolute;
-  top: 3%;
-  left: 2.5%;
+  top: 4%;
+  left: 0;
   z-index: 2;
-  width: 40%;
-  max-width: 320px;
-  padding: calc(.35 * var(--gap)) calc(.6 * var(--gap)) calc(.5 * var(--gap));
+  width: 42%;
+  max-width: 340px;
+  padding: calc(.35 * var(--gap)) calc(.7 * var(--gap)) calc(.5 * var(--gap))
+    calc(.5 * var(--gap));
   pointer-events: none;
+  /* The cut face: darker than the wall, lit warm along the bottom of the cut. */
   background:
-    repeating-linear-gradient(180deg,
-      rgba(0,0,0,.16) 0 3px, rgba(255,255,255,.03) 3px 7px),
-    linear-gradient(180deg, #5c3a1e, #3d2412);
-  border: 2px solid #1a0f08;
+    linear-gradient(100deg, rgba(0,0,0,.34), rgba(0,0,0,.14) 70%,
+      rgba(0,0,0,0));
   box-shadow:
-    inset 0 0 0 1px rgba(201,161,84,.45),
-    0 3px 0 rgba(0,0,0,.7);
+    inset 2px 2px 0 rgba(0,0,0,.45),
+    inset -1px -2px 0 rgba(255,150,70,.10);
 }
-/* Nail heads in the corners, and the peg it hangs off. */
-.billboard::before,
+/* The chisel edge down the right of the recess, fading out into the wall. */
 .billboard::after {
   content: "";
   position: absolute;
-  width: 4px;
-  height: 4px;
-  background: var(--gold);
-  box-shadow: 0 0 0 1px #1a0f08;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg,
+    rgba(255,170,90,.20), rgba(255,170,90,.06) 70%, rgba(255,170,90,0));
 }
-.billboard::before { top: 3px; left: 3px; }
-.billboard::after { top: 3px; right: 3px; }
 
 .board-head {
   font-size: clamp(8px, calc(1.1 * var(--s)), 24px);
-  letter-spacing: 2px;
-  color: var(--gold-lit);
-  text-shadow: 1px 1px 0 #000;
-  border-bottom: 1px solid rgba(0,0,0,.55);
+  letter-spacing: 3px;
+  color: var(--gold-dark);
+  text-shadow: 0 1px 0 rgba(255,190,120,.22), 0 -1px 0 rgba(0,0,0,.85);
+  border-bottom: 1px solid rgba(0,0,0,.5);
+  box-shadow: 0 1px 0 rgba(255,170,90,.10);
   padding-bottom: 2px;
   margin-bottom: 3px;
 }
@@ -219,17 +220,21 @@ body {
   padding: 1px 0;
   min-width: 0;
 }
-.buff + .buff { border-top: 1px solid rgba(0,0,0,.35); }
+.buff + .buff {
+  border-top: 1px solid rgba(0,0,0,.4);
+  box-shadow: 0 1px 0 rgba(255,170,90,.07);
+}
 .buff-name {
   font-size: clamp(8px, calc(1.05 * var(--s)), 24px);
   white-space: nowrap;
-  text-shadow: 1px 1px 0 #000;
+  color: var(--ink-dim);
+  text-shadow: 0 1px 0 rgba(255,190,120,.20), 0 -1px 0 rgba(0,0,0,.85);
 }
 .buff-name b { color: var(--gold-lit); font-weight: 700; }
 .buff-delta {
   font-size: clamp(7px, calc(.95 * var(--s)), 22px);
   white-space: nowrap;
-  text-shadow: 1px 1px 0 #000;
+  text-shadow: 0 1px 0 rgba(0,0,0,.9);
 }
 .buff-delta .up { color: var(--green); }
 .buff-delta .down { color: var(--red); }
@@ -238,7 +243,13 @@ body {
   pointer-events: auto;
   width: clamp(12px, calc(1.5 * var(--s)), 32px);
   font-size: clamp(8px, calc(.95 * var(--s)), 22px);
-  border-width: 1px;
+  color: var(--gold-dark);
+  background: none;
+  border: none;
+  text-shadow: 0 1px 0 rgba(255,190,120,.2), 0 -1px 0 rgba(0,0,0,.85);
+}
+@media (hover: hover) {
+  .billboard .help:hover { background: none; color: var(--gold-lit); }
 }
 
 .help {
