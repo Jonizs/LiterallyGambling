@@ -14,8 +14,8 @@
   var ORES = [
     { key: "bronze",  label: "Bronze",  seconds: 5,  value: 25 },
     { key: "silver",  label: "Silver",  seconds: 15, value: 90 },
-    { key: "gold",    label: "Gold",    seconds: 24, value: 220 },
-    { key: "crystal", label: "Crystal", seconds: 90, value: 900 }
+    { key: "gold",    label: "Gold",    seconds: 24, value: 140 },
+    { key: "crystal", label: "Crystal", seconds: 90, value: 11500 }
   ];
 
   var RUSH_MULTIPLIER = 5;
