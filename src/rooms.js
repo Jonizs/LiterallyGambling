@@ -375,16 +375,17 @@
   var BACKDROP = "#140b07";
 
   // Default style: "out" hides from the edges inward, "in" reveals from the
-  // middle outward. Style "down" runs the whole thing top to bottom instead,
-  // as if the room were being drawn in behind a falling curtain.
+  // middle outward. Style "down" runs the whole thing top to bottom, like a
+  // curtain falling; "up" runs it the other way, floor to ceiling.
   function wipe(ctx, phase, p, style) {
-    var top = style === "down";
-    var key = top ? down : order;
+    var rows = style === "down" || style === "up";
+    var flip = style === "up";
     ctx.fillStyle = BACKDROP;
     for (var r = 0; r < ROWS; r++) {
       for (var c = 0; c < COLS; c++) {
-        var d = key[r * COLS + c];
-        var hidden = top
+        var d = rows ? down[r * COLS + c] : order[r * COLS + c];
+        if (flip) d = 1 - d;
+        var hidden = rows
           ? (phase === "out" ? d <= p : d > p)
           : (phase === "out" ? d >= 1 - p : d > p);
         if (hidden) ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
