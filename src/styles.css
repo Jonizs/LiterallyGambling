@@ -379,6 +379,14 @@ body {
 
 /* Moving along a panel's tab strip swipes the page under it across, while
    the strip itself stays put. */
+@keyframes menuDown {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(105%); opacity: .6; }
+}
+.overlay-card.closing {
+  animation: menuDown .19s cubic-bezier(.45, 0, .9, .5) forwards;
+}
+
 @keyframes swipeFromRight {
   from { transform: translateX(12%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
@@ -956,7 +964,7 @@ body {
   .strike-btn { animation: none; }
   .popup-card { animation: none; }
   .discover-spin { animation: none; }
-  .overlay-card { animation: none; }
+  .overlay-card, .overlay-card.closing { animation: none; }
   .swipe-right > *:not(.tabs), .swipe-left > *:not(.tabs) { animation: none; }
   .wood-btn::before, .wood-btn::after, .tab::before, .tab::after {
     animation: none;

@@ -504,6 +504,9 @@
     view.notice = "";
     hideTooltip();
     if (key !== "forge") view.lastItem = null;
+    // A menu opening cuts short any slide still on its way out.
+    clearTimeout(closing);
+    if (menuCard()) menuCard().classList.remove("closing");
     drawPanel();
     $("overlay").hidden = false;
     renderStrike();
@@ -545,10 +548,27 @@
     if (view.offer) view.offer.fresh = false;
   }
 
+  // The menu slides back down before it is taken off screen; the panel is
+  // closed as far as the game is concerned the moment the button is pressed.
+  var CLOSE_MS = 190;
+  var closing = null;
+
+  function menuCard() { return document.querySelector(".overlay-card"); }
+
   function closePanel() {
     // Closing a menu leaves the smith wherever he was standing.
     view.panel = null;
-    $("overlay").hidden = true;
+    var overlay = $("overlay"), card = menuCard();
+    if (!overlay.hidden && card) {
+      card.classList.add("closing");
+      clearTimeout(closing);
+      closing = setTimeout(function () {
+        overlay.hidden = true;
+        card.classList.remove("closing");
+      }, CLOSE_MS);
+    } else {
+      overlay.hidden = true;
+    }
     renderStrike();
     syncRoomButtons();
   }
