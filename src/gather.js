@@ -25,7 +25,7 @@
         { key: "silver", low: 1, high: 2 }
       ] },
     { key: "cavern", name: "Cavern explorer", level: 7,
-      cost: 2500, minutes: 15,
+      cost: 2500, minutes: 8,
       yields: [
         { key: "bronze", low: 20, high: 28 },
         { key: "silver", low: 6, high: 10 },
@@ -33,7 +33,7 @@
         { key: "rare", low: 1, high: 1, chance: 0.5 }
       ] },
     { key: "drill", name: "Drill mining", level: 15,
-      cost: 30000, minutes: 120,
+      cost: 30000, minutes: 20,
       yields: [
         { key: "bronze", low: 220, high: 310 },
         { key: "silver", low: 45, high: 57 },
@@ -43,7 +43,7 @@
         { key: "epic", low: 1, high: 1, chance: 0.3 }
       ] },
     { key: "crystal", name: "Crystal excavation", level: 22,
-      cost: 75000, minutes: 240,
+      cost: 75000, minutes: 40,
       yields: [
         { key: "crystal", low: 6, high: 8 },
         { key: "rare", low: 1, high: 3 },
