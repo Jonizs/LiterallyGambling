@@ -381,10 +381,9 @@
      same underneath: each chunk carries a number, and the wipe hides the
      chunks whose number the sweep has passed.
        ""       edges in, then out of the middle again
-       "middle" middle out, then in from the edges
        "down"   top to bottom      "up"    bottom to top
        "right"  left to right      "left"  right to left */
-  var STYLES = ["", "middle", "down", "up", "right", "left"];
+  var STYLES = ["", "down", "up", "right", "left"];
 
   function wipe(ctx, phase, p, style) {
     var key = order, flip = false, sweep = false;
@@ -398,7 +397,6 @@
         if (flip) d = 1 - d;
         var hidden;
         if (sweep) hidden = phase === "out" ? d <= p : d > p;
-        else if (style === "middle") hidden = phase === "out" ? d <= p : d < 1 - p;
         else hidden = phase === "out" ? d >= 1 - p : d > p;
         if (hidden) ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
       }
