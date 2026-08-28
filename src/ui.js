@@ -576,6 +576,21 @@
     syncBoard();
   }
 
+  // Each workstation button wears a cutout of its own room, darkened just
+  // enough that the label still reads over it.
+  function dressRoomButtons() {
+    if (!window.Rooms || !window.Rooms.banner) return;
+    Array.prototype.forEach.call(
+      document.querySelectorAll("[data-home]"),
+      function (btn) {
+        var art = window.Rooms.banner(btn.dataset.home);
+        if (!art) return;
+        btn.style.backgroundImage =
+          "linear-gradient(rgba(8,4,2,.52), rgba(8,4,2,.52)), url(" + art + ")";
+      }
+    );
+  }
+
   function walkTo(room) {
     if (!scene) return;
     if (view.panel) closePanel();
@@ -1056,6 +1071,7 @@
     renderBuffs();
     renderSlots();
     bindTooltip(document.querySelector(".xp-row"), xpTooltip);
+    dressRoomButtons();
     scene = new window.Forge(document.getElementById("forge-canvas"));
     scene.onSettled = syncBoard;
     syncShelf();

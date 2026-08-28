@@ -439,6 +439,33 @@
     }
   }
 
-  global.Rooms = { draw: function (name, ctx, t) { ROOMS[name](ctx, t); },
+  /* A banner is a real cutout of the room: the room is drawn to an offscreen
+     canvas and a strip of it is handed back as an image, so a button wears
+     the actual pixels of the place it walks you to. */
+  var BANNERS = {
+    lab:     { x: 86,  y: 40, w: 170, h: 62 },   // bench, flasks and the still
+    enchant: { x: 76,  y: 42, w: 170, h: 62 },   // the table and its book
+    awaken:  { x: 62,  y: 36, w: 170, h: 62 }    // pedestal under the light
+  };
+
+  function banner(name) {
+    var cut = BANNERS[name];
+    if (!cut || !ROOMS[name]) return "";
+    var full = document.createElement("canvas");
+    full.width = W;
+    full.height = H;
+    var fc = full.getContext("2d");
+    fc.imageSmoothingEnabled = false;
+    ROOMS[name](fc, 1.35);   // a fixed moment, so the strip never flickers
+    var out = document.createElement("canvas");
+    out.width = cut.w;
+    out.height = cut.h;
+    var oc = out.getContext("2d");
+    oc.imageSmoothingEnabled = false;
+    oc.drawImage(full, cut.x, cut.y, cut.w, cut.h, 0, 0, cut.w, cut.h);
+    return out.toDataURL();
+  }
+
+  global.Rooms = { banner: banner, draw: function (name, ctx, t) { ROOMS[name](ctx, t); },
     has: function (name) { return !!ROOMS[name]; }, wipe: wipe };
 })(window);
