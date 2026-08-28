@@ -297,28 +297,51 @@ body {
 
 .filigree {
   position: absolute;
-  width: 13%;
+  width: 22%;
   aspect-ratio: 1;
   pointer-events: none;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,.7));
+  opacity: .95;
+  /* outer bracket: straight runs down the two edges meeting in a curved elbow */
   border-top: 4px solid var(--gold);
   border-left: 4px solid var(--gold);
-  border-top-left-radius: 100% 100%;
-  filter: drop-shadow(2px 2px 0 rgba(0,0,0,.6));
-  opacity: .95;
+  border-top-left-radius: 70% 70%;
 }
+/* inner echo arc + corner stud */
 .filigree::after {
   content: "";
   position: absolute;
-  top: 26%; left: 26%;
-  width: 44%; height: 44%;
+  top: 22%; left: 22%;
+  width: 46%; height: 46%;
   border-top: 2px solid var(--gold-dark);
   border-left: 2px solid var(--gold-dark);
-  border-top-left-radius: 100% 100%;
+  border-top-left-radius: 80% 80%;
+}
+/* bright highlight barb tracing the outside of the elbow */
+.filigree::before {
+  content: "";
+  position: absolute;
+  top: -3px; left: -3px;
+  width: 40%; height: 40%;
+  border-top: 2px solid #ffe1a3;
+  border-left: 2px solid #ffe1a3;
+  border-top-left-radius: 70% 70%;
+  opacity: .8;
 }
 .filigree.tl { top: 0; left: 0; }
 .filigree.tr { top: 0; right: 0; transform: scaleX(-1); }
 .filigree.bl { bottom: 0; left: 0; transform: scaleY(-1); }
 .filigree.br { bottom: 0; right: 0; transform: scale(-1); }
+
+/* fine hairline frame just inside the scene border, tying the corners together */
+.scene::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(214,164,74,.35);
+  pointer-events: none;
+  z-index: 1;
+}
 
 .gem {
   position: absolute;
