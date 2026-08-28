@@ -30,7 +30,7 @@
         { key: "bronze", low: 20, high: 28 },
         { key: "silver", low: 6, high: 10 },
         { key: "gold", low: 0, high: 5 },
-        { key: "rare", low: 1, high: 1, chance: 0.26 }
+        { key: "rare", low: 1, high: 1, chance: 0.5 }
       ] },
     { key: "drill", name: "Drill mining", level: 15,
       cost: 30000, minutes: 120,
