@@ -182,20 +182,19 @@
     rect(ctx, x + 2, y + 6, 36, 22, L.iron);
     rect(ctx, x + 2, y + 6, 36, 3, L.ironLit);
     rect(ctx, x, y + 4, 40, 4, L.ironLit);
-    // The brew sits level; only what comes off it moves.
-    rect(ctx, x + 4, y + 8, 32, 4, L.brew);
-    rect(ctx, x + 4, y + 8, 32, 1, L.brewLit);
-    // Bubbles breaking the surface.
+    // Filled to the rim, and sitting level: only what comes off it moves.
+    rect(ctx, x + 4, y + 4, 32, 4, L.brew);
+    rect(ctx, x + 4, y + 4, 32, 1, L.brewLit);
+    // Bubbles breaking the surface, one colour the whole way up.
     for (var i = 0; i < 5; i++) {
       var life = (t * 0.8 + i / 5) % 1;
-      rect(ctx, x + 8 + i * 6, y + 8 - (life * 5 | 0), 2, 2,
-        life > 0.6 ? L.brewDim : L.brewLit);
+      rect(ctx, x + 8 + i * 6, y + 4 - (life * 5 | 0), 2, 2, L.brewLit);
     }
-    // Steam rising off it.
+    // Steam rising off it, likewise.
     for (var v = 0; v < 6; v++) {
       var sl = (t * 0.35 + v / 6) % 1;
       var sx = x + 8 + v * 5 + Math.sin(sl * 6 + v) * 4;
-      rect(ctx, sx, y + 4 - sl * 40, 2, 2, sl > 0.6 ? L.wallMid : L.glassDim);
+      rect(ctx, sx, y - sl * 40, 2, 2, L.glassDim);
     }
   }
 
