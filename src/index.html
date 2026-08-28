@@ -13,7 +13,7 @@
     <aside class="sidebar">
       <div class="plate nameplate">
         <div class="name-row">
-          <span class="player-name">JONIS</span>
+          <span class="player-name" id="player-name">SMITH</span>
           <button class="chip" id="btn-profile">Profile</button>
         </div>
         <div class="player-title">Apprentice blacksmith</div>
@@ -67,6 +67,19 @@
       <div class="reveals" id="reveals" aria-live="polite"></div>
 
       <div class="pick-hint" id="pick-hint" hidden></div>
+
+      <!-- A new playthrough asks who is at the anvil before anything else. -->
+      <div class="popup" id="name-pop" hidden>
+        <div class="plate popup-card">
+          <div class="popup-head">Who works this forge?</div>
+          <div class="popup-note">The name over the anvil. You can pick anything.</div>
+          <input class="name-input" id="name-input" type="text" maxlength="14"
+            autocomplete="off" spellcheck="false" aria-label="Smith name">
+          <div class="popup-actions">
+            <button class="mini-btn strong" id="name-go" type="button">TAKE THE HAMMER</button>
+          </div>
+        </div>
+      </div>
 
       <div class="popup" id="result-pop" hidden>
         <div class="plate popup-card">

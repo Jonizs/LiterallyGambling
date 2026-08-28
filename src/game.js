@@ -219,6 +219,8 @@
 
   function createState() {
     return {
+      // What the smith goes by; asked for once, on a new playthrough.
+      smith: "",
       silver: STARTING_SILVER,
       level: STARTING_LEVEL,
       xp: 0,

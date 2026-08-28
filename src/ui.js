@@ -7,10 +7,11 @@
       Save = window.Save;
 
   var player = {
-    name: "JONIS",
     title: "Apprentice blacksmith",
     display: [null, null]
   };
+
+  function smithName() { return state.smith || "SMITH"; }
 
   // Pick up where the last visit left off; a missing or unreadable save
   // just starts a fresh smith.
@@ -42,6 +43,7 @@
   var tooltipEl = $("tooltip");
 
   function renderHeader() {
+    $("player-name").textContent = smithName();
     $("lvl-value").textContent = state.level;
     $("xp-fill").style.width = G.xpPercent(state) + "%";
     renderPanelButtons();
@@ -947,12 +949,13 @@
     clearReveals();
     Save.save(state);
     refresh();
+    askName();
   }
 
   function openProfile() {
     view.panel = null;
     if (scene) scene.setRoom("forge");
-    $("overlay-title").textContent = player.name;
+    $("overlay-title").textContent = smithName();
     var body = $("overlay-body");
     body.innerHTML = "";
     body.appendChild(P.el("p", null,
@@ -989,6 +992,10 @@
         btn.addEventListener("click", function () { walkTo(btn.dataset.room); });
       }
     );
+    $("name-go").addEventListener("click", takeName);
+    $("name-input").addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") takeName();
+    });
     $("overlay-close").addEventListener("click", closePanel);
     $("discover-close").addEventListener("click", closeDiscovery);
     $("discover-pop").addEventListener("click", function (ev) {
@@ -1019,6 +1026,23 @@
     window.addEventListener("scroll", hideTooltip, true);
   }
 
+  // A fresh playthrough has nobody at the anvil yet, so it asks for a name
+  // before the first strike. An empty answer keeps the default.
+  function askName() {
+    var pop = $("name-pop"), input = $("name-input");
+    pop.hidden = false;
+    input.value = "";
+    input.focus();
+  }
+
+  function takeName() {
+    var typed = $("name-input").value.trim().slice(0, 14);
+    state.smith = typed || "SMITH";
+    $("name-pop").hidden = true;
+    Save.save(state);
+    refresh();
+  }
+
   function init() {
     G.stipend(state);
     renderHeader();
@@ -1039,6 +1063,7 @@
     Save.save(state);
     startClock();
     scene.start();
+    if (!state.smith) askName();
   }
 
   if (document.readyState === "loading") {

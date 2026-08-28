@@ -54,6 +54,7 @@
     return {
       version: VERSION,
       savedAt: Date.now(),
+      smith: state.smith,
       silver: state.silver,
       level: state.level,
       xp: state.xp,
@@ -240,6 +241,7 @@
     if (!raw || typeof raw !== "object" || raw.version !== VERSION) return null;
 
     var state = G.createState();
+    state.smith = typeof raw.smith === "string" ? raw.smith.slice(0, 14) : "";
     state.silver = whole(raw.silver, G.STARTING_SILVER);
     state.level = Math.max(G.STARTING_LEVEL, whole(raw.level, G.STARTING_LEVEL, 1));
     state.xp = whole(raw.xp, 0);
