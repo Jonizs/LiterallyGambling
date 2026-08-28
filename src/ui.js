@@ -499,20 +499,15 @@
   function openPanel(key) {
     var panel = P.BUILDERS[key];
     if (!panel || panelLocked(key)) return;
-    // The bench is a room for now, not a panel: ENCHANT just walks the scene
-    // over to it, and pressing it again walks back.
-    if (key === "enchant") {
-      if (scene) scene.setRoom(scene.room === "enchant" ? "forge" : "enchant");
-      return;
-    }
     view.panel = key;
     view.notice = "";
     hideTooltip();
     if (key !== "forge") view.lastItem = null;
-    if (scene) scene.setRoom("forge");
+    if (scene && key !== "enchant") scene.setRoom("forge");
     drawPanel();
     $("overlay").hidden = false;
     renderStrike();
+    syncRoomButtons();
   }
 
   function drawPanel() {
@@ -526,10 +521,45 @@
   }
 
   function closePanel() {
+    // Closing the bench's own menu leaves the smith standing at the bench.
+    var was = view.panel;
     view.panel = null;
-    if (scene) scene.setRoom("forge");
+    if (scene && was !== "enchant") scene.setRoom("forge");
     $("overlay").hidden = true;
     renderStrike();
+    syncRoomButtons();
+  }
+
+  // Which room the smith is in (or walking to) decides what the two scene
+  // buttons say: one walks between the rooms, the other opens that room's menu.
+  function syncRoomButtons() {
+    if (!scene) return;
+    var at = scene.wipe ? scene.wipe.next : scene.room;
+    var bench = at === "enchant";
+    var walk = $("room-btn"), menu = $("scene-btn");
+    var locked = panelLocked("enchant");
+    walk.textContent = bench ? "FORGE" : "ENCHANT";
+    walk.dataset.room = bench ? "forge" : "enchant";
+    walk.disabled = locked && !bench;
+    walk.classList.toggle("locked", locked && !bench);
+    if (locked && !bench) {
+      walk.title = "Unlocks at smith level " + P.BUILDERS.enchant.level + ".";
+      walk.appendChild(P.el("span", "btn-lock",
+        "LVL " + P.BUILDERS.enchant.level));
+    } else {
+      walk.removeAttribute("title");
+    }
+    menu.dataset.panel = bench ? "enchant" : "forge";
+    // renderPanelButtons redraws from the cached label, so move that too.
+    menu.dataset.label = bench ? "ENCHANT" : "FORGE";
+    menu.textContent = menu.dataset.label;
+  }
+
+  function walkTo(room) {
+    if (!scene) return;
+    if (view.panel) closePanel();
+    scene.setRoom(room);
+    syncRoomButtons();
   }
 
   function refresh() {
@@ -541,6 +571,7 @@
     renderBuffs();
     renderSlots();
     syncShelf();
+    syncRoomButtons();
     drawPanel();
   }
 
@@ -933,6 +964,9 @@
         btn.addEventListener("click", function () { openPanel(btn.dataset.panel); });
       }
     );
+    $("room-btn").addEventListener("click", function () {
+      walkTo($("room-btn").dataset.room);
+    });
     $("overlay-close").addEventListener("click", closePanel);
     $("discover-close").addEventListener("click", closeDiscovery);
     $("discover-pop").addEventListener("click", function (ev) {
