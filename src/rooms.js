@@ -147,7 +147,7 @@
     vignette(ctx);
   };
 
-  /* ---- the experiment lab -----------------------------------------------
+  /* ---- the lab: the resource yard and the experiment bench in one room -----------------------------------------------
      A workbench of glassware over a cauldron, everything faintly green. */
   var L = {
     wallDark: "#141c18", wallMid: "#1d2a22", wallLine: "#0e1512",
@@ -305,7 +305,7 @@
     }
   }
 
-  ROOMS.experimentation = function (ctx, t) {
+  ROOMS.lab = function (ctx, t) {
     wall(ctx, L.wallDark, L.wallMid, L.wallLine);
     chalkboard(ctx);
     jars(ctx, t);

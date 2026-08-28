@@ -503,7 +503,7 @@
     view.notice = "";
     hideTooltip();
     if (key !== "forge") view.lastItem = null;
-    if (scene && !ROOM_LABEL[key]) scene.setRoom("forge");
+    if (scene && !PANEL_ROOM[key]) scene.setRoom("forge");
     drawPanel();
     $("overlay").hidden = false;
     renderStrike();
@@ -524,7 +524,7 @@
     // Closing a room's own menu leaves the smith standing in that room.
     var was = view.panel;
     view.panel = null;
-    if (scene && !ROOM_LABEL[was]) scene.setRoom("forge");
+    if (scene && !PANEL_ROOM[was]) scene.setRoom("forge");
     $("overlay").hidden = true;
     renderStrike();
     syncRoomButtons();
@@ -533,8 +533,17 @@
   // Which room the smith is in (or walking to) decides what the scene buttons
   // say: the button for the room he is standing in walks him back to the
   // forge, and the top button opens that room's menu.
-  var ROOM_LABEL = { forge: "FORGE", enchant: "ENCHANT",
-    experimentation: "EXPERIMENT", awaken: "AWAKEN" };
+  var ROOM_UI = {
+    forge: { label: "FORGE", short: "FORGE", panel: "forge" },
+    lab: { label: "RESOURCE & EXPERIMENT", short: "LAB", panel: "lab" },
+    enchant: { label: "ENCHANTING", short: "ENCHANT", panel: "enchant" },
+    awaken: { label: "AWAKEN", short: "AWAKEN", panel: "awaken" }
+  };
+  // Which room a panel belongs to, so opening it does not walk the smith out.
+  var PANEL_ROOM = {};
+  Object.keys(ROOM_UI).forEach(function (room) {
+    PANEL_ROOM[ROOM_UI[room].panel] = room;
+  });
 
   function syncRoomButtons() {
     if (!scene) return;
@@ -543,24 +552,24 @@
       document.querySelectorAll("[data-home]"),
       function (btn) {
         var home = btn.dataset.home, here = at === home;
-        var locked = panelLocked(home);
+        var panel = ROOM_UI[home].panel, locked = panelLocked(panel);
         btn.dataset.room = here ? "forge" : home;
-        btn.textContent = here ? "FORGE" : ROOM_LABEL[home];
+        btn.textContent = here ? "FORGE" : ROOM_UI[home].label;
         btn.disabled = locked && !here;
         btn.classList.toggle("locked", locked && !here);
         if (locked && !here) {
-          btn.title = "Unlocks at smith level " + P.BUILDERS[home].level + ".";
+          btn.title = "Unlocks at smith level " + P.BUILDERS[panel].level + ".";
           btn.appendChild(P.el("span", "btn-lock",
-            "LVL " + P.BUILDERS[home].level));
+            "LVL " + P.BUILDERS[panel].level));
         } else {
           btn.removeAttribute("title");
         }
       }
     );
     var menu = $("scene-btn");
-    menu.dataset.panel = at;
+    menu.dataset.panel = ROOM_UI[at].panel;
     // renderPanelButtons redraws from the cached label, so move that too.
-    menu.dataset.label = ROOM_LABEL[at];
+    menu.dataset.label = ROOM_UI[at].short;
     menu.textContent = menu.dataset.label;
   }
 
@@ -875,7 +884,7 @@
   // COLLECT on its own when the clock runs out.
   function startClock() {
     setInterval(function () {
-      if (view.panel !== "resource") return;
+      if (view.panel !== "lab") return;
       if (window.Gather.running(state) || window.Refine.running(state) ||
           window.Compound.running(state)) drawPanel();
     }, 1000);

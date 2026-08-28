@@ -384,6 +384,31 @@
     return wrap;
   }
 
+  // The yard and the bench share one room, so they share one menu: a strip
+  // across the top picks which side of the lab you are looking at.
+  var labSide = "resource";
+  var LAB_SIDES = [
+    { key: "resource", label: "RESOURCE" },
+    { key: "experiment", label: "EXPERIMENT" }
+  ];
+
+  function labPanel(ctx) {
+    var wrap = el("div");
+    var strip = el("div", "tabs");
+    LAB_SIDES.forEach(function (side) {
+      strip.appendChild(button(side.label,
+        "tab" + (side.key === labSide ? " on" : ""), function () {
+          labSide = side.key;
+          ctx.setNotice("");
+          ctx.refresh();
+        }));
+    });
+    wrap.appendChild(strip);
+    wrap.appendChild(labSide === "resource"
+      ? global.Resource.build(ctx) : global.Experiment.build(ctx));
+    return wrap;
+  }
+
   function soonPanel(what) {
     return function () {
       var wrap = el("div");
@@ -461,12 +486,7 @@
       return global.Enchant.build(ctx);
     }, level: 4 },
     upgrades: { title: "Upgrades", build: upgradesPanel },
-    resource: { title: "Resource", build: function (ctx) {
-      return global.Resource.build(ctx);
-    }, level: 2 },
-    experimentation: { title: "Experimentation", build: function (ctx) {
-      return global.Experiment.build(ctx);
-    }, level: 2 },
+    lab: { title: "Resource & Experiment", build: labPanel, level: 2 },
     polish: { title: "Polish", build: soonPanel("Polishing"), level: 8 },
     awaken: { title: "Awaken", build: soonPanel("Awakening"), level: 12 },
     options: { title: "Options", build: optionsPanel }
