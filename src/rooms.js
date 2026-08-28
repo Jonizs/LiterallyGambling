@@ -222,12 +222,8 @@
     var lines = [[14, 34, 30], [14, 38, 44], [14, 46, 22], [14, 50, 38],
       [14, 58, 26], [46, 58, 16]];
     lines.forEach(function (l) { rect(ctx, l[0], l[1], l[2], 1, L.glassDim); });
-    // A crossed-out attempt and a circled answer.
+    // A crossed-out attempt.
     rect(ctx, 14, 42, 26, 1, L.fluidA);
-    rect(ctx, 46, 32, 20, 1, L.brewLit);
-    rect(ctx, 46, 32, 1, 8, L.brewLit);
-    rect(ctx, 65, 32, 1, 8, L.brewLit);
-    rect(ctx, 46, 40, 20, 1, L.brewLit);
   }
 
   // Herbs strung from the ceiling to dry.
