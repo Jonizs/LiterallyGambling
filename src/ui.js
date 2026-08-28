@@ -84,23 +84,21 @@
       var win = A.luck(state, key);
       var cell = P.el("div", "buff");
 
-      var text = P.el("div");
       var name = P.el("div", "buff-name");
-      name.innerHTML = stat.label + ": <b>" + value + "</b>";
+      name.innerHTML = stat.label + " <b>" + value + "</b>";
       var delta = P.el("div", "buff-delta");
       delta.innerHTML =
-        '<span class="up">+' + win.up + '</span> ' +
-        '<span class="sep">#</span> ' +
+        '<span class="up">+' + win.up + '</span>' +
+        '<span class="sep">/</span>' +
         '<span class="down">' + win.down + "</span>";
-      text.appendChild(name);
-      text.appendChild(delta);
 
       var help = P.el("button", "help", "?");
       help.type = "button";
       help.setAttribute("aria-label", stat.label + " info");
       bindTooltip(help, buffTooltip(key, stat, value, win));
 
-      cell.appendChild(text);
+      cell.appendChild(name);
+      cell.appendChild(delta);
       cell.appendChild(help);
       grid.appendChild(cell);
     });

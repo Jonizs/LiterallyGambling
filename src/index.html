@@ -36,11 +36,6 @@
         <button class="wood-btn" data-panel="shop">SHOP</button>
       </div>
 
-      <section class="plate buffs">
-        <h2 class="tab-title">Forge buffs</h2>
-        <div class="buff-grid" id="buff-grid"></div>
-      </section>
-
       <button class="wood-btn small wide" data-home="lab"
         data-room="lab">RESOURCE &amp; EXPERIMENT</button>
       <button class="wood-btn small wide" data-home="enchant"
@@ -63,6 +58,12 @@
 
     <main class="scene">
       <canvas id="forge-canvas" width="256" height="160" aria-label="Blacksmith forge"></canvas>
+
+      <!-- The buffs hang in the scene itself, a board nailed to the wall. -->
+      <section class="billboard" aria-label="Forge buffs">
+        <div class="board-head">FORGE BUFFS</div>
+        <div class="buff-grid" id="buff-grid"></div>
+      </section>
       <button class="strike-btn idle" id="strike-btn" type="button" disabled>FORGE!</button>
 
       <div class="reveals" id="reveals" aria-live="polite"></div>

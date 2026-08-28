@@ -163,31 +163,83 @@ body {
 }
 .tab-title.small { font-size: clamp(10px, calc(1.4 * var(--s)), 34px); }
 
+/* The buff board hangs on the forge wall, top left of the scene: two nailed
+   planks with the four stats burned into them. */
+.billboard {
+  position: absolute;
+  top: 3%;
+  left: 2.5%;
+  z-index: 2;
+  width: 40%;
+  max-width: 320px;
+  padding: calc(.35 * var(--gap)) calc(.6 * var(--gap)) calc(.5 * var(--gap));
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(180deg,
+      rgba(0,0,0,.16) 0 3px, rgba(255,255,255,.03) 3px 7px),
+    linear-gradient(180deg, #5c3a1e, #3d2412);
+  border: 2px solid #1a0f08;
+  box-shadow:
+    inset 0 0 0 1px rgba(201,161,84,.45),
+    0 3px 0 rgba(0,0,0,.7);
+}
+/* Nail heads in the corners, and the peg it hangs off. */
+.billboard::before,
+.billboard::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--gold);
+  box-shadow: 0 0 0 1px #1a0f08;
+}
+.billboard::before { top: 3px; left: 3px; }
+.billboard::after { top: 3px; right: 3px; }
+
+.board-head {
+  font-size: clamp(8px, calc(1.1 * var(--s)), 24px);
+  letter-spacing: 2px;
+  color: var(--gold-lit);
+  text-shadow: 1px 1px 0 #000;
+  border-bottom: 1px solid rgba(0,0,0,.55);
+  padding-bottom: 2px;
+  margin-bottom: 3px;
+}
+
 .buff-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap-sm);
+  grid-template-columns: 1fr;
+  gap: 1px;
 }
 .buff {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
-  gap: var(--gap-sm);
-  padding: var(--gap-xs) var(--gap-sm);
-  border: 2px solid rgba(0,0,0,.5);
-  background: rgba(0,0,0,.18);
+  gap: calc(.5 * var(--gap-sm));
+  padding: 1px 0;
   min-width: 0;
 }
+.buff + .buff { border-top: 1px solid rgba(0,0,0,.35); }
 .buff-name {
-  font-size: clamp(9px, calc(1.15 * var(--s)), 28px);
+  font-size: clamp(8px, calc(1.05 * var(--s)), 24px);
   white-space: nowrap;
   text-shadow: 1px 1px 0 #000;
 }
 .buff-name b { color: var(--gold-lit); font-weight: 700; }
-.buff-delta { font-size: clamp(8px, calc(1.05 * var(--s)), 25px); text-shadow: 1px 1px 0 #000; }
+.buff-delta {
+  font-size: clamp(7px, calc(.95 * var(--s)), 22px);
+  white-space: nowrap;
+  text-shadow: 1px 1px 0 #000;
+}
 .buff-delta .up { color: var(--green); }
 .buff-delta .down { color: var(--red); }
 .buff-delta .sep { color: var(--ink-dim); }
+.billboard .help {
+  pointer-events: auto;
+  width: clamp(12px, calc(1.5 * var(--s)), 32px);
+  font-size: clamp(8px, calc(.95 * var(--s)), 22px);
+  border-width: 1px;
+}
 
 .help {
   font-family: var(--font);
@@ -926,8 +978,8 @@ body {
 
   /* Readable text at phone widths, where the scaled clamps bottom out. */
   .player-name { font-size: 22px; }
-  .player-title, .buff-name, .row-title, .item-name { font-size: 13px; }
-  .buff-delta, .purse, .cost, .chip-stat { font-size: 12px; }
+  .player-title, .row-title, .item-name { font-size: 13px; }
+  .purse, .cost, .chip-stat { font-size: 12px; }
   .overlay-body { font-size: 14px; }
   .popup-stats { font-size: 14px; }
   .popup-note { font-size: 13px; padding: 4px 8px; }
@@ -949,7 +1001,6 @@ body {
   .scene { order: -1; aspect-ratio: 16 / 11; }
   .sidebar { overflow-y: visible; }
   .wood-btn.options { margin-top: 8px; }
-  .buff { padding: 4px 6px; }
   .slot-row { gap: 10px; }
   /* Icon and name keep one line; the action gets a full-width line of its
      own so it is comfortably tappable. */
@@ -964,8 +1015,6 @@ body {
 /* Very narrow phones: one action per row rather than two cramped ones. */
 @media (max-width: 340px) {
   .btn-row { grid-template-columns: 1fr; }
-  .buff-grid { grid-template-columns: 1fr; }
-  .buff-name { white-space: normal; }
 }
 
 /* ---------- landscape phones: keep the two-column frame, drop the padding ---------- */
@@ -980,7 +1029,6 @@ body {
   }
   .scene { order: 0; aspect-ratio: auto; }
   .sidebar { overflow-y: auto; }
-  .buff-grid { grid-template-columns: 1fr 1fr; }
   .plate { padding: 4px 7px; }
   .sidebar { gap: 4px; }
   .wood-btn { min-height: 36px; padding: 4px 6px; font-size: 14px; }
@@ -992,9 +1040,7 @@ body {
   .chip { font-size: 12px; padding: 5px 10px; }
   .xp-track { height: 12px; }
   .tab-title { font-size: 12px; margin-bottom: 2px; }
-  .buff { padding: 1px 4px; }
-  .buff-name { font-size: 11px; }
-  .buff-delta { font-size: 10px; }
+  .billboard { width: 46%; }
   .help { width: 26px; font-size: 12px; }
   .purse { gap: 4px; font-size: 11px; }
   .purse span { padding: 3px 6px; }
