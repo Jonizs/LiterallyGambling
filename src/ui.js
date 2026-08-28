@@ -623,8 +623,14 @@
     Array.prototype.forEach.call(
       document.querySelectorAll("[data-home]"),
       function (btn) {
-        var art = btn.dataset.home === "forge"
-          ? forgeBanner() : window.Rooms.banner(btn.dataset.home);
+        // One room failing to paint must not cost the others their art.
+        var art;
+        try {
+          art = btn.dataset.home === "forge"
+            ? forgeBanner() : window.Rooms.banner(btn.dataset.home);
+        } catch (err) {
+          return;
+        }
         if (!art) return;
         btn.style.backgroundImage =
           "linear-gradient(rgba(8,4,2,.52), rgba(8,4,2,.52)), url(" + art + ")";

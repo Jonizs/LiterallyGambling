@@ -344,6 +344,7 @@
   }
 
   ROOMS.lab = function (ctx, t, work) {
+    work = work || {};
     wall(ctx, L.wallDark, L.wallMid, L.wallLine);
     chalkboard(ctx);
     jars(ctx, t);
@@ -418,7 +419,10 @@
     full.height = H;
     var fc = full.getContext("2d");
     fc.imageSmoothingEnabled = false;
-    ROOMS[name](fc, 1.35);   // a fixed moment, so the strip never flickers
+    // A fixed moment, so the strip never flickers, and with the room's
+    // machines running: a banner of a cold workshop reads as broken.
+    ROOMS[name](fc, 1.35, { ovens: [true, true],
+      crucibles: [true, true, true] });
     var out = document.createElement("canvas");
     out.width = cut.w;
     out.height = cut.h;
