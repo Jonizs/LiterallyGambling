@@ -123,6 +123,7 @@
 
   function renderSlots() {
     var row = $("slot-row");
+    if (!row) return;   // no display case on the sidebar for now
     row.innerHTML = "";
     player.display.forEach(function (item, i) {
       var slot = P.el("div", "slot", item ? item.name : "");

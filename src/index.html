@@ -31,27 +31,25 @@
 
       <div class="purse" id="purse"></div>
 
-      <div class="btn-row">
-        <button class="wood-btn" id="scene-btn" data-panel="forge">FORGE</button>
-        <button class="wood-btn" data-panel="shop">SHOP</button>
-      </div>
+      <section class="plate group">
+        <button class="wood-btn wide" id="scene-btn" data-panel="forge">FORGE</button>
+        <div class="btn-row three">
+          <button class="wood-btn small" data-panel="shop">SHOP</button>
+          <button class="wood-btn small" data-panel="inventory">INVENTORY</button>
+          <button class="wood-btn small" data-panel="upgrades">UPGRADES</button>
+        </div>
+      </section>
 
-      <button class="wood-btn small wide" data-home="lab"
-        data-room="lab">RESOURCE &amp; EXPERIMENT</button>
-      <button class="wood-btn small wide" data-home="enchant"
-        data-room="enchant">ENCHANTING</button>
-      <button class="wood-btn small wide" data-home="awaken"
-        data-room="awaken">AWAKEN</button>
-      <button class="wood-btn small wide" data-panel="polish">POLISH</button>
-
-      <div class="btn-row">
-        <button class="wood-btn small" data-panel="inventory">INVENTORY</button>
-        <button class="wood-btn small" data-panel="upgrades">UPGRADES</button>
-      </div>
-
-      <div class="display-block">
-        <div class="slot-row compact" id="slot-row"></div>
-      </div>
+      <section class="plate group">
+        <h2 class="tab-title small">Workstations</h2>
+        <button class="wood-btn small wide" data-home="lab"
+          data-room="lab">RESOURCE &amp; EXPERIMENT</button>
+        <button class="wood-btn small wide" data-home="enchant"
+          data-room="enchant">ENCHANTING</button>
+        <button class="wood-btn small wide" data-home="awaken"
+          data-room="awaken">AWAKEN</button>
+        <button class="wood-btn small wide" data-panel="polish">POLISH</button>
+      </section>
 
       <button class="wood-btn wide options" data-panel="options">OPTIONS</button>
     </aside>
