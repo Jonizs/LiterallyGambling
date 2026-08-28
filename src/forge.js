@@ -497,10 +497,6 @@
     }
   };
 
-  function pair(from, to, a, b) {
-    return (from === a && to === b) || (from === b && to === a);
-  }
-
   // Swap rooms behind a pixel wipe: the old one is eaten from the edges in,
   // the new one grows back out of the middle.
   var WIPE_SECONDS = 0.45;
@@ -510,12 +506,8 @@
     if (!known) { this.setRoom("forge"); return; }
     if (this.wipe) { this.wipe.next = name; return; }
     if (this.room === name) return;
-    // Some doors are stairs: the shrine is below the polishing room, so that
-    // swap falls from the top, and the bench is below it again, so coming up
-    // from the bench rises from the floor.
-    var style = "";
-    if (pair(this.room, name, "polish", "awaken")) style = "down";
-    else if (pair(this.room, name, "enchant", "polish")) style = "up";
+    // Which way the pixels go is drawn fresh for every walk.
+    var style = global.Rooms.anyStyle ? global.Rooms.anyStyle() : "";
     this.wipe = { phase: "out", t: 0, next: name, style: style };
   };
 

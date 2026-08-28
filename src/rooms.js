@@ -358,6 +358,7 @@
   var COLS = W / CELL, ROWS = H / CELL;
   var order = new Float32Array(COLS * ROWS);      // out from the middle
   var down = new Float32Array(COLS * ROWS);       // down from the top
+  var across = new Float32Array(COLS * ROWS);     // across from the left
   (function () {
     var cx = (COLS - 1) / 2, cy = (ROWS - 1) / 2;
     var max = Math.sqrt(cx * cx + cy * cy);
@@ -368,29 +369,46 @@
         order[r * COLS + c] = Math.min(1, Math.max(0, d + (Math.random() - 0.5) * 0.14));
         down[r * COLS + c] = Math.min(1, Math.max(0,
           r / (ROWS - 1) + (Math.random() - 0.5) * 0.12));
+        across[r * COLS + c] = Math.min(1, Math.max(0,
+          c / (COLS - 1) + (Math.random() - 0.5) * 0.12));
       }
     }
   })();
 
   var BACKDROP = "#140b07";
 
-  // Default style: "out" hides from the edges inward, "in" reveals from the
-  // middle outward. Style "down" runs the whole thing top to bottom, like a
-  // curtain falling; "up" runs it the other way, floor to ceiling.
+  /* The ways a room can be swapped for another. Every one of them works the
+     same underneath: each chunk carries a number, and the wipe hides the
+     chunks whose number the sweep has passed.
+       ""       edges in, then out of the middle again
+       "middle" middle out, then in from the edges
+       "down"   top to bottom      "up"    bottom to top
+       "right"  left to right      "left"  right to left */
+  var STYLES = ["", "middle", "down", "up", "right", "left"];
+
   function wipe(ctx, phase, p, style) {
-    var rows = style === "down" || style === "up";
-    var flip = style === "up";
+    var key = order, flip = false, sweep = false;
+    if (style === "down" || style === "up") { key = down; sweep = true; }
+    if (style === "right" || style === "left") { key = across; sweep = true; }
+    if (style === "up" || style === "left") flip = true;
     ctx.fillStyle = BACKDROP;
     for (var r = 0; r < ROWS; r++) {
       for (var c = 0; c < COLS; c++) {
-        var d = rows ? down[r * COLS + c] : order[r * COLS + c];
+        var d = key[r * COLS + c];
         if (flip) d = 1 - d;
-        var hidden = rows
-          ? (phase === "out" ? d <= p : d > p)
-          : (phase === "out" ? d >= 1 - p : d > p);
+        var hidden;
+        if (sweep) hidden = phase === "out" ? d <= p : d > p;
+        else if (style === "middle") hidden = phase === "out" ? d <= p : d < 1 - p;
+        else hidden = phase === "out" ? d >= 1 - p : d > p;
         if (hidden) ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
       }
     }
+  }
+
+  // One of the sweeps, picked at random: walking between rooms should not
+  // always look the same.
+  function anyStyle() {
+    return STYLES[Math.random() * STYLES.length | 0];
   }
 
   /* A banner is a real cutout of the room: the room is drawn to an offscreen
@@ -437,6 +455,7 @@
     has: function (name) { return !!ROOMS[name]; },
     add: add,
     wipe: wipe,
+    anyStyle: anyStyle,
     // The shared shell every room is built on.
     parts: { rect: rect, wall: wall, floor: floor, vignette: vignette }
   };
