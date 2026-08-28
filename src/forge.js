@@ -420,17 +420,28 @@
     this.rect(x, y + 6, 10, 6, PALETTE.anvil);
     this.rect(x + 52, y + 5, 6, 8, PALETTE.anvil);
     this.rect(x + 14, y + 44, 32, 4, PALETTE.anvilEdge);
-    // Under the pointer the whole anvil takes the forge's light, and a pair
-    // of chevrons blink either side of it, the same mark the menus use.
+    // Under the pointer only the corners light, like a bracket drawn round
+    // the anvil, with a chevron blinking either side of it.
     if (this.anvilHover) {
-      this.ctx.fillStyle = "rgba(255, 215, 106, 0.22)";
-      this.ctx.fillRect(x - 1, y + 3, 60, 46);
-      this.rect(x + 8, y + 4, 44, 2, "#ffd76a");
+      this.corners(x - 1, y + 3, 60, 46, 8, "#ffd76a");
       if ((this.t * 1.6) % 1 < 0.55) {
         this.chevron(x - 12, y + 20, 1);
         this.chevron(x + 70, y + 20, -1);
       }
     }
+  };
+
+  // Four corner brackets round a box: two arms each, nothing in between.
+  Forge.prototype.corners = function (x, y, w, h, arm, color) {
+    var r = x + w - 2, b = y + h - 2;
+    this.rect(x, y, arm, 2, color);
+    this.rect(x, y, 2, arm, color);
+    this.rect(r - arm + 2, y, arm, 2, color);
+    this.rect(r, y, 2, arm, color);
+    this.rect(x, b, arm, 2, color);
+    this.rect(x, b - arm + 2, 2, arm, color);
+    this.rect(r - arm + 2, b, arm, 2, color);
+    this.rect(r, b - arm + 2, 2, arm, color);
   };
 
   // A pointing mark, ">" when dir is 1 and "<" when it is -1.
