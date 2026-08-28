@@ -167,7 +167,7 @@ body {
    and no recess behind them, just letters cut into the wall the room draws. */
 .billboard {
   position: absolute;
-  top: calc(14% + 4px);
+  top: calc(14% + 10px);
   left: 0;
   z-index: 2;
   width: 36%;
@@ -175,6 +175,8 @@ body {
   padding: calc(.35 * var(--gap)) calc(.7 * var(--gap)) calc(.5 * var(--gap))
     calc(.5 * var(--gap));
   pointer-events: none;
+  /* It belongs to the room, so it goes with the room. */
+  transition: opacity .12s steps(3);
   /* No cut face and no frame: only the letters are carved, straight into the
      brick the room already draws. */
   background: none;

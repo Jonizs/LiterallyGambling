@@ -482,6 +482,7 @@
       w.t = 0;
     } else {
       this.wipe = null;
+      if (this.onSettled) this.onSettled(this.room);
     }
   };
 

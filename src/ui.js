@@ -543,6 +543,13 @@
     PANEL_ROOM[ROOM_UI[room].panel] = room;
   });
 
+  // The buff carving is part of the forge wall, so it is only there when the
+  // forge is: it goes with the wipe and stays out from under an open menu.
+  function syncBoard() {
+    var home = scene && scene.room === "forge" && !scene.wipe;
+    $("buff-board").hidden = !home || !!view.panel;
+  }
+
   function syncRoomButtons() {
     if (!scene) return;
     var at = scene.wipe ? scene.wipe.next : scene.room;
@@ -569,6 +576,7 @@
     // renderPanelButtons redraws from the cached label, so move that too.
     menu.dataset.label = ROOM_UI[at].short;
     menu.textContent = menu.dataset.label;
+    syncBoard();
   }
 
   function walkTo(room) {
@@ -1025,6 +1033,7 @@
     renderSlots();
     bindTooltip(document.querySelector(".xp-row"), xpTooltip);
     scene = new window.Forge(document.getElementById("forge-canvas"));
+    scene.onSettled = syncBoard;
     syncShelf();
     bindControls();
     // A tab closed mid-swing still keeps its progress.
