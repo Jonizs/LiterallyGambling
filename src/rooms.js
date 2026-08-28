@@ -277,6 +277,63 @@
     rect(ctx, 152, 80, 2, 8, L.bench);
   }
 
+  // The two smelting ovens, tucked under the bench. A burning one glows
+  // through its door and breathes.
+  function ovens(ctx, t, lit) {
+    [160, 196].forEach(function (x, i) {
+      var on = !!(lit && lit[i]);
+      rect(ctx, x, 100, 30, 18, L.iron);
+      rect(ctx, x, 100, 30, 2, L.ironLit);
+      rect(ctx, x + 2, 118, 26, 3, L.ironLit);
+      // The door, dark when cold, coals when the burn is on.
+      rect(ctx, x + 5, 104, 20, 11, on ? "#7a2a08" : "#1a1512");
+      if (!on) {
+        rect(ctx, x + 5, 104, 20, 1, "#12100e");
+        return;
+      }
+      var beat = (Math.sin(t * 5 + i * 2) + 1) / 2;
+      rect(ctx, x + 7, 107, 16, 6, beat > 0.5 ? "#ef6a15" : "#c3390f");
+      rect(ctx, x + 9, 109, 12, 3, beat > 0.5 ? "#ffd75e" : "#ffa32b");
+      // Light spilling out onto the floor in front.
+      var g = ctx.createRadialGradient(x + 15, 110, 4, x + 15, 110, 34);
+      g.addColorStop(0, "rgba(255,140,50,0.30)");
+      g.addColorStop(1, "rgba(255,140,50,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    });
+  }
+
+  // The three crucibles on the left, on their own stands. A cooking one
+  // glows from the melt inside.
+  function crucibles(ctx, t, lit) {
+    [12, 40, 68].forEach(function (x, i) {
+      var on = !!(lit && lit[i]);
+      // Stand.
+      rect(ctx, x + 2, 108, 3, 10, L.iron);
+      rect(ctx, x + 15, 108, 3, 10, L.iron);
+      rect(ctx, x, 118, 20, 3, L.ironLit);
+      // Pot.
+      rect(ctx, x, 92, 20, 16, L.iron);
+      rect(ctx, x - 1, 90, 22, 3, L.ironLit);
+      rect(ctx, x + 2, 95, 3, 10, L.ironLit);
+      if (!on) return;
+      // The melt, and what it throws up.
+      var beat = (Math.sin(t * 4 + i * 1.7) + 1) / 2;
+      rect(ctx, x + 2, 92, 16, 4, beat > 0.5 ? "#ffd75e" : "#ef6a15");
+      rect(ctx, x + 2, 96, 16, 8, "#a4503a");
+      for (var k = 0; k < 3; k++) {
+        var life = (t * 0.7 + k / 3 + i * 0.2) % 1;
+        rect(ctx, x + 4 + k * 6, 90 - life * 16, 2, 2,
+          life > 0.6 ? "#c3390f" : "#ffa32b");
+      }
+      var g = ctx.createRadialGradient(x + 10, 96, 4, x + 10, 96, 40);
+      g.addColorStop(0, "rgba(255,170,60,0.26)");
+      g.addColorStop(1, "rgba(255,170,60,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    });
+  }
+
   // Spores of whatever is in the air, drifting up through the room.
   function motes(ctx, t) {
     for (var i = 0; i < 12; i++) {
@@ -286,7 +343,7 @@
     }
   }
 
-  ROOMS.lab = function (ctx, t) {
+  ROOMS.lab = function (ctx, t, work) {
     wall(ctx, L.wallDark, L.wallMid, L.wallLine);
     chalkboard(ctx);
     jars(ctx, t);
@@ -294,6 +351,8 @@
     bench(ctx);
     floor(ctx, L.floor, L.floorDark, L.floorLine);
     labProps(ctx);
+    ovens(ctx, t, work.ovens);
+    crucibles(ctx, t, work.crucibles);
     cauldron(ctx, t);
     glassware(ctx, t);
     still(ctx, t);
@@ -378,7 +437,7 @@
 
   global.Rooms = {
     banner: banner,
-    draw: function (name, ctx, t) { ROOMS[name](ctx, t); },
+    draw: function (name, ctx, t, work) { ROOMS[name](ctx, t, work || {}); },
     has: function (name) { return !!ROOMS[name]; },
     add: add,
     wipe: wipe,

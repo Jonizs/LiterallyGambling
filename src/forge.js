@@ -45,6 +45,8 @@
     // What the artifact shelf is holding, kept by the HUD.
     this.shelf = { keys: [], permanent: [], picking: false, hover: -1 };
     this.room = "forge";  // which room the scene is showing
+    // What the other rooms need to know: which ovens and crucibles are lit.
+    this.work = { ovens: [], crucibles: [] };
     this.wipe = null;     // the pixel dissolve mid-swap
   }
 
@@ -531,7 +533,7 @@
       this.ctx.fillRect(0, 0, W, 6);
       this.ctx.fillRect(0, H - 6, W, 6);
     } else {
-      global.Rooms.draw(this.room, this.ctx, this.t);
+      global.Rooms.draw(this.room, this.ctx, this.t, this.work);
     }
     this.updateWipe(dt);
     if (this.wipe) {

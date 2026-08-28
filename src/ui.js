@@ -548,6 +548,21 @@
     $("buff-board").hidden = !home || !!view.panel;
   }
 
+  // The lab draws its ovens and crucibles lit or cold, so it needs to know
+  // which of them are working.
+  function syncWork() {
+    if (!scene) return;
+    var ovens = [], crucibles = [], i;
+    for (i = 0; i < window.Refine.OVENS; i++) {
+      ovens.push(!!window.Refine.slot(state, i));
+    }
+    for (i = 0; i < window.Compound.CRUCIBLES; i++) {
+      crucibles.push(!!window.Compound.slot(state, i));
+    }
+    scene.work.ovens = ovens;
+    scene.work.crucibles = crucibles;
+  }
+
   function syncRoomButtons() {
     if (!scene) return;
     var at = scene.wipe ? scene.wipe.next : scene.room;
@@ -634,6 +649,7 @@
     renderBuffs();
     renderSlots();
     syncShelf();
+    syncWork();
     syncRoomButtons();
     drawPanel();
   }
@@ -929,6 +945,7 @@
   // COLLECT on its own when the clock runs out.
   function startClock() {
     setInterval(function () {
+      syncWork();
       if (view.panel !== "lab") return;
       if (window.Gather.running(state) || window.Refine.running(state) ||
           window.Compound.running(state)) drawPanel();
@@ -1104,6 +1121,7 @@
     // level badges and nothing shut, so a fresh load could walk into a room
     // the smith has not earned.
     syncRoomButtons();
+    syncWork();
     syncShelf();
     bindControls();
     // A tab closed mid-swing still keeps its progress.
