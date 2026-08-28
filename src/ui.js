@@ -494,11 +494,15 @@
   function openPanel(key) {
     var panel = P.BUILDERS[key];
     if (!panel || panelLocked(key)) return;
+    // Forge-only panels stay shut while the smith is away from the anvil.
+    var btn = document.querySelector('[data-panel="' + key + '"][data-at-forge]');
+    if (btn && scene && (scene.wipe ? scene.wipe.next : scene.room) !== "forge") {
+      return;
+    }
     view.panel = key;
     view.notice = "";
     hideTooltip();
     if (key !== "forge") view.lastItem = null;
-    if (scene && !PANEL_ROOM[key]) scene.setRoom("forge");
     drawPanel();
     $("overlay").hidden = false;
     renderStrike();
@@ -516,10 +520,8 @@
   }
 
   function closePanel() {
-    // Closing a room's own menu leaves the smith standing in that room.
-    var was = view.panel;
+    // Closing a menu leaves the smith wherever he was standing.
     view.panel = null;
-    if (scene && !PANEL_ROOM[was]) scene.setRoom("forge");
     $("overlay").hidden = true;
     renderStrike();
     syncRoomButtons();
@@ -535,12 +537,6 @@
     awaken: { label: "AWAKEN", short: "AWAKEN", panel: "awaken" },
     polish: { label: "POLISH", short: "POLISH", panel: "polish" }
   };
-  // Which room a panel belongs to, so opening it does not walk the smith out.
-  var PANEL_ROOM = {};
-  Object.keys(ROOM_UI).forEach(function (room) {
-    PANEL_ROOM[ROOM_UI[room].panel] = room;
-  });
-
   // The buff carving is part of the forge wall, so it is only there when the
   // forge is: it goes with the wipe and stays out from under an open menu.
   function syncBoard() {
@@ -588,6 +584,18 @@
         } else {
           btn.removeAttribute("title");
         }
+      }
+    );
+    // The shop, the inventory and the upgrade tree are the forge's own: they
+    // are only reachable while the smith is standing at it.
+    Array.prototype.forEach.call(
+      document.querySelectorAll("[data-at-forge]"),
+      function (btn) {
+        var away = at !== "forge";
+        btn.disabled = away;
+        btn.classList.toggle("locked", away);
+        if (away) btn.title = "Back at the forge.";
+        else btn.removeAttribute("title");
       }
     );
     var menu = $("scene-btn");
@@ -1019,7 +1027,6 @@
 
   function openProfile() {
     view.panel = null;
-    if (scene) scene.setRoom("forge");
     $("overlay-title").textContent = smithName();
     var body = $("overlay-body");
     body.innerHTML = "";
