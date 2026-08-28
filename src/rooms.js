@@ -188,7 +188,8 @@
     // Bubbles breaking the surface, one colour the whole way up.
     for (var i = 0; i < 5; i++) {
       var life = (t * 0.8 + i / 5) % 1;
-      rect(ctx, x + 8 + i * 6, y + 4 - (life * 5 | 0), 2, 2, L.brewLit);
+      // Sitting on the surface at the start, never under it.
+      rect(ctx, x + 8 + i * 6, y + 2 - (life * 6 | 0), 2, 2, L.brewLit);
     }
     // Steam rising off it, likewise.
     for (var v = 0; v < 6; v++) {
@@ -332,15 +333,6 @@
     });
   }
 
-  // Spores of whatever is in the air, drifting up through the room.
-  function motes(ctx, t) {
-    for (var i = 0; i < 12; i++) {
-      var life = (t * 0.22 + i / 12) % 1;
-      var x = 20 + i * 19 + Math.sin(life * 5 + i) * 6;
-      rect(ctx, x, H - life * H, 1, 1, i % 3 ? L.brewDim : L.brewLit);
-    }
-  }
-
   ROOMS.lab = function (ctx, t, work) {
     work = work || {};
     wall(ctx, L.wallDark, L.wallMid, L.wallLine);
@@ -355,7 +347,6 @@
     cauldron(ctx, t);
     glassware(ctx, t);
     still(ctx, t);
-    motes(ctx, t);
     var g = ctx.createRadialGradient(116, 96, 8, 116, 96, 110);
     g.addColorStop(0, "rgba(79,191,106,0.22)");
     g.addColorStop(1, "rgba(79,191,106,0)");
