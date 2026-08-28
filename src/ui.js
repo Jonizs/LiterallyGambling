@@ -503,7 +503,7 @@
     view.notice = "";
     hideTooltip();
     if (key !== "forge") view.lastItem = null;
-    if (scene && key !== "enchant") scene.setRoom("forge");
+    if (scene && !ROOM_LABEL[key]) scene.setRoom("forge");
     drawPanel();
     $("overlay").hidden = false;
     renderStrike();
@@ -521,37 +521,46 @@
   }
 
   function closePanel() {
-    // Closing the bench's own menu leaves the smith standing at the bench.
+    // Closing a room's own menu leaves the smith standing in that room.
     var was = view.panel;
     view.panel = null;
-    if (scene && was !== "enchant") scene.setRoom("forge");
+    if (scene && !ROOM_LABEL[was]) scene.setRoom("forge");
     $("overlay").hidden = true;
     renderStrike();
     syncRoomButtons();
   }
 
-  // Which room the smith is in (or walking to) decides what the two scene
-  // buttons say: one walks between the rooms, the other opens that room's menu.
+  // Which room the smith is in (or walking to) decides what the scene buttons
+  // say: the button for the room he is standing in walks him back to the
+  // forge, and the top button opens that room's menu.
+  var ROOM_LABEL = { forge: "FORGE", enchant: "ENCHANT",
+    experimentation: "EXPERIMENT", awaken: "AWAKEN" };
+
   function syncRoomButtons() {
     if (!scene) return;
     var at = scene.wipe ? scene.wipe.next : scene.room;
-    var bench = at === "enchant";
-    var walk = $("room-btn"), menu = $("scene-btn");
-    var locked = panelLocked("enchant");
-    walk.textContent = bench ? "FORGE" : "ENCHANT";
-    walk.dataset.room = bench ? "forge" : "enchant";
-    walk.disabled = locked && !bench;
-    walk.classList.toggle("locked", locked && !bench);
-    if (locked && !bench) {
-      walk.title = "Unlocks at smith level " + P.BUILDERS.enchant.level + ".";
-      walk.appendChild(P.el("span", "btn-lock",
-        "LVL " + P.BUILDERS.enchant.level));
-    } else {
-      walk.removeAttribute("title");
-    }
-    menu.dataset.panel = bench ? "enchant" : "forge";
+    Array.prototype.forEach.call(
+      document.querySelectorAll("[data-home]"),
+      function (btn) {
+        var home = btn.dataset.home, here = at === home;
+        var locked = panelLocked(home);
+        btn.dataset.room = here ? "forge" : home;
+        btn.textContent = here ? "FORGE" : ROOM_LABEL[home];
+        btn.disabled = locked && !here;
+        btn.classList.toggle("locked", locked && !here);
+        if (locked && !here) {
+          btn.title = "Unlocks at smith level " + P.BUILDERS[home].level + ".";
+          btn.appendChild(P.el("span", "btn-lock",
+            "LVL " + P.BUILDERS[home].level));
+        } else {
+          btn.removeAttribute("title");
+        }
+      }
+    );
+    var menu = $("scene-btn");
+    menu.dataset.panel = at;
     // renderPanelButtons redraws from the cached label, so move that too.
-    menu.dataset.label = bench ? "ENCHANT" : "FORGE";
+    menu.dataset.label = ROOM_LABEL[at];
     menu.textContent = menu.dataset.label;
   }
 
@@ -964,9 +973,12 @@
         btn.addEventListener("click", function () { openPanel(btn.dataset.panel); });
       }
     );
-    $("room-btn").addEventListener("click", function () {
-      walkTo($("room-btn").dataset.room);
-    });
+    Array.prototype.forEach.call(
+      document.querySelectorAll("[data-home]"),
+      function (btn) {
+        btn.addEventListener("click", function () { walkTo(btn.dataset.room); });
+      }
+    );
     $("overlay-close").addEventListener("click", closePanel);
     $("discover-close").addEventListener("click", closeDiscovery);
     $("discover-pop").addEventListener("click", function (ev) {

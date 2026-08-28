@@ -460,7 +460,9 @@
   // the new one grows back out of the middle.
   var WIPE_SECONDS = 0.45;
   Forge.prototype.setRoom = function (name) {
-    if (!global.EnchantRoom) { this.room = name; return; }
+    var known = name === "forge" ||
+      (global.Rooms && global.Rooms.has(name));
+    if (!known) { this.setRoom("forge"); return; }
     if (this.wipe) { this.wipe.next = name; return; }
     if (this.room === name) return;
     this.wipe = { phase: "out", t: 0, next: name };
@@ -524,11 +526,11 @@
       this.ctx.fillRect(0, 0, W, 6);
       this.ctx.fillRect(0, H - 6, W, 6);
     } else {
-      global.EnchantRoom.draw(this.ctx, this.t);
+      global.Rooms.draw(this.room, this.ctx, this.t);
     }
     this.updateWipe(dt);
     if (this.wipe) {
-      global.EnchantRoom.wipe(this.ctx, this.wipe.phase,
+      global.Rooms.wipe(this.ctx, this.wipe.phase,
         Math.min(1, this.wipe.t / WIPE_SECONDS));
     }
     this.ctx.restore();
