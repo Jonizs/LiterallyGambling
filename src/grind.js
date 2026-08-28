@@ -96,13 +96,21 @@
     rect(ctx, 150, 92, 96, 2, P.woodLit);
     rect(ctx, 156, 98, 5, 20, P.woodDark);
     rect(ctx, 236, 98, 5, 20, P.woodDark);
-    // A blade laid out, catching the lamp along its edge.
-    rect(ctx, 158, 84, 62, 6, P.steel);
-    rect(ctx, 158, 84, 62, 2, P.steelLit);
-    rect(ctx, 220, 85, 12, 4, P.woodDark);
-    rect(ctx, 216, 83, 4, 8, P.gold);
-    var shine = (t * 0.7) % 1;
-    rect(ctx, 158 + shine * 58, 84, 5, 2, "#ffffff");
+    // A blade lying flat on the bench top, hilt to the right.
+    rect(ctx, 158, 86, 58, 6, P.steel);
+    rect(ctx, 158, 86, 58, 2, P.steelLit);
+    rect(ctx, 156, 87, 3, 4, P.steelLit);          // the point
+    rect(ctx, 216, 84, 4, 10, P.gold);             // guard
+    rect(ctx, 220, 87, 12, 4, P.woodDark);         // grip
+    rect(ctx, 232, 86, 3, 6, P.gold);              // pommel
+    // A glint runs the edge now and then, rather than a block sliding along
+    // it: most of the cycle there is nothing, then one quick pass.
+    var cycle = (t * 0.35) % 1;
+    if (cycle < 0.25) {
+      var at = 158 + (cycle / 0.25) * 54;
+      rect(ctx, at, 86, 4, 2, P.steelLit);
+      rect(ctx, at + 1, 86, 2, 1, "#ffffff");
+    }
     // Whetstones stacked, an oil bottle and a folded cloth.
     rect(ctx, 226, 76, 16, 4, P.stone);
     rect(ctx, 228, 72, 12, 4, P.stoneLit);
