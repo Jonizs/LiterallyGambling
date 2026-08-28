@@ -280,8 +280,10 @@ body {
   repeating-linear-gradient(180deg, rgba(0,0,0,.14) 0 3px, rgba(255,255,255,.03) 3px 6px),
   linear-gradient(180deg, var(--wood-lit), var(--wood)); } }
 .wood-btn:disabled:active { transform: none; }
+/* The level requirement rides on the same line as the name. */
 .btn-lock {
-  display: block;
+  display: inline;
+  margin-left: .7em;
   font-size: .72em;
   letter-spacing: 1px;
   color: var(--gold);
