@@ -19,37 +19,65 @@
     oil: "#b8762a", cloth: "#c9b892", flame: "#ffd75e"
   };
 
-  // The treadle grindstone: a wheel in a frame over a water trough, with a
-  // crank and a pedal. It is the loudest thing in the room, so it sits middle.
+  // A filled pixel disc, drawn a row at a time so the edge steps the way the
+  // rest of the art does. PX keeps the steps chunky rather than antialiased.
+  var PX = 2;
+  function disc(ctx, cx, cy, r, color) {
+    for (var dy = -r; dy < r; dy += PX) {
+      var half = Math.sqrt(Math.max(0, r * r - dy * dy));
+      if (half < 1) continue;
+      rect(ctx, cx - half, cy + dy, half * 2, PX, color);
+    }
+  }
+
+  // The treadle grindstone: a stone wheel turning in a timber frame over its
+  // water trough, cranked from the side and pumped from the pedal below.
   function grindstone(ctx, t) {
-    var cx = 96, cy = 84, r = 22;
-    // Frame legs and crossbar.
-    rect(ctx, cx - 26, cy + 4, 5, 30, P.woodDark);
-    rect(ctx, cx + 21, cy + 4, 5, 30, P.woodDark);
-    rect(ctx, cx - 28, cy + 32, 56, 5, P.wood);
-    rect(ctx, cx - 28, cy + 32, 56, 2, P.woodLit);
-    // The wheel, stepped so it reads round without a curve tool.
-    var steps = [[r, 6], [r - 3, 5], [r - 7, 5], [r - 12, 4]];
-    var off = 0;
-    steps.forEach(function (step) {
-      rect(ctx, cx - step[0], cy - r + off, step[0] * 2, step[1], P.stone);
-      off += step[1];
-    });
-    off = 0;
-    steps.slice().reverse().forEach(function (step) {
-      rect(ctx, cx - step[0], cy + off, step[0] * 2, step[1], P.stoneDark);
-      off += step[1];
-    });
-    rect(ctx, cx - r + 2, cy - r + 2, 4, 10, P.stoneLit);
-    // Hub and crank, turning on its own clock.
-    rect(ctx, cx - 4, cy - 4, 8, 8, P.iron);
-    var a = t * 2.2;
-    rect(ctx, cx + Math.cos(a) * 9, cy + Math.sin(a) * 9, 4, 4, P.ironLit);
-    rect(ctx, cx + Math.cos(a) * 15, cy + Math.sin(a) * 15, 5, 5, P.wood);
-    // Water trough under the wheel.
-    rect(ctx, cx - 18, cy + 22, 36, 8, P.woodDark);
-    rect(ctx, cx - 16, cy + 23, 32, 4, "#2c4a52");
-    rect(ctx, cx - 16, cy + 23, 32, 1, "#4d7a83");
+    var cx = 94, cy = 82, r = 24;
+    var a = t * 2.2;   // where the wheel is in its turn
+
+    // Frame: two uprights, a foot beam, and the brace across the back.
+    rect(ctx, cx - 32, cy - 12, 6, 46, P.woodDark);
+    rect(ctx, cx + 26, cy - 12, 6, 46, P.woodDark);
+    rect(ctx, cx - 32, cy - 12, 6, 3, P.wood);
+    rect(ctx, cx + 26, cy - 12, 6, 3, P.wood);
+    rect(ctx, cx - 30, cy + 2, 60, 4, P.wood);
+    rect(ctx, cx - 36, cy + 34, 72, 6, P.wood);
+    rect(ctx, cx - 36, cy + 34, 72, 2, P.woodLit);
+
+    // The stone: a dark rim, the wheel face, and a worn lighter band.
+    disc(ctx, cx, cy, r, P.stoneDark);
+    disc(ctx, cx, cy, r - 2, P.stone);
+    disc(ctx, cx, cy, r - 7, P.stoneLit);
+    disc(ctx, cx, cy, r - 10, P.stone);
+    // Grinding grain: four marks that ride round with the wheel.
+    for (var i = 0; i < 4; i++) {
+      var g = a + i * (Math.PI / 2);
+      rect(ctx, cx + Math.cos(g) * (r - 6), cy + Math.sin(g) * (r - 6),
+        3, 3, P.stoneDark);
+    }
+    // Light down the leading edge, where it meets the blade.
+    rect(ctx, cx + r - 4, cy - 10, 2, 16, P.stoneLit);
+
+    // Iron axle, and the crank arm swinging off it.
+    disc(ctx, cx, cy, 6, P.iron);
+    rect(ctx, cx - 2, cy - 2, 4, 4, P.ironLit);
+    var hx = cx + Math.cos(a) * 11, hy = cy + Math.sin(a) * 11;
+    // The arm is stepped along its own line, so it reads at any angle.
+    for (var k = 3; k <= 10; k += 2) {
+      rect(ctx, cx + Math.cos(a) * k - 1, cy + Math.sin(a) * k - 1, 3, 3, P.iron);
+    }
+    rect(ctx, hx - 2, hy - 2, 5, 5, P.wood);
+    rect(ctx, hx - 2, hy - 2, 5, 2, P.woodLit);
+
+    // Water trough slung under the wheel, and the pedal beside it.
+    rect(ctx, cx - 20, cy + 22, 40, 10, P.woodDark);
+    rect(ctx, cx - 18, cy + 24, 36, 5, "#2c4a52");
+    rect(ctx, cx - 18, cy + 24, 36, 1, "#4d7a83");
+    rect(ctx, cx - 17, cy + 24, 6, 2, "#7fb2bb");
+    var pedal = Math.sin(a) > 0 ? 0 : 2;
+    rect(ctx, cx + 4, cy + 40 + pedal, 26, 4, P.wood);
+    rect(ctx, cx + 26, cy + 6, 3, 34 + pedal, P.iron);
   }
 
   // Sparks thrown off the wheel while it turns.
