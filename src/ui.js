@@ -584,12 +584,14 @@
   function forgeBanner() {
     var canvas = $("forge-canvas");
     if (!canvas || !scene || scene.room !== "forge") return "";
+    // Straight down the hearth mouth: fire, coals and the lip under it.
+    var x = 70, y = 52, w = 116, h = 42;
     var out = document.createElement("canvas");
-    out.width = 170;
-    out.height = 62;
+    out.width = w;
+    out.height = h;
     var oc = out.getContext("2d");
     oc.imageSmoothingEnabled = false;
-    oc.drawImage(canvas, 66, 34, 170, 62, 0, 0, 170, 62);
+    oc.drawImage(canvas, x, y, w, h, 0, 0, w, h);
     return out.toDataURL();
   }
 
