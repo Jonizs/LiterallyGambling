@@ -817,6 +817,47 @@ body {
   text-shadow: 1px 1px 0 #000;
 }
 
+/* ---------- hover pointers ----------
+   Hovering anything you can press puts a blinking > <  around it, the way an
+   old menu marks the line the cursor is on. Absolutely placed, so nothing
+   in the button shifts when they appear. */
+.wood-btn, .mini-btn, .tab, .tab-btn, .chip, .strike-btn { position: relative; }
+@keyframes pickBlink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+@media (hover: hover) {
+  .wood-btn:hover:not(:disabled)::before,
+  .wood-btn:hover:not(:disabled)::after,
+  .mini-btn:hover:not(:disabled)::before,
+  .mini-btn:hover:not(:disabled)::after,
+  .tab:hover:not(:disabled)::before,
+  .tab:hover:not(:disabled)::after,
+  .tab-btn:hover:not(:disabled)::before,
+  .tab-btn:hover:not(:disabled)::after,
+  .chip:hover:not(:disabled)::before,
+  .chip:hover:not(:disabled)::after,
+  .strike-btn:hover:not(:disabled)::before,
+  .strike-btn:hover:not(:disabled)::after {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold-lit);
+    text-shadow: 1px 1px 0 #000;
+    pointer-events: none;
+    animation: pickBlink .62s steps(1) infinite;
+  }
+  .wood-btn:hover:not(:disabled)::before,
+  .mini-btn:hover:not(:disabled)::before,
+  .tab:hover:not(:disabled)::before,
+  .tab-btn:hover:not(:disabled)::before,
+  .chip:hover:not(:disabled)::before,
+  .strike-btn:hover:not(:disabled)::before { content: ">"; left: 4px; }
+  .wood-btn:hover:not(:disabled)::after,
+  .mini-btn:hover:not(:disabled)::after,
+  .tab:hover:not(:disabled)::after,
+  .tab-btn:hover:not(:disabled)::after,
+  .chip:hover:not(:disabled)::after,
+  .strike-btn:hover:not(:disabled)::after { content: "<"; right: 4px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .offer-reveal, .offer-reveal::after, .offer-reveal .offer-body { animation: none; }
   .fx { animation: fxFade 1s steps(3) forwards; }
@@ -824,6 +865,11 @@ body {
   .strike-btn { animation: none; }
   .popup-card { animation: none; }
   .discover-spin { animation: none; }
+  .wood-btn::before, .wood-btn::after, .mini-btn::before, .mini-btn::after,
+  .tab::before, .tab::after, .tab-btn::before, .tab-btn::after,
+  .chip::before, .chip::after, .strike-btn::before, .strike-btn::after {
+    animation: none;
+  }
   .row.discovered { animation: none; opacity: 0; }
 }
 
