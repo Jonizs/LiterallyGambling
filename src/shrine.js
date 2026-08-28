@@ -107,46 +107,11 @@
   }
 
   // Steps up to the pedestal and the sigil ring cut into the floor.
-  function dais(ctx, t) {
+  function dais(ctx) {
     rect(ctx, 92, 116, 72, 6, A.stoneDark);
     rect(ctx, 92, 116, 72, 2, A.stone);
     rect(ctx, 84, 122, 88, 6, A.stoneDark);
     rect(ctx, 84, 122, 88, 2, A.stone);
-    // The ring, its marks brightening one after another.
-    for (var i = 0; i < 12; i++) {
-      var a = i * (Math.PI / 6);
-      var on = (Math.sin(t * 2 - i * 0.5) + 1) / 2 > 0.7;
-      rect(ctx, 128 + Math.cos(a) * 46 - 1, 138 + Math.sin(a) * 9 - 1, 3, 3,
-        on ? A.coreLit : A.coreDim);
-    }
-  }
-
-  // Offering bowls at the foot of the steps, and a censer on a chain.
-  function offerings(ctx, t) {
-    [100, 156].forEach(function (x, i) {
-      rect(ctx, x - 6, 128, 12, 5, A.gold);
-      rect(ctx, x - 4, 126, 8, 3, A.goldLit);
-      var h = 2 + ((Math.sin(t * 5 + i * 2) + 1) * 1.5 | 0);
-      rect(ctx, x - 2, 126 - h, 4, h, A.coreLit);
-    });
-    var sway = Math.sin(t * 1.1) * 4;
-    rect(ctx, 200 + sway, 0, 2, 46, A.stoneDark);
-    rect(ctx, 195 + sway, 46, 12, 8, A.gold);
-    rect(ctx, 197 + sway, 44, 8, 3, A.goldLit);
-    for (var s = 0; s < 4; s++) {
-      var life = (t * 0.5 + s / 4) % 1;
-      rect(ctx, 200 + sway + Math.sin(life * 6 + s) * 4, 44 - life * 30, 2, 2,
-        A.coreDim);
-    }
-  }
-
-  // Dust drifting down through the shaft of light.
-  function dust(ctx, t) {
-    for (var i = 0; i < 14; i++) {
-      var life = (t * 0.18 + i / 14) % 1;
-      var x = 106 + ((i * 37) % 44);
-      rect(ctx, x, life * 120, 1, 1, i % 4 ? A.coreDim : A.coreLit);
-    }
   }
 
   function draw(ctx, t) {
@@ -155,12 +120,10 @@
     banners(ctx);
     pillars(ctx);
     floor(ctx, A.floor, A.floorDark, A.floorLine);
-    dais(ctx, t);
+    dais(ctx);
     braziers(ctx, t);
-    offerings(ctx, t);
     pedestal(ctx);
     core(ctx, t);
-    dust(ctx, t);
     vignette(ctx);
   }
 
