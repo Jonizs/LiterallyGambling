@@ -364,7 +364,9 @@
      canvas and a strip of it is handed back as an image, so a button wears
      the actual pixels of the place it walks you to. */
   var BANNERS = {
-    lab:     { x: 86,  y: 40, w: 170, h: 62 },   // bench, flasks and the still
+    // A low band across the lab: the cauldron's brew on the left, the bench
+    // top and what is standing on it running off to the right.
+    lab:     { x: 60,  y: 86, w: 196, h: 32 },
     enchant: { x: 76,  y: 42, w: 170, h: 62 }    // the table and its book
   };
 
