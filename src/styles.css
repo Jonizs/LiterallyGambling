@@ -167,7 +167,7 @@ body {
    and no recess behind them, just letters cut into the wall the room draws. */
 .billboard {
   position: absolute;
-  top: 14%;
+  top: calc(14% + 4px);
   left: 0;
   z-index: 2;
   width: 36%;
