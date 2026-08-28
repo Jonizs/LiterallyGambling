@@ -219,12 +219,104 @@
     for (var i = 0; i < 5; i++) rect(ctx, 192 + i * 6, 59, 3, 9, L.glass);
   }
 
+  // Chalkboard of half-finished sums on the left wall.
+  function chalkboard(ctx) {
+    rect(ctx, 8, 26, 68, 46, L.benchDark);
+    rect(ctx, 10, 28, 64, 42, "#1f2a24");
+    var lines = [[14, 34, 30], [14, 38, 44], [14, 46, 22], [14, 50, 38],
+      [14, 58, 26], [46, 58, 16]];
+    lines.forEach(function (l) { rect(ctx, l[0], l[1], l[2], 1, L.glassDim); });
+    // A crossed-out attempt and a circled answer.
+    rect(ctx, 14, 42, 26, 1, L.fluidA);
+    rect(ctx, 46, 32, 20, 1, L.brewLit);
+    rect(ctx, 46, 32, 1, 8, L.brewLit);
+    rect(ctx, 65, 32, 1, 8, L.brewLit);
+    rect(ctx, 46, 40, 20, 1, L.brewLit);
+  }
+
+  // Herbs strung from the ceiling to dry.
+  function herbs(ctx) {
+    [92, 108, 124, 210, 234].forEach(function (x, i) {
+      var len = 14 + (i % 3) * 5;
+      rect(ctx, x, 0, 1, len, L.benchDark);
+      rect(ctx, x - 3, len, 7, 6, i % 2 ? L.brewDim : "#5a6b34");
+      rect(ctx, x - 2, len + 6, 5, 4, i % 2 ? "#5a6b34" : L.brewDim);
+      rect(ctx, x - 1, len + 10, 3, 3, L.benchDark);
+    });
+  }
+
+  // A shelf of specimen jars, each with something suspended in it.
+  function jars(ctx, t) {
+    rect(ctx, 86, 58, 52, 3, L.benchDark);
+    rect(ctx, 86, 58, 52, 1, L.bench);
+    var inner = [L.fluidA, L.brewDim, L.fluidB, L.glassDim];
+    for (var i = 0; i < 4; i++) {
+      var x = 89 + i * 13;
+      rect(ctx, x, 44, 10, 14, L.glass);
+      rect(ctx, x, 46, 10, 12, inner[i]);
+      rect(ctx, x - 1, 42, 12, 3, L.benchDark);
+      // The specimen bobs a little on its own timing.
+      var bob = Math.sin(t * 1.3 + i * 1.7) > 0 ? 0 : 1;
+      rect(ctx, x + 3, 50 + bob, 4, 4, L.wallLine);
+    }
+  }
+
+  // A still on the end of the bench, dripping into a beaker.
+  function still(ctx, t) {
+    rect(ctx, 210, 74, 12, 12, L.iron);
+    rect(ctx, 210, 74, 12, 3, L.ironLit);
+    rect(ctx, 214, 68, 4, 6, L.iron);
+    // Condenser running down to the beaker.
+    rect(ctx, 222, 78, 8, 2, L.ironLit);
+    rect(ctx, 228, 78, 2, 12, L.ironLit);
+    rect(ctx, 224, 90, 8, 6, L.glass);
+    rect(ctx, 224, 93, 8, 3, L.fluidB);
+    // One drop falling on a loop.
+    var d = (t * 1.6) % 1;
+    rect(ctx, 228, 80 + d * 10, 2, 2, L.fluidB);
+  }
+
+  // Crates and a barrel of stock on the left, and what got spilled.
+  function labProps(ctx, t) {
+    rect(ctx, 8, 92, 26, 26, L.bench);
+    rect(ctx, 8, 92, 26, 3, L.benchLit);
+    rect(ctx, 8, 102, 26, 2, L.benchDark);
+    rect(ctx, 8, 112, 26, 2, L.benchDark);
+    rect(ctx, 38, 100, 28, 18, L.benchDark);
+    rect(ctx, 38, 100, 28, 2, L.bench);
+    rect(ctx, 50, 100, 2, 18, L.bench);
+    // Mortar and pestle on the bench.
+    rect(ctx, 142, 86, 12, 8, L.iron);
+    rect(ctx, 142, 86, 12, 2, L.glassDim);
+    rect(ctx, 152, 80, 2, 8, L.bench);
+    // A spill on the floor that still has a shine on it.
+    rect(ctx, 62, 130, 34, 6, L.brewDim);
+    rect(ctx, 66, 128, 22, 2, L.brewDim);
+    rect(ctx, 70, 131, 10, 1, Math.sin(t * 3) > 0 ? L.brewLit : L.brew);
+    rect(ctx, 100, 138, 6, 3, L.brewDim);
+  }
+
+  // Spores of whatever is in the air, drifting up through the room.
+  function motes(ctx, t) {
+    for (var i = 0; i < 12; i++) {
+      var life = (t * 0.22 + i / 12) % 1;
+      var x = 20 + i * 19 + Math.sin(life * 5 + i) * 6;
+      rect(ctx, x, H - life * H, 1, 1, i % 3 ? L.brewDim : L.brewLit);
+    }
+  }
+
   ROOMS.experimentation = function (ctx, t) {
     wall(ctx, L.wallDark, L.wallMid, L.wallLine);
+    chalkboard(ctx);
+    jars(ctx, t);
+    herbs(ctx);
     bench(ctx);
     floor(ctx, L.floor, L.floorDark, L.floorLine);
+    labProps(ctx, t);
     cauldron(ctx, t);
     glassware(ctx, t);
+    still(ctx, t);
+    motes(ctx, t);
     var g = ctx.createRadialGradient(116, 96, 8, 116, 96, 110);
     g.addColorStop(0, "rgba(79,191,106,0.22)");
     g.addColorStop(1, "rgba(79,191,106,0)");
