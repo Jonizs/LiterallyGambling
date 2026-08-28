@@ -44,6 +44,8 @@
     this.glow = 0;      // hot metal glow left on the anvil
     // What the artifact shelf is holding, kept by the HUD.
     this.shelf = { keys: [], permanent: [], picking: false, hover: -1 };
+    this.room = "forge";  // which room the scene is showing
+    this.wipe = null;     // the pixel dissolve mid-swap
   }
 
   var ANVIL_TOP = 104, STRIKE_X = 128;
@@ -454,6 +456,33 @@
     }
   };
 
+  // Swap rooms behind a pixel wipe: the old one is eaten from the edges in,
+  // the new one grows back out of the middle.
+  var WIPE_SECONDS = 0.45;
+  Forge.prototype.setRoom = function (name) {
+    if (!global.EnchantRoom) { this.room = name; return; }
+    if (this.wipe) { this.wipe.next = name; return; }
+    if (this.room === name) return;
+    this.wipe = { phase: "out", t: 0, next: name };
+  };
+
+  Forge.prototype.updateWipe = function (dt) {
+    var w = this.wipe;
+    if (!w) return;
+    w.t += dt;
+    if (w.t < WIPE_SECONDS) return;
+    if (w.phase === "out") {
+      this.room = w.next;
+      w.phase = "in";
+      w.t = 0;
+    } else if (w.next !== this.room) {
+      w.phase = "out";
+      w.t = 0;
+    } else {
+      this.wipe = null;
+    }
+  };
+
   Forge.prototype.frame = function (dt) {
     this.t += dt;
     this.updateSwing(dt);
@@ -468,31 +497,40 @@
     if (this.shake > 0) {
       this.ctx.translate((Math.random() - 0.5) * 3 | 0, (Math.random() - 0.5) * 3 | 0);
     }
-    this.drawWall();
-    this.drawForge(flicker);
-    this.drawFire(this.t);
-    this.drawFloor();
-    this.drawAnvil();
-    this.drawProps();
-    if (global.Shelf) global.Shelf.draw(this.ctx, this.shelf, this.t);
-    this.drawWorkpiece();
-    this.drawHammer();
-    this.drawIron();
-    this.updateEmbers(dt);
-    this.drawEmbers();
-    this.drawSparks();
-    // Warm light pooling in front of the forge.
-    var grad = this.ctx.createRadialGradient(128, 100, 10, 128, 100, 120);
-    grad.addColorStop(0, "rgba(255,140,50,0.22)");
-    grad.addColorStop(1, "rgba(255,140,50,0)");
-    this.ctx.globalAlpha = flicker;
-    this.ctx.fillStyle = grad;
-    this.ctx.fillRect(0, 0, W, H);
-    this.ctx.globalAlpha = 1;
-    // Vignette.
-    this.ctx.fillStyle = "rgba(0,0,0,0.28)";
-    this.ctx.fillRect(0, 0, W, 6);
-    this.ctx.fillRect(0, H - 6, W, 6);
+    if (this.room === "forge") {
+      this.drawWall();
+      this.drawForge(flicker);
+      this.drawFire(this.t);
+      this.drawFloor();
+      this.drawAnvil();
+      this.drawProps();
+      if (global.Shelf) global.Shelf.draw(this.ctx, this.shelf, this.t);
+      this.drawWorkpiece();
+      this.drawHammer();
+      this.drawIron();
+      this.updateEmbers(dt);
+      this.drawEmbers();
+      this.drawSparks();
+      // Warm light pooling in front of the forge.
+      var grad = this.ctx.createRadialGradient(128, 100, 10, 128, 100, 120);
+      grad.addColorStop(0, "rgba(255,140,50,0.22)");
+      grad.addColorStop(1, "rgba(255,140,50,0)");
+      this.ctx.globalAlpha = flicker;
+      this.ctx.fillStyle = grad;
+      this.ctx.fillRect(0, 0, W, H);
+      this.ctx.globalAlpha = 1;
+      // Vignette.
+      this.ctx.fillStyle = "rgba(0,0,0,0.28)";
+      this.ctx.fillRect(0, 0, W, 6);
+      this.ctx.fillRect(0, H - 6, W, 6);
+    } else {
+      global.EnchantRoom.draw(this.ctx, this.t);
+    }
+    this.updateWipe(dt);
+    if (this.wipe) {
+      global.EnchantRoom.wipe(this.ctx, this.wipe.phase,
+        Math.min(1, this.wipe.t / WIPE_SECONDS));
+    }
     this.ctx.restore();
   };
 

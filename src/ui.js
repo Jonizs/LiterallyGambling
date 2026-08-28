@@ -503,6 +503,7 @@
     view.notice = "";
     hideTooltip();
     if (key !== "forge") view.lastItem = null;
+    if (scene) scene.setRoom(key === "enchant" ? "enchant" : "forge");
     drawPanel();
     $("overlay").hidden = false;
     renderStrike();
@@ -520,6 +521,7 @@
 
   function closePanel() {
     view.panel = null;
+    if (scene) scene.setRoom("forge");
     $("overlay").hidden = true;
     renderStrike();
   }
@@ -893,6 +895,7 @@
 
   function openProfile() {
     view.panel = null;
+    if (scene) scene.setRoom("forge");
     $("overlay-title").textContent = player.name;
     var body = $("overlay-body");
     body.innerHTML = "";
