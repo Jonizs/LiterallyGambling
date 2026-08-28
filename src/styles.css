@@ -283,8 +283,9 @@ body {
 /* ---------- scene ---------- */
 .scene {
   position: relative;
-  border: 3px solid var(--gold-dark);
-  box-shadow: inset 0 0 0 2px #000;
+  --frame: clamp(12px, calc(1.6 * var(--s)), 26px);
+  border: var(--frame) solid transparent;
+  border-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' shape-rendering='crispEdges'><rect x='2' y='2' width='12' height='12' fill='%231a0f08'/><rect x='4' y='4' width='8' height='8' fill='%237a5a25'/><rect x='5' y='5' width='4' height='4' fill='%23f0d191'/><rect x='9' y='9' width='3' height='3' fill='%23c9a154'/><rect x='0' y='5' width='2' height='4' fill='%231a0f08'/><rect x='5' y='0' width='4' height='2' fill='%231a0f08'/><rect x='2' y='14' width='2' height='2' fill='%231a0f08'/><rect x='14' y='2' width='2' height='2' fill='%231a0f08'/><rect x='16' y='2' width='16' height='2' fill='%231a0f08'/><rect x='16' y='4' width='16' height='6' fill='%237a5a25'/><rect x='16' y='4' width='6' height='2' fill='%23c9a154'/><rect x='24' y='4' width='6' height='2' fill='%23c9a154'/><rect x='16' y='7' width='6' height='2' fill='%23f0d191'/><rect x='24' y='7' width='6' height='2' fill='%23f0d191'/><rect x='16' y='10' width='16' height='2' fill='%231a0f08'/><rect x='34' y='2' width='12' height='12' fill='%231a0f08'/><rect x='36' y='4' width='8' height='8' fill='%237a5a25'/><rect x='39' y='5' width='4' height='4' fill='%23f0d191'/><rect x='36' y='9' width='3' height='3' fill='%23c9a154'/><rect x='46' y='5' width='2' height='4' fill='%231a0f08'/><rect x='39' y='0' width='4' height='2' fill='%231a0f08'/><rect x='44' y='14' width='2' height='2' fill='%231a0f08'/><rect x='32' y='2' width='2' height='2' fill='%231a0f08'/><rect x='2' y='16' width='2' height='16' fill='%231a0f08'/><rect x='4' y='16' width='6' height='16' fill='%237a5a25'/><rect x='4' y='16' width='2' height='6' fill='%23c9a154'/><rect x='4' y='24' width='2' height='6' fill='%23c9a154'/><rect x='7' y='16' width='2' height='6' fill='%23f0d191'/><rect x='7' y='24' width='2' height='6' fill='%23f0d191'/><rect x='10' y='16' width='2' height='16' fill='%231a0f08'/><rect x='34' y='16' width='2' height='16' fill='%231a0f08'/><rect x='36' y='16' width='6' height='16' fill='%237a5a25'/><rect x='36' y='16' width='2' height='6' fill='%23c9a154'/><rect x='36' y='24' width='2' height='6' fill='%23c9a154'/><rect x='39' y='16' width='2' height='6' fill='%23f0d191'/><rect x='39' y='24' width='2' height='6' fill='%23f0d191'/><rect x='42' y='16' width='2' height='16' fill='%231a0f08'/><rect x='2' y='34' width='12' height='12' fill='%231a0f08'/><rect x='4' y='36' width='8' height='8' fill='%237a5a25'/><rect x='5' y='39' width='4' height='4' fill='%23f0d191'/><rect x='9' y='36' width='3' height='3' fill='%23c9a154'/><rect x='0' y='39' width='2' height='4' fill='%231a0f08'/><rect x='5' y='46' width='4' height='2' fill='%231a0f08'/><rect x='2' y='32' width='2' height='2' fill='%231a0f08'/><rect x='14' y='44' width='2' height='2' fill='%231a0f08'/><rect x='16' y='34' width='16' height='2' fill='%231a0f08'/><rect x='16' y='36' width='16' height='6' fill='%237a5a25'/><rect x='16' y='36' width='6' height='2' fill='%23c9a154'/><rect x='24' y='36' width='6' height='2' fill='%23c9a154'/><rect x='16' y='39' width='6' height='2' fill='%23f0d191'/><rect x='24' y='39' width='6' height='2' fill='%23f0d191'/><rect x='16' y='42' width='16' height='2' fill='%231a0f08'/><rect x='34' y='34' width='12' height='12' fill='%231a0f08'/><rect x='36' y='36' width='8' height='8' fill='%237a5a25'/><rect x='39' y='39' width='4' height='4' fill='%23f0d191'/><rect x='36' y='36' width='3' height='3' fill='%23c9a154'/><rect x='46' y='39' width='2' height='4' fill='%231a0f08'/><rect x='39' y='46' width='4' height='2' fill='%231a0f08'/><rect x='44' y='32' width='2' height='2' fill='%231a0f08'/><rect x='32' y='44' width='2' height='2' fill='%231a0f08'/></svg>") 16 round;
   overflow: hidden;
   background: #140b07;
 }
@@ -295,70 +296,6 @@ body {
   image-rendering: pixelated;
 }
 
-.filigree {
-  position: absolute;
-  width: 22%;
-  aspect-ratio: 1;
-  pointer-events: none;
-  filter: drop-shadow(2px 2px 0 rgba(0,0,0,.7));
-  opacity: .95;
-  /* outer bracket: straight runs down the two edges meeting in a curved elbow */
-  border-top: 4px solid var(--gold);
-  border-left: 4px solid var(--gold);
-  border-top-left-radius: 70% 70%;
-}
-/* inner echo arc + corner stud */
-.filigree::after {
-  content: "";
-  position: absolute;
-  top: 22%; left: 22%;
-  width: 46%; height: 46%;
-  border-top: 2px solid var(--gold-dark);
-  border-left: 2px solid var(--gold-dark);
-  border-top-left-radius: 80% 80%;
-}
-/* fan of gold rays filling the bare wedge between the corner and the arc */
-.filigree::before {
-  content: "";
-  position: absolute;
-  top: -4px; left: -4px;
-  width: 100%; height: 100%;
-  background:
-    repeating-conic-gradient(from 3deg at 0% 0%,
-      rgba(214,164,74,.5) 0deg 2.5deg, transparent 2.5deg 13deg),
-    radial-gradient(circle at 0% 0%, #ffe1a3 0 9%, var(--gold) 9% 13%, transparent 14%);
-  -webkit-mask: radial-gradient(circle at 0% 0%, #000 0 58%, transparent 62%);
-  mask: radial-gradient(circle at 0% 0%, #000 0 58%, transparent 62%);
-}
-.filigree.tl { top: 0; left: 0; }
-.filigree.tr { top: 0; right: 0; transform: scaleX(-1); }
-.filigree.bl { bottom: 0; left: 0; transform: scaleY(-1); }
-.filigree.br { bottom: 0; right: 0; transform: scale(-1); }
-
-/* fine hairline frame just inside the scene border, tying the corners together */
-.scene::before {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  border: 1px solid rgba(214,164,74,.35);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.gem {
-  position: absolute;
-  width: clamp(8px, calc(.7 * var(--s)), 17px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ffd9a0, #ff7a2a 55%, #7a2a08);
-  box-shadow: 0 0 10px rgba(255,140,60,.8);
-  animation: emberPulse 2.4s steps(6) infinite;
-}
-.gem.g1 { top: 8px; left: 8px; }
-.gem.g2 { top: 8px; right: 8px; }
-.gem.g3 { bottom: 8px; left: 8px; }
-.gem.g4 { bottom: 8px; right: 8px; }
-@keyframes emberPulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
 @keyframes fxFade {
   0% { opacity: 0; transform: translate(-50%, calc(-50% - var(--push))); }
   20%, 70% { opacity: 1; transform: translate(-50%, calc(-140% - var(--push))); }
@@ -842,7 +779,6 @@ body {
   .popup-card { animation: none; }
   .discover-spin { animation: none; }
   .row.discovered { animation: none; opacity: 0; }
-  .gem { animation: none; }
 }
 
 /* A recipe already worked out: kept on the bench, marked done. */
