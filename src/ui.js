@@ -614,6 +614,7 @@
 
   function walkTo(room) {
     if (!scene) return;
+    if (panelLocked(ROOM_UI[room].panel)) return;
     if (view.panel) closePanel();
     scene.setRoom(room);
     syncRoomButtons();
@@ -1094,6 +1095,10 @@
     bindTooltip(document.querySelector(".xp-row"), xpTooltip);
     scene = new window.Forge(document.getElementById("forge-canvas"));
     scene.onSettled = syncBoard;
+    // Until this runs the buttons are still as the page authored them: no
+    // level badges and nothing shut, so a fresh load could walk into a room
+    // the smith has not earned.
+    syncRoomButtons();
     syncShelf();
     bindControls();
     // A tab closed mid-swing still keeps its progress.
