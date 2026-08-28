@@ -499,11 +499,17 @@
   function openPanel(key) {
     var panel = P.BUILDERS[key];
     if (!panel || panelLocked(key)) return;
+    // The bench is a room for now, not a panel: ENCHANT just walks the scene
+    // over to it, and pressing it again walks back.
+    if (key === "enchant") {
+      if (scene) scene.setRoom(scene.room === "enchant" ? "forge" : "enchant");
+      return;
+    }
     view.panel = key;
     view.notice = "";
     hideTooltip();
     if (key !== "forge") view.lastItem = null;
-    if (scene) scene.setRoom(key === "enchant" ? "enchant" : "forge");
+    if (scene) scene.setRoom("forge");
     drawPanel();
     $("overlay").hidden = false;
     renderStrike();
