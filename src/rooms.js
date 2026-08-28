@@ -356,7 +356,8 @@
      rather than a clean circle. */
   var CELL = 4;
   var COLS = W / CELL, ROWS = H / CELL;
-  var order = new Float32Array(COLS * ROWS);
+  var order = new Float32Array(COLS * ROWS);      // out from the middle
+  var down = new Float32Array(COLS * ROWS);       // down from the top
   (function () {
     var cx = (COLS - 1) / 2, cy = (ROWS - 1) / 2;
     var max = Math.sqrt(cx * cx + cy * cy);
@@ -365,20 +366,27 @@
         var dx = c - cx, dy = r - cy;
         var d = Math.sqrt(dx * dx + dy * dy) / max;
         order[r * COLS + c] = Math.min(1, Math.max(0, d + (Math.random() - 0.5) * 0.14));
+        down[r * COLS + c] = Math.min(1, Math.max(0,
+          r / (ROWS - 1) + (Math.random() - 0.5) * 0.12));
       }
     }
   })();
 
   var BACKDROP = "#140b07";
 
-  // phase "out": p 0->1 hides from the edges inward.
-  // phase "in":  p 0->1 reveals from the middle outward.
-  function wipe(ctx, phase, p) {
+  // Default style: "out" hides from the edges inward, "in" reveals from the
+  // middle outward. Style "down" runs the whole thing top to bottom instead,
+  // as if the room were being drawn in behind a falling curtain.
+  function wipe(ctx, phase, p, style) {
+    var top = style === "down";
+    var key = top ? down : order;
     ctx.fillStyle = BACKDROP;
     for (var r = 0; r < ROWS; r++) {
       for (var c = 0; c < COLS; c++) {
-        var d = order[r * COLS + c];
-        var hidden = phase === "out" ? d >= 1 - p : d > p;
+        var d = key[r * COLS + c];
+        var hidden = top
+          ? (phase === "out" ? d <= p : d > p)
+          : (phase === "out" ? d >= 1 - p : d > p);
         if (hidden) ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
       }
     }

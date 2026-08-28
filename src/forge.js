@@ -506,7 +506,11 @@
     if (!known) { this.setRoom("forge"); return; }
     if (this.wipe) { this.wipe.next = name; return; }
     if (this.room === name) return;
-    this.wipe = { phase: "out", t: 0, next: name };
+    // The shrine is entered from the polishing room down a stair, so that
+    // one swap falls from the top rather than closing to the middle.
+    var style = (this.room === "polish" && name === "awaken") ||
+      (this.room === "awaken" && name === "polish") ? "down" : "";
+    this.wipe = { phase: "out", t: 0, next: name, style: style };
   };
 
   Forge.prototype.updateWipe = function (dt) {
@@ -575,7 +579,7 @@
     this.updateWipe(dt);
     if (this.wipe) {
       global.Rooms.wipe(this.ctx, this.wipe.phase,
-        Math.min(1, this.wipe.t / WIPE_SECONDS));
+        Math.min(1, this.wipe.t / WIPE_SECONDS), this.wipe.style);
     }
     this.ctx.restore();
   };
