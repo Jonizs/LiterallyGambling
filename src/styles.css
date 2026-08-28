@@ -831,6 +831,55 @@ body {
   text-shadow: 1px 1px 0 #000;
 }
 
+/* ---------- workstation banners ----------
+   A workstation button wears its own room: the same brick courses the scene
+   draws, tinted to that room and lit by whatever burns in it. */
+.wood-btn[data-home] {
+  border-color: var(--gold-dark);
+  background:
+    /* mortar between the courses */
+    repeating-linear-gradient(180deg,
+      transparent 0 7px, rgba(0,0,0,.5) 7px 8px),
+    repeating-linear-gradient(90deg,
+      transparent 0 15px, rgba(0,0,0,.4) 15px 16px),
+    /* the room's light, coming in from the left like the scene's does */
+    radial-gradient(120% 140% at 12% 50%, var(--room-glow), transparent 60%),
+    linear-gradient(180deg, var(--room-mid), var(--room-dark));
+}
+@media (hover: hover) {
+  .wood-btn[data-home]:hover:not(:disabled) {
+    border-color: var(--gold);
+    background:
+      repeating-linear-gradient(180deg,
+        transparent 0 7px, rgba(0,0,0,.42) 7px 8px),
+      repeating-linear-gradient(90deg,
+        transparent 0 15px, rgba(0,0,0,.32) 15px 16px),
+      radial-gradient(120% 140% at 12% 50%, var(--room-lit), transparent 68%),
+      linear-gradient(180deg, var(--room-mid), var(--room-dark));
+  }
+}
+/* The lab: green brew light off the cauldron. */
+.wood-btn[data-home="lab"] {
+  --room-dark: #141c18;
+  --room-mid: #1d2a22;
+  --room-glow: rgba(79,191,106,.30);
+  --room-lit: rgba(79,191,106,.50);
+}
+/* The bench: purple off the open book. */
+.wood-btn[data-home="enchant"] {
+  --room-dark: #1b1626;
+  --room-mid: #2a2038;
+  --room-glow: rgba(154,95,208,.32);
+  --room-lit: rgba(211,166,245,.48);
+}
+/* The shrine: the cold shaft of light over the pedestal. */
+.wood-btn[data-home="awaken"] {
+  --room-dark: #0f1018;
+  --room-mid: #1c1f2c;
+  --room-glow: rgba(127,216,255,.26);
+  --room-lit: rgba(127,216,255,.44);
+}
+
 /* ---------- hover pointers ----------
    Only the main navigation and the category tabs get marked: the sidebar
    buttons and a panel's tab strip. Actions inside a panel (forge, send, sell,
