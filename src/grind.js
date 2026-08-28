@@ -159,14 +159,16 @@
     rect(ctx, 130, 109, 10, 4, "#2c4a52");
   }
 
-  function draw(ctx, t) {
+  function draw(ctx, t, work) {
     wall(ctx, P.wallDark, P.wallMid, P.wallLine);
     wallKit(ctx, t);
     floor(ctx, P.floor, P.floorDark, P.floorLine);
     props(ctx);
     bench(ctx, t);
     grindstone(ctx, t);
-    sparks(ctx, t);
+    // A banner is one frozen frame, and sparks caught mid-air in it read as
+    // dirt on the button rather than a wheel at work.
+    if (!(work && work.snapshot)) sparks(ctx, t);
     vignette(ctx);
   }
 

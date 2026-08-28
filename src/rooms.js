@@ -182,10 +182,9 @@
     rect(ctx, x + 2, y + 6, 36, 22, L.iron);
     rect(ctx, x + 2, y + 6, 36, 3, L.ironLit);
     rect(ctx, x, y + 4, 40, 4, L.ironLit);
-    // The brew, with a surface that slops from side to side.
-    var slop = Math.sin(t * 2.3) > 0 ? 0 : 1;
-    rect(ctx, x + 4, y + 8 + slop, 32, 4, L.brew);
-    rect(ctx, x + 4, y + 8 + slop, 32, 1, L.brewLit);
+    // The brew sits level; only what comes off it moves.
+    rect(ctx, x + 4, y + 8, 32, 4, L.brew);
+    rect(ctx, x + 4, y + 8, 32, 1, L.brewLit);
     // Bubbles breaking the surface.
     for (var i = 0; i < 5; i++) {
       var life = (t * 0.8 + i / 5) % 1;
@@ -421,7 +420,7 @@
     fc.imageSmoothingEnabled = false;
     // A fixed moment, so the strip never flickers, and with the room's
     // machines running: a banner of a cold workshop reads as broken.
-    ROOMS[name](fc, 1.35, { ovens: [true, true],
+    ROOMS[name](fc, 1.35, { snapshot: true, ovens: [true, true],
       crucibles: [true, true, true] });
     var out = document.createElement("canvas");
     out.width = cut.w;
