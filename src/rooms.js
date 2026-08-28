@@ -186,11 +186,6 @@
     var slop = Math.sin(t * 2.3) > 0 ? 0 : 1;
     rect(ctx, x + 4, y + 8 + slop, 32, 4, L.brew);
     rect(ctx, x + 4, y + 8 + slop, 32, 1, L.brewLit);
-    // Fire under it.
-    for (var f = 0; f < 5; f++) {
-      var h = 3 + ((Math.sin(t * 9 + f) + 1) * 2 | 0);
-      rect(ctx, x + 8 + f * 6, y + 32 - h, 4, h, f % 2 ? L.flame : "#ffd75e");
-    }
     // Bubbles breaking the surface.
     for (var i = 0; i < 5; i++) {
       var life = (t * 0.8 + i / 5) % 1;
@@ -206,10 +201,11 @@
   }
 
   function bench(ctx) {
-    rect(ctx, 140, 94, 88, 6, L.bench);
-    rect(ctx, 140, 94, 88, 2, L.benchLit);
+    // Long enough that everything standing on it has a top under its feet.
+    rect(ctx, 140, 94, 98, 6, L.bench);
+    rect(ctx, 140, 94, 98, 2, L.benchLit);
     rect(ctx, 144, 100, 5, 18, L.benchDark);
-    rect(ctx, 219, 100, 5, 18, L.benchDark);
+    rect(ctx, 229, 100, 5, 18, L.benchDark);
     // Notes pinned over it, and a rack of empty tubes.
     rect(ctx, 156, 52, 22, 16, "#d8caa4");
     rect(ctx, 158, 56, 18, 1, L.benchDark);
@@ -271,29 +267,18 @@
     rect(ctx, 228, 78, 2, 12, L.ironLit);
     rect(ctx, 224, 90, 8, 6, L.glass);
     rect(ctx, 224, 93, 8, 3, L.fluidB);
-    // One drop falling on a loop.
-    var d = (t * 1.6) % 1;
-    rect(ctx, 228, 80 + d * 10, 2, 2, L.fluidB);
+    // One drop, followed the whole way: out along the arm, then down the
+    // pipe into the beaker, rather than appearing halfway.
+    var d = (t * 0.8) % 1;
+    if (d < 0.4) rect(ctx, 222 + (d / 0.4) * 6, 78, 2, 2, L.fluidB);
+    else rect(ctx, 228, 78 + ((d - 0.4) / 0.6) * 14, 2, 2, L.fluidB);
   }
 
-  // Crates and a barrel of stock on the left, and what got spilled.
-  function labProps(ctx, t) {
-    rect(ctx, 8, 92, 26, 26, L.bench);
-    rect(ctx, 8, 92, 26, 3, L.benchLit);
-    rect(ctx, 8, 102, 26, 2, L.benchDark);
-    rect(ctx, 8, 112, 26, 2, L.benchDark);
-    rect(ctx, 38, 100, 28, 18, L.benchDark);
-    rect(ctx, 38, 100, 28, 2, L.bench);
-    rect(ctx, 50, 100, 2, 18, L.bench);
-    // Mortar and pestle on the bench.
+  // Mortar and pestle, standing on the near end of the bench.
+  function labProps(ctx) {
     rect(ctx, 142, 86, 12, 8, L.iron);
     rect(ctx, 142, 86, 12, 2, L.glassDim);
     rect(ctx, 152, 80, 2, 8, L.bench);
-    // A spill on the floor that still has a shine on it.
-    rect(ctx, 62, 130, 34, 6, L.brewDim);
-    rect(ctx, 66, 128, 22, 2, L.brewDim);
-    rect(ctx, 70, 131, 10, 1, Math.sin(t * 3) > 0 ? L.brewLit : L.brew);
-    rect(ctx, 100, 138, 6, 3, L.brewDim);
   }
 
   // Spores of whatever is in the air, drifting up through the room.
@@ -312,7 +297,7 @@
     herbs(ctx);
     bench(ctx);
     floor(ctx, L.floor, L.floorDark, L.floorLine);
-    labProps(ctx, t);
+    labProps(ctx);
     cauldron(ctx, t);
     glassware(ctx, t);
     still(ctx, t);
