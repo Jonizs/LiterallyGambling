@@ -532,7 +532,8 @@
     forge: { label: "FORGE", short: "FORGE", panel: "forge" },
     lab: { label: "RESOURCE & EXPERIMENT", short: "LAB", panel: "lab" },
     enchant: { label: "ENCHANTING", short: "ENCHANT", panel: "enchant" },
-    awaken: { label: "AWAKEN", short: "AWAKEN", panel: "awaken" }
+    awaken: { label: "AWAKEN", short: "AWAKEN", panel: "awaken" },
+    polish: { label: "POLISH", short: "POLISH", panel: "polish" }
   };
   // Which room a panel belongs to, so opening it does not walk the smith out.
   var PANEL_ROOM = {};

@@ -466,6 +466,20 @@
     return out.toDataURL();
   }
 
-  global.Rooms = { banner: banner, draw: function (name, ctx, t) { ROOMS[name](ctx, t); },
-    has: function (name) { return !!ROOMS[name]; }, wipe: wipe };
+  // A room can also be written in its own file: hand in the draw call, the
+  // strip to cut its banner from, and it joins the rest.
+  function add(name, draw, cut) {
+    ROOMS[name] = draw;
+    BANNERS[name] = cut;
+  }
+
+  global.Rooms = {
+    banner: banner,
+    draw: function (name, ctx, t) { ROOMS[name](ctx, t); },
+    has: function (name) { return !!ROOMS[name]; },
+    add: add,
+    wipe: wipe,
+    // The shared shell every room is built on.
+    parts: { rect: rect, wall: wall, floor: floor, vignette: vignette }
+  };
 })(window);
