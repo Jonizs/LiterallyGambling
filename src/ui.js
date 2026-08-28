@@ -555,11 +555,14 @@
       function (btn) {
         var home = btn.dataset.home, here = at === home;
         var panel = ROOM_UI[home].panel, locked = panelLocked(panel);
-        btn.dataset.room = here ? "forge" : home;
-        btn.textContent = here ? "FORGE" : ROOM_UI[home].label;
-        btn.disabled = locked && !here;
-        btn.classList.toggle("locked", locked && !here);
-        if (locked && !here) {
+        // A workstation button always says where it goes; the one you are
+        // standing in is simply marked as where you are.
+        btn.dataset.room = home;
+        btn.textContent = ROOM_UI[home].label;
+        btn.classList.toggle("here", here);
+        btn.disabled = locked;
+        btn.classList.toggle("locked", locked);
+        if (locked) {
           btn.title = "Unlocks at smith level " + P.BUILDERS[panel].level + ".";
           btn.appendChild(P.el("span", "btn-lock",
             "LVL " + P.BUILDERS[panel].level));
@@ -576,6 +579,20 @@
     syncBoard();
   }
 
+  // The forge has no offscreen room of its own, so its banner is cut out of
+  // the scene canvas itself, once it has painted a frame.
+  function forgeBanner() {
+    var canvas = $("forge-canvas");
+    if (!canvas || !scene || scene.room !== "forge") return "";
+    var out = document.createElement("canvas");
+    out.width = 170;
+    out.height = 62;
+    var oc = out.getContext("2d");
+    oc.imageSmoothingEnabled = false;
+    oc.drawImage(canvas, 66, 34, 170, 62, 0, 0, 170, 62);
+    return out.toDataURL();
+  }
+
   // Each workstation button wears a cutout of its own room, darkened just
   // enough that the label still reads over it.
   function dressRoomButtons() {
@@ -583,7 +600,8 @@
     Array.prototype.forEach.call(
       document.querySelectorAll("[data-home]"),
       function (btn) {
-        var art = window.Rooms.banner(btn.dataset.home);
+        var art = btn.dataset.home === "forge"
+          ? forgeBanner() : window.Rooms.banner(btn.dataset.home);
         if (!art) return;
         btn.style.backgroundImage =
           "linear-gradient(rgba(8,4,2,.52), rgba(8,4,2,.52)), url(" + art + ")";
@@ -1071,7 +1089,6 @@
     renderBuffs();
     renderSlots();
     bindTooltip(document.querySelector(".xp-row"), xpTooltip);
-    dressRoomButtons();
     scene = new window.Forge(document.getElementById("forge-canvas"));
     scene.onSettled = syncBoard;
     syncShelf();
@@ -1084,6 +1101,8 @@
     Save.save(state);
     startClock();
     scene.start();
+    // One frame in, the forge is on the canvas and every banner can be cut.
+    requestAnimationFrame(function () { dressRoomButtons(); });
     if (!state.smith) askName();
   }
 
