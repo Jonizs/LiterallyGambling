@@ -510,14 +510,18 @@
     syncRoomButtons();
   }
 
-  // Which tab of a panel's strip is lit, so a redraw can tell that the
-  // player moved along the strip rather than just refreshed in place.
-  function tabIndex(root) {
-    var tabs = root.querySelectorAll(".tabs .tab");
-    for (var i = 0; i < tabs.length; i++) {
-      if (tabs[i].classList.contains("on")) return i;
-    }
-    return -1;
+  // Which tab is lit in each of a panel's strips, top strip first. A panel
+  // can carry more than one - the lab picks a side, then a section - and each
+  // is watched on its own.
+  function tabMarks(root) {
+    return Array.prototype.map.call(root.querySelectorAll(".tabs"),
+      function (strip) {
+        var tabs = strip.querySelectorAll(".tab");
+        for (var i = 0; i < tabs.length; i++) {
+          if (tabs[i].classList.contains("on")) return i;
+        }
+        return -1;
+      });
   }
 
   function drawPanel() {
@@ -525,15 +529,18 @@
     var panel = P.BUILDERS[view.panel];
     $("overlay-title").textContent = panel.title;
     var body = $("overlay-body");
-    var was = tabIndex(body);
+    var was = tabMarks(body);
     body.innerHTML = "";
     body.appendChild(panel.build(context()));
-    // Stepping right along the strip brings the new page in from the right,
-    // stepping left brings it in from the left.
-    var now = tabIndex(body);
-    if (was >= 0 && now >= 0 && now !== was) {
-      var page = body.firstElementChild;
-      if (page) page.classList.add(now > was ? "swipe-right" : "swipe-left");
+    // Stepping along any strip swipes what that strip governs: right for a
+    // step right, left for a step left. The strip itself stays put.
+    var now = tabMarks(body);
+    var strips = body.querySelectorAll(".tabs");
+    for (var i = 0; i < now.length && i < was.length; i++) {
+      if (was[i] < 0 || now[i] < 0 || now[i] === was[i]) continue;
+      var page = strips[i] && strips[i].parentElement;
+      if (page) page.classList.add(now[i] > was[i] ? "swipe-right" : "swipe-left");
+      break;
     }
     if (view.offer) view.offer.fresh = false;
   }
