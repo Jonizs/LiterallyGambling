@@ -185,13 +185,7 @@
     // Filled to the rim, and sitting level: only what comes off it moves.
     rect(ctx, x + 4, y + 4, 32, 4, L.brew);
     rect(ctx, x + 4, y + 4, 32, 1, L.brewLit);
-    // Bubbles breaking the surface, one colour the whole way up.
-    for (var i = 0; i < 5; i++) {
-      var life = (t * 0.8 + i / 5) % 1;
-      // Sitting on the surface at the start, never under it.
-      rect(ctx, x + 8 + i * 6, y + 2 - (life * 6 | 0), 2, 2, L.brewLit);
-    }
-    // Steam rising off it, likewise.
+    // Steam rising off it.
     for (var v = 0; v < 6; v++) {
       var sl = (t * 0.35 + v / 6) % 1;
       var sx = x + 8 + v * 5 + Math.sin(sl * 6 + v) * 4;
