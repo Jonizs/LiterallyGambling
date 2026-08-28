@@ -510,11 +510,13 @@
       this.drawAnvil();
       this.drawProps();
       if (global.Shelf) global.Shelf.draw(this.ctx, this.shelf, this.t);
+      // Embers drift out of the hearth behind the work, so they never float
+      // over the hammer. The strike's own sparks stay in front.
+      this.updateEmbers(dt);
+      this.drawEmbers();
       this.drawWorkpiece();
       this.drawHammer();
       this.drawIron();
-      this.updateEmbers(dt);
-      this.drawEmbers();
       this.drawSparks();
       // Warm light pooling in front of the forge.
       var grad = this.ctx.createRadialGradient(128, 100, 10, 128, 100, 120);
