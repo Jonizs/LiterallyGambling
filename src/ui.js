@@ -588,8 +588,10 @@
   function forgeBanner() {
     var canvas = $("forge-canvas");
     if (!canvas || !scene || scene.room !== "forge") return "";
-    // Straight down the hearth mouth: fire, coals and the lip under it.
-    var x = 70, y = 52, w = 116, h = 42;
+    // The working half of the forge, cut to the same shape as the other
+    // banners: the hearth mouth with the fire in it, the coal bed, and the
+    // anvil standing in front of it.
+    var x = 62, y = 56, w = 170, h = 62;
     var out = document.createElement("canvas");
     out.width = w;
     out.height = h;
