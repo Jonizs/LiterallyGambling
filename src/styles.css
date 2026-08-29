@@ -722,7 +722,8 @@ body {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  /* The bars sit above the fitting they came out of, not over it. */
+  transform: translate(-50%, -100%);
   z-index: 5;
   display: flex;
   flex-direction: column;

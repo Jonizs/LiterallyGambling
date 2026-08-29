@@ -972,9 +972,10 @@
   function showSpotBars(spot, choices) {
     var bars = $("spot-bars");
     bars.innerHTML = "";
-    // Centred on the fitting, in the scene's own 256x160 pixels.
+    // Over the middle of the fitting and clear above it, in the scene's own
+    // 256x160 pixels.
     bars.style.left = ((spot.x + spot.w / 2) / 256 * 100) + "%";
-    bars.style.top = ((spot.y + spot.h / 2) / 160 * 100) + "%";
+    bars.style.top = ((spot.y - 6) / 160 * 100) + "%";
     choices.forEach(function (choice) {
       var b = P.el("button", "spot-bar", choice.label);
       b.type = "button";
