@@ -211,10 +211,10 @@
     rect(ctx, 92, 100, 5, 18, L.benchDark);
     rect(ctx, 177, 100, 5, 18, L.benchDark);
     // Notes pinned over it, and a rack of empty tubes.
-    rect(ctx, 177, 44, 22, 16, "#d8caa4");
-    rect(ctx, 179, 48, 18, 1, L.benchDark);
-    rect(ctx, 179, 52, 14, 1, L.benchDark);
-    rect(ctx, 179, 56, 16, 1, L.benchDark);
+    rect(ctx, 165, 44, 22, 16, "#d8caa4");
+    rect(ctx, 167, 48, 18, 1, L.benchDark);
+    rect(ctx, 167, 52, 14, 1, L.benchDark);
+    rect(ctx, 167, 56, 16, 1, L.benchDark);
     rect(ctx, 200, 56, 30, 3, L.benchDark);
     for (var i = 0; i < 5; i++) rect(ctx, 202 + i * 6, 59, 3, 9, L.glass);
   }
