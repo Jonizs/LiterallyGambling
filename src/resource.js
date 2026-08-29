@@ -315,5 +315,6 @@
     return wrap;
   }
 
-  global.Resource = { build: build };
+  // The lab room opens this menu straight on the machine that was pressed.
+  global.Resource = { build: build, setTab: function (key) { resourceTab = key; } };
 })(window);

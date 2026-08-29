@@ -148,7 +148,8 @@
   };
 
   /* ---- the lab: the resource yard and the experiment bench in one room -----------------------------------------------
-     A workbench of glassware over a cauldron, everything faintly green. */
+     A workbench of glassware in the middle, crucibles on the left, the
+     smelting ovens on the right, everything faintly green. */
   var L = {
     wallDark: "#141c18", wallMid: "#1d2a22", wallLine: "#0e1512",
     floor: "#2c3128", floorDark: "#232720", floorLine: "#161a14",
@@ -159,11 +160,40 @@
     fluidA: "#d06fd0", fluidB: "#e8c14a", flame: "#ff9b3a"
   };
 
+  // Where the lab's machines stand. The hotspots below are cut from these,
+  // so what you can press is always what is drawn.
+  var OVEN_X = [192, 224];
+  var CRUCIBLE_X = [12, 40, 68];
+  var BOARD = { x: 8, y: 26, w: 68, h: 46 };
+  var BENCH = { x: 88, y: 68, w: 98, h: 50 };
+
+  // What each part of the lab opens. The click lands in room pixels.
+  function labHotspots() {
+    var spots = [{ key: "gather", x: BOARD.x, y: BOARD.y, w: BOARD.w, h: BOARD.h },
+      { key: "experiment", x: BENCH.x, y: BENCH.y, w: BENCH.w, h: BENCH.h }];
+    OVEN_X.forEach(function (x) {
+      spots.push({ key: "refine", x: x, y: 100, w: 30, h: 21 });
+    });
+    CRUCIBLE_X.forEach(function (x) {
+      spots.push({ key: "compound", x: x - 1, y: 90, w: 22, h: 31 });
+    });
+    return spots;
+  }
+
+  function labSpotAt(px, py) {
+    var spots = labHotspots();
+    for (var i = 0; i < spots.length; i++) {
+      var s = spots[i];
+      if (px >= s.x && px < s.x + s.w && py >= s.y && py < s.y + s.h) return s.key;
+    }
+    return null;
+  }
+
   function glassware(ctx, t) {
     // A row of flasks on the bench, each with a different brew in it.
     var fluids = [L.fluidA, L.brew, L.fluidB, L.fluidA];
     for (var i = 0; i < 4; i++) {
-      var x = 150 + i * 16, y = 78;
+      var x = 104 + i * 13, y = 78;
       rect(ctx, x + 2, y, 2, 6, L.glassDim);          // neck
       rect(ctx, x, y + 6, 6, 10, L.glass);            // body
       rect(ctx, x, y + 11, 6, 5, fluids[i]);          // what is in it
@@ -174,38 +204,19 @@
     }
   }
 
-  function cauldron(ctx, t) {
-    var x = 96, y = 88;
-    // Legs, belly, rim.
-    rect(ctx, x + 6, y + 26, 4, 6, L.iron);
-    rect(ctx, x + 30, y + 26, 4, 6, L.iron);
-    rect(ctx, x + 2, y + 6, 36, 22, L.iron);
-    rect(ctx, x + 2, y + 6, 36, 3, L.ironLit);
-    rect(ctx, x, y + 4, 40, 4, L.ironLit);
-    // Filled to the rim, and sitting level: only what comes off it moves.
-    rect(ctx, x + 4, y + 4, 32, 4, L.brew);
-    rect(ctx, x + 4, y + 4, 32, 1, L.brewLit);
-    // Steam rising off it.
-    for (var v = 0; v < 6; v++) {
-      var sl = (t * 0.35 + v / 6) % 1;
-      var sx = x + 8 + v * 5 + Math.sin(sl * 6 + v) * 4;
-      rect(ctx, sx, y - sl * 40, 2, 2, L.glassDim);
-    }
-  }
-
   function bench(ctx) {
     // Long enough that everything standing on it has a top under its feet.
-    rect(ctx, 140, 94, 98, 6, L.bench);
-    rect(ctx, 140, 94, 98, 2, L.benchLit);
-    rect(ctx, 144, 100, 5, 18, L.benchDark);
-    rect(ctx, 229, 100, 5, 18, L.benchDark);
+    rect(ctx, 88, 94, 98, 6, L.bench);
+    rect(ctx, 88, 94, 98, 2, L.benchLit);
+    rect(ctx, 92, 100, 5, 18, L.benchDark);
+    rect(ctx, 177, 100, 5, 18, L.benchDark);
     // Notes pinned over it, and a rack of empty tubes.
-    rect(ctx, 156, 52, 22, 16, "#d8caa4");
-    rect(ctx, 158, 56, 18, 1, L.benchDark);
-    rect(ctx, 158, 60, 14, 1, L.benchDark);
-    rect(ctx, 158, 64, 16, 1, L.benchDark);
-    rect(ctx, 190, 56, 30, 3, L.benchDark);
-    for (var i = 0; i < 5; i++) rect(ctx, 192 + i * 6, 59, 3, 9, L.glass);
+    rect(ctx, 104, 52, 22, 16, "#d8caa4");
+    rect(ctx, 106, 56, 18, 1, L.benchDark);
+    rect(ctx, 106, 60, 14, 1, L.benchDark);
+    rect(ctx, 106, 64, 16, 1, L.benchDark);
+    rect(ctx, 138, 56, 30, 3, L.benchDark);
+    for (var i = 0; i < 5; i++) rect(ctx, 140 + i * 6, 59, 3, 9, L.glass);
   }
 
   // The lab's board: OPERATIONS chalked across the top, working notes under it.
@@ -270,32 +281,33 @@
 
   // A still on the end of the bench, dripping into a beaker.
   function still(ctx, t) {
-    rect(ctx, 210, 74, 12, 12, L.iron);
-    rect(ctx, 210, 74, 12, 3, L.ironLit);
-    rect(ctx, 214, 68, 4, 6, L.iron);
+    rect(ctx, 158, 74, 12, 12, L.iron);
+    rect(ctx, 158, 74, 12, 3, L.ironLit);
+    rect(ctx, 162, 68, 4, 6, L.iron);
     // Condenser running down to the beaker.
-    rect(ctx, 222, 78, 8, 2, L.ironLit);
-    rect(ctx, 228, 78, 2, 12, L.ironLit);
-    rect(ctx, 224, 90, 8, 6, L.glass);
-    rect(ctx, 224, 93, 8, 3, L.fluidB);
+    rect(ctx, 170, 78, 8, 2, L.ironLit);
+    rect(ctx, 176, 78, 2, 12, L.ironLit);
+    rect(ctx, 172, 90, 8, 6, L.glass);
+    rect(ctx, 172, 93, 8, 3, L.fluidB);
     // One drop, followed the whole way: out along the arm, then down the
     // pipe into the beaker, rather than appearing halfway.
     var d = (t * 0.8) % 1;
-    if (d < 0.4) rect(ctx, 222 + (d / 0.4) * 6, 78, 2, 2, L.fluidB);
-    else rect(ctx, 228, 78 + ((d - 0.4) / 0.6) * 14, 2, 2, L.fluidB);
+    if (d < 0.4) rect(ctx, 170 + (d / 0.4) * 6, 78, 2, 2, L.fluidB);
+    else rect(ctx, 176, 78 + ((d - 0.4) / 0.6) * 14, 2, 2, L.fluidB);
   }
 
   // Mortar and pestle, standing on the near end of the bench.
   function labProps(ctx) {
-    rect(ctx, 142, 86, 12, 8, L.iron);
-    rect(ctx, 142, 86, 12, 2, L.glassDim);
-    rect(ctx, 152, 80, 2, 8, L.bench);
+    rect(ctx, 90, 86, 12, 8, L.iron);
+    rect(ctx, 90, 86, 12, 2, L.glassDim);
+    rect(ctx, 100, 80, 2, 8, L.bench);
   }
 
-  // The two smelting ovens, tucked under the bench. A burning one glows
+  // The two smelting ovens, standing clear of the bench on the right. A
+  // burning one glows
   // through its door and breathes.
   function ovens(ctx, t, lit) {
-    [160, 196].forEach(function (x, i) {
+    OVEN_X.forEach(function (x, i) {
       var on = !!(lit && lit[i]);
       rect(ctx, x, 100, 30, 18, L.iron);
       rect(ctx, x, 100, 30, 2, L.ironLit);
@@ -321,7 +333,7 @@
   // The three crucibles on the left, on their own stands. A cooking one
   // glows from the melt inside.
   function crucibles(ctx, t, lit) {
-    [12, 40, 68].forEach(function (x, i) {
+    CRUCIBLE_X.forEach(function (x, i) {
       var on = !!(lit && lit[i]);
       // Stand.
       rect(ctx, x + 2, 108, 3, 10, L.iron);
@@ -360,7 +372,6 @@
     labProps(ctx);
     ovens(ctx, t, work.ovens);
     crucibles(ctx, t, work.crucibles);
-    cauldron(ctx, t);
     glassware(ctx, t);
     still(ctx, t);
     var g = ctx.createRadialGradient(116, 96, 8, 116, 96, 110);
@@ -447,9 +458,9 @@
      canvas and a strip of it is handed back as an image, so a button wears
      the actual pixels of the place it walks you to. */
   var BANNERS = {
-    // A low band across the lab: the cauldron's brew on the left, the bench
-    // top and what is standing on it running off to the right.
-    lab:     { x: 60,  y: 86, w: 196, h: 32 },
+    // A low band across the lab: the crucibles on the left, the bench top
+    // and what is standing on it, and the ovens off to the right.
+    lab:     { x: 20,  y: 86, w: 220, h: 32 },
     enchant: { x: 76,  y: 42, w: 170, h: 62 }    // the table and its book
   };
 
@@ -488,6 +499,8 @@
     add: add,
     wipe: wipe,
     anyStyle: anyStyle,
+    // Which of the lab's machines a click in the room lands on.
+    labSpotAt: labSpotAt,
     // The shared shell every room is built on.
     parts: { rect: rect, wall: wall, floor: floor, vignette: vignette }
   };

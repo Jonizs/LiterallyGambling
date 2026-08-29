@@ -492,7 +492,10 @@
     options: { title: "Options", build: optionsPanel }
   };
 
-  global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, costLine: costLine,
+  // Pressing a machine in the lab picks the side of the menu it belongs to.
+  function setLabSide(key) { labSide = key; }
+
+  global.Panels = { BUILDERS: BUILDERS, setLabSide: setLabSide, itemLine: itemLine, costLine: costLine,
     recipeStats: recipeStats, partsTab: partsTab, batchGroup: batchGroup,
     el: el, button: button };
 })(window);

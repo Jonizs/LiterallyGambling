@@ -690,9 +690,10 @@
         else btn.removeAttribute("title");
       }
     );
-    // At the forge the anvil is the way in, so the tab has nothing to say.
+    // At the forge the anvil is the way in, and in the lab the machines are,
+    // so neither room needs a tab.
     var menu = $("scene-btn");
-    menu.hidden = at === "forge";
+    menu.hidden = at === "forge" || at === "lab";
     menu.dataset.panel = ROOM_UI[at].panel;
     // renderPanelButtons redraws from the cached label, so move that too.
     menu.dataset.label = ROOM_UI[at].short;
@@ -936,14 +937,40 @@
     return scene.anvilAt(at.x, at.y);
   }
 
+  // The lab has no menu button: the board, the ovens, the crucibles and the
+  // bench are each pressed for the part of the menu they do.
+  var LAB_SPOTS = {
+    gather: { side: "resource", tab: "gather" },
+    refine: { side: "resource", tab: "refine" },
+    compound: { side: "resource", tab: "compound" },
+    experiment: { side: "experiment" }
+  };
+
+  function labSpotUnder(ev) {
+    if (!scene || scene.room !== "lab" || scene.wipe) return null;
+    if (view.replacing || view.panel || view.shown) return null;
+    if (panelLocked("lab")) return null;
+    var at = scenePoint(ev);
+    return window.Rooms.labSpotAt(at.x, at.y);
+  }
+
+  function openLabSpot(key) {
+    var spot = LAB_SPOTS[key];
+    if (!spot) return;
+    P.setLabSide(spot.side);
+    if (spot.tab) window.Resource.setTab(spot.tab);
+    openPanel("lab");
+  }
+
   // The slot under the pointer lights up while a pick is waiting.
   function sceneMove(ev) {
     if (!scene) return;
     var slot = view.replacing ? slotUnder(ev) : -1;
     scene.shelf.hover = slot;
     scene.anvilHover = anvilUnder(ev);
+    var machine = !!labSpotUnder(ev);
     $("forge-canvas").style.cursor =
-      slot >= 0 || scene.anvilHover ? "pointer" : "";
+      slot >= 0 || scene.anvilHover || machine ? "pointer" : "";
   }
 
   function sceneLeave() {
@@ -960,7 +987,9 @@
       if (slot >= 0) replaceAt(slot);
       return;
     }
-    if (anvilUnder(ev)) openPanel("forge");
+    if (anvilUnder(ev)) { openPanel("forge"); return; }
+    var spot = labSpotUnder(ev);
+    if (spot) openLabSpot(spot);
   }
 
   // --- resource yard ------------------------------------------------------
