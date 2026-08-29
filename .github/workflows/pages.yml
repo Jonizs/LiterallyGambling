@@ -29,6 +29,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # Stamp every script and stylesheet with the commit it came from, so a
+      # browser can never serve yesterday's CSS against today's HTML.
+      - name: Cache-bust assets
+        run: |
+          sed -i "s/\.\(css\|js\)\"/.\1?v=${GITHUB_SHA::8}\"/g" src/index.html
+          grep -c "?v=" src/index.html
       # The game is plain static files, so src/ ships as the site root and
       # index.html is what a visitor lands on.
       - uses: actions/upload-pages-artifact@v3
