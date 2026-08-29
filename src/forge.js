@@ -262,8 +262,8 @@
     // Handle: a line of pixels from the grip out to the head.
     for (var d = 4; d < HEAD_DIST - HEAD_LONG; d++) {
       var sx = pivotX + ux * d, sy = pivotY + uy * d;
-      for (var v = -1; v <= 1; v++) {
-        var shade = v < 0 ? "#6f4823" : v > 0 ? PALETTE.woodDark : PALETTE.wood;
+      for (var v = -1; v <= 0; v++) {
+        var shade = v < 0 ? "#6f4823" : PALETTE.wood;
         // 2x2 rather than single pixels: at an angle the rounded positions
         // leave gaps between them and the tool goes see-through.
         this.rect(Math.round(sx - uy * v), Math.round(sy + ux * v), 2, 2, shade);
