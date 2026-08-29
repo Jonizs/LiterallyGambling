@@ -1017,11 +1017,11 @@ body {
 }
 /* Each room's wall, for the frame around its cutout. */
 /* A shade up from the wall itself, so the frame reads against the cutout. */
-.wood-btn[data-home="forge"]   { --room-edge: #4b3934; }
-.wood-btn[data-home="lab"]     { --room-edge: #33493c; }
-.wood-btn[data-home="enchant"] { --room-edge: #3e3155; }
-.wood-btn[data-home="polish"]  { --room-edge: #554025; }
-.wood-btn[data-home="awaken"]  { --room-edge: #2c2f42; }
+.wood-btn[data-home="forge"]   { --room-edge: #6a5148; }
+.wood-btn[data-home="lab"]     { --room-edge: #4a6a57; }
+.wood-btn[data-home="enchant"] { --room-edge: #594779; }
+.wood-btn[data-home="polish"]  { --room-edge: #785b35; }
+.wood-btn[data-home="awaken"]  { --room-edge: #414660; }
 
 /* Where the smith is standing right now. */
 .wood-btn[data-home].here {
