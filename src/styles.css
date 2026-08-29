@@ -730,19 +730,19 @@ body {
   gap: var(--gap-xs);
   align-items: stretch;
 }
-/* Bare words in the air, not buttons: the pointers either side are all the
-   frame they get. */
+/* Framed bars, lit like the table they came out of. */
 .spot-bar {
   font-family: var(--font);
   font-size: clamp(14px, calc(2 * var(--s)), 46px);
   letter-spacing: 2px;
   white-space: nowrap;
-  padding: var(--gap-xs) 1.4em;
-  color: var(--gold-lit);
-  text-shadow: 1px 1px 0 #000, 0 0 10px rgba(154,95,208,.75);
-  background: none;
-  border: 0;
-  box-shadow: none;
+  padding: var(--gap-xs) calc(var(--pad-x) * 1.6);
+  color: var(--page, #f4e3c1);
+  text-shadow: 1px 1px 0 #000;
+  background: linear-gradient(180deg, #4a2f6a, #2a1a3f);
+  border: 3px solid var(--gold);
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.45), 0 3px 0 #000,
+              0 0 14px rgba(154,95,208,.5);
   cursor: pointer;
   position: relative;
   animation: spotBarOut .22s ease-out both;
@@ -752,7 +752,10 @@ body {
 /* The pointers only turn up under the pointer, blinking, the same way the
    sidebar buttons mark themselves. */
 @media (hover: hover) {
-  .spot-bar:hover { color: #fff2c0; }
+  .spot-bar:hover {
+    color: #fff2c0;
+    background: linear-gradient(180deg, #654093, #3a2557);
+  }
   .spot-bar:hover::before, .spot-bar:hover::after {
     position: absolute;
     top: 50%;
@@ -763,8 +766,8 @@ body {
     pointer-events: none;
     animation: pickBlink .62s steps(1) infinite;
   }
-  .spot-bar:hover::before { content: ">"; left: 0; }
-  .spot-bar:hover::after { content: "<"; right: 0; }
+  .spot-bar:hover::before { content: ">"; left: .4em; }
+  .spot-bar:hover::after { content: "<"; right: .4em; }
 }
 .spot-bar:active { transform: translateY(2px); }
 @keyframes spotBarOut {
