@@ -163,7 +163,7 @@
   // Where the lab's machines stand. The hotspots below are cut from these,
   // so what you can press is always what is drawn.
   var OVEN_X = [192, 224];
-  var CRUCIBLE_X = [12, 40, 68];
+  var CRUCIBLE_X = [6, 34, 62];
   var BOARD = { x: 8, y: 26, w: 68, h: 46 };
   var BENCH = { x: 88, y: 68, w: 98, h: 50 };
 
