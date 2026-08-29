@@ -734,7 +734,7 @@ body {
    frame they get. */
 .spot-bar {
   font-family: var(--font);
-  font-size: clamp(11px, calc(1.5 * var(--s)), 34px);
+  font-size: clamp(14px, calc(2 * var(--s)), 46px);
   letter-spacing: 2px;
   white-space: nowrap;
   padding: var(--gap-xs) 1.4em;
