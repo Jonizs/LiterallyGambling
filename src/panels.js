@@ -466,6 +466,9 @@
     enchant: { title: "Enchant", build: function (ctx) {
       return global.Enchant.build(ctx);
     }, level: 4 },
+    revitalize: { title: "Revitalize", build: function (ctx) {
+      return global.Enchant.revitalise(ctx);
+    }, level: 4 },
     upgrades: { title: "Upgrades", build: upgradesPanel },
     // The lab's own entry is what gates the room; its machines are the menus.
     lab: { title: "Resource & Experiment", build: experimentPanel, level: 2 },

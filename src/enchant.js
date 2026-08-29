@@ -1,4 +1,4 @@
-/* The enchant bench: the odds on the table, the offer, and reforging. */
+/* The enchant bench: the odds on the table, the offer, and revitalising. */
 (function (global) {
   "use strict";
 
@@ -67,7 +67,7 @@
     go.title = !chosen.length ? "Pick at least one enchant."
       : ctx.state.silver < cost
         ? "Short " + (cost - ctx.state.silver) + " silver."
-        : "The next reforge of this piece costs " +
+        : "The next revitalise of this piece costs " +
           Math.round(cost * E.REFORGE_GROWTH) + ".";
     actions.appendChild(go);
     actions.appendChild(button("CANCEL", "mini-btn", function () {
@@ -151,15 +151,6 @@
 
     var items = ctx.state.inventory;
 
-    // A piece being picked over holds the panel until it is done.
-    if (reforgeId !== null) {
-      var picking = items.filter(function (entry) {
-        return entry.id === reforgeId && entry.enchants.length;
-      })[0];
-      if (picking) return reforgeMenu(ctx, picking);
-      endReforge();
-    }
-
     if (!items.length) {
       wrap.appendChild(el("p", "empty", "Nothing on the rack to enchant yet."));
       if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
@@ -195,20 +186,6 @@
       }
       group.appendChild(b);
 
-      // Strip what is on it and start over, dearer every time.
-      if (item.enchants.length) {
-        var price = E.reforgeCost(item);
-        var again = button("REFORGE " + price, "mini-btn", function () {
-          startReforge(item.id);
-          ctx.refresh();
-        });
-        again.disabled = ctx.state.silver < price;
-        again.title = ctx.state.silver < price
-          ? "Short " + (price - ctx.state.silver) + " silver."
-          : "Pick which enchants come off. The next reforge of this piece " +
-            "costs " + Math.round(price * E.REFORGE_GROWTH) + ".";
-        group.appendChild(again);
-      }
       row.appendChild(group);
       rows.appendChild(row);
     });
@@ -217,5 +194,54 @@
     return wrap;
   }
 
-  global.Enchant = { build: build };
+  // The table's second bar: strip what is already on a piece and start over,
+  // dearer every time.
+  function revitalise(ctx) {
+    var wrap = el("div");
+    var items = ctx.state.inventory.filter(function (entry) {
+      return entry.enchants.length;
+    });
+
+    // A piece being picked over holds the menu until it is done.
+    if (reforgeId !== null) {
+      var picking = items.filter(function (entry) {
+        return entry.id === reforgeId;
+      })[0];
+      if (picking) return reforgeMenu(ctx, picking);
+      endReforge();
+    }
+
+    if (!items.length) {
+      wrap.appendChild(el("p", "empty", "Nothing on the rack is enchanted yet."));
+      if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+      return wrap;
+    }
+
+    wrap.appendChild(el("p", null,
+      "Take enchants back off a piece and free their slots to be rolled " +
+      "again. Every revitalise of the same piece costs more than the last."));
+
+    var rows = el("div", "rows");
+    items.forEach(function (item) {
+      var row = el("div", "row");
+      row.appendChild(itemLine(item));
+      var price = E.reforgeCost(item);
+      var again = button("REVITALIZE " + price, "mini-btn", function () {
+        startReforge(item.id);
+        ctx.refresh();
+      });
+      again.disabled = ctx.state.silver < price;
+      again.title = ctx.state.silver < price
+        ? "Short " + (price - ctx.state.silver) + " silver."
+        : "Pick which enchants come off. The next revitalise of this piece " +
+          "costs " + Math.round(price * E.REFORGE_GROWTH) + ".";
+      row.appendChild(again);
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+    return wrap;
+  }
+
+  global.Enchant = { build: build, revitalise: revitalise };
 })(window);

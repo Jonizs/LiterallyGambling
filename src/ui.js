@@ -528,6 +528,7 @@
     // coming up off the floor, so it steps over instead.
     var swapping = !$("overlay").hidden && view.panel && view.panel !== key;
     cancelPending();
+    hideSpotBars();
     if (scene) scene.machineHover = null;
     view.panel = key;
     view.notice = "";
@@ -745,6 +746,7 @@
 
   function walkTo(room) {
     if (!scene) return;
+    hideSpotBars();
     if (panelLocked(ROOM_UI[room].panel)) return;
     cancelPending();
     if (view.panel) closePanel();
@@ -952,7 +954,47 @@
     return spot;
   }
 
+  // A fitting that does more than one job does not open a menu itself: it
+  // slides its choices out of the furniture and waits.
+  var SPOT_BARS = {
+    enchant: [
+      { panel: "enchant", label: "ENCHANT" },
+      { panel: "revitalize", label: "REVITALIZE" }
+    ]
+  };
+
+  function hideSpotBars() {
+    var bars = $("spot-bars");
+    bars.hidden = true;
+    bars.innerHTML = "";
+  }
+
+  function showSpotBars(spot, choices) {
+    var bars = $("spot-bars");
+    bars.innerHTML = "";
+    // Centred on the fitting, in the scene's own 256x160 pixels.
+    bars.style.left = ((spot.x + spot.w / 2) / 256 * 100) + "%";
+    bars.style.top = ((spot.y + spot.h / 2) / 160 * 100) + "%";
+    choices.forEach(function (choice) {
+      var b = P.el("button", "spot-bar", choice.label);
+      b.type = "button";
+      b.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        hideSpotBars();
+        view.machine = spot.index || 0;
+        openPanel(choice.panel);
+      });
+      bars.appendChild(b);
+    });
+    bars.hidden = false;
+  }
+
   function openRoomSpot(spot) {
+    var choices = SPOT_BARS[spot.key];
+    if (choices) {
+      showSpotBars(spot, choices);
+      return;
+    }
     if (!P.BUILDERS[spot.key]) return;
     view.machine = spot.index || 0;
     openPanel(spot.key);
@@ -979,6 +1021,7 @@
 
   // A click means the shelf while a pick is waiting, and the anvil otherwise.
   function sceneClick(ev) {
+    hideSpotBars();
     if (view.replacing) {
       var slot = slotUnder(ev);
       if (slot >= 0) replaceAt(slot);
@@ -1235,6 +1278,7 @@
     document.addEventListener("keydown", function (ev) {
       if (ev.key === "Escape") {
         cancelReplace();
+        hideSpotBars();
         closePanel(); closeResult(); closeDiscovery(); hideTooltip();
       }
     });
