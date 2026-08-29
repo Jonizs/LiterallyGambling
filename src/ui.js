@@ -965,16 +965,33 @@
 
   // Which fitting the bars belong to, so pressing it again puts them away.
   var barsFor = null;
+  var barsClosing = null;
+  var BARS_CLOSE_MS = 220;
 
+  // They fold back into the furniture before they are taken off screen; as
+  // far as the game is concerned they are gone the moment this is called.
   function hideSpotBars() {
     var bars = $("spot-bars");
-    bars.hidden = true;
-    bars.innerHTML = "";
     barsFor = null;
+    clearTimeout(barsClosing);
+    if (bars.hidden || !bars.firstChild) {
+      bars.hidden = true;
+      bars.innerHTML = "";
+      return;
+    }
+    bars.classList.add("closing");
+    barsClosing = setTimeout(function () {
+      bars.hidden = true;
+      bars.innerHTML = "";
+      bars.classList.remove("closing");
+    }, BARS_CLOSE_MS);
   }
 
   function showSpotBars(spot, choices) {
     var bars = $("spot-bars");
+    // A fresh set cuts short any fold still on its way out.
+    clearTimeout(barsClosing);
+    bars.classList.remove("closing");
     bars.innerHTML = "";
     // Over the middle of the fitting and clear above it, in the scene's own
     // 256x160 pixels.

@@ -755,7 +755,17 @@ body {
   from { opacity: 0; transform: translateY(14px) scaleY(.6); }
   to { opacity: 1; transform: none; }
 }
-@media (prefers-reduced-motion: reduce) { .spot-bar { animation: none; } }
+/* Going away they fold back down into the furniture, last bar first. */
+.spot-bars.closing .spot-bar { animation: spotBarIn .17s ease-in both; }
+.spot-bars.closing .spot-bar:nth-child(1) { animation-delay: .05s; }
+.spot-bars.closing .spot-bar:nth-child(2) { animation-delay: 0s; }
+@keyframes spotBarIn {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(14px) scaleY(.6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spot-bar, .spot-bars.closing .spot-bar { animation: none; }
+}
 
 /* ---------- queued strike ---------- */
 .strike-btn {
