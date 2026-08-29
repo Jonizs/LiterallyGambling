@@ -304,6 +304,14 @@
   // The button keeps its space in the column so nothing shifts when a
   // strike is queued; it is only made visible and clickable. Anything laid
   // over the scene — a panel or the result card — hides it again.
+  // Anything the smith does other than swinging - opening a menu, walking to
+  // another workstation - takes the queued piece back off the anvil.
+  function cancelPending() {
+    if (!view.pending || view.striking) return;
+    view.pending = null;
+    renderStrike();
+  }
+
   function renderStrike() {
     var btn = $("strike-btn");
     var ready = !!view.pending && !view.striking && !view.panel && !view.shown;
@@ -503,6 +511,7 @@
     // Swapping one open menu for another is its own move: the card is not
     // coming up off the floor, so it steps over instead.
     var swapping = !$("overlay").hidden && view.panel && view.panel !== key;
+    cancelPending();
     view.panel = key;
     view.notice = "";
     hideTooltip();
@@ -718,6 +727,7 @@
   function walkTo(room) {
     if (!scene) return;
     if (panelLocked(ROOM_UI[room].panel)) return;
+    cancelPending();
     if (view.panel) closePanel();
     scene.setRoom(room);
     syncRoomButtons();
