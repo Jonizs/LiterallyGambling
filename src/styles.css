@@ -266,7 +266,11 @@ body {
   box-shadow: inset 0 0 0 2px rgba(0,0,0,.45), 0 3px 0 #000;
   cursor: pointer;
 }
-@media (hover: hover) { .wood-btn:hover { background: linear-gradient(180deg, #8a5a30, var(--wood-lit)); } }
+@media (hover: hover) {
+  .wood-btn:hover:not(:disabled):not(.locked) {
+    background: linear-gradient(180deg, #8a5a30, var(--wood-lit));
+  }
+}
 .wood-btn:active { transform: translateY(2px); box-shadow: inset 0 0 0 2px rgba(0,0,0,.45), 0 1px 0 #000; }
 .wood-btn.wide { width: 100%; }
 .wood-btn.small { font-size: clamp(10px, calc(1.45 * var(--s)), 35px); letter-spacing: 1px; }
@@ -276,9 +280,8 @@ body {
   cursor: not-allowed;
   border-color: var(--gold-dark);
 }
-@media (hover: hover) { .wood-btn:disabled:hover { background:
-  repeating-linear-gradient(180deg, rgba(0,0,0,.14) 0 3px, rgba(255,255,255,.03) 3px 6px),
-  linear-gradient(180deg, var(--wood-lit), var(--wood)); } }
+/* A locked button never answers the pointer: the hover above skips it, so it
+   keeps whatever it is wearing - wood, or its room's cutout. */
 .wood-btn:disabled:active { transform: none; }
 /* The level requirement rides on the same line as the name. */
 .btn-lock {
