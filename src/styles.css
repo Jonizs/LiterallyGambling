@@ -730,25 +730,41 @@ body {
   gap: var(--gap-xs);
   align-items: stretch;
 }
+/* Bare words in the air, not buttons: the pointers either side are all the
+   frame they get. */
 .spot-bar {
   font-family: var(--font);
   font-size: clamp(11px, calc(1.5 * var(--s)), 34px);
   letter-spacing: 2px;
   white-space: nowrap;
-  padding: var(--gap-xs) calc(var(--pad-x) * 1.6);
-  color: var(--page, #f4e3c1);
-  text-shadow: 1px 1px 0 #000;
-  background: linear-gradient(180deg, #4a2f6a, #2a1a3f);
-  border: 3px solid var(--gold);
-  box-shadow: inset 0 0 0 2px rgba(0,0,0,.45), 0 3px 0 #000,
-              0 0 14px rgba(154,95,208,.5);
+  padding: var(--gap-xs) 1.4em;
+  color: var(--gold-lit);
+  text-shadow: 1px 1px 0 #000, 0 0 10px rgba(154,95,208,.75);
+  background: none;
+  border: 0;
+  box-shadow: none;
   cursor: pointer;
+  position: relative;
   animation: spotBarOut .22s ease-out both;
 }
+.spot-bar::before, .spot-bar::after {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: .95em;
+  color: var(--gold-lit);
+  pointer-events: none;
+}
+.spot-bar::before { content: ">"; left: 0; }
+.spot-bar::after { content: "<"; right: 0; }
 .spot-bar:nth-child(1) { animation-delay: 0s; }
 .spot-bar:nth-child(2) { animation-delay: .07s; }
 @media (hover: hover) {
-  .spot-bar:hover { background: linear-gradient(180deg, #654093, #3a2557); }
+  .spot-bar:hover { color: #fff2c0; }
+  .spot-bar:hover::before, .spot-bar:hover::after {
+    color: #fff2c0;
+    animation: pickBlink .62s steps(1) infinite;
+  }
 }
 .spot-bar:active { transform: translateY(2px); }
 @keyframes spotBarOut {
