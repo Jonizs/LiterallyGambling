@@ -39,6 +39,16 @@
     compound: "Bind bars into alloys, poured one at a time."
   };
 
+  // A machine cell: its icon down the left, everything else stacked to the
+  // right of it. The caller fills the body.
+  function machineCell(iconName, lit) {
+    var cell = el("div", "crucible" + (lit ? " lit" : ""));
+    cell.appendChild(global.Icons.make(iconName, "icon"));
+    var body = el("div", "crucible-main");
+    cell.appendChild(body);
+    return { cell: cell, body: body };
+  }
+
   function gatherTab(ctx, wrap) {
     var Ga = global.Gather;
     var state = ctx.state;
@@ -124,14 +134,14 @@
     [index].forEach(function (index) {
       {
         var job = Re.slot(state, index);
-        var cell = el("div", "crucible" + (job ? " lit" : ""));
-        cell.appendChild(global.Icons.make(job ? "oven-lit" : "oven", "icon"));
+        var made = machineCell(job ? "oven-lit" : "oven", !!job);
+        var cell = made.cell, body = made.body;
         if (!job) {
-          cell.appendChild(el("div", "row-title", "Oven " + (index + 1)));
-          cell.appendChild(el("div", "muted", "Out"));
+          body.appendChild(el("div", "row-title", "Oven " + (index + 1)));
+          body.appendChild(el("div", "muted", "Out"));
         } else {
-          cell.appendChild(el("div", "row-title", job.ore.label));
-          cell.appendChild(el("div", "muted",
+          body.appendChild(el("div", "row-title", job.ore.label));
+          body.appendChild(el("div", "muted",
             (job.qty - job.taken) + " left \u00b7 next " +
             Ga.clockText(Re.remaining(state, index))));
           var group = el("div", "btn-group");
@@ -146,8 +156,8 @@
             ? "Drops the " + queued + " still queued; the one burning finishes."
             : "Nothing queued behind this one.";
           group.appendChild(halt);
-          cell.appendChild(group);
-          cell.appendChild(rushButton(Re.rushCost(state, index), state.silver,
+          body.appendChild(group);
+          body.appendChild(rushButton(Re.rushCost(state, index), state.silver,
             function () { ctx.rushRefine(index); }));
         }
         kit.appendChild(cell);
@@ -208,17 +218,17 @@
     [index].forEach(function (index) {
       {
         var job = Co.slot(state, index);
-        var cell = el("div", "crucible" + (job ? " lit" : ""));
-        cell.appendChild(global.Icons.make(job ? "crucible-lit" : "crucible", "icon"));
+        var made = machineCell(job ? "crucible-lit" : "crucible", !!job);
+        var cell = made.cell, body = made.body;
         if (!job) {
-          cell.appendChild(el("div", "row-title", "Crucible " + (index + 1)));
-          cell.appendChild(el("div", "muted", "Cold"));
+          body.appendChild(el("div", "row-title", "Crucible " + (index + 1)));
+          body.appendChild(el("div", "muted", "Cold"));
         } else {
           var lit = el("div", "row-title");
           lit.appendChild(alloyIcon(job.alloy, "icon tiny"));
           lit.appendChild(el("span", null, job.alloy.name.replace(" Alloy", "")));
-          cell.appendChild(lit);
-          cell.appendChild(el("div", "muted",
+          body.appendChild(lit);
+          body.appendChild(el("div", "muted",
             (job.qty - job.taken) + " left \u00b7 next " +
             Ga.clockText(Co.remaining(state, index))));
           var pour = el("div", "btn-group");
@@ -233,8 +243,8 @@
             ? "Drops the " + queued + " still queued; the one cooking finishes."
             : "Nothing queued behind this one.";
           pour.appendChild(halt);
-          cell.appendChild(pour);
-          cell.appendChild(rushButton(Co.rushCost(state, index), state.silver,
+          body.appendChild(pour);
+          body.appendChild(rushButton(Co.rushCost(state, index), state.silver,
             function () { ctx.rushCompound(index); }));
         }
         slots.appendChild(cell);
