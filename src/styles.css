@@ -747,24 +747,24 @@ body {
   position: relative;
   animation: spotBarOut .22s ease-out both;
 }
-.spot-bar::before, .spot-bar::after {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: .95em;
-  color: var(--gold-lit);
-  pointer-events: none;
-}
-.spot-bar::before { content: ">"; left: 0; }
-.spot-bar::after { content: "<"; right: 0; }
 .spot-bar:nth-child(1) { animation-delay: 0s; }
 .spot-bar:nth-child(2) { animation-delay: .07s; }
+/* The pointers only turn up under the pointer, blinking, the same way the
+   sidebar buttons mark themselves. */
 @media (hover: hover) {
   .spot-bar:hover { color: #fff2c0; }
   .spot-bar:hover::before, .spot-bar:hover::after {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: .95em;
     color: #fff2c0;
+    text-shadow: 1px 1px 0 #000;
+    pointer-events: none;
     animation: pickBlink .62s steps(1) infinite;
   }
+  .spot-bar:hover::before { content: ">"; left: 0; }
+  .spot-bar:hover::after { content: "<"; right: 0; }
 }
 .spot-bar:active { transform: translateY(2px); }
 @keyframes spotBarOut {
