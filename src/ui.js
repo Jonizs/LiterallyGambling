@@ -613,7 +613,8 @@
     if (board.hidden) {
       boardTimer = setTimeout(function () {
         boardTimer = null;
-        syncBoard();
+        var still = scene && scene.room === "forge" && !scene.wipe && !view.panel;
+        if (still) board.hidden = false;
       }, 260);
       return;
     }
