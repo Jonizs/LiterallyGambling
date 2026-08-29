@@ -96,8 +96,9 @@
   }
 
   // The table itself: an obsidian block under a purple cloth, open book on top.
+  var TABLE = { x: 104, y: 92 };
   function table(ctx, t) {
-    var x = 104, y = 92;
+    var x = TABLE.x, y = TABLE.y;
     rect(ctx, x, y + 20, 48, 22, P.obsidian);
     rect(ctx, x, y + 20, 48, 2, P.obsidianLit);
     rect(ctx, x + 4, y + 42, 40, 4, P.obsidian);
@@ -180,8 +181,19 @@
     return spots;
   }
 
-  function labSpotAt(px, py) {
-    var spots = labHotspots();
+  // The enchanting table is the only thing to press in its room.
+  function enchantHotspots() {
+    return [{ key: "enchant", x: TABLE.x - 4, y: TABLE.y - 4,
+      w: 56, h: 50 }];
+  }
+
+  var HOTSPOTS = { lab: labHotspots, enchant: enchantHotspots };
+
+  function hasSpots(room) { return !!HOTSPOTS[room]; }
+
+  function spotAt(room, px, py) {
+    if (!HOTSPOTS[room]) return null;
+    var spots = HOTSPOTS[room]();
     for (var i = 0; i < spots.length; i++) {
       var s = spots[i];
       if (px >= s.x && px < s.x + s.w && py >= s.y && py < s.y + s.h) return s;
@@ -499,9 +511,10 @@
     add: add,
     wipe: wipe,
     anyStyle: anyStyle,
-    // Which of the lab's machines a click in the room lands on: the whole
-  // hotspot, so the scene can bracket the one under the pointer.
-    labSpotAt: labSpotAt,
+    // Which fitting in a room a click lands on: the whole hotspot, so the
+    // scene can bracket the one under the pointer.
+    spotAt: spotAt,
+    hasSpots: hasSpots,
     // The shared shell every room is built on.
     parts: { rect: rect, wall: wall, floor: floor, vignette: vignette }
   };
