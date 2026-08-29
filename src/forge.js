@@ -48,6 +48,7 @@
     // What the other rooms need to know: which ovens and crucibles are lit.
     this.work = { ovens: [], crucibles: [] };
     this.anvilHover = false;  // the pointer is over the anvil
+    this.machineHover = null; // the lab hotspot under the pointer, if any
     this.wipe = null;     // the pixel dissolve mid-swap
   }
 
@@ -431,6 +432,20 @@
     }
   };
 
+  // The lab's machines get the same bracket and blinking chevrons the anvil
+  // wears, so what can be pressed reads the same in either room.
+  Forge.prototype.drawMachineHover = function () {
+    var box = this.machineHover;
+    if (!box || this.wipe) return;
+    var arm = Math.min(8, Math.min(box.w, box.h) / 3 | 0);
+    this.corners(box.x - 1, box.y - 1, box.w + 2, box.h + 2, arm, "#ffd76a");
+    if ((this.t * 1.6) % 1 < 0.55) {
+      var cy = box.y + (box.h / 2 | 0);
+      this.chevron(box.x - 11, cy, 1);
+      this.chevron(box.x + box.w + 11, cy, -1);
+    }
+  };
+
   // Four corner brackets round a box: two arms each, nothing in between.
   Forge.prototype.corners = function (x, y, w, h, arm, color) {
     var r = x + w - 2, b = y + h - 2;
@@ -573,6 +588,7 @@
       this.ctx.fillRect(0, H - 6, W, 6);
     } else {
       global.Rooms.draw(this.room, this.ctx, this.t, this.work);
+      this.drawMachineHover();
     }
     this.updateWipe(dt);
     if (this.wipe) {

@@ -527,6 +527,7 @@
     // coming up off the floor, so it steps over instead.
     var swapping = !$("overlay").hidden && view.panel && view.panel !== key;
     cancelPending();
+    if (scene) scene.machineHover = null;
     view.panel = key;
     view.notice = "";
     hideTooltip();
@@ -968,15 +969,16 @@
     var slot = view.replacing ? slotUnder(ev) : -1;
     scene.shelf.hover = slot;
     scene.anvilHover = anvilUnder(ev);
-    var machine = !!labSpotUnder(ev);
+    scene.machineHover = labSpotUnder(ev);
     $("forge-canvas").style.cursor =
-      slot >= 0 || scene.anvilHover || machine ? "pointer" : "";
+      slot >= 0 || scene.anvilHover || scene.machineHover ? "pointer" : "";
   }
 
   function sceneLeave() {
     if (!scene) return;
     scene.shelf.hover = -1;
     scene.anvilHover = false;
+    scene.machineHover = null;
     $("forge-canvas").style.cursor = "";
   }
 
@@ -989,7 +991,7 @@
     }
     if (anvilUnder(ev)) { openPanel("forge"); return; }
     var spot = labSpotUnder(ev);
-    if (spot) openLabSpot(spot);
+    if (spot) openLabSpot(spot.key);
   }
 
   // --- resource yard ------------------------------------------------------

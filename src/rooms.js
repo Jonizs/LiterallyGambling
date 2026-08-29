@@ -184,7 +184,7 @@
     var spots = labHotspots();
     for (var i = 0; i < spots.length; i++) {
       var s = spots[i];
-      if (px >= s.x && px < s.x + s.w && py >= s.y && py < s.y + s.h) return s.key;
+      if (px >= s.x && px < s.x + s.w && py >= s.y && py < s.y + s.h) return s;
     }
     return null;
   }
@@ -499,7 +499,8 @@
     add: add,
     wipe: wipe,
     anyStyle: anyStyle,
-    // Which of the lab's machines a click in the room lands on.
+    // Which of the lab's machines a click in the room lands on: the whole
+  // hotspot, so the scene can bracket the one under the pointer.
     labSpotAt: labSpotAt,
     // The shared shell every room is built on.
     parts: { rect: rect, wall: wall, floor: floor, vignette: vignette }
