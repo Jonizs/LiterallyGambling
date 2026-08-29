@@ -996,6 +996,7 @@ body {
   /* The frame takes the room's own wall colour, so the button reads as one
      piece of art rather than a picture in a gold frame. */
   border-color: var(--room-edge, var(--wood-edge));
+  border-width: 4px;
   background-color: #140b07;
   background-size: cover;
   background-position: center;
@@ -1015,11 +1016,12 @@ body {
   }
 }
 /* Each room's wall, for the frame around its cutout. */
-.wood-btn[data-home="forge"]   { --room-edge: #2f2321; }
-.wood-btn[data-home="lab"]     { --room-edge: #1d2a22; }
-.wood-btn[data-home="enchant"] { --room-edge: #251d33; }
-.wood-btn[data-home="polish"]  { --room-edge: #332615; }
-.wood-btn[data-home="awaken"]  { --room-edge: #181a26; }
+/* A shade up from the wall itself, so the frame reads against the cutout. */
+.wood-btn[data-home="forge"]   { --room-edge: #4b3934; }
+.wood-btn[data-home="lab"]     { --room-edge: #33493c; }
+.wood-btn[data-home="enchant"] { --room-edge: #3e3155; }
+.wood-btn[data-home="polish"]  { --room-edge: #554025; }
+.wood-btn[data-home="awaken"]  { --room-edge: #2c2f42; }
 
 /* Where the smith is standing right now. */
 .wood-btn[data-home].here {
