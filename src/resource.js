@@ -31,18 +31,13 @@
   }
 
   // --- resource ------------------------------------------------------------
-  // The tab lives outside the builder so it survives a panel redraw.
-  var resourceTab = "gather";
-
-  var RESOURCE_TABS = [
-    { key: "gather", label: "Gather",
-      blurb: "Send a crew out. It costs silver and time, and comes back with ore." },
-    { key: "refine", label: "Refine",
-      blurb: "Burn ore down into bars, one bar per ore. Two ovens, and a bar " +
-        "drops every burn." },
-    { key: "compound", label: "Compound",
-      blurb: "Bind bars into alloys. Three crucibles, poured one at a time." }
-  ];
+  // Each machine in the lab opens its own menu, so there is no tab strip:
+  // the board is the yard, an oven is that oven, a crucible is that crucible.
+  var BLURBS = {
+    gather: "Send a crew out. It costs silver and time, and comes back with ore.",
+    refine: "Burn ore down into bars, one bar per ore. A bar drops every burn.",
+    compound: "Bind bars into alloys, poured one at a time."
+  };
 
   function gatherTab(ctx, wrap) {
     var Ga = global.Gather;
@@ -112,7 +107,7 @@
     wrap.appendChild(rows);
   }
 
-  function refineTab(ctx, wrap) {
+  function refineTab(ctx, wrap, index) {
     var Re = global.Refine, Ga = global.Gather;
     var state = ctx.state;
 
@@ -124,10 +119,10 @@
     });
     wrap.appendChild(stock);
 
-    // The two ovens, lit while they burn.
-    var kit = el("div", "kit two");
-    for (var i = 0; i < Re.OVENS; i++) {
-      (function (index) {
+    // Just the oven that was pressed, lit while it burns.
+    var kit = el("div", "kit");
+    [index].forEach(function (index) {
+      {
         var job = Re.slot(state, index);
         var cell = el("div", "crucible" + (job ? " lit" : ""));
         cell.appendChild(global.Icons.make(job ? "oven-lit" : "oven", "icon"));
@@ -156,11 +151,11 @@
             function () { ctx.rushRefine(index); }));
         }
         kit.appendChild(cell);
-      })(i);
-    }
+      }
+    });
     wrap.appendChild(kit);
 
-    var free = Re.freeSlot(state) >= 0;
+    var free = !Re.slot(state, index);
     var rows = el("div", "rows");
     Re.ORES.forEach(function (ore) {
       var held = state.resources[ore.key];
@@ -180,18 +175,18 @@
       row.appendChild(global.Panels.batchGroup(ctx, "refine-" + ore.key, "REFINE",
         held,
         function (qty) {
-          if (!free) return "Both ovens are burning";
+          if (!free) return "Oven " + (index + 1) + " is burning";
           if (qty > held) return "Short " + (qty - held) + " " +
             Ga.RESOURCES[ore.key].label.toLowerCase();
           return "";
         },
-        function (qty) { ctx.startRefine(ore, qty); }));
+        function (qty) { ctx.startRefine(ore, qty, index); }));
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
   }
 
-  function compoundTab(ctx, wrap) {
+  function compoundTab(ctx, wrap, index) {
     var Co = global.Compound, Re = global.Refine, Ga = global.Gather;
     var state = ctx.state;
 
@@ -208,10 +203,10 @@
     });
     wrap.appendChild(stock);
 
-    // The three crucibles, whatever is in them.
+    // Just the crucible that was pressed, and whatever is in it.
     var slots = el("div", "kit");
-    for (var i = 0; i < Co.CRUCIBLES; i++) {
-      (function (index) {
+    [index].forEach(function (index) {
+      {
         var job = Co.slot(state, index);
         var cell = el("div", "crucible" + (job ? " lit" : ""));
         cell.appendChild(global.Icons.make(job ? "crucible-lit" : "crucible", "icon"));
@@ -243,8 +238,8 @@
             function () { ctx.rushCompound(index); }));
         }
         slots.appendChild(cell);
-      })(i);
-    }
+      }
+    });
     wrap.appendChild(slots);
 
     var rows = el("div", "rows");
@@ -273,48 +268,44 @@
       row.appendChild(global.Panels.batchGroup(ctx, "compound-" + alloy.key, "POUR",
         most,
         function (qty) {
-          if (Co.freeSlot(state) < 0) return "Every crucible is full";
+          if (Co.slot(state, index)) return "Crucible " + (index + 1) + " is full";
           if (qty > most) return "Short bars for " + (qty - most) + " more";
           return "";
         },
-        function (qty) { ctx.startCompound(alloy, qty); }));
+        function (qty) { ctx.startCompound(alloy, qty, index); }));
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
   }
 
-  function build(ctx) {
+  // One machine, one menu. The refine and compound menus are pointed at the
+  // oven or crucible that was pressed, so a batch can only go in there.
+  function page(ctx, blurb, fill) {
     var wrap = el("div");
-
-    var strip = el("div", "tabs");
-    RESOURCE_TABS.forEach(function (tab) {
-      var b = button(tab.label, "tab" + (tab.key === resourceTab ? " on" : ""),
-        function () {
-          resourceTab = tab.key;
-          ctx.setNotice("");
-          ctx.refresh();
-        });
-      strip.appendChild(b);
-    });
-    wrap.appendChild(strip);
-
-    var current = RESOURCE_TABS.filter(function (tab) {
-      return tab.key === resourceTab;
-    })[0];
-    wrap.appendChild(el("p", null, current.blurb));
-
-    if (resourceTab === "gather") {
-      gatherTab(ctx, wrap);
-    } else if (resourceTab === "refine") {
-      refineTab(ctx, wrap);
-    } else {
-      compoundTab(ctx, wrap);
-    }
-
+    wrap.appendChild(el("p", null, blurb));
+    fill(ctx, wrap);
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
     return wrap;
   }
 
-  // The lab room opens this menu straight on the machine that was pressed.
-  global.Resource = { build: build, setTab: function (key) { resourceTab = key; } };
+  function buildGather(ctx) {
+    return page(ctx, BLURBS.gather, gatherTab);
+  }
+
+  function buildRefine(ctx) {
+    var index = ctx.machine || 0;
+    return page(ctx, BLURBS.refine, function (c, wrap) {
+      refineTab(c, wrap, index);
+    });
+  }
+
+  function buildCompound(ctx) {
+    var index = ctx.machine || 0;
+    return page(ctx, BLURBS.compound, function (c, wrap) {
+      compoundTab(c, wrap, index);
+    });
+  }
+
+  global.Resource = { gather: buildGather, refine: buildRefine,
+    compound: buildCompound };
 })(window);

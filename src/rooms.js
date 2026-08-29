@@ -171,11 +171,11 @@
   function labHotspots() {
     var spots = [{ key: "gather", x: BOARD.x, y: BOARD.y, w: BOARD.w, h: BOARD.h },
       { key: "experiment", x: BENCH.x, y: BENCH.y, w: BENCH.w, h: BENCH.h }];
-    OVEN_X.forEach(function (x) {
-      spots.push({ key: "refine", x: x, y: 100, w: 30, h: 21 });
+    OVEN_X.forEach(function (x, i) {
+      spots.push({ key: "refine", index: i, x: x, y: 100, w: 30, h: 21 });
     });
-    CRUCIBLE_X.forEach(function (x) {
-      spots.push({ key: "compound", x: x - 1, y: 90, w: 22, h: 31 });
+    CRUCIBLE_X.forEach(function (x, i) {
+      spots.push({ key: "compound", index: i, x: x - 1, y: 90, w: 22, h: 31 });
     });
     return spots;
   }

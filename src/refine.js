@@ -76,10 +76,15 @@
   function batchSeconds(ore, qty) { return ore.seconds * qty; }
 
   // The ore is spent going in; stopping hands back only what has not been lit.
-  function start(state, ore, qty) {
+  // An oven can be named, so a menu opened on one oven can only load that
+  // one; without a name the first free oven takes it.
+  function start(state, ore, qty, index) {
     qty = Math.floor(qty);
     if (qty <= 0) return { ok: false, reason: "Nothing to refine." };
-    var index = freeSlot(state);
+    if (typeof index !== "number") index = freeSlot(state);
+    else if (slot(state, index)) {
+      return { ok: false, reason: "Oven " + (index + 1) + " is burning." };
+    }
     if (index < 0) return { ok: false, reason: "Both ovens are burning." };
     if (state.resources[ore.key] < qty) {
       return { ok: false, reason: "Short " + (qty - state.resources[ore.key]) +

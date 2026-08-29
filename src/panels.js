@@ -384,29 +384,10 @@
     return wrap;
   }
 
-  // The yard and the bench share one room, so they share one menu: a strip
-  // across the top picks which side of the lab you are looking at.
-  var labSide = "resource";
-  var LAB_SIDES = [
-    { key: "resource", label: "RESOURCE" },
-    { key: "experiment", label: "EXPERIMENT" }
-  ];
-
-  function labPanel(ctx) {
-    var wrap = el("div");
-    var strip = el("div", "tabs");
-    LAB_SIDES.forEach(function (side) {
-      strip.appendChild(button(side.label,
-        "tab" + (side.key === labSide ? " on" : ""), function () {
-          labSide = side.key;
-          ctx.setNotice("");
-          ctx.refresh();
-        }));
-    });
-    wrap.appendChild(strip);
-    wrap.appendChild(labSide === "resource"
-      ? global.Resource.build(ctx) : global.Experiment.build(ctx));
-    return wrap;
+  // The lab has no menu of its own any more: each machine in the room opens
+  // its own, and the work table is where every experiment is run.
+  function experimentPanel(ctx) {
+    return global.Experiment.build(ctx);
   }
 
   function soonPanel(what) {
@@ -486,16 +467,24 @@
       return global.Enchant.build(ctx);
     }, level: 4 },
     upgrades: { title: "Upgrades", build: upgradesPanel },
-    lab: { title: "Resource & Experiment", build: labPanel, level: 2 },
+    // The lab's own entry is what gates the room; its machines are the menus.
+    lab: { title: "Resource & Experiment", build: experimentPanel, level: 2 },
+    gather: { title: "Gather", build: function (ctx) {
+      return global.Resource.gather(ctx);
+    }, level: 2 },
+    refine: { title: "Refine", build: function (ctx) {
+      return global.Resource.refine(ctx);
+    }, level: 2 },
+    compound: { title: "Compound", build: function (ctx) {
+      return global.Resource.compound(ctx);
+    }, level: 2 },
+    experiment: { title: "Experiment", build: experimentPanel, level: 2 },
     polish: { title: "Polish", build: soonPanel("Polishing"), level: 8 },
     awaken: { title: "Awaken", build: soonPanel("Awakening"), level: 12 },
     options: { title: "Options", build: optionsPanel }
   };
 
-  // Pressing a machine in the lab picks the side of the menu it belongs to.
-  function setLabSide(key) { labSide = key; }
-
-  global.Panels = { BUILDERS: BUILDERS, setLabSide: setLabSide, itemLine: itemLine, costLine: costLine,
+  global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, costLine: costLine,
     recipeStats: recipeStats, partsTab: partsTab, batchGroup: batchGroup,
     el: el, button: button };
 })(window);

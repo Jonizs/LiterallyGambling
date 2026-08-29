@@ -205,6 +205,7 @@
       state: state,
       notice: view.notice,
       pending: view.pending,
+      machine: view.machine,
       setNotice: function (text) { view.notice = text; },
       queue: queueStrike,
       offer: offerView(),
@@ -938,15 +939,9 @@
     return scene.anvilAt(at.x, at.y);
   }
 
-  // The lab has no menu button: the board, the ovens, the crucibles and the
-  // bench are each pressed for the part of the menu they do.
-  var LAB_SPOTS = {
-    gather: { side: "resource", tab: "gather" },
-    refine: { side: "resource", tab: "refine" },
-    compound: { side: "resource", tab: "compound" },
-    experiment: { side: "experiment" }
-  };
-
+  // The lab has no menu button: the board, each oven, each crucible and the
+  // bench open their own menu, and an oven or crucible menu only loads the
+  // one that was pressed.
   function labSpotUnder(ev) {
     if (!scene || scene.room !== "lab" || scene.wipe) return null;
     if (view.replacing || view.panel || view.shown) return null;
@@ -955,12 +950,10 @@
     return window.Rooms.labSpotAt(at.x, at.y);
   }
 
-  function openLabSpot(key) {
-    var spot = LAB_SPOTS[key];
-    if (!spot) return;
-    P.setLabSide(spot.side);
-    if (spot.tab) window.Resource.setTab(spot.tab);
-    openPanel("lab");
+  function openLabSpot(spot) {
+    if (!P.BUILDERS[spot.key]) return;
+    view.machine = spot.index || 0;
+    openPanel(spot.key);
   }
 
   // The slot under the pointer lights up while a pick is waiting.
@@ -991,7 +984,7 @@
     }
     if (anvilUnder(ev)) { openPanel("forge"); return; }
     var spot = labSpotUnder(ev);
-    if (spot) openLabSpot(spot.key);
+    if (spot) openLabSpot(spot);
   }
 
   // --- resource yard ------------------------------------------------------
@@ -1028,9 +1021,9 @@
     refresh();
   }
 
-  function startRefine(ore, qty) {
+  function startRefine(ore, qty, index) {
     var Re = window.Refine;
-    var result = Re.start(state, ore, qty);
+    var result = Re.start(state, ore, qty, index);
     view.notice = result.ok
       ? "Oven " + (result.index + 1) + ": " + result.qty + " " +
         ore.label.toLowerCase() + " ore \u2014 " +
@@ -1068,8 +1061,8 @@
     refresh();
   }
 
-  function startCompound(alloy, qty) {
-    var result = window.Compound.start(state, alloy, qty);
+  function startCompound(alloy, qty, index) {
+    var result = window.Compound.start(state, alloy, qty, index);
     view.notice = result.ok
       ? "Crucible " + (result.index + 1) + ": " + result.qty + " \u00d7 " + alloy.name + "."
       : result.reason;
@@ -1109,7 +1102,7 @@
   function startClock() {
     setInterval(function () {
       syncWork();
-      if (view.panel !== "lab") return;
+      if (["gather", "refine", "compound"].indexOf(view.panel) < 0) return;
       if (window.Gather.running(state) || window.Refine.running(state) ||
           window.Compound.running(state)) drawPanel();
     }, 1000);

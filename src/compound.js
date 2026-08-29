@@ -97,10 +97,15 @@
     return short;
   }
 
-  function start(state, alloy, qty) {
+  // A crucible can be named, so a menu opened on one crucible can only pour
+  // into that one; without a name the first free crucible takes it.
+  function start(state, alloy, qty, index) {
     qty = Math.floor(qty);
     if (qty <= 0) return { ok: false, reason: "Nothing to compound." };
-    var index = freeSlot(state);
+    if (typeof index !== "number") index = freeSlot(state);
+    else if (slot(state, index)) {
+      return { ok: false, reason: "Crucible " + (index + 1) + " is full." };
+    }
     if (index < 0) return { ok: false, reason: "Every crucible is full." };
     var short = missingFor(state, alloy, qty);
     if (short.length) return { ok: false, reason: "Short " + short.join(", ") + " bars." };
