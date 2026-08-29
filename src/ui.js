@@ -593,9 +593,22 @@
   };
   // The buff carving is part of the forge wall, so it is only there when the
   // forge is: it goes with the wipe and stays out from under an open menu.
+  var boardTimer = null;
   function syncBoard() {
     var home = scene && scene.room === "forge" && !scene.wipe;
-    $("buff-board").hidden = !home || !!view.panel;
+    var board = $("buff-board");
+    var show = home && !view.panel;
+    if (boardTimer) { clearTimeout(boardTimer); boardTimer = null; }
+    if (!show) { board.hidden = true; return; }
+    // Let the closing menu clear the wall before the carving comes back.
+    if (board.hidden) {
+      boardTimer = setTimeout(function () {
+        boardTimer = null;
+        syncBoard();
+      }, 260);
+      return;
+    }
+    board.hidden = false;
   }
 
   // The lab draws its ovens and crucibles lit or cold, so it needs to know
