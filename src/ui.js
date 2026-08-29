@@ -963,10 +963,14 @@
     ]
   };
 
+  // Which fitting the bars belong to, so pressing it again puts them away.
+  var barsFor = null;
+
   function hideSpotBars() {
     var bars = $("spot-bars");
     bars.hidden = true;
     bars.innerHTML = "";
+    barsFor = null;
   }
 
   function showSpotBars(spot, choices) {
@@ -988,12 +992,15 @@
       bars.appendChild(b);
     });
     bars.hidden = false;
+    barsFor = spot.key + ":" + (spot.index || 0);
   }
 
   function openRoomSpot(spot) {
     var choices = SPOT_BARS[spot.key];
     if (choices) {
-      showSpotBars(spot, choices);
+      // Pressing the same fitting again folds its bars back in.
+      if (barsFor === spot.key + ":" + (spot.index || 0)) hideSpotBars();
+      else showSpotBars(spot, choices);
       return;
     }
     if (!P.BUILDERS[spot.key]) return;
@@ -1022,15 +1029,17 @@
 
   // A click means the shelf while a pick is waiting, and the anvil otherwise.
   function sceneClick(ev) {
-    hideSpotBars();
     if (view.replacing) {
+      hideSpotBars();
       var slot = slotUnder(ev);
       if (slot >= 0) replaceAt(slot);
       return;
     }
-    if (anvilUnder(ev)) { openPanel("forge"); return; }
+    if (anvilUnder(ev)) { hideSpotBars(); openPanel("forge"); return; }
     var spot = roomSpotUnder(ev);
-    if (spot) openRoomSpot(spot);
+    // Anywhere else in the room puts any open bars away.
+    if (!spot) { hideSpotBars(); return; }
+    openRoomSpot(spot);
   }
 
   // --- resource yard ------------------------------------------------------
