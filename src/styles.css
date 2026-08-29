@@ -480,12 +480,15 @@ body {
 .stock .none { opacity: .45; }
 
 /* ---------- crucibles and ovens ---------- */
+/* One machine to a menu now, so the cell sits in the middle of the panel
+   rather than in the first column of a three-wide grid. */
 .kit {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  justify-content: center;
   gap: var(--gap-sm);
   margin: var(--gap-sm) 0 var(--gap);
 }
+.kit > .crucible { flex: 0 1 min(46%, 340px); }
 .crucible {
   display: flex;
   flex-direction: column;
@@ -501,8 +504,6 @@ body {
   background: rgba(255,138,36,.10);
   box-shadow: inset 0 0 12px rgba(255,138,36,.35);
 }
-/* Two ovens instead of three crucibles. */
-.kit.two { grid-template-columns: repeat(2, 1fr); }
 .crucible .icon { margin-bottom: var(--gap-xs); }
 
 /* ---------- shop silhouettes ---------- */
