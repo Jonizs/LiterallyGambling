@@ -208,15 +208,37 @@
     for (var i = 0; i < 5; i++) rect(ctx, 192 + i * 6, 59, 3, 9, L.glass);
   }
 
-  // Chalkboard of half-finished sums on the left wall.
+  // The lab's board: OPERATIONS chalked across the top, working notes under it.
+  var GLYPHS = {
+    O: "111101101101111", P: "111101111100100", E: "111100110100111",
+    R: "111101111110101", A: "111101111101101", T: "111010010010010",
+    I: "111010010010111", N: "101111111101101", S: "111100111001111"
+  };
+
+  function chalkWord(ctx, word, x, y, color) {
+    for (var i = 0; i < word.length; i++) {
+      var g = GLYPHS[word.charAt(i)];
+      if (!g) continue;
+      for (var r = 0; r < 5; r++) {
+        for (var c = 0; c < 3; c++) {
+          if (g.charAt(r * 3 + c) === "1") rect(ctx, x + i * 4 + c, y + r, 1, 1, color);
+        }
+      }
+    }
+  }
+
   function chalkboard(ctx) {
     rect(ctx, 8, 26, 68, 46, L.benchDark);
     rect(ctx, 10, 28, 64, 42, "#1f2a24");
-    var lines = [[14, 34, 30], [14, 38, 44], [14, 46, 22], [14, 50, 38],
-      [14, 58, 26], [46, 58, 16]];
+    // Heading, centred, with a rule under it.
+    chalkWord(ctx, "OPERATIONS", 23, 32, L.glass);
+    rect(ctx, 22, 39, 40, 1, L.glassDim);
+    // Scribbled notes below - short ragged lines, one crossed out.
+    var lines = [[14, 44, 30], [14, 48, 44], [14, 52, 22], [40, 52, 16],
+      [14, 56, 38], [14, 60, 26], [46, 60, 14], [14, 64, 34]];
     lines.forEach(function (l) { rect(ctx, l[0], l[1], l[2], 1, L.glassDim); });
     // A crossed-out attempt.
-    rect(ctx, 14, 42, 26, 1, L.fluidA);
+    rect(ctx, 14, 48, 26, 1, L.fluidA);
   }
 
   // Herbs strung from the ceiling to dry.
