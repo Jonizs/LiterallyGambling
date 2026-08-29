@@ -301,9 +301,6 @@
     renderStrike();
   }
 
-  // The button keeps its space in the column so nothing shifts when a
-  // strike is queued; it is only made visible and clickable. Anything laid
-  // over the scene — a panel or the result card — hides it again.
   // Anything the smith does other than swinging - opening a menu, walking to
   // another workstation - takes the queued piece back off the anvil.
   function cancelPending() {
@@ -312,9 +309,27 @@
     renderStrike();
   }
 
+  // The button keeps its space in the column so nothing shifts when a
+  // strike is queued; it is only made visible and clickable. Anything laid
+  // over the scene — a panel or the result card — hides it again.
+  var strikeTimer = null;
   function renderStrike() {
     var btn = $("strike-btn");
     var ready = !!view.pending && !view.striking && !view.panel && !view.shown;
+    if (strikeTimer) { clearTimeout(strikeTimer); strikeTimer = null; }
+    // Coming up, the button waits for the menu to get out of the way; going
+    // away it leaves at once.
+    if (ready && btn.classList.contains("idle")) {
+      strikeTimer = setTimeout(function () {
+        strikeTimer = null;
+        if (!view.pending || view.striking || view.panel || view.shown) return;
+        btn.classList.remove("idle");
+        btn.disabled = false;
+        btn.setAttribute("aria-hidden", "false");
+      }, 260);
+      syncBoard();
+      return;
+    }
     btn.classList.toggle("idle", !ready);
     btn.disabled = !ready;
     btn.setAttribute("aria-hidden", ready ? "false" : "true");
