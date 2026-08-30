@@ -72,14 +72,20 @@
   // started, so a dark cloth book stays dark.
   var PURPLE_TONES = {};
 
+  // A triangle wave rather than a sine: the hue travels at one steady rate
+  // and turns round at the ends, so a book never sits still on a shade.
+  function tri(x) {
+    var v = x % 2;
+    if (v < 0) v += 2;
+    return v < 1 ? v : 2 - v;
+  }
+
   function purpleDrift(t, seed, sat, light) {
-    // Three sines at unrelated rates: the sum never repeats on any beat you
-    // could follow, so no two books ever run together.
-    var speed = 0.55 + (seed % 7) * 0.19;
-    var hue = 282
-      + Math.sin(t * speed + seed * 1.7) * 26
-      + Math.sin(t * speed * 0.63 + seed * 2.9) * 13
-      + Math.sin(t * speed * 1.47 + seed * 0.8) * 7;
+    // Two triangles at unrelated rates: always moving, never on a beat.
+    var speed = 0.42 + (seed % 7) * 0.13;
+    var hue = 238
+      + tri(t * speed + seed * 0.37) * 76
+      + tri(t * speed * 1.63 + seed * 0.81) * 16;
     return "hsl(" + hue.toFixed(1) + "," + sat + "%," + light + "%)";
   }
 
