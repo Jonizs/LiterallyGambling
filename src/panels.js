@@ -444,18 +444,16 @@
     var wrap = el("div", "split");
     POLISH_PARTS.forEach(function (part) {
       var pane = el("div", "split-pane " + part.key);
-      // Sanding works on one piece at a time, so the slot it goes in and the
-      // station itself are one box: the piece at the head, the work under it.
+      // Sanding works on one piece at a time: its heading stands clear the
+      // way every other station's does, and the box under it holds the piece
+      // and the work together.
+      pane.appendChild(el("div", "split-title", part.label));
+      var box = el("div", "split-work");
       if (part.key === "sanding") {
-        var box = el("div", "split-work");
         box.appendChild(pieceSlot());
-        box.appendChild(el("div", "split-title", part.label));
         box.appendChild(el("div", "split-fill"));
-        pane.appendChild(box);
-      } else {
-        pane.appendChild(el("div", "split-title", part.label));
-        pane.appendChild(el("div", "split-work"));
       }
+      pane.appendChild(box);
       wrap.appendChild(pane);
     });
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
