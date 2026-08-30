@@ -819,15 +819,22 @@ body {
 }
 .bench-close {
   font-family: var(--font);
-  font-size: 1.1em;
+  font-size: .85em;
+  letter-spacing: 2px;
   line-height: 1;
-  color: #d3a6f5;
-  background: none;
-  border: 0;
-  padding: 0 .2em;
+  color: #efe2ff;
+  text-shadow: 1px 1px 0 #000;
+  background: linear-gradient(180deg, #7b4fae, #3f2760);
+  border: 2px solid rgba(211,166,245,.7);
+  padding: var(--gap-xs) var(--gap-sm);
   cursor: pointer;
 }
-@media (hover: hover) { .bench-close:hover { color: #fff2c0; } }
+@media (hover: hover) {
+  .bench-close:hover {
+    color: #fff2c0;
+    background: linear-gradient(180deg, #9a6fcf, #56377f);
+  }
+}
 .bench-body {
   flex: 1;
   min-height: 0;
