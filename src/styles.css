@@ -730,48 +730,50 @@ body {
   gap: var(--gap-xs);
   align-items: stretch;
 }
-/* Framed bars, lit like the table they came out of. */
+/* Parchment plaques nailed up over the fitting: pale label, dark ink, a
+   gold hairline inside a heavy frame, and a rune stud at either end. */
 .spot-bar {
   font-family: var(--font);
-  font-size: clamp(12px, calc(1.6 * var(--s)), 37px);
+  font-size: clamp(11px, calc(1.45 * var(--s)), 34px);
   letter-spacing: 2px;
   white-space: nowrap;
-  /* Room either side for the hover pointers, so the longest label - the
-     revitalise bar - never runs under them. */
-  padding: var(--gap-xs) calc(var(--pad-x) * 1.35 + 1.1em);
-  color: var(--page, #f4e3c1);
-  text-shadow: 1px 1px 0 #000;
-  background: linear-gradient(180deg, #4a2f6a, #2a1a3f);
-  border: 3px solid var(--gold);
-  box-shadow: inset 0 0 0 2px rgba(0,0,0,.45), 0 3px 0 #000,
-              0 0 14px rgba(154,95,208,.5);
+  padding: var(--gap-xs) calc(var(--pad-x) * 1.2 + 1em);
+  color: #2b1a10;
+  text-shadow: 1px 1px 0 rgba(255,255,255,.4);
+  background:
+    repeating-linear-gradient(180deg, rgba(0,0,0,.05) 0 3px, rgba(255,255,255,.05) 3px 6px),
+    linear-gradient(180deg, #f4e3c1, #c9ab7c);
+  border: 3px solid #1a0f08;
+  box-shadow: inset 0 0 0 2px var(--gold), 0 3px 0 #000,
+              0 0 16px rgba(154,95,208,.45);
   cursor: pointer;
   position: relative;
-  animation: spotBarOut .22s ease-out both;
 }
-.spot-bar:nth-child(1) { animation-delay: 0s; }
-.spot-bar:nth-child(2) { animation-delay: .07s; }
-/* The pointers only turn up under the pointer, blinking, the same way the
-   sidebar buttons mark themselves. */
+/* A rune stud pinning each end of the plaque. */
+.spot-bar::before, .spot-bar::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: .42em;
+  height: .42em;
+  transform: translateY(-50%) rotate(45deg);
+  background: var(--purple);
+  box-shadow: 0 0 0 2px #1a0f08;
+}
+.spot-bar::before { left: .5em; }
+.spot-bar::after { right: .5em; }
 @media (hover: hover) {
   .spot-bar:hover {
-    color: #fff2c0;
-    background: linear-gradient(180deg, #654093, #3a2557);
+    background:
+      repeating-linear-gradient(180deg, rgba(0,0,0,.05) 0 3px, rgba(255,255,255,.05) 3px 6px),
+      linear-gradient(180deg, #fff6dc, #e0c493);
   }
-  .spot-bar:hover::before, .spot-bar:hover::after {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: .95em;
-    color: #fff2c0;
-    text-shadow: 1px 1px 0 #000;
-    pointer-events: none;
-    animation: pickBlink .62s steps(1) infinite;
-  }
-  .spot-bar:hover::before { content: ">"; left: .4em; }
-  .spot-bar:hover::after { content: "<"; right: .4em; }
+  .spot-bar:hover::before, .spot-bar:hover::after { background: var(--purple-lit); }
 }
-.spot-bar:active { transform: translateY(2px); }
+.spot-bar:active { transform: translateY(2px); box-shadow: inset 0 0 0 2px var(--gold), 0 1px 0 #000; }
+.spot-bar:nth-child(1) { animation-delay: 0s; }
+.spot-bar:nth-child(2) { animation-delay: .07s; }
+.spot-bar { animation: spotBarOut .22s ease-out both; }
 @keyframes spotBarOut {
   from { opacity: 0; transform: translateY(14px) scaleY(.6); }
   to { opacity: 1; transform: none; }
