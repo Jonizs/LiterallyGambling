@@ -1101,10 +1101,14 @@ body {
    up (the mask is driven from script), lit as they go. */
 .ritual-choice.dissolving {
   pointer-events: none;
-  border-color: var(--purple-lit);
-  filter: brightness(1.45) drop-shadow(0 0 12px rgba(154,95,208,.9));
+  outline: none;
+  /* No brightness lift here: it washed the border out to white. The glow
+     alone carries the burn. */
+  border-color: var(--purple);
+  filter: drop-shadow(0 0 12px rgba(154,95,208,.85));
   transition: filter .2s ease-out;
 }
+.ritual-choice:focus, .ritual-finish:focus { outline: none; }
 
 /* The one taken flares; the two left behind burn away. */
 .ritual-choice.taken {
