@@ -20,7 +20,7 @@
     critDamage: "Crit damage", armorPen: "Armor pen"
   };
 
-  var COST_SHARE = 0.55; // of the piece's sale price, paid to roll the offer
+  var COST_SHARE = 0.57; // of the piece's sale price, paid to roll the offer
   var OFFER_SIZE = 3;
   var REFORGE_GROWTH = 1.2; // each reforge of the same piece costs this much more
 
@@ -76,9 +76,6 @@
       effect: function (t) {
         return { damage: per(0.55, t), durability: per(0.55, t) };
       } },
-    { key: "awakened", name: "Awakened", rarity: "uncommon", maxTier: 1,
-      note: "Lets the piece be awakened.",
-      effect: function () { return {}; } },
 
     // --- rare --------------------------------------------------------------
     { key: "godly", name: "Godly", rarity: "rare", maxTier: 3,
@@ -164,18 +161,25 @@
     });
   }
 
-  // The Shapeshifter Doll makes Awakened come up more often. The extra share
-  // is taken out of common, so nothing else in the table moves.
-  function awakenedBonus(state) {
+  // An artifact can make one enchant come up more often. The extra share is
+  // taken out of common, so nothing else in the table moves.
+  function bentEnchant(state) {
     var A = global.Artifacts;
-    if (!state || !A) return 0;
-    var mult = A.enchantMult(state, "awakened");
-    if (mult <= 1) return 0;
-    var band = rarityOdds(state).filter(function (entry) {
-      return entry.value === "uncommon";
-    })[0];
-    var pool = DEFS.filter(function (def) { return def.rarity === "uncommon"; });
-    return band.chance / pool.length * (mult - 1);
+    if (!state || !A) return null;
+    for (var i = 0; i < DEFS.length; i++) {
+      var def = DEFS[i];
+      var mult = A.enchantMult(state, def.key);
+      if (mult <= 1) continue;
+      var band = rarityOdds(state).filter(function (entry) {
+        return entry.value === def.rarity;
+      })[0];
+      if (!band) continue;
+      var pool = DEFS.filter(function (other) {
+        return other.rarity === def.rarity;
+      });
+      return { def: def, bonus: band.chance / pool.length * (mult - 1) };
+    }
+    return null;
   }
 
   // Common's share, less whatever the doll has taken out of it.
@@ -188,11 +192,13 @@
   }
 
   function rollOne(taken, state) {
-    var bonus = awakenedBonus(state);
-    if (bonus > 0 && taken.indexOf("awakened") < 0 && Math.random() * 100 < bonus) {
-      var doll = defFor("awakened");
-      return { key: doll.key, name: doll.name, rarity: doll.rarity,
-        tier: 1, tiered: false, text: describe(doll, 1) };
+    var bent = bentEnchant(state);
+    var bonus = bent ? bent.bonus : 0;
+    if (bonus > 0 && taken.indexOf(bent.def.key) < 0 && Math.random() * 100 < bonus) {
+      var def = bent.def;
+      var tier = Math.min(def.maxTier, pick(TIER_ODDS));
+      return { key: def.key, name: def.name, rarity: def.rarity, tier: tier,
+        tiered: def.maxTier > 1, text: describe(def, tier) };
     }
     var rarity = pick(bentOdds(state, bonus));
     var pool = DEFS.filter(function (def) {
@@ -273,7 +279,6 @@
     });
     // Anything over "crits every swing" is worked into the crit instead.
     G.spillCrit(item);
-    if (def.key === "awakened") item.awakenable = true;
     item.enchants.push(entry);
     return { ok: true, entry: entry };
   }
@@ -347,7 +352,6 @@
     var stats = G.baseStatsOf(item);
     Object.keys(stats).forEach(function (key) { item[key] = stats[key]; });
     item.enchants = [];
-    item.awakenable = false;
     kept.forEach(function (entry) { apply(item, entry); });
     item.reforges = (item.reforges || 0) + 1;
     return { ok: true, cost: cost, removed: wanted.length, kept: kept.length };
