@@ -114,8 +114,11 @@
   // those to need a second line, so the chips wrap.
   function compactLine(item) {
     var line = el("div", "item-line tight");
-    line.appendChild(global.Icons.make(item.icon));
-    line.appendChild(el("span", "item-name", item.name));
+
+    // What the piece is, on one line with the icon.
+    var top = el("div", "tight-top");
+    top.appendChild(global.Icons.make(item.icon));
+    top.appendChild(el("span", "item-name", item.name));
     var meta = el("span", "item-meta");
     meta.appendChild(el("span", "chip-stat tier", item.tier));
     meta.appendChild(el("span", "chip-stat band-" + item.band.toLowerCase(),
@@ -123,12 +126,28 @@
     meta.appendChild(el("span", "chip-stat", item.editionName));
     meta.appendChild(el("span", "chip-stat",
       item.enchants.length + "/" + item.slots));
+    top.appendChild(meta);
+    line.appendChild(top);
+
+    // What is burned into it gets the full width underneath, two lines of it.
+    var ench = el("div", "tight-ench");
     item.enchants.forEach(function (entry) {
-      meta.appendChild(el("span", "chip-stat ench " + entry.rarity,
-        E.label(entry)));
+      var chip = el("span", "chip-stat ench " + entry.rarity, shortLabel(entry));
+      chip.title = E.label(entry) + " \u2014 " + entry.text;
+      ench.appendChild(chip);
     });
-    line.appendChild(meta);
+    line.appendChild(ench);
     return line;
+  }
+
+  // Names cut to four letters a word, so a piece wearing five enchants still
+  // fits its two lines. The full name is on the chip's tooltip.
+  function shortLabel(entry) {
+    var roman = ["", "I", "II", "III"];
+    var name = entry.name.split(" ").map(function (word) {
+      return word.length > 5 ? word.slice(0, 4) : word;
+    }).join(" ");
+    return entry.tiered ? name + " " + roman[entry.tier] : name;
   }
 
   // Two states: pick a piece, or pick one of the three the ritual turned up.

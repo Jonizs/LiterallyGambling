@@ -858,6 +858,7 @@ body {
 .item-line.tight { flex-wrap: nowrap; align-items: center; }
 /* Two rows of chips are always kept clear, so a piece with nothing on it
    sits at the same height as one carrying a full set. */
+.item-line.tight .chip-stat { padding: 0 3px; letter-spacing: 0; }
 .item-line.tight .item-meta {
   flex-wrap: wrap;
   row-gap: 2px;
