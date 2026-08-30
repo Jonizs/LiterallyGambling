@@ -49,8 +49,8 @@
         parts: { bloodinfusion: 1 } },
       perTier: { damage: 151.7, durability: 396 },
       combat: { speed: 1.06, crit: 5.5, critDamage: 165, pen: 10 },
-      cost: { wood: 30, metal: 20 },
-      alloys: { argentaurum: 5, corinthium: 1 } },
+      cost: { wood: 30, metal: 20 }, bars: { gold: 2 },
+      alloys: { argentaurum: 3, corinthium: 1 } },
     // Tuned for Quality Control on top of those.
     { key: "zeus", name: "Zeus' Wrath", kind: "weapon", icon: "zeus",
       level: 1, xp: 160, margin: 1.04,
