@@ -183,8 +183,11 @@
     };
   }
 
-  function rollOffer(state) {
-    var taken = [], out = [];
+  // A piece never gets the same enchant twice: what it already carries is
+  // taken before the offer is rolled, so those cannot come up again.
+  function rollOffer(state, item) {
+    var taken = item ? item.enchants.map(function (e) { return e.key; }) : [];
+    var out = [];
     for (var i = 0; i < OFFER_SIZE; i++) {
       var entry = rollOne(taken, state);
       taken.push(entry.key);
@@ -216,7 +219,7 @@
       return { ok: false, reason: "Not enough silver. That roll costs " + cost + "." };
     }
     state.silver -= cost;
-    return { ok: true, cost: cost, choices: rollOffer(state) };
+    return { ok: true, cost: cost, choices: rollOffer(state, item) };
   }
 
   function round(value, places) {
@@ -229,6 +232,10 @@
     if (!def) return { ok: false, reason: "That enchant is gone." };
     if (slotsLeft(item) <= 0) {
       return { ok: false, reason: "No enchant slots left on that piece." };
+    }
+    var already = item.enchants.some(function (e) { return e.key === entry.key; });
+    if (already) {
+      return { ok: false, reason: def.name + " is already on that piece." };
     }
     var mult = multipliersFor(def, entry.tier);
     Object.keys(mult).forEach(function (stat) {

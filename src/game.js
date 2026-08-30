@@ -121,7 +121,7 @@
   var CRIT_PER_EDITION = 1.5;
   var CRIT_DMG_SHARE = 20;
   var CRIT_DMG_PER_EDITION = 10;
-  var CRIT_CAP = 75; // percent, so a piece never crits every swing
+  var CRIT_CAP = 100; // percent - a piece crits every swing at most
 
   function round(value, places) {
     var factor = Math.pow(10, places);
