@@ -846,7 +846,11 @@ body {
 }
 .bench-body .rows { gap: var(--gap-xs); }
 .item-line.tight { gap: var(--gap-sm); }
-.item-line.tight { flex-wrap: nowrap; }
+/* The name and icon hold their line; the chips behind them wrap onto a
+   second when a piece is carrying a full set of enchants. */
+.item-line.tight { flex-wrap: nowrap; align-items: center; }
+.item-line.tight .item-meta { flex-wrap: wrap; row-gap: 2px; }
+.item-line.tight .item-name { white-space: nowrap; }
 .item-line.tight .icon { width: clamp(15px, calc(1.7 * var(--s)), 38px); }
 .item-line.tight .item-name { font-size: clamp(10px, calc(1.2 * var(--s)), 28px); }
 .item-line.tight .item-meta { gap: var(--gap-xs); }

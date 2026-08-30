@@ -109,8 +109,9 @@
   }
 
   // The bench only cares what a piece is and what is already burned into it,
-  // so the combat numbers are left off: name, tier, quality, slots used, and
-  // the enchants it is carrying.
+  // so the combat numbers are left off: name, tier, quality, edition, slots
+  // used, and the enchants it is carrying. A full piece carries enough of
+  // those to need a second line, so the chips wrap.
   function compactLine(item) {
     var line = el("div", "item-line tight");
     line.appendChild(global.Icons.make(item.icon));
@@ -119,6 +120,7 @@
     meta.appendChild(el("span", "chip-stat tier", item.tier));
     meta.appendChild(el("span", "chip-stat band-" + item.band.toLowerCase(),
       item.band));
+    meta.appendChild(el("span", "chip-stat", item.editionName));
     meta.appendChild(el("span", "chip-stat",
       item.enchants.length + "/" + item.slots));
     item.enchants.forEach(function (entry) {
