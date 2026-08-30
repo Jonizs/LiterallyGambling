@@ -986,9 +986,11 @@ body {
   left: 50%;
   top: 44%;
   transform: translate(-50%, -50%);
-  /* A whole number of turns, so it comes to rest square instead of
-     snapping back when the hover takes over. */
-  animation: ritualLift .5s ease-out both, ritualSpin .38s linear .5s 5;
+  /* One long turn-up rather than a fixed rate: it starts barely moving and
+     winds up to a blur, landing on a whole number of turns so it comes to
+     rest square instead of snapping back when the hover takes over. */
+  animation: ritualLift .5s ease-out both,
+             ritualSpin 1.9s cubic-bezier(.7, 0, .9, .35) .5s 1;
   filter: drop-shadow(0 0 10px rgba(154,95,208,.85));
 }
 .ritual-item .icon { width: clamp(45px, calc(5.4 * var(--s)), 129px); }
@@ -1001,7 +1003,7 @@ body {
 }
 @keyframes ritualSpin {
   from { transform: translate(-50%, -50%) rotateY(0deg); }
-  to { transform: translate(-50%, -50%) rotateY(360deg); }
+  to { transform: translate(-50%, -50%) rotateY(2520deg); }
 }
 @keyframes ritualHover {
   0%, 100% { transform: translate(-50%, -50%); }

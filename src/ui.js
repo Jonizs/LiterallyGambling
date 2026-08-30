@@ -308,9 +308,9 @@
 
   // Straight above the piece, then out to either side of that.
   var CHOICE_SPOTS = [
-    { left: 50, top: 22 },
-    { left: 30, top: 31 },
-    { left: 70, top: 31 }
+    { left: 50, top: 27 },
+    { left: 34, top: 35 },
+    { left: 66, top: 35 }
   ];
 
   function showChoices() {
