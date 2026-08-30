@@ -907,7 +907,7 @@ body {
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(110px, 1fr) 2.4fr;
-  grid-template-rows: 1fr minmax(64px, .32fr);
+  grid-template-rows: 4fr minmax(76px, 1fr);
   border: 2px solid rgba(154,160,171,.35);
   background: rgba(10,10,12,.35);
 }
@@ -947,7 +947,7 @@ body {
 @media (max-width: 760px) {
   .split {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1.4fr minmax(64px, .5fr);
+    grid-template-rows: 1fr 1.4fr minmax(76px, .6fr);
   }
   .split-pane.sanding { grid-area: 1 / 1 / 2 / 2; }
   .split-pane.modification {
