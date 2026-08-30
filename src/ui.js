@@ -272,7 +272,7 @@
   // The piece comes up off the table, the table throws runes, and the three
   // that came out of the coals rise around it. The menu stays shut for the
   // whole of it, and picking one burns the other two away.
-  var SPIN_MS = 2400;      // five whole turns, then the offers show
+  var SPIN_MS = 2600;      // the wind-up and its gold burn, then the offers
   var BURN_MS = 600;       // the two left behind burning off
   var SPARK_MS = 2600;     // how long the table keeps throwing runes
   var ritual = null;
