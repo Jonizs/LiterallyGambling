@@ -267,8 +267,7 @@
       row.appendChild(compactLine(item));
       var price = E.reforgeCost(item);
       var again = costButton("REVITALIZE", price, "mini-btn", function () {
-        startReforge(item.id);
-        ctx.refresh();
+        ctx.revitalise(item);
       });
       again.disabled = ctx.state.silver < price;
       again.title = ctx.state.silver < price

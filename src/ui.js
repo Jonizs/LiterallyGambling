@@ -212,6 +212,7 @@
       rollEnchant: rollEnchant,
       takeEnchant: takeEnchant,
       reforge: reforge,
+      revitalise: startRevitalise,
       buyUpgrade: buyUpgrade,
       rollArtifact: rollArtifact,
       equipArtifact: equipArtifact,
@@ -309,7 +310,10 @@
   var CHOICE_SPOTS = [
     { left: 50, top: 27 },
     { left: 34, top: 35 },
-    { left: 66, top: 35 }
+    { left: 66, top: 35 },
+    { left: 27, top: 47 },
+    { left: 73, top: 47 },
+    { left: 50, top: 17 }
   ];
 
   function showChoices() {
@@ -354,16 +358,77 @@
     }, BURN_MS));
   }
 
-  function startRitual(item) {
+  // --- taking enchants back off ---------------------------------------------
+  // The piece comes up the same way, wearing what is already burned into it.
+  // Each one pressed catches and burns off the piece from the ground up; the
+  // bar under the piece ends the rite and pays for what was stripped.
+  var DISSOLVE_MS = 760;
+
+  function showStrips(item) {
+    var stage = $("ritual");
+    stage.classList.add("settled", "picking");
+    var box = $("ritual-choices");
+    box.innerHTML = "";
+    item.enchants.forEach(function (entry, i) {
+      var spot = CHOICE_SPOTS[i] || CHOICE_SPOTS[0];
+      var b = P.el("button", "ritual-choice " + entry.rarity);
+      b.type = "button";
+      b.appendChild(P.el("span", "choice-rarity", entry.rarity));
+      b.appendChild(P.el("span", "choice-name", E.label(entry)));
+      b.style.left = spot.left + "%";
+      b.style.top = spot.top + "%";
+      b.style.setProperty("--in", (i * 0.41) + "s");
+      b.title = entry.text;
+      b.addEventListener("click", function () { burnStrip(i, b); });
+      box.appendChild(b);
+    });
+
+    // The way out, under the piece.
+    var done = P.el("button", "ritual-finish", "FINISH RITUAL");
+    done.type = "button";
+    done.style.setProperty("--in", (item.enchants.length * 0.41) + "s");
+    done.addEventListener("click", finishStrip);
+    box.appendChild(done);
+  }
+
+  // One enchant catching: it burns off from the bottom up and is gone.
+  function burnStrip(index, el) {
+    if (!ritual || ritual.done || ritual.picked.indexOf(index) >= 0) return;
+    ritual.picked.push(index);
+    el.classList.add("dissolving");
+    el.disabled = true;
+    ritual.timers.push(setTimeout(function () {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, DISSOLVE_MS));
+  }
+
+  function finishStrip() {
+    if (!ritual || ritual.done) return;
+    var item = ritual.item, picked = ritual.picked.slice();
+    ritual.done = true;
+    clearInterval(ritual.sparks);
+    ritual.sparks = null;
+    clearRitual();
+    if (picked.length) reforge(item, picked);
+    openPanel("revitalize");
+  }
+
+  function startStripRitual(item) {
+    startRitual(item, function () { showStrips(item); });
+    ritual.item = item;
+  }
+
+  function startRitual(item, onReady) {
     clearRitual();
     var stage = $("ritual");
     stage.hidden = false;
     var art = window.Icons.make(item.icon, "icon");
     $("ritual-item").appendChild(art);
-    ritual = { timers: [], done: false, sparks: setInterval(throwSpark, 38) };
+    ritual = { timers: [], done: false, picked: [], item: item,
+      sparks: setInterval(throwSpark, 38) };
     for (var i = 0; i < 18; i++) throwSpark();
     // The table keeps throwing runes for the whole rite; only a pick stops it.
-    ritual.timers.push(setTimeout(showChoices, SPIN_MS));
+    ritual.timers.push(setTimeout(onReady || showChoices, SPIN_MS));
   }
 
   function buyUpgrade(def) {
@@ -372,6 +437,13 @@
       ? def.name + " tier " + result.tier + " built for " + result.cost + " silver."
       : result.reason;
     refresh();
+  }
+
+  // The bench shuts and the piece comes up over the table to be picked over.
+  function startRevitalise(item) {
+    closePanel();
+    refresh();
+    startStripRitual(item);
   }
 
   function reforge(item, indexes) {
