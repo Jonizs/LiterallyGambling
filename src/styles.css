@@ -828,13 +828,31 @@ body {
   cursor: pointer;
 }
 @media (hover: hover) { .bench-close:hover { color: #fff2c0; } }
+/* The panel's height is fixed by the wall, so its sections share it out
+   between them and each scrolls on its own - a percentage max-height on a
+   child of a scrolling box does not hold. */
 .bench-body {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   overscroll-behavior: contain;
   padding: var(--gap-sm);
   font-size: clamp(9px, calc(1.15 * var(--s)), 27px);
+  display: flex;
+  flex-direction: column;
+}
+.bench-body > * {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.bench-body .intro-row, .bench-body .notice, .bench-body .empty { flex: none; }
+.bench-body .rows {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 /* Inside the wall panel the rows go see-through too, so the room reads
    through the whole thing rather than just its edges. */
@@ -849,7 +867,7 @@ body {
 .bench-body .odds-panel, .odds-panel {
   display: flex;
   flex-direction: column;
-  max-height: 46%;
+  flex: 1 1 45%;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
