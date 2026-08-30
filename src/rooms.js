@@ -66,10 +66,10 @@
     ctx.fillRect(0, H - 6, W, 6);
   }
 
-  // The enchanted volumes never settle: their hue slides back and forth
-  // through the purples, each on its own slow, off-beat swing, so the colour
-  // creeps rather than jumps. Saturation and lightness stay where the spine
-  // started, so a dark cloth book stays dark.
+  // The enchanted volumes never settle: their hue slides back and forth on
+  // its own off-beat swing, so the colour creeps rather than jumps.
+  // Saturation and lightness stay where the spine started, so a dark cloth
+  // book stays dark.
   var PURPLE_TONES = {};
 
   // A triangle wave rather than a sine: the hue travels at one steady rate
@@ -80,19 +80,22 @@
     return v < 1 ? v : 2 - v;
   }
 
-  function purpleDrift(t, seed, sat, light) {
+  function hueDrift(t, seed, tone) {
     // Two triangles at unrelated rates: always moving, never on a beat.
     var speed = 0.42 + (seed % 7) * 0.13;
-    var hue = 238
+    var hue = tone[0]
       + tri(t * speed + seed * 0.37) * 76
       + tri(t * speed * 1.63 + seed * 0.81) * 16;
-    return "hsl(" + hue.toFixed(1) + "," + sat + "%," + light + "%)";
+    return "hsl(" + hue.toFixed(1) + "," + tone[1] + "%," + tone[2] + "%)";
   }
 
-  // Which purples drift, and the saturation and lightness each keeps.
-  PURPLE_TONES[P.cloth] = [48, 32];
-  PURPLE_TONES[P.clothLit] = [48, 44];
-  PURPLE_TONES[P.glow] = [55, 59];
+  // Every dyed spine drifts - only the plain leather stays put. Each keeps
+  // the saturation and lightness it started with and swings from its own
+  // corner of the wheel: [hue it starts at, saturation, lightness].
+  PURPLE_TONES[P.cloth] = [238, 48, 32];
+  PURPLE_TONES[P.clothLit] = [238, 48, 44];
+  PURPLE_TONES[P.glow] = [238, 55, 59];
+  PURPLE_TONES["#2f4a6b"] = [176, 39, 30];
 
   // Shelves of books on both walls, so the room reads as a study.
   function shelves(ctx, t) {
@@ -107,7 +110,7 @@
           var colour = spines[(b + s * 2 + side) % spines.length];
           // Only the purple ones are enchanted; the plain leather stays put.
           var tone = PURPLE_TONES[colour];
-          if (tone) colour = purpleDrift(t, b + s * 4 + side * 13, tone[0], tone[1]);
+          if (tone) colour = hueDrift(t, b + s * 4 + side * 13, tone);
           rect(ctx, x0 + 2 + b * 4, y + 16 - h, 3, h, colour);
         }
       }
