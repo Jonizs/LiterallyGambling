@@ -517,7 +517,7 @@
   }
 
   // Menus that hang in the room itself rather than over the whole screen.
-  var SCENE_PANELS = { enchant: true };
+  var SCENE_PANELS = { enchant: true, revitalize: true };
 
   function openPanel(key) {
     var panel = P.BUILDERS[key];

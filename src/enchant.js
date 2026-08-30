@@ -3,8 +3,7 @@
   "use strict";
 
   var E = global.Enchants;
-  var el = global.Panels.el, button = global.Panels.button,
-      itemLine = global.Panels.itemLine;
+  var el = global.Panels.el, button = global.Panels.button;
 
   // The odds stay folded away until asked for, and survive a redraw.
   var showOdds = false;
@@ -232,7 +231,7 @@
   // The table's second bar: strip what is already on a piece and start over,
   // dearer every time.
   function revitalise(ctx) {
-    var wrap = el("div");
+    var wrap = el("div", "ench-panel");
     var items = ctx.state.inventory.filter(function (entry) {
       return entry.enchants.length;
     });
@@ -252,14 +251,10 @@
       return wrap;
     }
 
-    wrap.appendChild(el("p", null,
-      "Take enchants back off a piece and free their slots to be rolled " +
-      "again. Every revitalise of the same piece costs more than the last."));
-
     var rows = el("div", "rows");
     items.forEach(function (item) {
       var row = el("div", "row");
-      row.appendChild(itemLine(item));
+      row.appendChild(compactLine(item));
       var price = E.reforgeCost(item);
       var again = button("REVITALIZE " + price, "mini-btn", function () {
         startReforge(item.id);
@@ -270,7 +265,9 @@
         ? "Short " + (price - ctx.state.silver) + " silver."
         : "Pick which enchants come off. The next revitalise of this piece " +
           "costs " + Math.round(price * E.REFORGE_GROWTH) + ".";
-      row.appendChild(again);
+      var group = el("div", "btn-group");
+      group.appendChild(again);
+      row.appendChild(group);
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
