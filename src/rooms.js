@@ -120,11 +120,11 @@
   // Two candle stands flanking the table, burning steady.
   function candles(ctx) {
     [78, 172].forEach(function (x) {
-      rect(ctx, x - 1, 96, 4, 22, P.woodDark);
+      rect(ctx, x - 1, 104, 4, 14, P.woodDark);
       rect(ctx, x - 4, 116, 10, 3, P.woodDark);
-      rect(ctx, x - 2, 90, 6, 7, P.candle);
-      rect(ctx, x, 85, 2, 5, P.flame);
-      rect(ctx, x, 83, 2, 2, P.page);
+      rect(ctx, x - 2, 98, 6, 7, P.candle);
+      rect(ctx, x, 93, 2, 5, P.flame);
+      rect(ctx, x, 91, 2, 2, P.page);
     });
   }
 
