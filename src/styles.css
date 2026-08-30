@@ -817,13 +817,135 @@ body {
   50%      { box-shadow: inset 0 0 0 2px rgba(255,255,255,.3), 0 3px 0 #000, 0 0 20px rgba(255,190,90,.85); }
 }
 
+/* ---------- enchant bench ---------- */
+/* Pieces are cards on a bench rather than list rows: the piece itself, the
+   slots it has, what is already burned into them, and the roll. */
+.ench-lead { margin: 0; }
+.ench-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: var(--gap-sm);
+  margin: var(--gap-sm) 0;
+}
+.ench-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  padding: var(--gap-sm) var(--gap);
+  background: linear-gradient(180deg, rgba(58,36,84,.30), rgba(0,0,0,.26));
+  border: 2px solid rgba(154,95,208,.45);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.5);
+}
+.ench-head { display: flex; align-items: center; gap: var(--gap); }
+.ench-who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--gap-xs); }
+.ench-name {
+  color: var(--ink);
+  font-size: clamp(11px, calc(1.4 * var(--s)), 33px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ench-chips { display: flex; flex-wrap: wrap; gap: var(--gap-xs); }
+
+/* One pip a slot: lit ones carry what is in them, dark ones are open. */
+.pips { display: flex; align-items: center; gap: var(--gap-xs); }
+.pip {
+  width: clamp(9px, calc(1.1 * var(--s)), 22px);
+  aspect-ratio: 1;
+  background: rgba(0,0,0,.5);
+  border: 2px solid rgba(255,255,255,.18);
+}
+.pip.on { border-color: var(--gold); background: var(--gold); }
+.pip.on.uncommon { border-color: #6fb7d4; background: #6fb7d4; }
+.pip.on.rare { border-color: var(--purple-lit); background: var(--purple); }
+.pips-count { color: var(--ink-dim); font-size: .8em; margin-left: var(--gap-xs); }
+
+.ench-list { display: flex; flex-direction: column; gap: 2px; }
+.ench-entry {
+  display: flex;
+  gap: var(--gap-xs);
+  align-items: baseline;
+  padding: 2px var(--gap-xs);
+  border-left: 3px solid var(--gold-dark);
+  background: rgba(0,0,0,.2);
+  font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
+}
+.ench-entry.uncommon { border-left-color: #6fb7d4; }
+.ench-entry.rare { border-left-color: var(--purple); }
+.ench-entry.empty { color: var(--ink-dim); border-left-color: rgba(255,255,255,.12); }
+.ench-entry-name { color: var(--ink); white-space: nowrap; }
+.ench-entry.uncommon .ench-entry-name { color: #6fb7d4; }
+.ench-entry.rare .ench-entry-name { color: var(--purple-lit); }
+.ench-entry-text { color: var(--ink-dim); min-width: 0; }
+
+/* The roll itself: one bar across the foot of the card. */
+.ench-go {
+  font-family: var(--font);
+  font-size: clamp(10px, calc(1.25 * var(--s)), 30px);
+  letter-spacing: 1px;
+  margin-top: auto;
+  padding: var(--gap-xs) var(--pad-x);
+  color: #2b1a10;
+  text-shadow: 1px 1px 0 rgba(255,255,255,.3);
+  background: linear-gradient(180deg, #d3a6f5, var(--purple) 60%, #6a3f96);
+  border: 2px solid var(--gold);
+  box-shadow: 0 2px 0 #000;
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .ench-go:hover:not(:disabled) {
+    background: linear-gradient(180deg, #eccdff, #b07be0 60%, #7c4bab);
+  }
+}
+.ench-go:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  background: linear-gradient(180deg, #6a5a78, #3d3346);
+  color: var(--ink-dim);
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* The three that came out of the coals, side by side. */
+.offer-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: var(--gap-sm);
+  margin: var(--gap-sm) 0;
+}
+.offer-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  padding: var(--gap) var(--gap-sm);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: rgba(0,0,0,.28);
+  border: 2px solid var(--gold-dark);
+}
+.offer-card.uncommon { border-color: #6fb7d4; box-shadow: inset 0 0 20px rgba(111,183,212,.18); }
+.offer-card.rare { border-color: var(--purple); box-shadow: inset 0 0 22px rgba(154,95,208,.28); }
+.offer-rarity {
+  font-size: .78em;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.offer-card.uncommon .offer-rarity { color: #6fb7d4; }
+.offer-card.rare .offer-rarity { color: var(--purple-lit); }
+.offer-name {
+  color: var(--ink);
+  font-size: clamp(12px, calc(1.5 * var(--s)), 35px);
+}
+.offer-text { color: var(--ink-dim); flex: 1; }
+
 /* ---------- enchant offers ---------- */
 /* The frames land with the panel; each enchant drops into its frame a beat
    later, one after another. --d is when this row's turn comes. */
-.row.offer { position: relative; overflow: hidden; }
-.row.offer.common { --flash: var(--gold); }
-.row.offer.uncommon { --flash: #6fb7d4; }
-.row.offer.rare { --flash: var(--purple-lit); }
+.offer-card { position: relative; overflow: hidden; }
+.offer-card.common { --flash: var(--gold); }
+.offer-card.uncommon { --flash: #6fb7d4; }
+.offer-card.rare { --flash: var(--purple-lit); }
 
 /* A slot waits as a flat dark silhouette of itself. When its turn comes the
    whole thing strikes in at once: the frame punches out and brightens as the
@@ -1082,6 +1204,7 @@ body {
 .chip-stat.found { color: #8fd694; border-color: #4f9d55; }
 
 /* A pick marked to come off the piece. */
+/* A marked enchant in the revitalise list. */
 .row.offer.picked {
   border-color: var(--gold);
   box-shadow: inset 0 0 14px rgba(255,215,106,.28);
