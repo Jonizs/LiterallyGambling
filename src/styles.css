@@ -932,44 +932,9 @@ body {
 /* The work each station is done in: modification gets a box of its own,
    the other two are open. */
 .split-work { flex: 1; min-height: 0; }
-.split-pane.modification .split-work,
-.split-pane.sanding .split-work {
+.split-pane.modification .split-work {
   border: 2px solid rgba(154,160,171,.3);
   background: rgba(10,10,12,.35);
-}
-/* Sanding holds the piece and the work in the one box. */
-.split-pane.sanding .split-work {
-  padding: var(--gap-sm);
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap-xs);
-  overflow: auto;
-}
-.split-fill { flex: 1; min-height: 0; }
-/* The piece on the wheel: its slot, and the stats it shows once filled. */
-.piece-pick {
-  display: flex;
-  gap: var(--gap-sm);
-  align-items: flex-start;
-  margin-bottom: var(--gap-xs);
-}
-.piece-slot {
-  width: clamp(40px, calc(5.5 * var(--s)), 96px);
-  flex: none;
-}
-.piece-stats {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.overlay[data-theme="polish"] .piece-slot {
-  background: rgba(10,10,12,.6);
-  border-color: #63636e;
-}
-@media (hover: hover) {
-  .overlay[data-theme="polish"] .piece-slot:hover { border-color: #e2e8f0; }
 }
 .split-title {
   font-family: var(--font);
