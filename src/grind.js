@@ -84,16 +84,6 @@
     rect(ctx, cx + 26, cy + 6, 3, 34 + pedal, P.iron);
   }
 
-  // Sparks thrown off the wheel while it turns.
-  function sparks(ctx, t) {
-    for (var i = 0; i < 10; i++) {
-      var life = (t * 1.6 + i / 10) % 1;
-      var x = STONE.cx + 24 + life * 26 + i;
-      var y = STONE.cy - 10 + life * life * 30 - (i % 3) * 3;
-      rect(ctx, x, y, 2, 1, life > 0.7 ? P.gold : P.goldLit);
-    }
-  }
-
   // The bench on the right: whetstones, oil, cloth and the blade in progress.
   function bench(ctx, t) {
     var bx = 198, bw = 48;
@@ -152,24 +142,12 @@
     ctx.fillRect(0, 0, W, H);
   }
 
-  // A bucket by the wheel. The crate that stood left of it is gone: the
-  // stone stands there now.
-  function props(ctx) {
-    rect(ctx, 128, 106, 14, 12, P.iron);
-    rect(ctx, 128, 106, 14, 2, P.ironLit);
-    rect(ctx, 130, 109, 10, 4, "#2c4a52");
-  }
-
-  function draw(ctx, t, work) {
+  function draw(ctx, t) {
     wall(ctx, P.wallDark, P.wallMid, P.wallLine);
     wallKit(ctx, t);
     floor(ctx, P.floor, P.floorDark, P.floorLine);
-    props(ctx);
     bench(ctx, t);
     grindstone(ctx, t);
-    // A banner is one frozen frame, and sparks caught mid-air in it read as
-    // dirt on the button rather than a wheel at work.
-    if (!(work && work.snapshot)) sparks(ctx, t);
     vignette(ctx);
   }
 
