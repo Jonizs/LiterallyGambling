@@ -18,14 +18,15 @@
     critDamage: "Crit damage", armorPen: "Armor pen"
   };
 
-  var COST_SHARE = 0.5; // of the piece's sale price, paid to roll the offer
+  var COST_SHARE = 0.55; // of the piece's sale price, paid to roll the offer
   var OFFER_SIZE = 3;
   var REFORGE_GROWTH = 1.2; // each reforge of the same piece costs this much more
 
   var RARITY_ODDS = [
-    { value: "common", chance: 85 },
+    { value: "common", chance: 84 },
     { value: "uncommon", chance: 10 },
-    { value: "rare", chance: 5 }
+    { value: "rare", chance: 5 },
+    { value: "epic", chance: 1 }
   ];
 
   // Rolled for anything with tiers, then clamped to what that enchant goes
@@ -51,6 +52,16 @@
       effect: function (t) { return { durability: per(0.7, t) }; } },
     { key: "deep-cuts", name: "Deep Cuts", rarity: "common", maxTier: 1,
       effect: function () { return { critDamage: 1.9 }; } },
+    { key: "honed", name: "Honed", rarity: "common", maxTier: 3,
+      effect: function (t) { return { damage: per(0.36, t) }; } },
+    { key: "tempered", name: "Tempered", rarity: "common", maxTier: 2,
+      effect: function (t) { return { durability: per(0.8, t) }; } },
+    { key: "swift", name: "Swift", rarity: "common", maxTier: 3,
+      effect: function (t) { return { attackSpeed: per(0.22, t) }; } },
+    { key: "piercing", name: "Piercing", rarity: "common", maxTier: 2,
+      effect: function (t) {
+        return { armorPen: per(0.9, t), damage: per(0.15, t) };
+      } },
 
     // --- uncommon ----------------------------------------------------------
     { key: "critical", name: "Critical", rarity: "uncommon", maxTier: 3,
@@ -75,7 +86,21 @@
     { key: "bladed", name: "Bladed", rarity: "rare", maxTier: 3,
       effect: function (t) {
         return { damage: per(0.85, t), critDamage: per(0.61, t) };
-      } }
+      } },
+    { key: "titanic", name: "Titanic", rarity: "rare", maxTier: 3,
+      effect: function (t) { return { damage: per(1.1, t) }; } },
+    { key: "executioner", name: "Executioner", rarity: "rare", maxTier: 3,
+      effect: function (t) {
+        return { critChance: per(0.8, t), critDamage: per(0.9, t) };
+      } },
+    { key: "warded", name: "Warded", rarity: "rare", maxTier: 2,
+      effect: function (t) {
+        return { armor: per(2.4, t), durability: per(1.6, t) };
+      } },
+
+    // --- epic ---------------------------------------------------------------
+    { key: "mythic", name: "Mythic", rarity: "epic", maxTier: 3,
+      effect: function (t) { return { all: per(0.55, t) }; } }
   ];
 
   function defFor(key) {
@@ -243,10 +268,9 @@
       // grow armour off an "all stats" enchant.
       if (!item[stat]) return;
       item[stat] = round(item[stat] * mult[stat], ROUND[stat]);
-      if (stat === "critChance") {
-        item[stat] = Math.min(G.CRIT_CAP, item[stat]);
-      }
     });
+    // Anything over "crits every swing" is worked into the crit instead.
+    G.spillCrit(item);
     if (def.key === "awakened") item.awakenable = true;
     item.enchants.push(entry);
     return { ok: true, entry: entry };

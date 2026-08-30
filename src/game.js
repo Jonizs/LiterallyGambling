@@ -122,6 +122,9 @@
   var CRIT_DMG_SHARE = 20;
   var CRIT_DMG_PER_EDITION = 10;
   var CRIT_CAP = 100; // percent - a piece crits every swing at most
+  // Crit chance past every swing is not thrown away: each point over the cap
+  // is worked into the crit itself instead.
+  var CRIT_SPILL = 1;
 
   function round(value, places) {
     var factor = Math.pow(10, places);
@@ -156,6 +159,16 @@
 
   // What the damage side of a piece is worth: its output, with crit counted
   // at the premium the market puts on it.
+  // Move whatever crit chance is over the cap into crit damage. Called after
+  // anything that can push the chance up.
+  function spillCrit(item) {
+    if (item.critChance <= CRIT_CAP) return item;
+    var over = item.critChance - CRIT_CAP;
+    item.critChance = CRIT_CAP;
+    item.critDamage = Math.round(item.critDamage + over * CRIT_SPILL);
+    return item;
+  }
+
   function saleDamage(item) {
     var crit = (item.critChance / 100) * (item.critDamage / 100 - 1);
     var premium = 1 + (CRIT_VALUE_CAP - 1) * crit / (crit + CRIT_VALUE_HALF);
@@ -551,6 +564,7 @@
     damagePerSecond: damagePerSecond,
     saleDamage: saleDamage,
     CRIT_CAP: CRIT_CAP,
+    spillCrit: spillCrit,
     priceOf: priceOf,
     stocked: stocked,
     buy: buy,
