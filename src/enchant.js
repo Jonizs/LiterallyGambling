@@ -164,7 +164,13 @@
       }));
     intro.lastChild.title = showOdds ? "Hide the odds." : "What am I rolling against?";
     wrap.appendChild(intro);
-    if (showOdds) wrap.appendChild(oddsBoard(ctx.state));
+    // The odds take the panel over while they are up: nothing to pick from
+    // underneath, just what a slot is rolling against.
+    if (showOdds) {
+      wrap.appendChild(oddsBoard(ctx.state));
+      if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+      return wrap;
+    }
 
     var rows = el("div", "rows");
     items.forEach(function (item) {
