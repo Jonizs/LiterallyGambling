@@ -838,10 +838,18 @@ body {
 }
 /* Inside the wall panel the rows go see-through too, so the room reads
    through the whole thing rather than just its edges. */
+/* Tight rows, so as many pieces as possible fit on the wall. */
 .bench-body .row {
   background: rgba(10,6,16,.42);
   border-color: rgba(154,95,208,.35);
+  padding: var(--gap-xs) var(--gap-sm);
 }
+.bench-body .rows { gap: var(--gap-xs); }
+.item-line.tight { gap: var(--gap-sm); }
+.item-line.tight { flex-wrap: nowrap; }
+.item-line.tight .icon { width: clamp(15px, calc(1.7 * var(--s)), 38px); }
+.item-line.tight .item-name { font-size: clamp(10px, calc(1.2 * var(--s)), 28px); }
+.item-line.tight .item-meta { gap: var(--gap-xs); }
 .bench-body .row-title, .bench-body p { color: #efe2ff; }
 .bench-body .muted { color: #b9a6cf; }
 /* The odds toggle wears the bench's purple rather than the wood palette. */

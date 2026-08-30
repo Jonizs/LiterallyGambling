@@ -108,6 +108,27 @@
     return board;
   }
 
+  // The bench only cares what a piece is and what is already burned into it,
+  // so the combat numbers are left off: name, tier, quality, slots used, and
+  // the enchants it is carrying.
+  function compactLine(item) {
+    var line = el("div", "item-line tight");
+    line.appendChild(global.Icons.make(item.icon));
+    line.appendChild(el("span", "item-name", item.name));
+    var meta = el("span", "item-meta");
+    meta.appendChild(el("span", "chip-stat tier", item.tier));
+    meta.appendChild(el("span", "chip-stat band-" + item.band.toLowerCase(),
+      item.band));
+    meta.appendChild(el("span", "chip-stat",
+      item.enchants.length + "/" + item.slots));
+    item.enchants.forEach(function (entry) {
+      meta.appendChild(el("span", "chip-stat ench " + entry.rarity,
+        E.label(entry)));
+    });
+    line.appendChild(meta);
+    return line;
+  }
+
   // Two states: pick a piece, or pick one of the three the ritual turned up.
   function build(ctx) {
     var wrap = el("div");
@@ -175,7 +196,7 @@
     var rows = el("div", "rows");
     items.forEach(function (item) {
       var row = el("div", "row");
-      row.appendChild(itemLine(item));
+      row.appendChild(compactLine(item));
       var cost = E.costFor(item);
       var free = E.slotsLeft(item);
       var group = el("div", "btn-group");
