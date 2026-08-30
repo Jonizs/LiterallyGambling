@@ -745,6 +745,13 @@
   // Menus that hang in the room itself rather than over the whole screen.
   var SCENE_PANELS = { enchant: true, revitalize: true };
 
+  // Which room's colours a menu wears. The forge's own menus keep the wood
+  // and brass they have always had.
+  var PANEL_THEME = {
+    gather: "lab", refine: "lab", compound: "lab",
+    experiment: "lab", lab: "lab"
+  };
+
   function openPanel(key) {
     var panel = P.BUILDERS[key];
     if (!panel || panelLocked(key)) return;
@@ -767,6 +774,7 @@
     clearTimeout(closing);
     var card = menuCard();
     if (card) card.classList.remove("closing", "swapping");
+    $("overlay").dataset.theme = PANEL_THEME[key] || "";
     drawPanel();
     if (SCENE_PANELS[key]) {
       clearTimeout(benchClosing);

@@ -714,6 +714,70 @@ body {
 .notice { margin-top: 6px; color: var(--gold-lit); }
 .empty { color: var(--ink-dim); }
 
+/* ---------- the lab's own menus ----------
+   Gather, refine, compound and the work table wear the lab's greens the way
+   the bench wears the enchanting room's purples. Only the colours change -
+   the layout is the same card every other menu uses. */
+.overlay[data-theme="lab"] .overlay-card {
+  background:
+    repeating-linear-gradient(
+      180deg, rgba(0,0,0,.18) 0 3px, rgba(255,255,255,.03) 3px 6px),
+    linear-gradient(180deg, #24352a, #16211a);
+  border-color: #4a6a57;
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.5), 0 2px 0 #000;
+  scrollbar-color: #3f7a55 rgba(8,16,12,.6);
+}
+.overlay[data-theme="lab"] .tab-title { color: #bfe6dd; }
+.overlay[data-theme="lab"] .overlay-body { color: #9ec4b6; }
+.overlay[data-theme="lab"] .overlay-body p,
+.overlay[data-theme="lab"] .row-title { color: #e4f4ee; }
+.overlay[data-theme="lab"] .muted { color: #8faea2; }
+.overlay[data-theme="lab"] .row {
+  background: rgba(8,16,12,.42);
+  border-color: rgba(79,191,106,.28);
+}
+.overlay[data-theme="lab"] .head-row { border-color: #4fbf6a; }
+.overlay[data-theme="lab"] .crucible {
+  background: rgba(8,16,12,.4);
+  border-color: rgba(79,191,106,.3);
+}
+.overlay[data-theme="lab"] .crucible.lit {
+  border-color: #4fbf6a;
+  background: rgba(79,191,106,.12);
+  box-shadow: inset 0 0 12px rgba(79,191,106,.32);
+}
+.overlay[data-theme="lab"] .stock .mat,
+.overlay[data-theme="lab"] .chip-stat { border-color: rgba(79,191,106,.45); }
+.overlay[data-theme="lab"] .chip-stat.tier { color: #a7f0a0; border-color: #4fbf6a; }
+.overlay[data-theme="lab"] .tab { color: #8faea2; }
+.overlay[data-theme="lab"] .tab.on { color: #d8f5e6; }
+.overlay[data-theme="lab"] .mini-btn,
+.overlay[data-theme="lab"] .chip {
+  color: #eafaf2;
+  background: linear-gradient(180deg, #3f7a55, #1f3d2c);
+  border-color: rgba(167,240,160,.65);
+}
+@media (hover: hover) {
+  .overlay[data-theme="lab"] .mini-btn:hover:not(:disabled),
+  .overlay[data-theme="lab"] .chip:hover {
+    background: linear-gradient(180deg, #56a06e, #2a5540);
+    color: #fff;
+  }
+}
+.overlay[data-theme="lab"] .mini-btn:disabled {
+  background: linear-gradient(180deg, #46584d, #232e28);
+  color: #92a89b;
+}
+.overlay[data-theme="lab"] .notice { color: #a7f0a0; }
+.overlay[data-theme="lab"] .overlay-card::-webkit-scrollbar-track {
+  background: rgba(8,16,12,.6);
+  box-shadow: inset 0 0 0 2px #000, inset 2px 0 0 2px rgba(79,191,106,.35);
+}
+.overlay[data-theme="lab"] .overlay-card::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a7f0a0, #4fbf6a 45%, #2c7a45);
+  border: 2px solid #10201a;
+}
+
 /* ---------- bars out of a fitting ---------- */
 /* Pressing something that does more than one job - the enchanting table -
    slides its choices out of the furniture, stacked over the spot itself. */
