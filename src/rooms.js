@@ -66,16 +66,23 @@
     ctx.fillRect(0, H - 6, W, 6);
   }
 
-  // The enchanted volumes never settle on one shade: each purple spine drifts
-  // through the room's other purples on its own slow, off-beat clock.
-  var PURPLES = ["#5a2a7a", "#7b3aa4", "#9a5fd0", "#6b2f95", "#8a45c0",
-    "#43206b", "#a06fe0"];
+  // The enchanted volumes never settle: their hue slides back and forth
+  // through the purples, each on its own slow, off-beat swing, so the colour
+  // creeps rather than jumps. Saturation and lightness stay where the spine
+  // started, so a dark cloth book stays dark.
+  var PURPLE_TONES = {};
 
-  function purpleAt(t, seed) {
-    // A different dwell per book, so no two ever turn together.
-    var step = Math.floor(t / (1.8 + (seed % 5) * 0.7) + seed);
-    return PURPLES[Math.abs(step * 5 + seed * 3) % PURPLES.length];
+  function purpleDrift(t, seed, sat, light) {
+    var speed = 0.09 + (seed % 5) * 0.035;
+    var hue = 282 + Math.sin(t * speed + seed * 1.7) * 26
+      + Math.sin(t * speed * 0.41 + seed) * 8;
+    return "hsl(" + hue.toFixed(1) + "," + sat + "%," + light + "%)";
   }
+
+  // Which purples drift, and the saturation and lightness each keeps.
+  PURPLE_TONES[P.cloth] = [48, 32];
+  PURPLE_TONES[P.clothLit] = [48, 44];
+  PURPLE_TONES[P.glow] = [55, 59];
 
   // Shelves of books on both walls, so the room reads as a study.
   function shelves(ctx, t) {
@@ -89,9 +96,8 @@
           var h = 10 + ((b * 7 + s * 5 + side * 3) % 5);
           var colour = spines[(b + s * 2 + side) % spines.length];
           // Only the purple ones are enchanted; the plain leather stays put.
-          if (colour === P.cloth || colour === P.clothLit || colour === P.glow) {
-            colour = purpleAt(t, b + s * 4 + side * 13);
-          }
+          var tone = PURPLE_TONES[colour];
+          if (tone) colour = purpleDrift(t, b + s * 4 + side * 13, tone[0], tone[1]);
           rect(ctx, x0 + 2 + b * 4, y + 16 - h, 3, h, colour);
         }
       }
