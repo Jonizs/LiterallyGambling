@@ -32,12 +32,8 @@
 
   // The treadle grindstone: a stone wheel turning in a timber frame over its
   // water trough, cranked from the side and pumped from the pedal below.
-  // The stone stands where the crate of finished pieces used to, hard left,
-  // so the middle of the room is clear.
-  var STONE = { cx: 46, cy: 82 };
-
   function grindstone(ctx, t) {
-    var cx = STONE.cx, cy = STONE.cy, r = 24;
+    var cx = 94, cy = 82, r = 24;
     var a = t * 2.2;   // where the wheel is in its turn
 
     // Frame: two uprights, a foot beam, and the brace across the back.
@@ -88,56 +84,55 @@
   function sparks(ctx, t) {
     for (var i = 0; i < 10; i++) {
       var life = (t * 1.6 + i / 10) % 1;
-      var x = STONE.cx + 24 + life * 26 + i;
-      var y = STONE.cy - 10 + life * life * 30 - (i % 3) * 3;
+      var x = 118 + life * 26 + i;
+      var y = 72 + life * life * 30 - (i % 3) * 3;
       rect(ctx, x, y, 2, 1, life > 0.7 ? P.gold : P.goldLit);
     }
   }
 
   // The bench on the right: whetstones, oil, cloth and the blade in progress.
   function bench(ctx, t) {
-    var bx = 198, bw = 48;
-    rect(ctx, bx, 92, bw, 6, P.wood);
-    rect(ctx, bx, 92, bw, 2, P.woodLit);
-    rect(ctx, bx + 6, 98, 5, 20, P.woodDark);
-    rect(ctx, bx + 37, 98, 5, 20, P.woodDark);
+    rect(ctx, 150, 92, 96, 6, P.wood);
+    rect(ctx, 150, 92, 96, 2, P.woodLit);
+    rect(ctx, 156, 98, 5, 20, P.woodDark);
+    rect(ctx, 236, 98, 5, 20, P.woodDark);
     // A blade lying flat on the bench top, hilt to the right.
-    rect(ctx, bx + 2, 86, 26, 6, P.steel);
-    rect(ctx, bx + 2, 86, 26, 2, P.steelLit);
-    rect(ctx, bx - 1, 87, 3, 4, P.steelLit);       // the point
-    rect(ctx, bx + 28, 84, 4, 10, P.gold);         // guard
-    rect(ctx, bx + 32, 87, 10, 4, P.woodDark);     // grip
-    rect(ctx, bx + 42, 86, 3, 6, P.gold);          // pommel
+    rect(ctx, 158, 86, 58, 6, P.steel);
+    rect(ctx, 158, 86, 58, 2, P.steelLit);
+    rect(ctx, 156, 87, 3, 4, P.steelLit);          // the point
+    rect(ctx, 216, 84, 4, 10, P.gold);             // guard
+    rect(ctx, 220, 87, 12, 4, P.woodDark);         // grip
+    rect(ctx, 232, 86, 3, 6, P.gold);              // pommel
     // A glint runs the edge now and then, rather than a block sliding along
     // it: most of the cycle there is nothing, then one quick pass.
     var cycle = (t * 0.35) % 1;
     if (cycle < 0.25) {
-      var at = bx + 2 + (cycle / 0.25) * 22;
+      var at = 158 + (cycle / 0.25) * 54;
       rect(ctx, at, 86, 4, 2, P.steelLit);
       rect(ctx, at + 1, 86, 2, 1, "#ffffff");
     }
     // Whetstones stacked, an oil bottle and a folded cloth.
-    rect(ctx, bx + 30, 76, 16, 4, P.stone);
-    rect(ctx, bx + 32, 72, 12, 4, P.stoneLit);
-    rect(ctx, bx + 2, 70, 8, 14, P.oil);
-    rect(ctx, bx + 4, 66, 4, 4, P.woodDark);
-    rect(ctx, bx + 2, 76, 8, 4, P.goldLit);
-    rect(ctx, bx + 12, 76, 16, 8, P.cloth);
-    rect(ctx, bx + 12, 76, 16, 2, "#e8dcc0");
+    rect(ctx, 226, 76, 16, 4, P.stone);
+    rect(ctx, 228, 72, 12, 4, P.stoneLit);
+    rect(ctx, 172, 70, 8, 14, P.oil);
+    rect(ctx, 174, 66, 4, 4, P.woodDark);
+    rect(ctx, 172, 76, 8, 4, P.goldLit);
+    rect(ctx, 190, 76, 20, 8, P.cloth);
+    rect(ctx, 190, 76, 20, 2, "#e8dcc0");
   }
 
   // Buffing wheels and files hung on the wall, and the lamp that lights them.
   function wallKit(ctx, t) {
-    rect(ctx, 16, 22, 60, 3, P.woodDark);
+    rect(ctx, 16, 30, 60, 3, P.woodDark);
     for (var i = 0; i < 5; i++) {
-      rect(ctx, 20 + i * 12, 25, 3, 16 + (i % 3) * 5, P.iron);
-      rect(ctx, 19 + i * 12, 25, 5, 4, P.woodDark);
+      rect(ctx, 20 + i * 12, 33, 3, 16 + (i % 3) * 5, P.iron);
+      rect(ctx, 19 + i * 12, 33, 5, 4, P.woodDark);
     }
     // Two buffing wheels on their pegs.
     [96, 122].forEach(function (x, i) {
-      rect(ctx, x - 8, 18, 16, 16, i ? P.cloth : P.goldLit);
-      rect(ctx, x - 5, 21, 10, 10, i ? "#e8dcc0" : P.gold);
-      rect(ctx, x - 2, 24, 4, 4, P.woodDark);
+      rect(ctx, x - 8, 26, 16, 16, i ? P.cloth : P.goldLit);
+      rect(ctx, x - 5, 29, 10, 10, i ? "#e8dcc0" : P.gold);
+      rect(ctx, x - 2, 32, 4, 4, P.woodDark);
     });
     // Hanging lamp: the warm light everything in here is polished by.
     rect(ctx, 200, 0, 2, 18, P.iron);
@@ -152,9 +147,13 @@
     ctx.fillRect(0, 0, W, H);
   }
 
-  // A bucket by the wheel. The crate that stood left of it is gone: the
-  // stone stands there now.
+  // A crate of finished pieces and a bucket by the wheel.
   function props(ctx) {
+    rect(ctx, 16, 100, 28, 18, P.woodDark);
+    rect(ctx, 16, 100, 28, 2, P.wood);
+    rect(ctx, 20, 96, 5, 5, P.gold);
+    rect(ctx, 28, 94, 5, 7, P.steel);
+    rect(ctx, 36, 96, 4, 5, P.goldLit);
     rect(ctx, 128, 106, 14, 12, P.iron);
     rect(ctx, 128, 106, 14, 2, P.ironLit);
     rect(ctx, 130, 109, 10, 4, "#2c4a52");
