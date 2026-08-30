@@ -845,12 +845,17 @@ body {
 }
 /* Inside the wall panel the rows go see-through too, so the room reads
    through the whole thing rather than just its edges. */
-/* Tight rows, so as many pieces as possible fit on the wall. */
+/* Tight rows, so as many pieces as possible fit on the wall. The roll
+   button sits level with the enchant box, not centred against the whole
+   row, so the two boxes read as one line. */
 .bench-body .row {
   background: rgba(10,6,16,.42);
   border-color: rgba(154,95,208,.35);
   padding: var(--gap-xs) var(--gap-sm);
+  align-items: flex-end;
 }
+.bench-body .btn-group { align-items: stretch; }
+.bench-body .row .mini-btn { min-height: calc(2.9em + 10px); }
 .bench-body .rows { gap: var(--gap-xs); }
 /* Two stacked lines: what the piece is, then a box holding what is burned
    into it. The box always keeps two rows clear, so a bare piece and a fully
