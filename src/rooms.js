@@ -128,8 +128,8 @@
     });
   }
 
-  // A banner hung over the table, its glyphs surfacing and sinking away again
-  // on their own timings so the cloth never reads as a fixed pattern.
+  // A banner hung over each bookshelf, its glyphs surfacing and sinking away
+  // again on their own timings so the cloth never reads as a fixed pattern.
   var BANNER_GLYPHS = [
     "010111010101010", "111010010010111", "101101111101101",
     "010101101101010", "111100110100111", "010111111111010",
@@ -143,7 +143,12 @@
     "100101010101001", "011111010111110", "110001111100011"
   ];
 
-  var BANNER = { x: 100, y: 0, w: 56, h: 74 };
+  // One banner over each bookshelf rather than a single sheet down the
+  // middle of the wall, each hanging clear of the top row of books.
+  var BANNERS_HUNG = [
+    { x: 18, y: 0, w: 36, h: 30 },
+    { x: 202, y: 0, w: 36, h: 30 }
+  ];
 
   // Which mark each slot is wearing and when it next turns over. A slot is
   // dark for a while, then a new mark surfaces, holds, and sinks again -
@@ -170,7 +175,14 @@
   }
 
   function wallBanner(ctx, t) {
-    var b = BANNER;
+    BANNERS_HUNG.forEach(function (b, index) {
+      hangBanner(ctx, t, b, index * 4);
+    });
+  }
+
+  // One sheet: its rod, its cloth, and the marks that come and go on it.
+  // The seed offset keeps the two banners off each other's beat.
+  function hangBanner(ctx, t, b, seed) {
     // The rod it hangs from, and the cloth itself.
     rect(ctx, b.x - 6, b.y, b.w + 12, 3, P.woodDark);
     rect(ctx, b.x - 6, b.y, b.w + 12, 1, P.wood);
@@ -192,12 +204,12 @@
       rect(ctx, b.x + b.w - 5, b.y + 3 + d, 2, 2, P.clothLit);
     }
 
-    // Five rows of three, each slot surfacing and sinking on its own turn.
-    for (var i = 0; i < 15; i++) {
-      var glyph = glyphAt(t, i);
+    // Two rows of two, each slot surfacing and sinking on its own turn.
+    for (var i = 0; i < 4; i++) {
+      var glyph = glyphAt(t, i + seed);
       if (!glyph) continue;
-      var col = i % 3, row = (i / 3) | 0;
-      var gx = b.x + 10 + col * 13, gy = b.y + 10 + row * 13;
+      var col = i % 2, row = (i / 2) | 0;
+      var gx = b.x + 8 + col * 14, gy = b.y + 8 + row * 14;
       ctx.globalAlpha = glyph.alpha * 0.95;
       for (var r = 0; r < 5; r++) {
         for (var c = 0; c < 3; c++) {
