@@ -828,31 +828,13 @@ body {
   cursor: pointer;
 }
 @media (hover: hover) { .bench-close:hover { color: #fff2c0; } }
-/* The panel's height is fixed by the wall, so its sections share it out
-   between them and each scrolls on its own - a percentage max-height on a
-   child of a scrolling box does not hold. */
 .bench-body {
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
   overscroll-behavior: contain;
   padding: var(--gap-sm);
   font-size: clamp(9px, calc(1.15 * var(--s)), 27px);
-  display: flex;
-  flex-direction: column;
-}
-.bench-body > * {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-.bench-body .intro-row, .bench-body .notice, .bench-body .empty { flex: none; }
-.bench-body .rows {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
 }
 /* Inside the wall panel the rows go see-through too, so the room reads
    through the whole thing rather than just its edges. */
@@ -862,29 +844,6 @@ body {
 }
 .bench-body .row-title, .bench-body p { color: #efe2ff; }
 .bench-body .muted { color: #b9a6cf; }
-/* The odds are a panel of their own inside the wall menu: its own frame, its
-   own scroll, with the pieces still listed below it. */
-.bench-body .odds-panel, .odds-panel {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 45%;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  margin: var(--gap-xs) 0 var(--gap-sm);
-  padding: var(--gap-xs) var(--gap-sm);
-  background: rgba(10,6,16,.5);
-  border: 2px solid rgba(154,95,208,.4);
-}
-.odds-head {
-  position: sticky;
-  top: calc(var(--gap-xs) * -1);
-  letter-spacing: 1px;
-  color: #d3a6f5;
-  background: rgba(10,6,16,.92);
-  padding: var(--gap-xs) 0;
-}
-
 /* The odds toggle wears the bench's purple rather than the wood palette. */
 .bench-body .odds-toggle {
   color: #efe2ff;
@@ -900,26 +859,22 @@ body {
 }
 
 /* Even the scrollbars in here are the bench's, not the forge's brass. */
-.bench-body, .odds-panel { scrollbar-color: #7b4fae rgba(10,6,16,.6); }
-.bench-body::-webkit-scrollbar-track,
-.odds-panel::-webkit-scrollbar-track {
+.bench-body { scrollbar-color: #7b4fae rgba(10,6,16,.6); }
+.bench-body::-webkit-scrollbar-track {
   background: rgba(10,6,16,.6);
   box-shadow: inset 0 0 0 2px #000, inset 2px 0 0 2px rgba(154,95,208,.35);
 }
-.bench-body::-webkit-scrollbar-thumb,
-.odds-panel::-webkit-scrollbar-thumb {
+.bench-body::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #d3a6f5, #9a5fd0 45%, #56377f);
   border: 2px solid #1b1028;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
 }
 @media (hover: hover) {
-  .bench-body::-webkit-scrollbar-thumb:hover,
-  .odds-panel::-webkit-scrollbar-thumb:hover {
+  .bench-body::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #efdcff, #b07be0 45%, #6a3f96);
   }
 }
-.bench-body::-webkit-scrollbar-corner,
-.odds-panel::-webkit-scrollbar-corner { background: rgba(10,6,16,.6); }
+.bench-body::-webkit-scrollbar-corner { background: rgba(10,6,16,.6); }
 
 .bench-body .mini-btn {
   background: linear-gradient(180deg, #7b4fae, #3f2760);

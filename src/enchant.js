@@ -164,14 +164,7 @@
       }));
     intro.lastChild.title = showOdds ? "Hide the odds." : "What am I rolling against?";
     wrap.appendChild(intro);
-    // The odds are their own panel with its own scroll, so the pieces stay
-    // where they are underneath rather than being pushed off the wall.
-    if (showOdds) {
-      var board = el("div", "odds-panel");
-      board.appendChild(el("div", "odds-head", "What a slot rolls against"));
-      board.appendChild(oddsBoard(ctx.state));
-      wrap.appendChild(board);
-    }
+    if (showOdds) wrap.appendChild(oddsBoard(ctx.state));
 
     var rows = el("div", "rows");
     items.forEach(function (item) {
