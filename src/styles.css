@@ -980,63 +980,19 @@ body {
 }
 .ritual.picking { pointer-events: auto; }
 
-/* The piece itself, lifted off the table and turning. */
+/* The piece itself, lifted off the table and left hanging over it. */
 .ritual-item {
   position: absolute;
   left: 50%;
   top: 44%;
   transform: translate(-50%, -50%);
-  /* One long turn-up rather than a fixed rate: it starts barely moving and
-     winds up to a blur, landing on a whole number of turns so it comes to
-     rest square instead of snapping back when the hover takes over. */
-  animation: ritualLift .5s ease-out both,
-             ritualSpin 2.1s cubic-bezier(.8, 0, .45, .96) .5s 1,
-             ritualGlow 2.6s ease-in both;
-}
-/* The piece takes the light in as it winds up: rune purple to a full gold
-   burn by the time it comes to rest. */
-@keyframes ritualGlow {
-  0% { filter: drop-shadow(0 0 4px rgba(154,95,208,.5)); }
-  40% {
-    filter: drop-shadow(0 0 14px rgba(211,166,245,.9)) brightness(1.1);
-  }
-  70% {
-    filter: drop-shadow(0 0 20px rgba(255,215,106,.85))
-            sepia(.5) saturate(3) hue-rotate(-12deg) brightness(1.3);
-  }
-  /* Every pixel of it gold by the time it stops turning. */
-  100% {
-    filter: drop-shadow(0 0 18px rgba(255,215,106,1))
-            drop-shadow(0 0 38px rgba(255,170,60,.85))
-            sepia(1) saturate(6) hue-rotate(-14deg) brightness(1.5);
-  }
+  animation: ritualLift .5s ease-out both, ritualHover 2.4s ease-in-out .5s infinite;
+  filter: drop-shadow(0 0 12px rgba(154,95,208,.85));
 }
 .ritual-item .icon { width: clamp(45px, calc(5.4 * var(--s)), 129px); }
-/* Once it has stopped turning the gold burns off again, leaving the piece
-   itself under a soft aura while the offers are up. */
-.ritual.settled .ritual-item {
-  animation: ritualLift .5s ease-out both,
-             ritualHover 2.4s ease-in-out infinite,
-             ritualCool .8s ease-out both;
-}
-@keyframes ritualCool {
-  from {
-    filter: drop-shadow(0 0 18px rgba(255,215,106,1))
-            drop-shadow(0 0 38px rgba(255,170,60,.85))
-            sepia(1) saturate(6) hue-rotate(-14deg) brightness(1.5);
-  }
-  to {
-    filter: drop-shadow(0 0 10px rgba(255,200,90,.55))
-            sepia(0) saturate(1) hue-rotate(0deg) brightness(1);
-  }
-}
 @keyframes ritualLift {
   from { opacity: 0; transform: translate(-50%, 60%) scale(.7); }
   to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-@keyframes ritualSpin {
-  from { transform: translate(-50%, -50%) rotateY(0deg); }
-  to { transform: translate(-50%, -50%) rotateY(2520deg); }
 }
 @keyframes ritualHover {
   0%, 100% { transform: translate(-50%, -50%); }
@@ -1136,7 +1092,7 @@ body {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ritual-item, .ritual.settled .ritual-item, .spark, .ritual-choice,
+  .ritual-item, .spark, .ritual-choice,
   .ritual-choice.taken, .ritual-choice.burning { animation-duration: .01s; }
 }
 
