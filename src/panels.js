@@ -1,4 +1,4 @@
-/* Panel bodies for the scene overlay: forge, shop and inventory. */
+/* Panel bodies for the scene overlay: forge, orders and inventory. */
 (function (global) {
   "use strict";
 
@@ -287,11 +287,45 @@
     return wrap;
   }
 
-  // --- shop ----------------------------------------------------------------
-  function shopPanel(ctx) {
-    var wrap = el("div");
-    wrap.appendChild(el("p", null, "Materials for the forge. Prices are per unit."));
+  // --- orders ---------------------------------------------------------------
+  // The order board carries two jobs, so it wears the forge's own tab strip
+  // rather than sliding a choice out of the desk.
+  var ordersTab = "shop";
 
+  var ORDER_TABS = [
+    { key: "shop", label: "Shop",
+      blurb: "Materials for the forge. Prices are per unit." },
+    { key: "upgrades", label: "Upgrades",
+      blurb: "Work on the forge itself. Every tier lifts the stats each " +
+        "strike rolls around, for good." }
+  ];
+
+  function ordersPanel(ctx) {
+    var wrap = el("div");
+
+    var strip = el("div", "tabs");
+    ORDER_TABS.forEach(function (tab) {
+      strip.appendChild(button(tab.label, "tab" + (tab.key === ordersTab ? " on" : ""),
+        function () {
+          ordersTab = tab.key;
+          ctx.setNotice("");
+          ctx.refresh();
+        }));
+    });
+    wrap.appendChild(strip);
+
+    var current = ORDER_TABS.filter(function (tab) {
+      return tab.key === ordersTab;
+    })[0];
+    wrap.appendChild(el("p", null, current.blurb));
+
+    if (ordersTab === "upgrades") upgradesTab(ctx, wrap);
+    else shopTab(ctx, wrap);
+    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+    return wrap;
+  }
+
+  function shopTab(ctx, wrap) {
     var rows = el("div", "rows");
     Object.keys(G.MATERIALS).forEach(function (key) {
       var mat = G.MATERIALS[key];
@@ -342,17 +376,9 @@
       locked.appendChild(bar);
     }
     wrap.appendChild(locked);
-
-    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
-    return wrap;
   }
 
-  function upgradesPanel(ctx) {
-    var wrap = el("div");
-    wrap.appendChild(el("p", null,
-      "Work on the forge itself. Every tier lifts the stats each strike " +
-      "rolls around, for good."));
-
+  function upgradesTab(ctx, wrap) {
     var rows = el("div", "rows");
     U.UPGRADES.forEach(function (def) {
       var tier = U.tierOf(ctx.state, def);
@@ -380,8 +406,6 @@
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
-    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
-    return wrap;
   }
 
   // The lab has no menu of its own any more: each machine in the room opens
@@ -459,7 +483,7 @@
 
   var BUILDERS = {
     forge: { title: "Forge", build: forgePanel },
-    shop: { title: "Shop", build: shopPanel },
+    orders: { title: "Orders", build: ordersPanel },
     inventory: { title: "Inventory", build: function (ctx) {
       return global.Inventory.build(ctx);
     } },
@@ -469,7 +493,6 @@
     revitalize: { title: "Revitalize", build: function (ctx) {
       return global.Enchant.revitalise(ctx);
     }, level: 4 },
-    upgrades: { title: "Upgrades", build: upgradesPanel },
     // The lab's own entry is what gates the room; its machines are the menus.
     lab: { title: "Resource & Experiment", build: experimentPanel, level: 2 },
     gather: { title: "Gather", build: function (ctx) {
