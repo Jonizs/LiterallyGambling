@@ -157,9 +157,6 @@
       return wrap;
     }
     var intro = el("div", "intro-row");
-    intro.appendChild(el("p", null,
-      "Rolling three enchants for a piece costs half what it sells for. " +
-      "Each one takes an enchant slot."));
     intro.appendChild(button(showOdds ? "\u00d7" : "?", "chip odds-toggle",
       function () {
         showOdds = !showOdds;
