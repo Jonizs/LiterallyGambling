@@ -20,15 +20,14 @@
     critDamage: "Crit damage", armorPen: "Armor pen"
   };
 
-  var COST_SHARE = 0.57; // of the piece's sale price, paid to roll the offer
+  var COST_SHARE = 0.555; // of the piece's sale price, paid to roll the offer
   var OFFER_SIZE = 3;
   var REFORGE_GROWTH = 1.2; // each reforge of the same piece costs this much more
 
   var RARITY_ODDS = [
-    { value: "common", chance: 84 },
+    { value: "common", chance: 85 },
     { value: "uncommon", chance: 10 },
-    { value: "rare", chance: 5 },
-    { value: "epic", chance: 1 }
+    { value: "rare", chance: 5 }
   ];
 
   // Rolled for anything with tiers, then clamped to what that enchant goes
@@ -76,6 +75,16 @@
       effect: function (t) {
         return { damage: per(0.55, t), durability: per(0.55, t) };
       } },
+    { key: "titanic", name: "Titanic", rarity: "uncommon", maxTier: 3,
+      effect: function (t) { return { damage: per(0.62, t) }; } },
+    { key: "executioner", name: "Executioner", rarity: "uncommon", maxTier: 3,
+      effect: function (t) {
+        return { critChance: per(0.5, t), critDamage: per(0.6, t) };
+      } },
+    { key: "warded", name: "Warded", rarity: "uncommon", maxTier: 2,
+      effect: function (t) {
+        return { durability: per(1.3, t), armorPen: per(0.85, t) };
+      } },
 
     // --- rare --------------------------------------------------------------
     { key: "godly", name: "Godly", rarity: "rare", maxTier: 3,
@@ -86,20 +95,8 @@
       effect: function (t) {
         return { damage: per(0.85, t), critDamage: per(0.61, t) };
       } },
-    { key: "titanic", name: "Titanic", rarity: "rare", maxTier: 3,
-      effect: function (t) { return { damage: per(1.1, t) }; } },
-    { key: "executioner", name: "Executioner", rarity: "rare", maxTier: 3,
-      effect: function (t) {
-        return { critChance: per(0.8, t), critDamage: per(0.9, t) };
-      } },
-    { key: "warded", name: "Warded", rarity: "rare", maxTier: 2,
-      effect: function (t) {
-        return { durability: per(2.2, t), armorPen: per(1.4, t) };
-      } },
-
-    // --- epic ---------------------------------------------------------------
-    { key: "mythic", name: "Mythic", rarity: "epic", maxTier: 3,
-      effect: function (t) { return { all: per(0.55, t) }; } }
+    { key: "mythic", name: "Mythic", rarity: "rare", maxTier: 3,
+      effect: function (t) { return { all: per(0.42, t) }; } }
   ];
 
   function defFor(key) {
