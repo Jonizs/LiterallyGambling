@@ -132,22 +132,12 @@
     // What is burned into it gets the full width underneath, two lines of it.
     var ench = el("div", "tight-ench");
     item.enchants.forEach(function (entry) {
-      var chip = el("span", "chip-stat ench " + entry.rarity, shortLabel(entry));
-      chip.title = E.label(entry) + " \u2014 " + entry.text;
+      var chip = el("span", "chip-stat ench " + entry.rarity, E.label(entry));
+      chip.title = entry.text;
       ench.appendChild(chip);
     });
     line.appendChild(ench);
     return line;
-  }
-
-  // Names cut to four letters a word, so a piece wearing five enchants still
-  // fits its two lines. The full name is on the chip's tooltip.
-  function shortLabel(entry) {
-    var roman = ["", "I", "II", "III"];
-    var name = entry.name.split(" ").map(function (word) {
-      return word.length > 5 ? word.slice(0, 4) : word;
-    }).join(" ");
-    return entry.tiered ? name + " " + roman[entry.tier] : name;
   }
 
   // Two states: pick a piece, or pick one of the three the ritual turned up.
