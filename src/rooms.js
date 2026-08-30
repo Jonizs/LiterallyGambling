@@ -73,9 +73,13 @@
   var PURPLE_TONES = {};
 
   function purpleDrift(t, seed, sat, light) {
-    var speed = 0.09 + (seed % 5) * 0.035;
-    var hue = 282 + Math.sin(t * speed + seed * 1.7) * 26
-      + Math.sin(t * speed * 0.41 + seed) * 8;
+    // Three sines at unrelated rates: the sum never repeats on any beat you
+    // could follow, so no two books ever run together.
+    var speed = 0.55 + (seed % 7) * 0.19;
+    var hue = 282
+      + Math.sin(t * speed + seed * 1.7) * 26
+      + Math.sin(t * speed * 0.63 + seed * 2.9) * 13
+      + Math.sin(t * speed * 1.47 + seed * 0.8) * 7;
     return "hsl(" + hue.toFixed(1) + "," + sat + "%," + light + "%)";
   }
 
