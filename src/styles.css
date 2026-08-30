@@ -890,12 +890,24 @@ body {
 }
 
 /* ---------- a menu split into stations ----------
-   One box divided rather than tabbed: the panes sit side by side with a rule
-   between them, and stack on a narrow screen. */
+   One box divided rather than tabbed, filling the card: a full-height pane
+   down the left, a big box beside it, and a strip along the bottom. */
+.overlay[data-theme="polish"] .overlay-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.overlay[data-theme="polish"] .overlay-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
 .split {
+  flex: 1;
+  min-height: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin: var(--gap-sm) 0;
+  grid-template-columns: minmax(110px, 1fr) 2.4fr;
+  grid-template-rows: 1fr minmax(64px, .32fr);
   border: 2px solid rgba(154,160,171,.35);
   background: rgba(10,10,12,.35);
 }
@@ -904,8 +916,26 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--gap-xs);
+  min-height: 0;
+  overflow: auto;
 }
-.split-pane + .split-pane { border-left: 2px solid rgba(154,160,171,.35); }
+.split-pane.sanding { grid-area: 1 / 1 / 3 / 2; }
+.split-pane.modification {
+  grid-area: 1 / 2 / 2 / 3;
+  border-left: 2px solid rgba(154,160,171,.35);
+}
+.split-pane.socketing {
+  grid-area: 2 / 2 / 3 / 3;
+  border-left: 2px solid rgba(154,160,171,.35);
+  border-top: 2px solid rgba(154,160,171,.35);
+}
+/* The work each station is done in: modification gets a box of its own,
+   the other two are open. */
+.split-work { flex: 1; min-height: 0; }
+.split-pane.modification .split-work {
+  border: 2px solid rgba(154,160,171,.3);
+  background: rgba(10,10,12,.35);
+}
 .split-title {
   font-family: var(--font);
   font-size: clamp(11px, calc(1.5 * var(--s)), 34px);
@@ -915,11 +945,17 @@ body {
 }
 .overlay[data-theme="polish"] .split-title { color: #eef1f5; }
 @media (max-width: 760px) {
-  .split { grid-template-columns: 1fr; }
-  .split-pane + .split-pane {
+  .split {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1.4fr minmax(64px, .5fr);
+  }
+  .split-pane.sanding { grid-area: 1 / 1 / 2 / 2; }
+  .split-pane.modification {
+    grid-area: 2 / 1 / 3 / 2;
     border-left: 0;
     border-top: 2px solid rgba(154,160,171,.35);
   }
+  .split-pane.socketing { grid-area: 3 / 1 / 4 / 2; border-left: 0; }
 }
 
 /* ---------- bars out of a fitting ---------- */

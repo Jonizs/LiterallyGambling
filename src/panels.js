@@ -420,28 +420,23 @@
   }
 
   // --- polish ---------------------------------------------------------------
-  // One box split three ways rather than three tabs: the whole bench is in
-  // front of the smith at once, each station under its own heading.
+  // One box split three ways rather than three tabs, filling the whole menu:
+  // sanding runs the full height down the left, modification takes the big
+  // box beside it, and socketing is the strip along the bottom.
   var POLISH_PARTS = [
-    { key: "sanding", label: "Sanding",
-      blurb: "Take the piece down to a clean face on the wheel." },
-    { key: "modification", label: "Modification",
-      blurb: "Rework the piece itself \u2014 the shape, the balance, the edge." },
-    { key: "socketing", label: "Socketing",
-      blurb: "Cut seats into the piece for what goes in them." }
+    { key: "sanding", label: "Sanding" },
+    { key: "modification", label: "Modification" },
+    { key: "socketing", label: "Socketing" }
   ];
 
   function polishPanel(ctx) {
-    var wrap = el("div");
-    var split = el("div", "split");
+    var wrap = el("div", "split");
     POLISH_PARTS.forEach(function (part) {
-      var pane = el("div", "split-pane");
+      var pane = el("div", "split-pane " + part.key);
       pane.appendChild(el("div", "split-title", part.label));
-      pane.appendChild(el("div", "muted", part.blurb));
-      pane.appendChild(el("p", "empty", "Not built yet."));
-      split.appendChild(pane);
+      pane.appendChild(el("div", "split-work"));
+      wrap.appendChild(pane);
     });
-    wrap.appendChild(split);
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
     return wrap;
   }
