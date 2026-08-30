@@ -6,14 +6,16 @@
 
   // Every stat an enchant can touch, and the places each is rounded to once
   // it has been multiplied.
+  // Nothing in the book is armour, so no enchant touches an armour stat -
+  // "all stats" means everything a weapon actually carries.
   var ROUND = {
-    damage: 0, armor: 0, durability: 0, attackSpeed: 2,
+    damage: 0, durability: 0, attackSpeed: 2,
     critChance: 1, critDamage: 0, armorPen: 0
   };
   var ALL_STATS = Object.keys(ROUND);
 
   var LABEL = {
-    damage: "Damage", armor: "Armor", durability: "Durability",
+    damage: "Damage", durability: "Durability",
     attackSpeed: "Attack speed", critChance: "Crit chance",
     critDamage: "Crit damage", armorPen: "Armor pen"
   };
@@ -95,7 +97,7 @@
       } },
     { key: "warded", name: "Warded", rarity: "rare", maxTier: 2,
       effect: function (t) {
-        return { armor: per(2.4, t), durability: per(1.6, t) };
+        return { durability: per(2.2, t), armorPen: per(1.4, t) };
       } },
 
     // --- epic ---------------------------------------------------------------
