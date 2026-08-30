@@ -272,7 +272,7 @@
   // The piece comes up off the table, the table throws runes, and the three
   // that came out of the coals rise around it. The menu stays shut for the
   // whole of it, and picking one burns the other two away.
-  var SPIN_MS = 2300;      // how long the piece turns before the offers show
+  var SPIN_MS = 2400;      // five whole turns, then the offers show
   var BURN_MS = 600;       // the two left behind burning off
   var SPARK_MS = 2600;     // how long the table keeps throwing runes
   var ritual = null;
@@ -294,12 +294,12 @@
   // One rune off the table, thrown on its own heading.
   function throwSpark() {
     var spark = P.el("div", "spark");
-    var angle = -Math.PI / 2 + (Math.random() - 0.5) * 2.2;
-    var reach = 40 + Math.random() * 90;
-    spark.style.setProperty("--dx", Math.cos(angle) * reach + "px");
-    spark.style.setProperty("--dy", Math.sin(angle) * reach + "px");
-    spark.style.setProperty("--life", (0.7 + Math.random() * 0.7) + "s");
-    spark.style.left = (50 + (Math.random() - 0.5) * 16) + "%";
+    // How far it winds off its line on the way up, and which way it starts.
+    var sway = (8 + Math.random() * 26) * (Math.random() < 0.5 ? -1 : 1);
+    spark.style.setProperty("--sway", sway + "px");
+    spark.style.setProperty("--life", (1.6 + Math.random() * 1.4) + "s");
+    // Anywhere along the table top, which runs from x 104 to 152 of 256.
+    spark.style.left = (41 + Math.random() * 18) + "%";
     spark.addEventListener("animationend", function () {
       if (spark.parentNode) spark.parentNode.removeChild(spark);
     });
@@ -358,8 +358,8 @@
     stage.hidden = false;
     var art = window.Icons.make(item.icon, "icon");
     $("ritual-item").appendChild(art);
-    ritual = { timers: [], done: false, sparks: setInterval(throwSpark, 55) };
-    for (var i = 0; i < 10; i++) throwSpark();
+    ritual = { timers: [], done: false, sparks: setInterval(throwSpark, 32) };
+    for (var i = 0; i < 18; i++) throwSpark();
     ritual.timers.push(setTimeout(showChoices, SPIN_MS));
     ritual.timers.push(setTimeout(function () {
       if (ritual) { clearInterval(ritual.sparks); ritual.sparks = null; }
