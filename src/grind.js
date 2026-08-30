@@ -172,5 +172,8 @@
     vignette(ctx);
   }
 
-  R.add("polish", draw, { x: 62, y: 44, w: 170, h: 62 });
+  // The wheel is the one thing in here that answers a press: it wears the
+  // same bracket and chevrons as the anvil and opens the polishing menu.
+  R.add("polish", draw, { x: 62, y: 44, w: 170, h: 62 },
+    [{ key: "polish", x: 68, y: 56, w: 52, h: 52 }]);
 })(window);

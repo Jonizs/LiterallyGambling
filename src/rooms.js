@@ -616,10 +616,12 @@
   }
 
   // A room can also be written in its own file: hand in the draw call, the
-  // strip to cut its banner from, and it joins the rest.
-  function add(name, draw, cut) {
+  // strip to cut its banner from, and what in it can be pressed, and it
+  // joins the rest.
+  function add(name, draw, cut, spots) {
     ROOMS[name] = draw;
     BANNERS[name] = cut;
+    if (spots) HOTSPOTS[name] = function () { return spots; };
   }
 
   global.Rooms = {
