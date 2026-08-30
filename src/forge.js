@@ -402,6 +402,22 @@
   };
 
   var ANVIL = { x: 100, y: 103, w: 58, h: 46 };
+
+  // The other two things in the forge that answer a press: the machine on the
+  // desk and the pack under the shelf. Both boxes follow the art below.
+  var FORGE_SPOTS = [
+    { key: "computer", x: 4, y: 72, w: 46, h: 50 },
+    { key: "inventory", x: 198, y: 92, w: 26, h: 32 }
+  ];
+
+  Forge.prototype.spotAt = function (px, py) {
+    for (var i = 0; i < FORGE_SPOTS.length; i++) {
+      var spot = FORGE_SPOTS[i];
+      if (px >= spot.x && px < spot.x + spot.w &&
+          py >= spot.y && py < spot.y + spot.h) return spot;
+    }
+    return null;
+  };
   Forge.prototype.anvilAt = function (px, py) {
     return px >= ANVIL.x && px <= ANVIL.x + ANVIL.w &&
       py >= ANVIL.y && py <= ANVIL.y + ANVIL.h;
@@ -437,12 +453,17 @@
   Forge.prototype.drawMachineHover = function () {
     var box = this.machineHover;
     if (!box || this.wipe) return;
-    var arm = Math.min(8, Math.min(box.w, box.h) / 3 | 0);
+    var small = Math.min(box.w, box.h);
+    var arm = Math.max(3, Math.min(8, small / 3 | 0));
+    // The anvil's bracket is drawn round a 60x46 box, so anything smaller
+    // gets the same mark scaled down rather than a chunky one.
+    var scale = Math.max(0.5, Math.min(1, small / 46));
     this.corners(box.x - 1, box.y - 1, box.w + 2, box.h + 2, arm, "#ffd76a");
     if ((this.t * 1.6) % 1 < 0.55) {
       var cy = box.y + (box.h / 2 | 0);
-      this.chevron(box.x - 11, cy, 1);
-      this.chevron(box.x + box.w + 11, cy, -1);
+      var gap = Math.round(11 * scale);
+      this.chevron(box.x - gap, cy, 1, scale);
+      this.chevron(box.x + box.w + gap, cy, -1, scale);
     }
   };
 
@@ -460,10 +481,12 @@
   };
 
   // A pointing mark, ">" when dir is 1 and "<" when it is -1.
-  Forge.prototype.chevron = function (cx, cy, dir) {
+  Forge.prototype.chevron = function (cx, cy, dir, scale) {
+    var step = Math.max(1, Math.round(2 * (scale || 1)));
+    var reach = step * 3;
     for (var i = 0; i < 4; i++) {
-      this.rect(cx + dir * i * 2, cy - 6 + i * 2, 2, 2, "#ffd76a");
-      this.rect(cx + dir * i * 2, cy + 6 - i * 2, 2, 2, "#ffd76a");
+      this.rect(cx + dir * i * step, cy - reach + i * step, step, step, "#ffd76a");
+      this.rect(cx + dir * i * step, cy + reach - i * step, step, step, "#ffd76a");
     }
   };
 
@@ -634,6 +657,7 @@
       this.drawFloor();
       this.drawAnvil();
       this.drawProps();
+      this.drawMachineHover();
       if (global.Shelf) global.Shelf.draw(this.ctx, this.shelf, this.t);
       // Embers drift out of the hearth behind the work, so they never float
       // over the hammer. The strike's own sparks stay in front.

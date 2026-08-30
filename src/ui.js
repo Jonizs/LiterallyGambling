@@ -1211,10 +1211,16 @@
   function roomSpotUnder(ev) {
     if (!scene || scene.wipe) return null;
     if (view.replacing || view.panel || view.shown) return null;
-    if (!window.Rooms.hasSpots(scene.room)) return null;
     var at = scenePoint(ev);
-    var spot = window.Rooms.spotAt(scene.room, at.x, at.y);
-    if (!spot || panelLocked(spot.key)) return null;
+    // The forge keeps its own fittings; the other rooms hand theirs over.
+    var spot = scene.room === "forge"
+      ? scene.spotAt(at.x, at.y)
+      : (window.Rooms.hasSpots(scene.room)
+        ? window.Rooms.spotAt(scene.room, at.x, at.y) : null);
+    if (!spot) return null;
+    // A fitting that opens bars is not a panel itself, so only a panel key
+    // is checked against the smith's level.
+    if (!SPOT_BARS[spot.key] && panelLocked(spot.key)) return null;
     return spot;
   }
 
@@ -1224,6 +1230,11 @@
     enchant: [
       { panel: "enchant", label: "ENCHANT" },
       { panel: "revitalize", label: "REVITALIZE" }
+    ],
+    // The machine on the forge desk keeps the ledger and the plans.
+    computer: [
+      { panel: "shop", label: "SHOP" },
+      { panel: "upgrades", label: "UPGRADES" }
     ]
   };
 
