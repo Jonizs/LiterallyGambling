@@ -849,7 +849,14 @@ body {
 /* The name and icon hold their line; the chips behind them wrap onto a
    second when a piece is carrying a full set of enchants. */
 .item-line.tight { flex-wrap: nowrap; align-items: center; }
-.item-line.tight .item-meta { flex-wrap: wrap; row-gap: 2px; }
+/* Two rows of chips are always kept clear, so a piece with nothing on it
+   sits at the same height as one carrying a full set. */
+.item-line.tight .item-meta {
+  flex-wrap: wrap;
+  row-gap: 2px;
+  align-content: flex-start;
+  min-height: calc(2.9em + 2px);
+}
 .item-line.tight .item-name { white-space: nowrap; }
 .item-line.tight .icon { width: clamp(15px, calc(1.7 * var(--s)), 38px); }
 .item-line.tight .item-name { font-size: clamp(10px, calc(1.2 * var(--s)), 28px); }
