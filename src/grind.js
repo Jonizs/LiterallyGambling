@@ -34,54 +34,64 @@
   // water trough, cranked from the side and pumped from the pedal below.
   // The stone stands where the crate of finished pieces used to, hard left,
   // so the middle of the room is clear.
-  var STONE = { cx: 46, cy: 90 };
+  var STONE = { cx: 46, cy: 82 };
 
   function grindstone(ctx, t) {
-    var cx = STONE.cx, cy = STONE.cy, r = 18;
+    var cx = STONE.cx, cy = STONE.cy, r = 24;
     var a = t * 2.2;   // where the wheel is in its turn
 
     // Frame: two uprights, a foot beam, and the brace across the back.
-    rect(ctx, cx - 24, cy - 9, 5, 35, P.woodDark);
-    rect(ctx, cx + 19, cy - 9, 5, 35, P.woodDark);
-    rect(ctx, cx - 24, cy - 9, 5, 2, P.wood);
-    rect(ctx, cx + 19, cy - 9, 5, 2, P.wood);
-    rect(ctx, cx - 22, cy + 2, 45, 3, P.wood);
-    rect(ctx, cx - 27, cy + 26, 54, 5, P.wood);
-    rect(ctx, cx - 27, cy + 26, 54, 2, P.woodLit);
+    rect(ctx, cx - 32, cy - 12, 6, 46, P.woodDark);
+    rect(ctx, cx + 26, cy - 12, 6, 46, P.woodDark);
+    rect(ctx, cx - 32, cy - 12, 6, 3, P.wood);
+    rect(ctx, cx + 26, cy - 12, 6, 3, P.wood);
+    rect(ctx, cx - 30, cy + 2, 60, 4, P.wood);
+    rect(ctx, cx - 36, cy + 34, 72, 6, P.wood);
+    rect(ctx, cx - 36, cy + 34, 72, 2, P.woodLit);
 
     // The stone: a dark rim, the wheel face, and a worn lighter band.
     disc(ctx, cx, cy, r, P.stoneDark);
     disc(ctx, cx, cy, r - 2, P.stone);
-    disc(ctx, cx, cy, r - 5, P.stoneLit);
-    disc(ctx, cx, cy, r - 8, P.stone);
+    disc(ctx, cx, cy, r - 7, P.stoneLit);
+    disc(ctx, cx, cy, r - 10, P.stone);
     // Grinding grain: four marks that ride round with the wheel.
     for (var i = 0; i < 4; i++) {
       var g = a + i * (Math.PI / 2);
-      rect(ctx, cx + Math.cos(g) * (r - 5), cy + Math.sin(g) * (r - 5),
-        2, 2, P.stoneDark);
+      rect(ctx, cx + Math.cos(g) * (r - 6), cy + Math.sin(g) * (r - 6),
+        3, 3, P.stoneDark);
     }
     // Light down the leading edge, where it meets the blade.
-    rect(ctx, cx + r - 3, cy - 8, 2, 12, P.stoneLit);
+    rect(ctx, cx + r - 4, cy - 10, 2, 16, P.stoneLit);
 
     // Iron axle, and the crank arm swinging off it.
-    disc(ctx, cx, cy, 5, P.iron);
-    rect(ctx, cx - 1, cy - 1, 3, 3, P.ironLit);
-    var hx = cx + Math.cos(a) * 8, hy = cy + Math.sin(a) * 8;
+    disc(ctx, cx, cy, 6, P.iron);
+    rect(ctx, cx - 2, cy - 2, 4, 4, P.ironLit);
+    var hx = cx + Math.cos(a) * 11, hy = cy + Math.sin(a) * 11;
     // The arm is stepped along its own line, so it reads at any angle.
-    for (var k = 3; k <= 8; k += 2) {
-      rect(ctx, cx + Math.cos(a) * k - 1, cy + Math.sin(a) * k - 1, 2, 2, P.iron);
+    for (var k = 3; k <= 10; k += 2) {
+      rect(ctx, cx + Math.cos(a) * k - 1, cy + Math.sin(a) * k - 1, 3, 3, P.iron);
     }
-    rect(ctx, hx - 2, hy - 2, 4, 4, P.wood);
-    rect(ctx, hx - 2, hy - 2, 4, 2, P.woodLit);
+    rect(ctx, hx - 2, hy - 2, 5, 5, P.wood);
+    rect(ctx, hx - 2, hy - 2, 5, 2, P.woodLit);
 
     // Water trough slung under the wheel, and the pedal beside it.
-    rect(ctx, cx - 15, cy + 17, 30, 8, P.woodDark);
-    rect(ctx, cx - 13, cy + 19, 26, 4, "#2c4a52");
-    rect(ctx, cx - 13, cy + 19, 26, 1, "#4d7a83");
-    rect(ctx, cx - 12, cy + 19, 5, 2, "#7fb2bb");
+    rect(ctx, cx - 20, cy + 22, 40, 10, P.woodDark);
+    rect(ctx, cx - 18, cy + 24, 36, 5, "#2c4a52");
+    rect(ctx, cx - 18, cy + 24, 36, 1, "#4d7a83");
+    rect(ctx, cx - 17, cy + 24, 6, 2, "#7fb2bb");
     var pedal = Math.sin(a) > 0 ? 0 : 2;
-    rect(ctx, cx + 3, cy + 31 + pedal, 20, 3, P.wood);
-    rect(ctx, cx + 19, cy + 5, 2, 26 + pedal, P.iron);
+    rect(ctx, cx + 4, cy + 40 + pedal, 26, 4, P.wood);
+    rect(ctx, cx + 26, cy + 6, 3, 34 + pedal, P.iron);
+  }
+
+  // Sparks thrown off the wheel while it turns.
+  function sparks(ctx, t) {
+    for (var i = 0; i < 10; i++) {
+      var life = (t * 1.6 + i / 10) % 1;
+      var x = STONE.cx + 24 + life * 26 + i;
+      var y = STONE.cy - 10 + life * life * 30 - (i % 3) * 3;
+      rect(ctx, x, y, 2, 1, life > 0.7 ? P.gold : P.goldLit);
+    }
   }
 
   // The bench on the right: whetstones, oil, cloth and the blade in progress.
@@ -142,12 +152,24 @@
     ctx.fillRect(0, 0, W, H);
   }
 
-  function draw(ctx, t) {
+  // A bucket by the wheel. The crate that stood left of it is gone: the
+  // stone stands there now.
+  function props(ctx) {
+    rect(ctx, 128, 106, 14, 12, P.iron);
+    rect(ctx, 128, 106, 14, 2, P.ironLit);
+    rect(ctx, 130, 109, 10, 4, "#2c4a52");
+  }
+
+  function draw(ctx, t, work) {
     wall(ctx, P.wallDark, P.wallMid, P.wallLine);
     wallKit(ctx, t);
     floor(ctx, P.floor, P.floorDark, P.floorLine);
+    props(ctx);
     bench(ctx, t);
     grindstone(ctx, t);
+    // A banner is one frozen frame, and sparks caught mid-air in it read as
+    // dirt on the button rather than a wheel at work.
+    if (!(work && work.snapshot)) sparks(ctx, t);
     vignette(ctx);
   }
 
