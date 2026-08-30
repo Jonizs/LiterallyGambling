@@ -489,17 +489,17 @@
   // The smith's desk under the tools, pushed back against the wall so it
   // stands at the far edge of the floor rather than out in the room.
   Forge.prototype.drawDesk = function () {
-    var x = 6, top = 85;
+    var x = 6, top = 96;
     // Top and legs.
     this.rect(x, top, 42, 4, PALETTE.wood);
     this.rect(x, top, 42, 1, "#8a5a2b");
     this.rect(x, top + 4, 42, 1, PALETTE.woodDark);
-    this.rect(x + 3, top + 5, 4, 28, PALETTE.woodDark);
-    this.rect(x + 35, top + 5, 4, 28, PALETTE.woodDark);
-    this.rect(x + 2, top + 33, 38, 2, PALETTE.woodDark);
+    this.rect(x + 3, top + 5, 4, 17, PALETTE.woodDark);
+    this.rect(x + 35, top + 5, 4, 17, PALETTE.woodDark);
+    this.rect(x + 2, top + 22, 38, 2, PALETTE.woodDark);
     // A shadow where it meets the floor, so it reads as standing back there.
     this.ctx.globalAlpha = 0.35;
-    this.rect(x, top + 35, 42, 2, "#1b0f06");
+    this.rect(x, top + 24, 42, 2, "#1b0f06");
     this.ctx.globalAlpha = 1;
 
     // The machine: a boxy case with a screen sunk into it.
@@ -524,33 +524,32 @@
 
   // A pack dumped against the wall under the artifact shelf.
   Forge.prototype.drawPack = function () {
-    var x = 198, y = 88;
+    var x = 200, y = 92;
     var cloth = "#3f5a34", clothLit = "#587a48", clothDark = "#26361f";
     var strap = "#3d2412", buckle = "#c9a154";
     // Body, with the lid folded over the top of it.
-    this.rect(x + 2, y + 6, 24, 24, cloth);
-    this.rect(x + 2, y + 6, 24, 2, clothLit);
-    this.rect(x + 2, y + 28, 24, 2, clothDark);
-    this.rect(x, y + 10, 2, 18, clothDark);
-    this.rect(x + 26, y + 10, 2, 18, clothDark);
+    this.rect(x + 2, y + 6, 20, 20, cloth);
+    this.rect(x + 2, y + 6, 20, 2, clothLit);
+    this.rect(x + 2, y + 24, 20, 2, clothDark);
+    this.rect(x, y + 9, 2, 15, clothDark);
+    this.rect(x + 22, y + 9, 2, 15, clothDark);
     // Flap and its buckle.
-    this.rect(x + 2, y + 2, 24, 8, clothLit);
-    this.rect(x + 2, y + 2, 24, 1, "#6b8f56");
-    this.rect(x + 11, y + 9, 6, 4, strap);
-    this.rect(x + 12, y + 10, 4, 2, buckle);
+    this.rect(x + 2, y + 2, 20, 7, clothLit);
+    this.rect(x + 2, y + 2, 20, 1, "#6b8f56");
+    this.rect(x + 9, y + 8, 6, 4, strap);
+    this.rect(x + 10, y + 9, 4, 2, buckle);
     // Side pocket and the straps down the back.
-    this.rect(x + 4, y + 16, 9, 10, clothDark);
-    this.rect(x + 4, y + 16, 9, 1, cloth);
-    this.rect(x + 19, y + 14, 3, 14, strap);
-    this.rect(x + 23, y + 14, 3, 14, strap);
+    this.rect(x + 4, y + 14, 8, 9, clothDark);
+    this.rect(x + 4, y + 14, 8, 1, cloth);
+    this.rect(x + 16, y + 12, 3, 12, strap);
     // Bedroll strapped under it.
-    this.rect(x, y + 30, 28, 5, "#7a5a35");
-    this.rect(x, y + 30, 28, 1, "#9a744a");
-    this.rect(x + 8, y + 30, 2, 5, "#5c422a");
-    this.rect(x + 18, y + 30, 2, 5, "#5c422a");
+    this.rect(x, y + 26, 24, 4, "#7a5a35");
+    this.rect(x, y + 26, 24, 1, "#9a744a");
+    this.rect(x + 7, y + 26, 2, 4, "#5c422a");
+    this.rect(x + 16, y + 26, 2, 4, "#5c422a");
     // Its own shadow on the floor behind it.
     this.ctx.globalAlpha = 0.35;
-    this.rect(x, y + 35, 28, 2, "#1b0f06");
+    this.rect(x, y + 30, 24, 2, "#1b0f06");
     this.ctx.globalAlpha = 1;
   };
 
