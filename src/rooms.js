@@ -128,6 +128,63 @@
     });
   }
 
+  // A banner hung over the table, its glyphs surfacing and sinking away again
+  // on their own timings so the cloth never reads as a fixed pattern.
+  var BANNER_GLYPHS = [
+    "010111010101010", "111010010010111", "101101111101101",
+    "010101101101010", "111100110100111", "010111111111010",
+    "101010111010101", "110101110101011", "111101010101111",
+    "010010111010010", "101111010111101", "011101110101110"
+  ];
+
+  var BANNER = { x: 100, y: 18, w: 56, h: 60 };
+
+  function wallBanner(ctx, t) {
+    var b = BANNER;
+    // The rod it hangs from, and the cloth itself.
+    rect(ctx, b.x - 6, b.y, b.w + 12, 3, P.woodDark);
+    rect(ctx, b.x - 6, b.y, b.w + 12, 1, P.wood);
+    rect(ctx, b.x - 8, b.y - 1, 3, 5, P.wood);
+    rect(ctx, b.x + b.w + 5, b.y - 1, 3, 5, P.wood);
+    rect(ctx, b.x, b.y + 3, b.w, b.h, P.cloth);
+    rect(ctx, b.x, b.y + 3, b.w, 2, P.clothLit);
+    rect(ctx, b.x, b.y + 3, 2, b.h, P.clothLit);
+    rect(ctx, b.x + b.w - 2, b.y + 3, 2, b.h, P.obsidian);
+    // A frayed hem, cut to a point in the middle.
+    for (var f = 0; f < b.w; f += 4) {
+      var drop = f === (b.w / 2 - 2) ? 6 : (f % 8 === 0 ? 3 : 1);
+      rect(ctx, b.x + f, b.y + b.h + 3, 4, drop, P.cloth);
+      rect(ctx, b.x + f, b.y + b.h + 3 + drop - 1, 4, 1, P.obsidian);
+    }
+    // Braid down each edge.
+    for (var d = 6; d < b.h; d += 6) {
+      rect(ctx, b.x + 3, b.y + 3 + d, 2, 2, P.clothLit);
+      rect(ctx, b.x + b.w - 5, b.y + 3 + d, 2, 2, P.clothLit);
+    }
+
+    // The glyphs: three across, four down, each on its own slow cycle. A
+    // glyph is only there while its cycle is in the lit half of the swing.
+    for (var i = 0; i < 12; i++) {
+      var col = i % 3, row = (i / 3) | 0;
+      var gx = b.x + 10 + col * 13, gy = b.y + 10 + row * 13;
+      var speed = 0.22 + (i % 5) * 0.07;
+      var wave = Math.sin(t * speed + i * 1.9) * 0.5 + 0.5;
+      if (wave < 0.42) continue;
+      // Fade in over the first stretch of the swing and out at the end.
+      var alpha = Math.min(1, (wave - 0.42) / 0.2);
+      ctx.globalAlpha = alpha * 0.95;
+      var mark = BANNER_GLYPHS[(i + ((t * 0.09 + i) | 0)) % BANNER_GLYPHS.length];
+      for (var r = 0; r < 5; r++) {
+        for (var c = 0; c < 3; c++) {
+          if (mark.charAt(r * 3 + c) !== "1") continue;
+          rect(ctx, gx + c * 2, gy + r * 2, 2, 2, P.rune);
+          if (alpha > 0.85 && r === 0) rect(ctx, gx + c * 2, gy - 1, 2, 1, P.glow);
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
   // The table itself: an obsidian block under a purple cloth, open book on top.
   var TABLE = { x: 104, y: 92 };
   function table(ctx, t) {
@@ -163,6 +220,7 @@
   ROOMS.enchant = function (ctx, t) {
     wall(ctx, P.wallDark, P.wallMid, P.wallLine);
     shelves(ctx, t);
+    wallBanner(ctx, t);
     floor(ctx, P.floor, P.floorDark, P.floorLine);
     candles(ctx);
     table(ctx, t);
