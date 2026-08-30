@@ -516,6 +516,9 @@
     );
   }
 
+  // Menus that hang in the room itself rather than over the whole screen.
+  var SCENE_PANELS = { enchant: true };
+
   function openPanel(key) {
     var panel = P.BUILDERS[key];
     if (!panel || panelLocked(key)) return;
@@ -539,6 +542,14 @@
     var card = menuCard();
     if (card) card.classList.remove("closing", "swapping");
     drawPanel();
+    if (SCENE_PANELS[key]) {
+      clearTimeout(benchClosing);
+      $("bench-panel").classList.remove("closing");
+      $("bench-panel").hidden = false;
+      renderStrike();
+      syncRoomButtons();
+      return;
+    }
     $("overlay").hidden = false;
     if (swapping && card) {
       void card.offsetWidth;   // let the class land as a fresh animation
@@ -565,6 +576,14 @@
   function drawPanel() {
     if (!view.panel) return;
     var panel = P.BUILDERS[view.panel];
+    if (SCENE_PANELS[view.panel]) {
+      $("bench-title").textContent = panel.title;
+      var wall = $("bench-body");
+      wall.innerHTML = "";
+      wall.appendChild(panel.build(context()));
+      if (view.offer) view.offer.fresh = false;
+      return;
+    }
     $("overlay-title").textContent = panel.title;
     var body = $("overlay-body");
     var was = tabMarks(body);
@@ -587,11 +606,21 @@
   // closed as far as the game is concerned the moment the button is pressed.
   var CLOSE_MS = 190;
   var closing = null;
+  var benchClosing = null;
 
   function menuCard() { return document.querySelector(".overlay-card"); }
 
   function closePanel() {
     // Closing a menu leaves the smith wherever he was standing.
+    var wall = $("bench-panel");
+    if (!wall.hidden) {
+      wall.classList.add("closing");
+      clearTimeout(benchClosing);
+      benchClosing = setTimeout(function () {
+        wall.hidden = true;
+        wall.classList.remove("closing");
+      }, CLOSE_MS);
+    }
     view.panel = null;
     var overlay = $("overlay"), card = menuCard();
     if (!overlay.hidden && card) {
@@ -1285,6 +1314,7 @@
       });
     }
     $("overlay-close").addEventListener("click", closePanel);
+    $("bench-close").addEventListener("click", closePanel);
     $("discover-close").addEventListener("click", closeDiscovery);
     $("discover-pop").addEventListener("click", function (ev) {
       if (ev.target === $("discover-pop")) closeDiscovery();
