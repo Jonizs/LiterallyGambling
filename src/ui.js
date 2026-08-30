@@ -1231,8 +1231,8 @@
       { panel: "enchant", label: "ENCHANT" },
       { panel: "revitalize", label: "REVITALIZE" }
     ],
-    // The machine on the forge desk keeps the ledger and the plans.
-    computer: [
+    // The order board on the forge desk keeps the ledger and the plans.
+    orders: [
       { panel: "shop", label: "SHOP" },
       { panel: "upgrades", label: "UPGRADES" }
     ]

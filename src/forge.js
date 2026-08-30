@@ -403,10 +403,10 @@
 
   var ANVIL = { x: 100, y: 103, w: 58, h: 46 };
 
-  // The other two things in the forge that answer a press: the machine on the
-  // desk and the pack under the shelf. Both boxes follow the art below.
+  // The other two things in the forge that answer a press: the order board on
+  // the desk and the pack under the shelf. Both boxes follow the art below.
   var FORGE_SPOTS = [
-    { key: "computer", x: 13, y: 72, w: 46, h: 50 },
+    { key: "orders", x: 13, y: 70, w: 46, h: 52 },
     { key: "inventory", x: 198, y: 92, w: 26, h: 32 }
   ];
 
@@ -448,7 +448,7 @@
     }
   };
 
-  // The lab's machines get the same bracket and blinking chevrons the anvil
+  // The room's fittings get the same bracket and blinking chevrons the anvil
   // wears, so what can be pressed reads the same in either room.
   Forge.prototype.drawMachineHover = function () {
     var box = this.machineHover;
@@ -525,24 +525,39 @@
     this.rect(x, top + 24, 42, 2, "#1b0f06");
     this.ctx.globalAlpha = 1;
 
-    // The machine: a boxy case with a screen sunk into it.
-    var mx = x + 8, my = top - 22;
-    this.rect(mx - 2, top - 3, 22, 3, "#6b6b74");      // stand
-    this.rect(mx + 7, top - 6, 4, 4, "#565660");
-    this.rect(mx - 4, my, 26, 20, "#8d8d97");          // case
-    this.rect(mx - 4, my, 26, 2, "#a8a8b2");
-    this.rect(mx - 4, my + 18, 26, 2, "#5f5f6a");
-    this.rect(mx - 2, my + 2, 22, 14, "#131a16");      // bezel
-    // The screen itself: four lines of something, sitting still.
-    this.rect(mx, my + 4, 18, 10, "#123020");
-    var LINES = [11, 6, 14, 8];
-    for (var r = 0; r < LINES.length; r++) {
-      this.rect(mx + 1, my + 5 + r * 2, LINES[r], 1,
-        r === 2 ? "#a7f0a0" : "#4fbf6a");
+    // The order board: plans pinned to a plank of wood above the desk, with
+    // the smith's ledger open on the desk under it.
+    var bx = x + 2, by = top - 24;
+    this.rect(bx, by, 38, 22, PALETTE.woodDark);       // board
+    this.rect(bx, by, 38, 2, PALETTE.wood);
+    this.rect(bx, by + 20, 38, 2, "#2a1809");
+    this.rect(bx + 12, by, 2, 22, "#2a1809");          // plank seam
+    // Two sheets pinned to it, the left one hanging a little crooked.
+    this.rect(bx + 2, by + 4, 12, 14, "#d8c49a");
+    this.rect(bx + 2, by + 4, 12, 1, "#efdcb4");
+    this.rect(bx + 2, by + 17, 12, 1, "#a68f66");
+    this.rect(bx + 18, by + 3, 16, 15, "#cbb68c");
+    this.rect(bx + 18, by + 3, 16, 1, "#efdcb4");
+    this.rect(bx + 18, by + 17, 16, 1, "#a68f66");
+    // Charcoal marks on the sheets, and the nails holding them up.
+    var MARKS = [8, 5, 10, 6];
+    for (var r = 0; r < MARKS.length; r++) {
+      this.rect(bx + 3, by + 6 + r * 3, MARKS[r], 1, "#6a5334");
+      this.rect(bx + 19, by + 6 + r * 3, MARKS[r] + 3, 1, "#6a5334");
     }
-    // Keyboard on the desk in front of it.
-    this.rect(x + 4, top - 3, 20, 3, "#6b6b74");
-    this.rect(x + 4, top - 3, 20, 1, "#9a9aa4");
+    this.rect(bx + 7, by + 4, 2, 2, PALETTE.steel);
+    this.rect(bx + 25, by + 3, 2, 2, PALETTE.steel);
+    // Ledger open on the desk, an inkpot beside it and a stack of coin.
+    this.rect(x + 4, top - 4, 18, 4, "#c9b287");
+    this.rect(x + 4, top - 4, 18, 1, "#e6d3a8");
+    this.rect(x + 12, top - 4, 2, 4, "#8a6f43");        // spine
+    this.rect(x + 6, top - 2, 4, 1, "#6a5334");
+    this.rect(x + 16, top - 2, 4, 1, "#6a5334");
+    this.rect(x + 26, top - 5, 5, 5, "#2b3a44");        // inkpot
+    this.rect(x + 26, top - 5, 5, 1, "#415a68");
+    this.rect(x + 30, top - 9, 1, 5, "#e6d3a8");        // quill
+    this.rect(x + 34, top - 2, 6, 2, "#c9a154");        // coin stack
+    this.rect(x + 35, top - 4, 5, 2, "#e0bc6a");
   };
 
   // A pack dumped against the wall under the artifact shelf.
