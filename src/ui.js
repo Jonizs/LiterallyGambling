@@ -272,7 +272,7 @@
   // The piece comes up off the table, the table throws runes, and the three
   // that came out of the coals rise around it. The menu stays shut for the
   // whole of it, and picking one burns the other two away.
-  var SPIN_MS = 1500;      // how long the piece turns before the offers show
+  var SPIN_MS = 2300;      // how long the piece turns before the offers show
   var BURN_MS = 600;       // the two left behind burning off
   var SPARK_MS = 2600;     // how long the table keeps throwing runes
   var ritual = null;
@@ -308,9 +308,9 @@
 
   // Straight above the piece, then out to either side of that.
   var CHOICE_SPOTS = [
-    { left: 50, top: 30 },
-    { left: 26, top: 40 },
-    { left: 74, top: 40 }
+    { left: 50, top: 22 },
+    { left: 30, top: 31 },
+    { left: 70, top: 31 }
   ];
 
   function showChoices() {
