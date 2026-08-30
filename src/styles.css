@@ -852,23 +852,48 @@ body {
   padding: var(--gap-xs) var(--gap-sm);
 }
 .bench-body .rows { gap: var(--gap-xs); }
-.item-line.tight { gap: var(--gap-sm); }
-/* The name and icon hold their line; the chips behind them wrap onto a
-   second when a piece is carrying a full set of enchants. */
-.item-line.tight { flex-wrap: nowrap; align-items: center; }
-/* Two rows of chips are always kept clear, so a piece with nothing on it
-   sits at the same height as one carrying a full set. */
-.item-line.tight .chip-stat { padding: 0 3px; letter-spacing: 0; }
-.item-line.tight .item-meta {
-  flex-wrap: wrap;
-  row-gap: 2px;
-  align-content: flex-start;
-  min-height: calc(2.9em + 2px);
+/* Two stacked lines: what the piece is, then a box holding what is burned
+   into it. The box always keeps two rows clear, so a bare piece and a fully
+   enchanted one stand the same height. */
+.item-line.tight {
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
 }
-.item-line.tight .item-name { white-space: nowrap; }
+.item-line.tight .chip-stat { padding: 0 3px; letter-spacing: 0; }
 .item-line.tight .icon { width: clamp(15px, calc(1.7 * var(--s)), 38px); }
 .item-line.tight .item-name { font-size: clamp(10px, calc(1.2 * var(--s)), 28px); }
-.item-line.tight .item-meta { gap: var(--gap-xs); }
+.tight-top {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  min-width: 0;
+}
+.tight-top .item-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tight-top .item-meta { flex: none; flex-wrap: nowrap; gap: var(--gap-xs); }
+/* The enchants get a box of their own inside the row, and a chip never
+   breaks across lines - it moves down whole. */
+.tight-ench {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 3px;
+  min-height: calc(2.9em + 6px);
+  padding: 3px;
+  background: rgba(0,0,0,.3);
+  border: 2px solid rgba(154,95,208,.3);
+}
+.tight-ench .chip-stat {
+  white-space: nowrap;
+  flex: none;
+  word-break: keep-all;
+}
 .bench-body .row-title, .bench-body p { color: #efe2ff; }
 .bench-body .muted { color: #b9a6cf; }
 /* The odds toggle wears the bench's purple rather than the wood palette. */
