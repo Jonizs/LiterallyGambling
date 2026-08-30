@@ -134,18 +134,48 @@
     "010111010101010", "111010010010111", "101101111101101",
     "010101101101010", "111100110100111", "010111111111010",
     "101010111010101", "110101110101011", "111101010101111",
-    "010010111010010", "101111010111101", "011101110101110"
+    "010010111010010", "101111010111101", "011101110101110",
+    "111001010100111", "101101010101010", "010101111101010",
+    "110010111010011", "101010010111111", "111010111010111",
+    "011010110010011", "100111101111001", "010110111011010",
+    "111101101101111", "001011111110100", "110110010011011",
+    "101111101111101", "010011111110010", "111011010110111",
+    "100101010101001", "011111010111110", "110001111100011"
   ];
 
-  var BANNER = { x: 100, y: 18, w: 56, h: 60 };
+  var BANNER = { x: 100, y: 0, w: 56, h: 74 };
+
+  // Which mark each slot is wearing and when it next turns over. A slot is
+  // dark for a while, then a new mark surfaces, holds, and sinks again -
+  // all of it drawn from the clock rather than kept between frames, so the
+  // banner looks the same however long the room has been open.
+  function glyphAt(t, i) {
+    // Each slot runs on its own beat, none of them a multiple of another.
+    var beat = 3.1 + (i % 7) * 0.9 + (i % 3) * 0.4;
+    var phase = (t / beat + i * 0.618) % 1;
+    var cycle = Math.floor(t / beat + i * 0.618);
+    // A hash of the slot and which turn it is on: what shows, and whether
+    // this turn is one where the slot stays dark.
+    var seed = (i * 2654435761 + cycle * 40503) >>> 0;
+    var lit = (seed % 100) / 100;
+    if (lit < 0.34) return null;              // this turn it stays empty
+    // In over the first fifth, out over the last third, holding between.
+    var alpha = phase < 0.2 ? phase / 0.2
+      : phase > 0.68 ? Math.max(0, (1 - phase) / 0.32) : 1;
+    if (alpha <= 0.05) return null;
+    return {
+      mark: BANNER_GLYPHS[(seed >>> 7) % BANNER_GLYPHS.length],
+      alpha: alpha
+    };
+  }
 
   function wallBanner(ctx, t) {
     var b = BANNER;
     // The rod it hangs from, and the cloth itself.
     rect(ctx, b.x - 6, b.y, b.w + 12, 3, P.woodDark);
     rect(ctx, b.x - 6, b.y, b.w + 12, 1, P.wood);
-    rect(ctx, b.x - 8, b.y - 1, 3, 5, P.wood);
-    rect(ctx, b.x + b.w + 5, b.y - 1, 3, 5, P.wood);
+    rect(ctx, b.x - 8, b.y, 3, 5, P.wood);
+    rect(ctx, b.x + b.w + 5, b.y, 3, 5, P.wood);
     rect(ctx, b.x, b.y + 3, b.w, b.h, P.cloth);
     rect(ctx, b.x, b.y + 3, b.w, 2, P.clothLit);
     rect(ctx, b.x, b.y + 3, 2, b.h, P.clothLit);
@@ -162,23 +192,20 @@
       rect(ctx, b.x + b.w - 5, b.y + 3 + d, 2, 2, P.clothLit);
     }
 
-    // The glyphs: three across, four down, each on its own slow cycle. A
-    // glyph is only there while its cycle is in the lit half of the swing.
-    for (var i = 0; i < 12; i++) {
+    // Five rows of three, each slot surfacing and sinking on its own turn.
+    for (var i = 0; i < 15; i++) {
+      var glyph = glyphAt(t, i);
+      if (!glyph) continue;
       var col = i % 3, row = (i / 3) | 0;
       var gx = b.x + 10 + col * 13, gy = b.y + 10 + row * 13;
-      var speed = 0.22 + (i % 5) * 0.07;
-      var wave = Math.sin(t * speed + i * 1.9) * 0.5 + 0.5;
-      if (wave < 0.42) continue;
-      // Fade in over the first stretch of the swing and out at the end.
-      var alpha = Math.min(1, (wave - 0.42) / 0.2);
-      ctx.globalAlpha = alpha * 0.95;
-      var mark = BANNER_GLYPHS[(i + ((t * 0.09 + i) | 0)) % BANNER_GLYPHS.length];
+      ctx.globalAlpha = glyph.alpha * 0.95;
       for (var r = 0; r < 5; r++) {
         for (var c = 0; c < 3; c++) {
-          if (mark.charAt(r * 3 + c) !== "1") continue;
+          if (glyph.mark.charAt(r * 3 + c) !== "1") continue;
           rect(ctx, gx + c * 2, gy + r * 2, 2, 2, P.rune);
-          if (alpha > 0.85 && r === 0) rect(ctx, gx + c * 2, gy - 1, 2, 1, P.glow);
+          if (glyph.alpha > 0.9 && r === 0) {
+            rect(ctx, gx + c * 2, gy - 1, 2, 1, P.glow);
+          }
         }
       }
       ctx.globalAlpha = 1;
