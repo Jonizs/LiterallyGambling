@@ -783,8 +783,8 @@ body {
   position: absolute;
   left: 24.5%;
   right: 24.5%;
-  top: 11%;
-  bottom: 45%;
+  top: 5%;
+  bottom: 47%;
   z-index: 5;
   display: flex;
   flex-direction: column;
