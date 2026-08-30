@@ -940,6 +940,16 @@ body {
   text-align: center;
   white-space: nowrap;
 }
+/* Word on top, price under it, so neither has to be cut to fit the box. */
+.bench-body .mini-btn:has(.btn-cost) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  line-height: 1.1;
+}
+.btn-cost { font-size: .85em; opacity: .85; }
 .bench-body .mini-btn:disabled {
   opacity: .5;
   cursor: not-allowed;

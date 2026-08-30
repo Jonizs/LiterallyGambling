@@ -27,6 +27,15 @@
       .map(Number);
   }
 
+  // A button whose price sits on its own line under the word, so a long
+  // label and a long number never have to share one.
+  function costButton(label, cost, className, onClick) {
+    var b = button("", className, onClick);
+    b.appendChild(el("span", "btn-label", label));
+    b.appendChild(el("span", "btn-cost", cost.toLocaleString()));
+    return b;
+  }
+
   // The strip menu: every enchant on the piece, any number of them marked.
   function reforgeMenu(ctx, item) {
     var wrap = el("div");
@@ -56,7 +65,7 @@
     var chosen = pickedList();
     var cost = E.reforgeCost(item);
     var actions = el("div", "btn-group");
-    var go = button("STRIP " + chosen.length + " \u00b7 " + cost, "mini-btn strong",
+    var go = costButton("STRIP " + chosen.length, cost, "mini-btn strong",
       function () {
         ctx.reforge(item, chosen);
         endReforge();
@@ -210,8 +219,9 @@
       var cost = E.costFor(item);
       var free = E.slotsLeft(item);
       var group = el("div", "btn-group");
-      var b = button(free > 0 ? "ENCHANT " + cost : "NO SLOTS", "mini-btn",
-        function () { ctx.rollEnchant(item); });
+      var b = free > 0
+        ? costButton("ENCHANT", cost, "mini-btn", function () { ctx.rollEnchant(item); })
+        : button("NO SLOTS", "mini-btn", function () { ctx.rollEnchant(item); });
       b.disabled = !E.canEnchant(ctx.state, item);
       if (free <= 0) {
         b.title = "Every slot on this piece is filled.";
@@ -256,7 +266,7 @@
       var row = el("div", "row");
       row.appendChild(compactLine(item));
       var price = E.reforgeCost(item);
-      var again = button("REVITALIZE " + price, "mini-btn", function () {
+      var again = costButton("REVITALIZE", price, "mini-btn", function () {
         startReforge(item.id);
         ctx.refresh();
       });
