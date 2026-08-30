@@ -108,88 +108,32 @@
     return board;
   }
 
-  // A row of pips, one per slot on the piece: filled ones wear the rarity of
-  // what is in them, empty ones are the slots still open to a roll.
-  function slotPips(item) {
-    var pips = el("div", "pips");
-    for (var i = 0; i < item.slots; i++) {
-      var on = item.enchants[i];
-      pips.appendChild(el("span", "pip" + (on ? " on " + on.rarity : "")));
-    }
-    pips.appendChild(el("span", "pips-count",
-      item.enchants.length + "/" + item.slots));
-    return pips;
-  }
-
-  // One piece on the bench: what it is, what is already on it, and the roll.
-  function benchCard(ctx, item) {
-    var card = el("div", "ench-card");
-
-    var head = el("div", "ench-head");
-    head.appendChild(global.Icons.make(item.icon, "icon big"));
-    var who = el("div", "ench-who");
-    who.appendChild(el("div", "ench-name", item.name));
-    var chips = el("div", "ench-chips");
-    chips.appendChild(el("span", "chip-stat tier", item.tier));
-    chips.appendChild(el("span", "chip-stat band-" + item.band.toLowerCase(),
-      item.band));
-    who.appendChild(chips);
-    who.appendChild(slotPips(item));
-    head.appendChild(who);
-    card.appendChild(head);
-
-    var list = el("div", "ench-list");
-    if (item.enchants.length) {
-      item.enchants.forEach(function (entry) {
-        var line = el("div", "ench-entry " + entry.rarity);
-        line.appendChild(el("span", "ench-entry-name", E.label(entry)));
-        line.appendChild(el("span", "ench-entry-text", entry.text));
-        list.appendChild(line);
-      });
-    } else {
-      list.appendChild(el("div", "ench-entry empty", "Nothing on it yet."));
-    }
-    card.appendChild(list);
-
-    var cost = E.costFor(item);
-    var free = E.slotsLeft(item);
-    var go = button(free > 0 ? "ENCHANT · " + cost : "NO SLOTS LEFT",
-      "ench-go", function () { ctx.rollEnchant(item); });
-    go.disabled = !E.canEnchant(ctx.state, item);
-    if (free <= 0) {
-      go.title = "Every slot on this piece is filled.";
-    } else if (ctx.state.silver < cost) {
-      go.title = "Short " + (cost - ctx.state.silver) + " silver.";
-    }
-    card.appendChild(go);
-    return card;
-  }
-
   // Two states: pick a piece, or pick one of the three the ritual turned up.
   function build(ctx) {
-    var wrap = el("div", "ench-panel");
+    var wrap = el("div");
 
     if (ctx.offer) {
-      wrap.appendChild(el("p", "ench-lead",
+      wrap.appendChild(el("p", null,
         "Three came out of the coals for " + ctx.offer.item.name +
         ". One of them goes on the piece."));
       // The panel lands first with three empty slots waiting in it; each one
       // strikes in whole, one at a time.
-      var choices = el("div", "offer-cards");
+      var choices = el("div", "rows");
       ctx.offer.choices.forEach(function (choice, i) {
         var fresh = ctx.offer.fresh;
         var at = FIRST_REVEAL + i * REVEAL_GAP;
-        var card = el("div", "offer-card " + choice.rarity +
+        var row = el("div", "row offer " + choice.rarity +
           (fresh ? " offer-reveal" : ""));
-        if (fresh) card.style.setProperty("--d", at + "s");
+        if (fresh) row.style.setProperty("--d", at + "s");
 
-        var main = el("div", "offer-body");
-        main.appendChild(el("div", "offer-rarity", choice.rarity));
-        main.appendChild(el("div", "offer-name", E.label(choice)));
-        main.appendChild(el("div", "offer-text", choice.text));
-        card.appendChild(main);
+        var main = el("div", "row-main offer-body");
+        var title = el("div", "row-title", E.label(choice));
+        title.appendChild(el("span", "chip-stat rarity-" + choice.rarity, choice.rarity));
+        main.appendChild(title);
+        main.appendChild(el("div", "muted", choice.text));
+        row.appendChild(main);
 
-        var take = button("TAKE", "ench-go offer-body", function () {
+        var take = button("TAKE", "mini-btn strong offer-body", function () {
           ctx.takeEnchant(choice);
         });
         // Nothing is takeable before it has been shown.
@@ -197,8 +141,8 @@
           take.disabled = true;
           setTimeout(function () { take.disabled = false; }, (at + 0.3) * 1000);
         }
-        card.appendChild(take);
-        choices.appendChild(card);
+        row.appendChild(take);
+        choices.appendChild(row);
       });
       wrap.appendChild(choices);
       if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
@@ -212,9 +156,8 @@
       if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
       return wrap;
     }
-
     var intro = el("div", "intro-row");
-    intro.appendChild(el("p", "ench-lead",
+    intro.appendChild(el("p", null,
       "Rolling three enchants for a piece costs half what it sells for. " +
       "Each one takes an enchant slot."));
     intro.appendChild(button(showOdds ? "\u00d7" : "?", "chip odds-toggle",
@@ -226,11 +169,27 @@
     wrap.appendChild(intro);
     if (showOdds) wrap.appendChild(oddsBoard(ctx.state));
 
-    var grid = el("div", "ench-grid");
+    var rows = el("div", "rows");
     items.forEach(function (item) {
-      grid.appendChild(benchCard(ctx, item));
+      var row = el("div", "row");
+      row.appendChild(itemLine(item));
+      var cost = E.costFor(item);
+      var free = E.slotsLeft(item);
+      var group = el("div", "btn-group");
+      var b = button(free > 0 ? "ENCHANT " + cost : "NO SLOTS", "mini-btn",
+        function () { ctx.rollEnchant(item); });
+      b.disabled = !E.canEnchant(ctx.state, item);
+      if (free <= 0) {
+        b.title = "Every slot on this piece is filled.";
+      } else if (ctx.state.silver < cost) {
+        b.title = "Short " + (cost - ctx.state.silver) + " silver.";
+      }
+      group.appendChild(b);
+
+      row.appendChild(group);
+      rows.appendChild(row);
     });
-    wrap.appendChild(grid);
+    wrap.appendChild(rows);
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
     return wrap;
   }
