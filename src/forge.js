@@ -473,15 +473,78 @@
     this.rect(46, 68, 2, 50, PALETTE.woodDark);
     this.rect(56, 60, 4, 58, PALETTE.woodDark);
     this.rect(55, 56, 6, 6, PALETTE.steel);
-    // Tongs on the floor.
-    this.rect(20, 140, 34, 3, PALETTE.steel);
-    this.rect(20, 145, 30, 3, PALETTE.steel);
-    this.rect(52, 140, 4, 8, PALETTE.anvilEdge);
-    // Brick and coal chunks on the right.
-    this.rect(214, 132, 26, 14, PALETTE.brick);
-    this.rect(214, 132, 26, 3, PALETTE.brickLit);
+    // Tongs on the floor, out from under the desk.
+    this.rect(66, 140, 34, 3, PALETTE.steel);
+    this.rect(66, 145, 30, 3, PALETTE.steel);
+    this.rect(98, 140, 4, 8, PALETTE.anvilEdge);
+    // Brick and coal chunks on the right, clear of the pack.
+    this.rect(232, 132, 22, 14, PALETTE.brick);
+    this.rect(232, 132, 22, 3, PALETTE.brickLit);
     this.rect(170, 142, 8, 5, PALETTE.coal);
     this.rect(180, 145, 5, 4, PALETTE.coal);
+    this.drawDesk();
+    this.drawPack();
+  };
+
+  // The smith's desk under the tools: a plank on two legs with the machine he
+  // keeps his books on standing on it.
+  Forge.prototype.drawDesk = function () {
+    var x = 6, top = 112;
+    // Top and legs.
+    this.rect(x, top, 42, 4, PALETTE.wood);
+    this.rect(x, top, 42, 1, "#8a5a2b");
+    this.rect(x, top + 4, 42, 1, PALETTE.woodDark);
+    this.rect(x + 3, top + 5, 4, 28, PALETTE.woodDark);
+    this.rect(x + 35, top + 5, 4, 28, PALETTE.woodDark);
+    this.rect(x + 2, top + 33, 38, 2, PALETTE.woodDark);
+
+    // The machine: a boxy case with a screen sunk into it.
+    var mx = x + 8, my = top - 22;
+    this.rect(mx - 2, top - 3, 22, 3, "#6b6b74");      // stand
+    this.rect(mx + 7, top - 6, 4, 4, "#565660");
+    this.rect(mx - 4, my, 26, 20, "#8d8d97");          // case
+    this.rect(mx - 4, my, 26, 2, "#a8a8b2");
+    this.rect(mx - 4, my + 18, 26, 2, "#5f5f6a");
+    this.rect(mx - 2, my + 2, 22, 14, "#131a16");      // bezel
+    // The screen itself, lit and scrolling a line of its own.
+    this.rect(mx, my + 4, 18, 10, "#123020");
+    var glow = (this.t * 1.6) % 1;
+    for (var r = 0; r < 4; r++) {
+      var len = 4 + ((r * 5 + Math.floor(this.t * 2)) % 11);
+      this.rect(mx + 1, my + 5 + r * 2, len, 1,
+        r === (Math.floor(glow * 4) % 4) ? "#a7f0a0" : "#4fbf6a");
+    }
+    // Keyboard on the desk in front of it.
+    this.rect(x + 4, top - 3, 20, 3, "#6b6b74");
+    this.rect(x + 4, top - 3, 20, 1, "#9a9aa4");
+  };
+
+  // A pack dumped on the floor under the artifact shelf.
+  Forge.prototype.drawPack = function () {
+    var x = 198, y = 120;
+    var cloth = "#3f5a34", clothLit = "#587a48", clothDark = "#26361f";
+    var strap = "#3d2412", buckle = "#c9a154";
+    // Body, with the lid folded over the top of it.
+    this.rect(x + 2, y + 6, 24, 24, cloth);
+    this.rect(x + 2, y + 6, 24, 2, clothLit);
+    this.rect(x + 2, y + 28, 24, 2, clothDark);
+    this.rect(x, y + 10, 2, 18, clothDark);
+    this.rect(x + 26, y + 10, 2, 18, clothDark);
+    // Flap and its buckle.
+    this.rect(x + 2, y + 2, 24, 8, clothLit);
+    this.rect(x + 2, y + 2, 24, 1, "#6b8f56");
+    this.rect(x + 11, y + 9, 6, 4, strap);
+    this.rect(x + 12, y + 10, 4, 2, buckle);
+    // Side pocket and the straps down the back.
+    this.rect(x + 4, y + 16, 9, 10, clothDark);
+    this.rect(x + 4, y + 16, 9, 1, cloth);
+    this.rect(x + 19, y + 14, 3, 14, strap);
+    this.rect(x + 23, y + 14, 3, 14, strap);
+    // Bedroll strapped under it.
+    this.rect(x, y + 30, 28, 5, "#7a5a35");
+    this.rect(x, y + 30, 28, 1, "#9a744a");
+    this.rect(x + 8, y + 30, 2, 5, "#5c422a");
+    this.rect(x + 18, y + 30, 2, 5, "#5c422a");
   };
 
   Forge.prototype.updateEmbers = function (dt) {
