@@ -429,10 +429,24 @@
     { key: "socketing", label: "Socketing" }
   ];
 
+  // Where the piece being worked sits: the slot itself, and the stats it
+  // shows once something is in it.
+  function pieceSlot() {
+    var pick = el("div", "piece-pick");
+    pick.appendChild(el("div", "slot piece-slot", "Empty"));
+    var stats = el("div", "piece-stats");
+    stats.appendChild(el("div", "muted", "No piece on the wheel."));
+    pick.appendChild(stats);
+    return pick;
+  }
+
   function polishPanel(ctx) {
     var wrap = el("div", "split");
     POLISH_PARTS.forEach(function (part) {
       var pane = el("div", "split-pane " + part.key);
+      // Sanding works on one piece at a time, so the slot it goes in sits at
+      // the head of the pane and the station itself starts under it.
+      if (part.key === "sanding") pane.appendChild(pieceSlot());
       pane.appendChild(el("div", "split-title", part.label));
       pane.appendChild(el("div", "split-work"));
       wrap.appendChild(pane);
