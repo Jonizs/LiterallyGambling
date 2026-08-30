@@ -20,7 +20,7 @@
     critDamage: "Crit damage", armorPen: "Armor pen"
   };
 
-  var COST_SHARE = 0.555; // of the piece's sale price, paid to roll the offer
+  var COST_SHARE = 0.55; // of the piece's sale price, paid to roll the offer
   var OFFER_SIZE = 3;
   var REFORGE_GROWTH = 1.2; // each reforge of the same piece costs this much more
 
