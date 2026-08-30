@@ -986,13 +986,14 @@ body {
   left: 50%;
   top: 44%;
   transform: translate(-50%, -50%);
-  animation: ritualLift .5s ease-out both, ritualHover 2.4s ease-in-out .5s infinite;
+  /* One slow turn on the way up, then it hangs. */
+  animation: ritualLift .95s ease-out both, ritualHover 2.4s ease-in-out .95s infinite;
   filter: drop-shadow(0 0 12px rgba(154,95,208,.85));
 }
 .ritual-item .icon { width: clamp(45px, calc(5.4 * var(--s)), 129px); }
 @keyframes ritualLift {
-  from { opacity: 0; transform: translate(-50%, 60%) scale(.7); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  from { opacity: 0; transform: translate(-50%, 60%) scale(.7) rotateY(0deg); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1) rotateY(360deg); }
 }
 @keyframes ritualHover {
   0%, 100% { transform: translate(-50%, -50%); }
