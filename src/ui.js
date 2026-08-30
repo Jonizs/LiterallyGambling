@@ -280,6 +280,7 @@
   function clearRitual() {
     if (ritual) {
       ritual.timers.forEach(clearTimeout);
+      (ritual.crumbles || []).forEach(clearInterval);
       clearInterval(ritual.sparks);
       ritual = null;
     }
@@ -362,8 +363,6 @@
   // The piece comes up the same way, wearing what is already burned into it.
   // Each one pressed catches and burns off the piece from the ground up; the
   // bar under the piece ends the rite and pays for what was stripped.
-  var DISSOLVE_MS = 760;
-
   function showStrips(item) {
     var stage = $("ritual");
     stage.classList.add("settled", "picking");
@@ -391,15 +390,69 @@
     box.appendChild(done);
   }
 
-  // One enchant catching: it burns off from the bottom up and is gone.
+  // One enchant catching: the box crumbles away a pixel block at a time from
+  // the ground up, the way a room breaks apart when the smith walks out of
+  // it. The mask is rebuilt every tick out of the blocks still standing.
+  var CRUMB = 5;           // pixel block, in screen pixels
+  var CRUMB_TICK = 55;     // milliseconds a row of blocks takes to go
+
+  function crumble(el, onDone) {
+    var box = el.getBoundingClientRect();
+    var cols = Math.max(1, Math.ceil(box.width / CRUMB));
+    var rows = Math.max(1, Math.ceil(box.height / CRUMB));
+    var cells = [];
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        // Sorting by this puts the bottom row first, but the jitter lets a
+        // block here and there go early or hang on, so the edge stays ragged.
+        cells.push({ x: c * CRUMB, y: r * CRUMB,
+          when: (rows - 1 - r) + (Math.random() - 0.5) * 2.6 });
+      }
+    }
+    cells.sort(function (a, b) { return a.when - b.when; });
+
+    var gone = 0;
+    var perTick = Math.max(1, Math.ceil(cells.length / (rows * 1.35)));
+    var paint = function () {
+      var images = [], spots = [], sizes = [];
+      for (var i = gone; i < cells.length; i++) {
+        images.push("linear-gradient(#000, #000)");
+        spots.push(cells[i].x + "px " + cells[i].y + "px");
+        sizes.push(CRUMB + "px " + CRUMB + "px");
+      }
+      var image = images.join(","), spot = spots.join(","), size = sizes.join(",");
+      el.style.webkitMaskImage = image;
+      el.style.maskImage = image;
+      el.style.webkitMaskPosition = spot;
+      el.style.maskPosition = spot;
+      el.style.webkitMaskSize = size;
+      el.style.maskSize = size;
+      el.style.webkitMaskRepeat = "no-repeat";
+      el.style.maskRepeat = "no-repeat";
+    };
+
+    paint();
+    var timer = setInterval(function () {
+      gone += perTick;
+      if (gone >= cells.length) {
+        clearInterval(timer);
+        if (onDone) onDone();
+        return;
+      }
+      paint();
+    }, CRUMB_TICK);
+    return timer;
+  }
+
   function burnStrip(index, el) {
     if (!ritual || ritual.done || ritual.picked.indexOf(index) >= 0) return;
     ritual.picked.push(index);
     el.classList.add("dissolving");
     el.disabled = true;
-    ritual.timers.push(setTimeout(function () {
+    var timer = crumble(el, function () {
       if (el.parentNode) el.parentNode.removeChild(el);
-    }, DISSOLVE_MS));
+    });
+    ritual.crumbles.push(timer);
   }
 
   function finishStrip() {
@@ -424,7 +477,7 @@
     stage.hidden = false;
     var art = window.Icons.make(item.icon, "icon");
     $("ritual-item").appendChild(art);
-    ritual = { timers: [], done: false, picked: [], item: item,
+    ritual = { timers: [], crumbles: [], done: false, picked: [], item: item,
       sparks: setInterval(throwSpark, 38) };
     for (var i = 0; i < 18; i++) throwSpark();
     // The table keeps throwing runes for the whole rite; only a pick stops it.
