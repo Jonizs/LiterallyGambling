@@ -898,10 +898,11 @@ body {
 /* Every roll button is the same box, whatever it says, so the column of
    them lines up down the panel. */
 .bench-body .mini-btn {
+  font-size: clamp(9px, calc(1.05 * var(--s)), 25px);
   background: linear-gradient(180deg, #7b4fae, #3f2760);
   border-color: rgba(211,166,245,.7);
   color: #f6ecff;
-  width: clamp(96px, calc(11.5 * var(--s)), 270px);
+  width: clamp(74px, calc(8.6 * var(--s)), 200px);
   padding-inline: var(--gap-xs);
   text-align: center;
   white-space: nowrap;
