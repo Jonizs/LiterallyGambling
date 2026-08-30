@@ -486,10 +486,10 @@
     this.drawPack();
   };
 
-  // The smith's desk under the tools: a plank on two legs with the machine he
-  // keeps his books on standing on it.
+  // The smith's desk under the tools, pushed back against the wall so it
+  // stands at the far edge of the floor rather than out in the room.
   Forge.prototype.drawDesk = function () {
-    var x = 6, top = 112;
+    var x = 6, top = 85;
     // Top and legs.
     this.rect(x, top, 42, 4, PALETTE.wood);
     this.rect(x, top, 42, 1, "#8a5a2b");
@@ -497,6 +497,10 @@
     this.rect(x + 3, top + 5, 4, 28, PALETTE.woodDark);
     this.rect(x + 35, top + 5, 4, 28, PALETTE.woodDark);
     this.rect(x + 2, top + 33, 38, 2, PALETTE.woodDark);
+    // A shadow where it meets the floor, so it reads as standing back there.
+    this.ctx.globalAlpha = 0.35;
+    this.rect(x, top + 35, 42, 2, "#1b0f06");
+    this.ctx.globalAlpha = 1;
 
     // The machine: a boxy case with a screen sunk into it.
     var mx = x + 8, my = top - 22;
@@ -506,22 +510,21 @@
     this.rect(mx - 4, my, 26, 2, "#a8a8b2");
     this.rect(mx - 4, my + 18, 26, 2, "#5f5f6a");
     this.rect(mx - 2, my + 2, 22, 14, "#131a16");      // bezel
-    // The screen itself, lit and scrolling a line of its own.
+    // The screen itself: four lines of something, sitting still.
     this.rect(mx, my + 4, 18, 10, "#123020");
-    var glow = (this.t * 1.6) % 1;
-    for (var r = 0; r < 4; r++) {
-      var len = 4 + ((r * 5 + Math.floor(this.t * 2)) % 11);
-      this.rect(mx + 1, my + 5 + r * 2, len, 1,
-        r === (Math.floor(glow * 4) % 4) ? "#a7f0a0" : "#4fbf6a");
+    var LINES = [11, 6, 14, 8];
+    for (var r = 0; r < LINES.length; r++) {
+      this.rect(mx + 1, my + 5 + r * 2, LINES[r], 1,
+        r === 2 ? "#a7f0a0" : "#4fbf6a");
     }
     // Keyboard on the desk in front of it.
     this.rect(x + 4, top - 3, 20, 3, "#6b6b74");
     this.rect(x + 4, top - 3, 20, 1, "#9a9aa4");
   };
 
-  // A pack dumped on the floor under the artifact shelf.
+  // A pack dumped against the wall under the artifact shelf.
   Forge.prototype.drawPack = function () {
-    var x = 198, y = 120;
+    var x = 198, y = 88;
     var cloth = "#3f5a34", clothLit = "#587a48", clothDark = "#26361f";
     var strap = "#3d2412", buckle = "#c9a154";
     // Body, with the lid folded over the top of it.
@@ -545,6 +548,10 @@
     this.rect(x, y + 30, 28, 1, "#9a744a");
     this.rect(x + 8, y + 30, 2, 5, "#5c422a");
     this.rect(x + 18, y + 30, 2, 5, "#5c422a");
+    // Its own shadow on the floor behind it.
+    this.ctx.globalAlpha = 0.35;
+    this.rect(x, y + 35, 28, 2, "#1b0f06");
+    this.ctx.globalAlpha = 1;
   };
 
   Forge.prototype.updateEmbers = function (dt) {
