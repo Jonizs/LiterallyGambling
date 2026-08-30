@@ -1,4 +1,4 @@
-/* The experimentation bench: the Recipes, Parts and Artifacts tabs. */
+/* The experimentation bench: the Recipes and Artifacts tabs. */
 (function (global) {
   "use strict";
 
@@ -15,10 +15,6 @@
   var EXPERIMENT_TABS = [
     { key: "recipes", label: "Recipes",
       blurb: "Work out what the smith can learn to make." },
-    { key: "parts", label: "Parts",
-      blurb: "Fittings the better pieces are built from. They go on the anvil " +
-        "like a piece, but the iron finishes them \u2014 it is held to the work " +
-        "for a few seconds and the part comes off done." },
     { key: "artifacts", label: "Artifacts",
       blurb: "Strange finds that fit no recipe. They bend what the forge " +
         "rolls; the shelf by the fire holds three, and what you already " +
@@ -109,7 +105,6 @@
     })[0];
     wrap.appendChild(el("p", null, current.blurb));
     if (experimentTab === "recipes") recipesTab(ctx, wrap);
-    else if (experimentTab === "parts") global.Panels.partsTab(ctx, wrap);
     else wrap.appendChild(global.Artifact.build(ctx));
 
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));

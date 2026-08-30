@@ -96,7 +96,11 @@
       blurb: "Pick a piece to set on the anvil. The strike itself happens at " +
         "the forge \u2014 every value in the luck window is equally likely." },
     { key: "utility", label: "Utility",
-      blurb: "Tools and oddments the forge can turn out." }
+      blurb: "Tools and oddments the forge can turn out." },
+    { key: "parts", label: "Parts",
+      blurb: "Fittings the better pieces are built from. They go on the anvil " +
+        "like a piece, but the iron finishes them \u2014 it is held to the work " +
+        "for a few seconds and the part comes off done." }
   ];
 
   // How many of each craft was last typed into its box, so a redraw of the
@@ -179,8 +183,8 @@
     wrap.appendChild(rows);
   }
 
-  // Parts sit on the anvil like anything else, but the iron finishes them.
-  // The bench owns this list; the forge only takes the job it queues.
+  // Parts sit on the anvil like anything else, but the iron finishes them,
+  // so the forge keeps the list rather than the experimentation bench.
   function partsTab(ctx, wrap) {
     var state = ctx.state;
     var rows = el("div", "rows");
@@ -222,8 +226,9 @@
     })[0];
     wrap.appendChild(el("p", null, current.blurb));
 
-    if (forgeTab !== "gear") {
-      utilityTab(ctx, wrap);
+    if (forgeTab === "utility" || forgeTab === "parts") {
+      if (forgeTab === "parts") partsTab(ctx, wrap);
+      else utilityTab(ctx, wrap);
       if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
       return wrap;
     }
@@ -511,6 +516,6 @@
   };
 
   global.Panels = { BUILDERS: BUILDERS, itemLine: itemLine, costLine: costLine,
-    recipeStats: recipeStats, partsTab: partsTab, batchGroup: batchGroup,
+    recipeStats: recipeStats, batchGroup: batchGroup,
     el: el, button: button };
 })(window);
