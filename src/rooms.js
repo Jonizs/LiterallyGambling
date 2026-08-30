@@ -127,24 +127,12 @@
     ctx.fillRect(0, 0, W, H);
   }
 
-  // Runes drifting up out of the book, on a fixed cycle so they never pile up.
-  function runes(ctx, t) {
-    for (var i = 0; i < 9; i++) {
-      var life = (t * 0.45 + i / 9) % 1;
-      var x = 128 + Math.sin((i * 2.3) + life * 3.4) * (10 + i * 2);
-      var y = 92 - life * 46;
-      rect(ctx, x, y, 2, 2, life > 0.75 ? P.glow : P.rune);
-      if (i % 3 === 0) rect(ctx, x + 2, y + 2, 1, 1, P.glow);
-    }
-  }
-
   ROOMS.enchant = function (ctx, t) {
     wall(ctx, P.wallDark, P.wallMid, P.wallLine);
     shelves(ctx);
     floor(ctx, P.floor, P.floorDark, P.floorLine);
     candles(ctx, t);
     table(ctx, t);
-    runes(ctx, t);
     vignette(ctx);
   };
 
