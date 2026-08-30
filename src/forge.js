@@ -406,7 +406,7 @@
   // The other two things in the forge that answer a press: the machine on the
   // desk and the pack under the shelf. Both boxes follow the art below.
   var FORGE_SPOTS = [
-    { key: "computer", x: 8, y: 72, w: 46, h: 50 },
+    { key: "computer", x: 13, y: 72, w: 46, h: 50 },
     { key: "inventory", x: 198, y: 92, w: 26, h: 32 }
   ];
 
@@ -512,7 +512,7 @@
   // The smith's desk under the tools, pushed back against the wall so it
   // stands at the far edge of the floor rather than out in the room.
   Forge.prototype.drawDesk = function () {
-    var x = 10, top = 96;
+    var x = 15, top = 96;
     // Top and legs.
     this.rect(x, top, 42, 4, PALETTE.wood);
     this.rect(x, top, 42, 1, "#8a5a2b");
