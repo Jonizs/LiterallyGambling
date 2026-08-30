@@ -66,8 +66,19 @@
     ctx.fillRect(0, H - 6, W, 6);
   }
 
+  // The enchanted volumes never settle on one shade: each purple spine drifts
+  // through the room's other purples on its own slow, off-beat clock.
+  var PURPLES = ["#5a2a7a", "#7b3aa4", "#9a5fd0", "#6b2f95", "#8a45c0",
+    "#43206b", "#a06fe0"];
+
+  function purpleAt(t, seed) {
+    // A different dwell per book, so no two ever turn together.
+    var step = Math.floor(t / (1.8 + (seed % 5) * 0.7) + seed);
+    return PURPLES[Math.abs(step * 5 + seed * 3) % PURPLES.length];
+  }
+
   // Shelves of books on both walls, so the room reads as a study.
-  function shelves(ctx) {
+  function shelves(ctx, t) {
     var spines = [P.cloth, P.clothLit, "#3d2412", "#5c3a1e", P.glow, "#2f4a6b"];
     [12, 196].forEach(function (x0, side) {
       for (var s = 0; s < 3; s++) {
@@ -76,8 +87,12 @@
         rect(ctx, x0, y + 16, 48, 1, P.wood);
         for (var b = 0; b < 11; b++) {
           var h = 10 + ((b * 7 + s * 5 + side * 3) % 5);
-          rect(ctx, x0 + 2 + b * 4, y + 16 - h, 3, h,
-            spines[(b + s * 2 + side) % spines.length]);
+          var colour = spines[(b + s * 2 + side) % spines.length];
+          // Only the purple ones are enchanted; the plain leather stays put.
+          if (colour === P.cloth || colour === P.clothLit || colour === P.glow) {
+            colour = purpleAt(t, b + s * 4 + side * 13);
+          }
+          rect(ctx, x0 + 2 + b * 4, y + 16 - h, 3, h, colour);
         }
       }
     });
@@ -128,7 +143,7 @@
 
   ROOMS.enchant = function (ctx, t) {
     wall(ctx, P.wallDark, P.wallMid, P.wallLine);
-    shelves(ctx);
+    shelves(ctx, t);
     floor(ctx, P.floor, P.floorDark, P.floorLine);
     candles(ctx);
     table(ctx, t);
