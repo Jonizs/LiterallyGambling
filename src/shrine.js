@@ -26,12 +26,13 @@
     });
   }
 
-  function braziers(ctx, t) {
-    [64, 192].forEach(function (x, i) {
+  // The braziers stand lit, but their flames hold still.
+  function braziers(ctx) {
+    [64, 192].forEach(function (x) {
       rect(ctx, x - 6, 104, 12, 6, A.stone);
       rect(ctx, x - 2, 110, 4, 8, A.stoneDark);
       rect(ctx, x - 7, 118, 14, 3, A.stoneDark);
-      var h = 4 + ((Math.sin(t * 8 + i * 3) + 1) * 2 | 0);
+      var h = 6;
       rect(ctx, x - 3, 104 - h, 6, h, A.gold);
       rect(ctx, x - 1, 102 - h, 2, 3, A.goldLit);
     });
@@ -121,7 +122,7 @@
     pillars(ctx);
     floor(ctx, A.floor, A.floorDark, A.floorLine);
     dais(ctx);
-    braziers(ctx, t);
+    braziers(ctx);
     pedestal(ctx);
     core(ctx, t);
     vignette(ctx);

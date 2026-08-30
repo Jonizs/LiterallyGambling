@@ -83,15 +83,14 @@
     });
   }
 
-  // Two candle stands flanking the table.
-  function candles(ctx, t) {
-    [78, 172].forEach(function (x, i) {
+  // Two candle stands flanking the table, burning steady.
+  function candles(ctx) {
+    [78, 172].forEach(function (x) {
       rect(ctx, x - 1, 96, 4, 22, P.woodDark);
       rect(ctx, x - 4, 116, 10, 3, P.woodDark);
       rect(ctx, x - 2, 90, 6, 7, P.candle);
-      var flick = Math.sin(t * 7 + i * 2) > 0 ? 0 : 1;
-      rect(ctx, x, 85 - flick, 2, 5 + flick, P.flame);
-      rect(ctx, x, 83 - flick, 2, 2, P.page);
+      rect(ctx, x, 85, 2, 5, P.flame);
+      rect(ctx, x, 83, 2, 2, P.page);
     });
   }
 
@@ -131,7 +130,7 @@
     wall(ctx, P.wallDark, P.wallMid, P.wallLine);
     shelves(ctx);
     floor(ctx, P.floor, P.floorDark, P.floorLine);
-    candles(ctx, t);
+    candles(ctx);
     table(ctx, t);
     vignette(ctx);
   };
