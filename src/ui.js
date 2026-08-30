@@ -749,7 +749,9 @@
   // and brass they have always had.
   var PANEL_THEME = {
     gather: "lab", refine: "lab", compound: "lab",
-    experiment: "lab", lab: "lab"
+    experiment: "lab", lab: "lab",
+    // The polishing room's menu wears its stone and steel greys.
+    polish: "polish"
   };
 
   function openPanel(key) {

@@ -807,6 +807,88 @@ body {
   border: 2px solid #10201a;
 }
 
+/* ---------- the polishing room's own menu ----------
+   The wheel opens a menu in stone and steel: the same card as everywhere
+   else, wearing the greys the room is lit in. */
+.overlay[data-theme="polish"] .overlay-card {
+  background:
+    repeating-linear-gradient(
+      180deg, rgba(0,0,0,.18) 0 3px, rgba(255,255,255,.03) 3px 6px),
+    linear-gradient(180deg, #33333a, #1c1c21);
+  border-color: #63636e;
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.5), 0 2px 0 #000;
+  scrollbar-color: #7c7c86 rgba(10,10,12,.6);
+}
+.overlay[data-theme="polish"] .tab-title { color: #dfe4ea; }
+.overlay[data-theme="polish"] .overlay-body { color: #a9aeb8; }
+.overlay[data-theme="polish"] .overlay-body p,
+.overlay[data-theme="polish"] .row-title { color: #eef1f5; }
+.overlay[data-theme="polish"] .muted { color: #8d939d; }
+.overlay[data-theme="polish"] .row {
+  background: rgba(10,10,12,.42);
+  border-color: rgba(154,160,171,.28);
+}
+.overlay[data-theme="polish"] .head-row { border-color: #9aa0ab; }
+.overlay[data-theme="polish"] .stock .mat,
+.overlay[data-theme="polish"] .chip-stat { border-color: rgba(154,160,171,.45); }
+.overlay[data-theme="polish"] .chip-stat.tier { color: #e2e8f0; border-color: #9aa0ab; }
+.overlay[data-theme="polish"] .tab { color: #8d939d; }
+.overlay[data-theme="polish"] .tab.on { color: #f2f5f9; }
+.overlay[data-theme="polish"] .mini-btn,
+.overlay[data-theme="polish"] .chip {
+  color: #f2f5f9;
+  background: linear-gradient(180deg, #6d6d78, #34343b);
+  border-color: rgba(226,232,240,.6);
+}
+@media (hover: hover) {
+  .overlay[data-theme="polish"] .mini-btn:hover:not(:disabled),
+  .overlay[data-theme="polish"] .chip:hover {
+    background: linear-gradient(180deg, #8a8a95, #45454e);
+    color: #fff;
+  }
+}
+.overlay[data-theme="polish"] .mini-btn:disabled {
+  background: linear-gradient(180deg, #4a4a52, #26262b);
+  color: #9096a0;
+}
+.overlay[data-theme="polish"] .notice { color: #e2e8f0; }
+.overlay[data-theme="polish"] .empty { color: #8d939d; }
+/* The strips a menu is split by, and the tab standing open on one. */
+.overlay[data-theme="polish"] .tabs { border-bottom-color: #5a5a63; }
+.overlay[data-theme="polish"] .tab.on {
+  background: linear-gradient(180deg, #6d6d78, #34343b);
+  border-color: #e2e8f0;
+}
+/* Stock chips and the boxes a recipe's costs are listed in. */
+.overlay[data-theme="polish"] .stock span,
+.overlay[data-theme="polish"] .purse span {
+  border-color: rgba(154,160,171,.45);
+  background: rgba(10,10,12,.45);
+}
+.overlay[data-theme="polish"] .stock .mat { color: #a9aeb8; }
+.overlay[data-theme="polish"] .chip-stat.lock { color: #8d939d; border-color: #8d939d; }
+.overlay[data-theme="polish"] .qty-input {
+  color: #f2f5f9;
+  background: rgba(10,10,12,.55);
+  border-color: #5a5a63;
+}
+.overlay[data-theme="polish"] .qty-input:focus { border-color: #e2e8f0; }
+.overlay[data-theme="polish"] .silhouette {
+  background: rgba(6,6,8,.55);
+  border-color: rgba(0,0,0,.7);
+}
+.overlay[data-theme="polish"] .silhouette .row-title,
+.overlay[data-theme="polish"] .silhouette .muted { color: #6b7078; }
+.overlay[data-theme="polish"] .item-name { color: #eef1f5; }
+.overlay[data-theme="polish"] .overlay-card::-webkit-scrollbar-track {
+  background: rgba(10,10,12,.6);
+  box-shadow: inset 0 0 0 2px #000, inset 2px 0 0 2px rgba(154,160,171,.35);
+}
+.overlay[data-theme="polish"] .overlay-card::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #e2e8f0, #9aa0ab 45%, #55555e);
+  border: 2px solid #1a1a1e;
+}
+
 /* ---------- bars out of a fitting ---------- */
 /* Pressing something that does more than one job - the enchanting table -
    slides its choices out of the furniture, stacked over the spot itself. */
