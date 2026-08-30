@@ -274,7 +274,6 @@
   // whole of it, and picking one burns the other two away.
   var SPIN_MS = 1680;      // the piece hangs while the runes build, then the offers
   var BURN_MS = 720;       // the two left behind burning off
-  var SPARK_MS = 3120;     // how long the table keeps throwing runes
   var ritual = null;
 
   function clearRitual() {
@@ -340,6 +339,8 @@
   function pickChoice(index, choice) {
     if (!ritual || ritual.done) return;
     ritual.done = true;
+    clearInterval(ritual.sparks);
+    ritual.sparks = null;
     $("ritual").classList.remove("picking");
     var buttons = $("ritual-choices").children;
     for (var i = 0; i < buttons.length; i++) {
@@ -361,10 +362,8 @@
     $("ritual-item").appendChild(art);
     ritual = { timers: [], done: false, sparks: setInterval(throwSpark, 38) };
     for (var i = 0; i < 18; i++) throwSpark();
+    // The table keeps throwing runes for the whole rite; only a pick stops it.
     ritual.timers.push(setTimeout(showChoices, SPIN_MS));
-    ritual.timers.push(setTimeout(function () {
-      if (ritual) { clearInterval(ritual.sparks); ritual.sparks = null; }
-    }, SPARK_MS));
   }
 
   function buyUpgrade(def) {
