@@ -419,6 +419,33 @@
     return global.Experiment.build(ctx);
   }
 
+  // --- polish ---------------------------------------------------------------
+  // One box split three ways rather than three tabs: the whole bench is in
+  // front of the smith at once, each station under its own heading.
+  var POLISH_PARTS = [
+    { key: "sanding", label: "Sanding",
+      blurb: "Take the piece down to a clean face on the wheel." },
+    { key: "modification", label: "Modification",
+      blurb: "Rework the piece itself \u2014 the shape, the balance, the edge." },
+    { key: "socketing", label: "Socketing",
+      blurb: "Cut seats into the piece for what goes in them." }
+  ];
+
+  function polishPanel(ctx) {
+    var wrap = el("div");
+    var split = el("div", "split");
+    POLISH_PARTS.forEach(function (part) {
+      var pane = el("div", "split-pane");
+      pane.appendChild(el("div", "split-title", part.label));
+      pane.appendChild(el("div", "muted", part.blurb));
+      pane.appendChild(el("p", "empty", "Not built yet."));
+      split.appendChild(pane);
+    });
+    wrap.appendChild(split);
+    if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
+    return wrap;
+  }
+
   function soonPanel(what) {
     return function () {
       var wrap = el("div");
@@ -510,7 +537,7 @@
       return global.Resource.compound(ctx);
     }, level: 2 },
     experiment: { title: "Experiment", build: experimentPanel, level: 2 },
-    polish: { title: "Polish", build: soonPanel("Polishing"), level: 8 },
+    polish: { title: "Polish", build: polishPanel, level: 8 },
     awaken: { title: "Awaken", build: soonPanel("Awakening"), level: 12 },
     options: { title: "Options", build: optionsPanel }
   };

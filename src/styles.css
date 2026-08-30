@@ -889,6 +889,39 @@ body {
   border: 2px solid #1a1a1e;
 }
 
+/* ---------- a menu split into stations ----------
+   One box divided rather than tabbed: the panes sit side by side with a rule
+   between them, and stack on a narrow screen. */
+.split {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: var(--gap-sm) 0;
+  border: 2px solid rgba(154,160,171,.35);
+  background: rgba(10,10,12,.35);
+}
+.split-pane {
+  padding: var(--gap-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xs);
+}
+.split-pane + .split-pane { border-left: 2px solid rgba(154,160,171,.35); }
+.split-title {
+  font-family: var(--font);
+  font-size: clamp(11px, calc(1.5 * var(--s)), 34px);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.overlay[data-theme="polish"] .split-title { color: #eef1f5; }
+@media (max-width: 760px) {
+  .split { grid-template-columns: 1fr; }
+  .split-pane + .split-pane {
+    border-left: 0;
+    border-top: 2px solid rgba(154,160,171,.35);
+  }
+}
+
 /* ---------- bars out of a fitting ---------- */
 /* Pressing something that does more than one job - the enchanting table -
    slides its choices out of the furniture, stacked over the spot itself. */
