@@ -987,7 +987,7 @@ body {
   top: 44%;
   transform: translate(-50%, -50%);
   /* One slow turn on the way up, then it hangs. */
-  animation: ritualLift .95s ease-out both, ritualHover 2.4s ease-in-out .95s infinite;
+  animation: ritualLift 1.14s ease-out both, ritualHover 2.9s ease-in-out 1.14s infinite;
   filter: drop-shadow(0 0 12px rgba(154,95,208,.85));
 }
 .ritual-item .icon { width: clamp(45px, calc(5.4 * var(--s)), 129px); }
@@ -1010,7 +1010,7 @@ body {
   aspect-ratio: 1;
   background: var(--purple-lit);
   box-shadow: 0 0 6px rgba(154,95,208,.9);
-  animation: sparkFly var(--life, 2.2s) linear both;
+  animation: sparkFly var(--life, 2.6s) linear both;
 }
 /* Off the table and up to the top of the room, winding round as it climbs. */
 @keyframes sparkFly {
@@ -1041,7 +1041,7 @@ body {
   box-shadow: inset 0 0 0 1px rgba(0,0,0,.5), 0 0 16px rgba(154,95,208,.4);
   cursor: pointer;
   pointer-events: auto;
-  animation: choiceIn .22s ease-out both;
+  animation: choiceIn .26s ease-out both;
   animation-delay: var(--in, 0s);
 }
 .ritual-choice .choice-rarity {
@@ -1068,11 +1068,11 @@ body {
 
 /* The one taken flares; the two left behind burn away. */
 .ritual-choice.taken {
-  animation: choiceTaken .5s ease-in both;
+  animation: choiceTaken .6s ease-in both;
   pointer-events: none;
 }
 .ritual-choice.burning {
-  animation: choiceBurn .55s ease-in both;
+  animation: choiceBurn .66s ease-in both;
   pointer-events: none;
 }
 @keyframes choiceTaken {

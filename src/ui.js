@@ -272,9 +272,9 @@
   // The piece comes up off the table, the table throws runes, and the three
   // that came out of the coals rise around it. The menu stays shut for the
   // whole of it, and picking one burns the other two away.
-  var SPIN_MS = 1400;      // the piece hangs while the runes build, then the offers
-  var BURN_MS = 600;       // the two left behind burning off
-  var SPARK_MS = 2600;     // how long the table keeps throwing runes
+  var SPIN_MS = 1680;      // the piece hangs while the runes build, then the offers
+  var BURN_MS = 720;       // the two left behind burning off
+  var SPARK_MS = 3120;     // how long the table keeps throwing runes
   var ritual = null;
 
   function clearRitual() {
@@ -297,7 +297,7 @@
     // How far it winds off its line on the way up, and which way it starts.
     var sway = (8 + Math.random() * 26) * (Math.random() < 0.5 ? -1 : 1);
     spark.style.setProperty("--sway", sway + "px");
-    spark.style.setProperty("--life", (1.6 + Math.random() * 1.4) + "s");
+    spark.style.setProperty("--life", (1.9 + Math.random() * 1.7) + "s");
     // Anywhere along the table top, which runs from x 104 to 152 of 256.
     spark.style.left = (41 + Math.random() * 18) + "%";
     spark.addEventListener("animationend", function () {
@@ -329,7 +329,7 @@
       b.style.left = spot.left + "%";
       b.style.top = spot.top + "%";
       // One at a time, each waiting for the one before to land.
-      b.style.setProperty("--in", (i * 0.34) + "s");
+      b.style.setProperty("--in", (i * 0.41) + "s");
       b.title = choice.text;
       b.addEventListener("click", function () { pickChoice(i, choice); });
       box.appendChild(b);
@@ -359,7 +359,7 @@
     stage.hidden = false;
     var art = window.Icons.make(item.icon, "icon");
     $("ritual-item").appendChild(art);
-    ritual = { timers: [], done: false, sparks: setInterval(throwSpark, 32) };
+    ritual = { timers: [], done: false, sparks: setInterval(throwSpark, 38) };
     for (var i = 0; i < 18; i++) throwSpark();
     ritual.timers.push(setTimeout(showChoices, SPIN_MS));
     ritual.timers.push(setTimeout(function () {
