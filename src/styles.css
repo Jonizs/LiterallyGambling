@@ -990,12 +990,28 @@ body {
      winds up to a blur, landing on a whole number of turns so it comes to
      rest square instead of snapping back when the hover takes over. */
   animation: ritualLift .5s ease-out both,
-             ritualSpin 1.9s cubic-bezier(.7, 0, .9, .35) .5s 1;
-  filter: drop-shadow(0 0 10px rgba(154,95,208,.85));
+             ritualSpin 1.9s cubic-bezier(.7, 0, .9, .35) .5s 1,
+             ritualGlow 2.4s ease-in both;
+}
+/* The piece takes the light in as it winds up: rune purple to a full gold
+   burn by the time it comes to rest. */
+@keyframes ritualGlow {
+  0% { filter: drop-shadow(0 0 4px rgba(154,95,208,.5)); }
+  45% { filter: drop-shadow(0 0 14px rgba(211,166,245,.9)) brightness(1.1); }
+  75% { filter: drop-shadow(0 0 20px rgba(255,215,106,.85)) brightness(1.25) saturate(1.2); }
+  100% {
+    filter: drop-shadow(0 0 16px rgba(255,215,106,1))
+            drop-shadow(0 0 34px rgba(255,170,60,.8))
+            brightness(1.45) saturate(1.35);
+  }
 }
 .ritual-item .icon { width: clamp(45px, calc(5.4 * var(--s)), 129px); }
 .ritual.settled .ritual-item {
   animation: ritualLift .5s ease-out both, ritualHover 2.4s ease-in-out infinite;
+  /* Holds the gold it burned up to while the offers are on the table. */
+  filter: drop-shadow(0 0 16px rgba(255,215,106,1))
+          drop-shadow(0 0 34px rgba(255,170,60,.8))
+          brightness(1.45) saturate(1.35);
 }
 @keyframes ritualLift {
   from { opacity: 0; transform: translate(-50%, 60%) scale(.7); }
@@ -1051,7 +1067,7 @@ body {
   box-shadow: inset 0 0 0 1px rgba(0,0,0,.5), 0 0 16px rgba(154,95,208,.4);
   cursor: pointer;
   pointer-events: auto;
-  animation: choiceIn .3s ease-out both;
+  animation: choiceIn .22s ease-out both;
   animation-delay: var(--in, 0s);
 }
 .ritual-choice .choice-rarity {
@@ -1070,9 +1086,10 @@ body {
     background: linear-gradient(180deg, rgba(90,55,130,.95), rgba(30,20,45,.95));
   }
 }
+/* The same pop the table's own bars come out with. */
 @keyframes choiceIn {
-  from { opacity: 0; transform: translate(-50%, calc(-50% + 16px)) scale(.9); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 14px)) scaleY(.6); }
+  to { opacity: 1; transform: translate(-50%, -50%) scaleY(1); }
 }
 
 /* The one taken flares; the two left behind burn away. */

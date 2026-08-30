@@ -328,7 +328,8 @@
       b.appendChild(P.el("span", "choice-name", E.label(choice)));
       b.style.left = spot.left + "%";
       b.style.top = spot.top + "%";
-      b.style.setProperty("--in", (i * 0.12) + "s");
+      // One at a time, each waiting for the one before to land.
+      b.style.setProperty("--in", (i * 0.34) + "s");
       b.title = choice.text;
       b.addEventListener("click", function () { pickChoice(i, choice); });
       box.appendChild(b);
