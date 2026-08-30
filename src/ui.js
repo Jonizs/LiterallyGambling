@@ -1263,10 +1263,10 @@
     clearTimeout(barsClosing);
     bars.classList.remove("closing");
     bars.innerHTML = "";
-    // Over the middle of the fitting and clear above it, in the scene's own
-    // 256x160 pixels.
+    // Over the middle of the fitting and just above it, in the scene's own
+    // 256x160 pixels, sitting low enough to nearly touch the furniture.
     bars.style.left = ((spot.x + spot.w / 2) / 256 * 100) + "%";
-    bars.style.top = ((spot.y - 6) / 160 * 100) + "%";
+    bars.style.top = ((spot.y + 6) / 160 * 100) + "%";
     choices.forEach(function (choice) {
       var b = P.el("button", "spot-bar", choice.label);
       b.type = "button";
