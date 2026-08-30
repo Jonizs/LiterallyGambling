@@ -844,6 +844,65 @@ body {
 }
 .bench-body .row-title, .bench-body p { color: #efe2ff; }
 .bench-body .muted { color: #b9a6cf; }
+/* The odds are a panel of their own inside the wall menu: its own frame, its
+   own scroll, with the pieces still listed below it. */
+.bench-body .odds-panel, .odds-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: 46%;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: var(--gap-xs) 0 var(--gap-sm);
+  padding: var(--gap-xs) var(--gap-sm);
+  background: rgba(10,6,16,.5);
+  border: 2px solid rgba(154,95,208,.4);
+}
+.odds-head {
+  position: sticky;
+  top: calc(var(--gap-xs) * -1);
+  letter-spacing: 1px;
+  color: #d3a6f5;
+  background: rgba(10,6,16,.92);
+  padding: var(--gap-xs) 0;
+}
+
+/* The odds toggle wears the bench's purple rather than the wood palette. */
+.bench-body .odds-toggle {
+  color: #efe2ff;
+  background: linear-gradient(180deg, #7b4fae, #3f2760);
+  border-color: rgba(211,166,245,.7);
+  text-shadow: 1px 1px 0 #000;
+}
+@media (hover: hover) {
+  .bench-body .odds-toggle:hover {
+    background: linear-gradient(180deg, #9a6fcf, #56377f);
+    color: #fff2c0;
+  }
+}
+
+/* Even the scrollbars in here are the bench's, not the forge's brass. */
+.bench-body, .odds-panel { scrollbar-color: #7b4fae rgba(10,6,16,.6); }
+.bench-body::-webkit-scrollbar-track,
+.odds-panel::-webkit-scrollbar-track {
+  background: rgba(10,6,16,.6);
+  box-shadow: inset 0 0 0 2px #000, inset 2px 0 0 2px rgba(154,95,208,.35);
+}
+.bench-body::-webkit-scrollbar-thumb,
+.odds-panel::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d3a6f5, #9a5fd0 45%, #56377f);
+  border: 2px solid #1b1028;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+}
+@media (hover: hover) {
+  .bench-body::-webkit-scrollbar-thumb:hover,
+  .odds-panel::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #efdcff, #b07be0 45%, #6a3f96);
+  }
+}
+.bench-body::-webkit-scrollbar-corner,
+.odds-panel::-webkit-scrollbar-corner { background: rgba(10,6,16,.6); }
+
 .bench-body .mini-btn {
   background: linear-gradient(180deg, #7b4fae, #3f2760);
   border-color: rgba(211,166,245,.7);
