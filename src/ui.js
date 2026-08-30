@@ -262,7 +262,108 @@
     }
     view.offer = { itemId: item.id, choices: result.choices, fresh: true };
     view.notice = "Paid " + result.cost + " silver for the roll.";
+    // The bench shuts and the ritual takes the room over.
+    closePanel();
     refresh();
+    startRitual(item);
+  }
+
+  // --- the enchanting ritual ----------------------------------------------
+  // The piece comes up off the table, the table throws runes, and the three
+  // that came out of the coals rise around it. The menu stays shut for the
+  // whole of it, and picking one burns the other two away.
+  var SPIN_MS = 1500;      // how long the piece turns before the offers show
+  var BURN_MS = 600;       // the two left behind burning off
+  var SPARK_MS = 2600;     // how long the table keeps throwing runes
+  var ritual = null;
+
+  function clearRitual() {
+    if (ritual) {
+      ritual.timers.forEach(clearTimeout);
+      clearInterval(ritual.sparks);
+      ritual = null;
+    }
+    var stage = $("ritual");
+    stage.hidden = true;
+    stage.classList.remove("settled", "picking");
+    $("ritual-item").innerHTML = "";
+    $("ritual-sparks").innerHTML = "";
+    $("ritual-choices").innerHTML = "";
+  }
+
+  // One rune off the table, thrown on its own heading.
+  function throwSpark() {
+    var spark = P.el("div", "spark");
+    var angle = -Math.PI / 2 + (Math.random() - 0.5) * 2.2;
+    var reach = 40 + Math.random() * 90;
+    spark.style.setProperty("--dx", Math.cos(angle) * reach + "px");
+    spark.style.setProperty("--dy", Math.sin(angle) * reach + "px");
+    spark.style.setProperty("--life", (0.7 + Math.random() * 0.7) + "s");
+    spark.style.left = (50 + (Math.random() - 0.5) * 16) + "%";
+    spark.addEventListener("animationend", function () {
+      if (spark.parentNode) spark.parentNode.removeChild(spark);
+    });
+    $("ritual-sparks").appendChild(spark);
+  }
+
+  // Straight above the piece, then out to either side of that.
+  var CHOICE_SPOTS = [
+    { left: 50, top: 30 },
+    { left: 26, top: 40 },
+    { left: 74, top: 40 }
+  ];
+
+  function showChoices() {
+    var pending = offerView();
+    if (!pending) { clearRitual(); return; }
+    var stage = $("ritual");
+    stage.classList.add("settled", "picking");
+    var box = $("ritual-choices");
+    box.innerHTML = "";
+    pending.choices.forEach(function (choice, i) {
+      var spot = CHOICE_SPOTS[i] || CHOICE_SPOTS[0];
+      var b = P.el("button", "ritual-choice " + choice.rarity);
+      b.type = "button";
+      b.appendChild(P.el("span", "choice-rarity", choice.rarity));
+      b.appendChild(P.el("span", "choice-name", E.label(choice)));
+      b.style.left = spot.left + "%";
+      b.style.top = spot.top + "%";
+      b.style.setProperty("--in", (i * 0.12) + "s");
+      b.title = choice.text;
+      b.addEventListener("click", function () { pickChoice(i, choice); });
+      box.appendChild(b);
+    });
+  }
+
+  // The one taken flares off; the other two burn away in the same breath.
+  function pickChoice(index, choice) {
+    if (!ritual || ritual.done) return;
+    ritual.done = true;
+    $("ritual").classList.remove("picking");
+    var buttons = $("ritual-choices").children;
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].classList.add(i === index ? "taken" : "burning");
+    }
+    ritual.timers.push(setTimeout(function () {
+      clearRitual();
+      takeEnchant(choice);
+      // Back to the bench, so another piece can go straight on.
+      openPanel("enchant");
+    }, BURN_MS));
+  }
+
+  function startRitual(item) {
+    clearRitual();
+    var stage = $("ritual");
+    stage.hidden = false;
+    var art = window.Icons.make(item.icon, "icon");
+    $("ritual-item").appendChild(art);
+    ritual = { timers: [], done: false, sparks: setInterval(throwSpark, 55) };
+    for (var i = 0; i < 10; i++) throwSpark();
+    ritual.timers.push(setTimeout(showChoices, SPIN_MS));
+    ritual.timers.push(setTimeout(function () {
+      if (ritual) { clearInterval(ritual.sparks); ritual.sparks = null; }
+    }, SPARK_MS));
   }
 
   function buyUpgrade(def) {
@@ -776,6 +877,7 @@
   function walkTo(room) {
     if (!scene) return;
     hideSpotBars();
+    clearRitual();
     if (panelLocked(ROOM_UI[room].panel)) return;
     cancelPending();
     if (view.panel) closePanel();
