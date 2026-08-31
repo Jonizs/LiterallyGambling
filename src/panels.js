@@ -512,7 +512,9 @@
   function anatomy(item) {
     var wrap = el("div", "anatomy");
     var frame = el("div", "anatomy-frame");
-    frame.appendChild(I.shadow(item.icon, "icon anatomy-icon"));
+    // The room's own silhouette colour is all but black, and the bench box
+    // is dark too, so the piece is ghosted with the icon itself instead.
+    frame.appendChild(I.make(item.icon, "icon anatomy-icon"));
 
     var svg = document.createElementNS(SVG_NS, "svg");
     svg.setAttribute("class", "anatomy-lines");
