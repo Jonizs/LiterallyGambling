@@ -110,10 +110,6 @@
     rect(ctx, 202, top - 10, 8, 4, P.goldLit);
     rect(ctx, 212, top - 14, 2, 14, P.wood);
     rect(ctx, 211, top - 16, 4, 3, P.cloth);
-    // Calipers left open on the bench top.
-    rect(ctx, 168, top - 22, 18, 2, P.ironLit);
-    rect(ctx, 168, top - 26, 2, 6, P.ironLit);
-    rect(ctx, 184, top - 26, 2, 6, P.ironLit);
   }
 
   // The rail of tools over the bench, and the lamp that lights all of it.
@@ -126,14 +122,10 @@
       rect(ctx, x, 31, 3, 14 + (i % 3) * 6, P.iron);
       rect(ctx, x - 1, 31, 5, 4, P.woodDark);
     }
-    // A hammer and a clamp on the end pegs.
+    // A hammer on the end peg.
     rect(ctx, 156, 31, 3, 20, P.wood);
     rect(ctx, 150, 31, 15, 6, P.iron);
     rect(ctx, 150, 31, 15, 2, P.ironLit);
-    rect(ctx, 172, 31, 4, 18, P.iron);
-    rect(ctx, 172, 31, 14, 4, P.iron);
-    rect(ctx, 182, 35, 4, 14, P.iron);
-    rect(ctx, 172, 47, 14, 3, P.ironLit);
     // Hanging lamp: the warm light everything in here is polished by.
     rect(ctx, 200, 0, 2, 18, P.iron);
     rect(ctx, 192, 18, 18, 6, P.goldDark);
