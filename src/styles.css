@@ -925,9 +925,9 @@ body {
   height: 74%;
   align-self: end;
 }
-/* ---------- the piece laid out part by part ----------
-   A 3:2 board: the piece stands in the middle of it and every part that can
-   be worked is called out to the column on one side or the other. */
+/* ---------- the piece on the bench ----------
+   The piece stands in the middle of the modification box. Pressing it pulls
+   it apart: each band of it drifts to its own side and back again. */
 .anatomy {
   height: 100%;
   display: flex;
@@ -937,47 +937,30 @@ body {
 .anatomy-board {
   position: relative;
   height: 100%;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 2 / 3;
   max-width: 100%;
+  cursor: pointer;
 }
-.anatomy-frame {
+/* One band of the piece: a window onto the whole sprite with the rest
+   cropped away, so together they read as one sword. */
+.piece-part {
   position: absolute;
-  left: 30.4%;
-  width: 39.2%;
-  top: 6%;
-  height: 88%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.anatomy .anatomy-icon { height: 100%; width: auto; }
-.anatomy-lines {
-  position: absolute;
-  inset: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
-  pointer-events: none;
+  overflow: hidden;
+  transition: transform .28s cubic-bezier(.16, .84, .34, 1);
 }
-.anatomy-lines polyline {
-  fill: none;
-  stroke: rgba(154,160,171,.55);
-  stroke-width: 1;
-  stroke-linecap: butt;
-  stroke-linejoin: miter;
-  vector-effect: non-scaling-stroke;
-}
-.anatomy-tag {
+.piece-slice {
   position: absolute;
-  transform: translateY(-50%);
-  white-space: nowrap;
-  font-family: var(--font);
-  font-size: clamp(8px, calc(.95 * var(--s)), 22px);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #cfd5de;
-  text-shadow: 1px 1px 0 #000;
+  left: 0;
+  width: 100%;
+  height: auto;
 }
-.anatomy-tag.left { text-align: right; }
+.anatomy-board.apart .piece-part.left { transform: translateX(-26%); }
+.anatomy-board.apart .piece-part.right { transform: translateX(26%); }
+@media (prefers-reduced-motion: reduce) {
+  .piece-part { transition: none; }
+}
 
 /* Either face of the polish menu fades in rather than cutting over. */
 @keyframes splitFade {
