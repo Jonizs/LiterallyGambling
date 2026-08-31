@@ -939,11 +939,7 @@ body {
   height: 84%;
   aspect-ratio: 2 / 3;
 }
-.anatomy .anatomy-icon {
-  width: 100%;
-  height: 100%;
-  filter: grayscale(1) brightness(1.9) contrast(.55) opacity(.8);
-}
+.anatomy .anatomy-icon { width: 100%; height: 100%; }
 .anatomy-lines {
   position: absolute;
   inset: 0;

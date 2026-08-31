@@ -493,16 +493,18 @@
     return line;
   }
 
-  // Where each callout hangs off the blade, as a share of the silhouette:
-  // x and y on the piece, and which side the label runs out to.
+  // Where each callout hangs off the blade. The weapon sprites are drawn on
+  // a 32 x 48 half-unit grid, so these are that grid read as percentages:
+  // point at the tip, fuller and ridge down the blade, ricasso above the
+  // guard, then the chappe, the grip and the pommel.
   var ANATOMY = [
-    { label: "Point", x: 50, y: 4, side: 1 },
-    { label: "Fuller", x: 44, y: 24, side: -1 },
-    { label: "Centre ridge", x: 56, y: 40, side: 1 },
-    { label: "Ricasso", x: 44, y: 58, side: -1 },
-    { label: "Chappe", x: 56, y: 68, side: 1 },
-    { label: "Handle", x: 44, y: 80, side: -1 },
-    { label: "Pommel", x: 56, y: 94, side: 1 }
+    { label: "Point", x: 50, y: 19, side: 1 },
+    { label: "Fuller", x: 48, y: 30, side: -1 },
+    { label: "Centre ridge", x: 52, y: 44, side: 1 },
+    { label: "Ricasso", x: 48, y: 55, side: -1 },
+    { label: "Chappe", x: 52, y: 62, side: 1 },
+    { label: "Handle", x: 48, y: 72, side: -1 },
+    { label: "Pommel", x: 52, y: 80, side: 1 }
   ];
 
   var SVG_NS = "http://www.w3.org/2000/svg";
@@ -512,8 +514,6 @@
   function anatomy(item) {
     var wrap = el("div", "anatomy");
     var frame = el("div", "anatomy-frame");
-    // The room's own silhouette colour is all but black, and the bench box
-    // is dark too, so the piece is ghosted with the icon itself instead.
     frame.appendChild(I.make(item.icon, "icon anatomy-icon"));
 
     var svg = document.createElementNS(SVG_NS, "svg");
@@ -521,7 +521,7 @@
     svg.setAttribute("viewBox", "0 0 100 100");
     svg.setAttribute("preserveAspectRatio", "none");
     ANATOMY.forEach(function (part) {
-      var out = part.side > 0 ? 150 : -50;
+      var out = part.side > 0 ? 140 : -40;
       var line = document.createElementNS(SVG_NS, "polyline");
       line.setAttribute("points",
         part.x + "," + part.y + " " +
@@ -542,8 +542,8 @@
       var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"),
         part.label);
       tag.style.top = part.y + "%";
-      if (part.side > 0) tag.style.left = "152%";
-      else tag.style.right = "152%";
+      if (part.side > 0) tag.style.left = "142%";
+      else tag.style.right = "142%";
       frame.appendChild(tag);
     });
 
