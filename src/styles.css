@@ -962,9 +962,10 @@ body {
   fill: none;
   stroke: rgba(154,160,171,.55);
   stroke-width: 1;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
   vector-effect: non-scaling-stroke;
 }
-.anatomy-lines circle { fill: #e2e8f0; }
 .anatomy-tag {
   position: absolute;
   transform: translateY(-50%);

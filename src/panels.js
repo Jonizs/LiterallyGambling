@@ -498,13 +498,13 @@
   // point at the tip, fuller and ridge down the blade, ricasso above the
   // guard, then the chappe, the grip and the pommel.
   var ANATOMY = [
-    { label: "Point", x: 50, y: 19, side: 1 },
-    { label: "Fuller", x: 48, y: 30, side: -1 },
-    { label: "Centre ridge", x: 52, y: 44, side: 1 },
-    { label: "Ricasso", x: 48, y: 55, side: -1 },
-    { label: "Chappe", x: 52, y: 62, side: 1 },
-    { label: "Handle", x: 48, y: 72, side: -1 },
-    { label: "Pommel", x: 52, y: 80, side: 1 }
+    { label: "Point", x: 50, y: 18, side: 1 },
+    { label: "Fuller", x: 48, y: 34, side: -1 },
+    { label: "Centre ridge", x: 52, y: 48, side: 1 },
+    { label: "Ricasso", x: 48, y: 57, side: -1 },
+    { label: "Chappe", x: 52, y: 65, side: 1 },
+    { label: "Handle", x: 48, y: 74, side: -1 },
+    { label: "Pommel", x: 52, y: 82, side: 1 }
   ];
 
   var SVG_NS = "http://www.w3.org/2000/svg";
@@ -538,11 +538,6 @@
       line.setAttribute("points",
         x + "," + y + " " + (x + part.side * 6) + "," + y + " " + end + "," + y);
       svg.appendChild(line);
-      var dot = document.createElementNS(SVG_NS, "circle");
-      dot.setAttribute("cx", x);
-      dot.setAttribute("cy", y);
-      dot.setAttribute("r", 1.1);
-      svg.appendChild(dot);
     });
     board.appendChild(svg);
 
