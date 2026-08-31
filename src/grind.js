@@ -122,10 +122,6 @@
       rect(ctx, x, 31, 3, 14 + (i % 3) * 6, P.iron);
       rect(ctx, x - 1, 31, 5, 4, P.woodDark);
     }
-    // A hammer on the end peg.
-    rect(ctx, 156, 31, 3, 20, P.wood);
-    rect(ctx, 150, 31, 15, 6, P.iron);
-    rect(ctx, 150, 31, 15, 2, P.ironLit);
     // Hanging lamp: the warm light everything in here is polished by.
     rect(ctx, 200, 0, 2, 18, P.iron);
     rect(ctx, 192, 18, 18, 6, P.goldDark);
