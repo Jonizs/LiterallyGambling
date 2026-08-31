@@ -491,9 +491,12 @@
     // what is being worked on.
     var held = heldPiece(ctx);
     var spare = el("div", "split-pane spare");
-    var pickBox = el("button", "split-work pick-box",
-      held ? held.name : "Select weapon");
+    var pickBox = el("button", "split-work pick-box" + (held ? " filled" : ""));
     pickBox.type = "button";
+    // Empty it says what it is for; filled it shows the piece itself, its
+    // icon, its name and everything it carries.
+    if (held) pickBox.appendChild(itemLine(held));
+    else pickBox.appendChild(el("span", null, "Select weapon"));
     pickBox.addEventListener("click", function () {
       polishPicking = true;
       ctx.refresh();

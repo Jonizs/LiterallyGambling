@@ -954,6 +954,14 @@ body {
   cursor: pointer;
 }
 .overlay[data-theme="polish"] .pick-box { color: #eef1f5; }
+/* With a piece in it the box reads as the piece, not as a label. */
+.pick-box.filled {
+  text-transform: none;
+  letter-spacing: 0;
+  align-items: stretch;
+  justify-content: flex-start;
+  text-align: left;
+}
 @media (hover: hover) {
   .pick-box:hover { border-color: rgba(226,232,240,.8); }
 }
