@@ -987,7 +987,24 @@ body {
 .fade-in { animation: splitFade .2s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .fade-in { animation: none; } }
 /* The picker the SELECT WEAPON box opens onto. */
-.picker { display: flex; flex-direction: column; gap: var(--gap-sm); }
+/* The card itself does not scroll in this menu, so the list inside the
+   picker does: the heading stays put and the pieces run under it. */
+.picker {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+.picker-head { flex: none; }
+.picker .rows {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding-right: var(--gap-xs);
+}
 .picker-head {
   display: flex;
   align-items: center;
