@@ -462,7 +462,7 @@
     var rows = el("div", "rows");
     ctx.state.inventory.forEach(function (item) {
       var row = el("div", "row" + (item.id === polishPiece ? " picked" : ""));
-      row.appendChild(pieceLine(item));
+      row.appendChild(itemLine(item));
       row.appendChild(button(item.id === polishPiece ? "ON BENCH" : "PICK",
         "mini-btn strong", function () {
           polishPiece = item.id;
@@ -475,7 +475,8 @@
     return wrap;
   }
 
-  // What the bench cares about: the piece itself, not its combat numbers.
+  // On the bench only what the piece is, not its combat numbers; the picker
+  // itself still lists everything.
   function pieceLine(item) {
     var line = el("div", "item-line");
     line.appendChild(I.make(item.icon));
