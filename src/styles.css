@@ -960,8 +960,8 @@ body {
 }
 .anatomy-lines polyline {
   fill: none;
-  stroke: rgba(154,160,171,.55);
-  stroke-width: 1;
+  stroke: rgba(198,205,216,.8);
+  stroke-width: 2;
   stroke-linecap: butt;
   stroke-linejoin: miter;
   vector-effect: non-scaling-stroke;
@@ -971,10 +971,12 @@ body {
   transform: translateY(-50%);
   white-space: nowrap;
   font-family: var(--font);
-  font-size: clamp(8px, calc(.95 * var(--s)), 22px);
+  font-weight: 700;
+  font-size: clamp(9px, calc(1.15 * var(--s)), 26px);
+  -webkit-text-stroke: .5px currentColor;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: #cfd5de;
+  color: #eef2f7;
   text-shadow: 1px 1px 0 #000;
 }
 .anatomy-tag.left { text-align: right; }
