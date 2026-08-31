@@ -429,8 +429,55 @@
     { key: "socketing", label: "Socketing" }
   ];
 
+  // Which piece is on the bench, and whether the menu has faded over to the
+  // screen that picks one.
+  var polishPiece = null;
+  var polishPicking = false;
+
+  function heldPiece(ctx) {
+    var found = null;
+    ctx.state.inventory.forEach(function (item) {
+      if (item.id === polishPiece) found = item;
+    });
+    if (!found) polishPiece = null;
+    return found;
+  }
+
+  // The screen the SELECT WEAPON box fades over to: every piece in hand, one
+  // to a row, and a way back out without picking.
+  function polishPicker(ctx) {
+    var wrap = el("div", "picker fade-in");
+    var head = el("div", "picker-head");
+    head.appendChild(el("div", "split-title", "Select weapon"));
+    head.appendChild(button("BACK", "mini-btn", function () {
+      polishPicking = false;
+      ctx.refresh();
+    }));
+    wrap.appendChild(head);
+
+    if (!ctx.state.inventory.length) {
+      wrap.appendChild(el("p", "empty", "Nothing in the inventory to work."));
+      return wrap;
+    }
+    var rows = el("div", "rows");
+    ctx.state.inventory.forEach(function (item) {
+      var row = el("div", "row" + (item.id === polishPiece ? " picked" : ""));
+      row.appendChild(itemLine(item));
+      row.appendChild(button(item.id === polishPiece ? "ON BENCH" : "PICK",
+        "mini-btn strong", function () {
+          polishPiece = item.id;
+          polishPicking = false;
+          ctx.refresh();
+        }));
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+    return wrap;
+  }
+
   function polishPanel(ctx) {
-    var wrap = el("div", "split");
+    if (polishPicking) return polishPicker(ctx);
+    var wrap = el("div", "split fade-in");
     POLISH_PARTS.forEach(function (part) {
       var pane = el("div", "split-pane " + part.key);
       // The station's name sits inside its own box, over the work.
@@ -440,9 +487,18 @@
       pane.appendChild(box);
       wrap.appendChild(pane);
     });
-    // The strip of the left column sanding leaves free, boxed like the rest.
+    // The strip of the left column sanding leaves free: the box that picks
+    // what is being worked on.
+    var held = heldPiece(ctx);
     var spare = el("div", "split-pane spare");
-    spare.appendChild(el("div", "split-work"));
+    var pickBox = el("button", "split-work pick-box",
+      held ? held.name : "Select weapon");
+    pickBox.type = "button";
+    pickBox.addEventListener("click", function () {
+      polishPicking = true;
+      ctx.refresh();
+    });
+    spare.appendChild(pickBox);
     wrap.appendChild(spare);
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
     return wrap;
