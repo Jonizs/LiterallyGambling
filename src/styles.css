@@ -966,36 +966,29 @@ body {
   padding: var(--gap-xs);
   gap: 2px;
 }
-/* The piece fills its box: icon down the left, name over the chips beside
-   it, everything stretched to the edges. */
+/* Icon, then the name over its chips, packed against each other rather than
+   spread across the box. */
 .pick-box.filled .item-line {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
-  gap: 3px var(--gap-xs);
+  grid-template-rows: auto auto;
+  align-content: center;
+  gap: 2px var(--gap-xs);
   width: 100%;
-  height: 100%;
   min-width: 0;
 }
-.pick-box.filled .item-meta { align-content: center; }
 .pick-box.filled .item-name {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* The icon runs the height of the box, the name and chips fill the rest. */
-.pick-box.filled .icon {
-  grid-row: 1 / 3;
-  align-self: center;
-  height: 100%;
-  width: auto;
-  max-width: 40%;
-}
+/* The icon is the same one the forge lists, at the same size. */
+.pick-box.filled .icon { grid-row: 1 / 3; align-self: center; }
 .pick-box.filled .item-name {
   font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
 }
-.pick-box.filled .item-meta { gap: 2px; }
+.pick-box.filled .item-meta { gap: 2px; align-content: start; }
 .pick-box.filled .chip-stat {
   font-size: clamp(8px, calc(.9 * var(--s)), 20px);
   padding: 0 3px;
