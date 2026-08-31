@@ -501,7 +501,7 @@
     { label: "Point", x: 50, y: 7, side: 1 },
     { label: "Fuller", x: 48, y: 20, side: -1 },
     { label: "Centre ridge", x: 52, y: 36, side: 1 },
-    { label: "Ricasso", x: 48, y: 72, side: -1 },
+    { label: "Ricasso", x: 48, y: 73, side: -1 },
     { label: "Chappe", x: 52, y: 75, side: 1 },
     { label: "Handle", x: 48, y: 83, side: -1 },
     { label: "Pommel", x: 52, y: 92, side: 1 }
