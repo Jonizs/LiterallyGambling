@@ -535,7 +535,7 @@
     frame.appendChild(svg);
 
     // The names themselves are laid over the frame rather than drawn into
-    // the picture, so they keep the menu\u2019s own lettering.
+    // the picture, so they keep the menu's own lettering.
     ANATOMY.forEach(function (part) {
       var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"),
         part.label);
