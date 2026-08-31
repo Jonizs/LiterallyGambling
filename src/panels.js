@@ -509,45 +509,55 @@
 
   var SVG_NS = "http://www.w3.org/2000/svg";
 
-  // The piece as a silhouette in the middle of the bench, with a line drawn
-  // off every part of it that can be worked.
+  // The diagram is a fixed 3:2 board so everything can be placed in one set
+  // of coordinates: the piece stands in the middle 39% of it, 6% clear top
+  // and bottom, and the callouts run out to the columns either side.
+  var BOARD = { left: 30.4, span: 39.2, top: 6, height: 88, out: 22 };
+
+  function atX(part) { return BOARD.left + part.x * BOARD.span / 100; }
+  function atY(part) { return BOARD.top + part.y * BOARD.height / 100; }
+
+  // The piece in the middle of the bench, with a line drawn off every part
+  // of it that can be worked.
   function anatomy(item) {
     var wrap = el("div", "anatomy");
+    var board = el("div", "anatomy-board");
+
     var frame = el("div", "anatomy-frame");
     frame.appendChild(I.make(item.icon, "icon anatomy-icon"));
+    board.appendChild(frame);
 
     var svg = document.createElementNS(SVG_NS, "svg");
     svg.setAttribute("class", "anatomy-lines");
     svg.setAttribute("viewBox", "0 0 100 100");
     svg.setAttribute("preserveAspectRatio", "none");
     ANATOMY.forEach(function (part) {
-      var out = part.side > 0 ? 140 : -40;
+      var x = atX(part), y = atY(part);
+      var end = part.side > 0 ? 100 - BOARD.out : BOARD.out;
       var line = document.createElementNS(SVG_NS, "polyline");
       line.setAttribute("points",
-        part.x + "," + part.y + " " +
-        (part.x + part.side * 26) + "," + part.y + " " +
-        out + "," + part.y);
+        x + "," + y + " " + (x + part.side * 6) + "," + y + " " + end + "," + y);
       svg.appendChild(line);
       var dot = document.createElementNS(SVG_NS, "circle");
-      dot.setAttribute("cx", part.x);
-      dot.setAttribute("cy", part.y);
-      dot.setAttribute("r", 1.6);
+      dot.setAttribute("cx", x);
+      dot.setAttribute("cy", y);
+      dot.setAttribute("r", 1.1);
       svg.appendChild(dot);
     });
-    frame.appendChild(svg);
+    board.appendChild(svg);
 
-    // The names themselves are laid over the frame rather than drawn into
-    // the picture, so they keep the menu's own lettering.
+    // The names are laid over the board rather than drawn into the picture,
+    // so they keep the menu's own lettering.
     ANATOMY.forEach(function (part) {
       var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"),
         part.label);
-      tag.style.top = part.y + "%";
-      if (part.side > 0) tag.style.left = "142%";
-      else tag.style.right = "142%";
-      frame.appendChild(tag);
+      tag.style.top = atY(part) + "%";
+      if (part.side > 0) tag.style.left = (100 - BOARD.out + 1) + "%";
+      else tag.style.right = (100 - BOARD.out + 1) + "%";
+      board.appendChild(tag);
     });
 
-    wrap.appendChild(frame);
+    wrap.appendChild(board);
     return wrap;
   }
 
