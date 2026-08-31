@@ -919,10 +919,10 @@ body {
   min-height: 0;
   overflow: auto;
 }
-/* Sanding stands three quarters tall against the foot of the box. */
+/* Sanding stands four fifths tall against the foot of the box. */
 .split-pane.sanding {
   grid-area: 1 / 1 / 3 / 2;
-  height: 75%;
+  height: 80%;
   align-self: end;
 }
 .split-pane.modification {
