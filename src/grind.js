@@ -110,18 +110,6 @@
     rect(ctx, 202, top - 10, 8, 4, P.goldLit);
     rect(ctx, 212, top - 14, 2, 14, P.wood);
     rect(ctx, 211, top - 16, 4, 3, P.cloth);
-    // The empty tray at the far end, waiting for what comes off the piece.
-    rect(ctx, 218, top - 8, 32, 8, P.woodDark);
-    rect(ctx, 218, top - 8, 32, 1, P.wood);
-    // Punches and a graver stood in a solid block behind the tray.
-    ctx.globalAlpha = 1;
-    rect(ctx, 222, top - 24, 20, 8, P.wood);
-    rect(ctx, 222, top - 24, 20, 2, P.woodLit);
-    rect(ctx, 222, top - 17, 20, 1, P.woodDark);
-    [225, 230, 235].forEach(function (x, i) {
-      rect(ctx, x, top - 34 + (i % 2) * 4, 3, 11 - (i % 2) * 4, P.steelLit);
-      rect(ctx, x, top - 24, 3, 5, P.iron);
-    });
     // Calipers left open on the bench top.
     rect(ctx, 168, top - 22, 18, 2, P.ironLit);
     rect(ctx, 168, top - 26, 2, 6, P.ironLit);
