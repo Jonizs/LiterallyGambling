@@ -437,6 +437,10 @@
       pane.appendChild(el("div", "split-work"));
       wrap.appendChild(pane);
     });
+    // The strip of the left column sanding leaves free, boxed like the rest.
+    var spare = el("div", "split-pane spare");
+    spare.appendChild(el("div", "split-work"));
+    wrap.appendChild(spare);
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
     return wrap;
   }
