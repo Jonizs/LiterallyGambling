@@ -919,13 +919,11 @@ body {
   min-height: 0;
   overflow: auto;
 }
-.split-pane.sanding { grid-area: 1 / 1 / 3 / 2; }
-/* Sanding's own box stands four fifths tall on the foot of its pane, with
-   the heading over it rather than a second frame above. */
-.split-pane.sanding .split-work {
-  flex: none;
+/* Sanding stands four fifths tall against the foot of the box. */
+.split-pane.sanding {
+  grid-area: 1 / 1 / 3 / 2;
   height: 80%;
-  margin-top: auto;
+  align-self: end;
 }
 .split-pane.modification {
   grid-area: 1 / 2 / 2 / 3;
