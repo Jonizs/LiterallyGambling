@@ -498,13 +498,13 @@
   // point at the tip, fuller and ridge down the blade, ricasso above the
   // guard, then the chappe, the grip and the pommel.
   var ANATOMY = [
-    { label: "Point", x: 50, y: 7, side: 1, rise: 9, trim: 1.5 },
+    { label: "Point", x: 50, y: 7, side: 1, rise: -9, trim: 1.5 },
     { label: "Fuller", x: 48, y: 20, side: -1 },
     { label: "Centre ridge", x: 52, y: 36, side: 1 },
     { label: "Ricasso", x: 48, y: 71, side: -1, rise: -9, trim: 1.5 },
     { label: "Chappe", x: 52, y: 75, side: 1 },
     { label: "Handle", x: 48, y: 83, side: -1 },
-    { label: "Pommel", x: 52, y: 92, side: 1, rise: -9, trim: 1.5 }
+    { label: "Pommel", x: 52, y: 92, side: 1, rise: 9, trim: 1.5 }
   ];
 
   var SVG_NS = "http://www.w3.org/2000/svg";
