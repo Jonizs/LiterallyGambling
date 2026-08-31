@@ -493,39 +493,63 @@
     return line;
   }
 
-  // The piece comes apart into bands down its length - the sprites are
-  // drawn on a 32 x 48 half-unit grid, so these are that grid read as
-  // percentages of the icon. Each band drifts to its own side when the piece
-  // is pulled apart.
-  var PARTS = [
-    { key: "point", top: 0, height: 22, side: 1 },
-    { key: "weak", top: 22, height: 20, side: -1 },
-    { key: "strong", top: 42, height: 16, side: 1 },
-    { key: "guard", top: 58, height: 10, side: -1 },
-    { key: "grip", top: 68, height: 10, side: 1 },
-    { key: "pommel", top: 78, height: 22, side: -1 }
+  // Where each callout hangs off the blade. The weapon sprites are drawn on
+  // a 32 x 48 half-unit grid, so these are that grid read as percentages:
+  // point at the tip, fuller and ridge down the blade, ricasso above the
+  // guard, then the chappe, the grip and the pommel.
+  var ANATOMY = [
+    { label: "Point", x: 50, y: 18, side: 1 },
+    { label: "Fuller", x: 48, y: 34, side: -1 },
+    { label: "Centre ridge", x: 52, y: 48, side: 1 },
+    { label: "Ricasso", x: 48, y: 57, side: -1 },
+    { label: "Chappe", x: 52, y: 65, side: 1 },
+    { label: "Handle", x: 48, y: 74, side: -1 },
+    { label: "Pommel", x: 52, y: 82, side: 1 }
   ];
 
-  // The piece in the middle of the bench. Pressing it pulls it apart into
-  // its pieces and pressing it again sets them back together.
+  var SVG_NS = "http://www.w3.org/2000/svg";
+
+  // The diagram is a fixed 3:2 board so everything can be placed in one set
+  // of coordinates: the piece stands in the middle 39% of it, 6% clear top
+  // and bottom, and the callouts run out to the columns either side.
+  var BOARD = { left: 30.4, span: 39.2, top: 6, height: 88, out: 22 };
+
+  function atX(part) { return BOARD.left + part.x * BOARD.span / 100; }
+  function atY(part) { return BOARD.top + part.y * BOARD.height / 100; }
+
+  // The piece in the middle of the bench, with a line drawn off every part
+  // of it that can be worked.
   function anatomy(item) {
     var wrap = el("div", "anatomy");
     var board = el("div", "anatomy-board");
-    board.addEventListener("click", function () {
-      board.classList.toggle("apart");
-    });
 
-    PARTS.forEach(function (part) {
-      // A band is a window onto the whole piece with the rest cropped away,
-      // so the parts still line up as one sword when they are together.
-      var band = el("div", "piece-part " + (part.side > 0 ? "right" : "left"));
-      band.style.top = part.top + "%";
-      band.style.height = part.height + "%";
-      var icon = I.make(item.icon, "icon piece-slice");
-      icon.style.height = (100 / part.height * 100) + "%";
-      icon.style.top = (-part.top / part.height * 100) + "%";
-      band.appendChild(icon);
-      board.appendChild(band);
+    var frame = el("div", "anatomy-frame");
+    frame.appendChild(I.make(item.icon, "icon anatomy-icon"));
+    board.appendChild(frame);
+
+    var svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("class", "anatomy-lines");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("preserveAspectRatio", "none");
+    ANATOMY.forEach(function (part) {
+      var x = atX(part), y = atY(part);
+      var end = part.side > 0 ? 100 - BOARD.out : BOARD.out;
+      var line = document.createElementNS(SVG_NS, "polyline");
+      line.setAttribute("points",
+        x + "," + y + " " + (x + part.side * 6) + "," + y + " " + end + "," + y);
+      svg.appendChild(line);
+    });
+    board.appendChild(svg);
+
+    // The names are laid over the board rather than drawn into the picture,
+    // so they keep the menu's own lettering.
+    ANATOMY.forEach(function (part) {
+      var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"),
+        part.label);
+      tag.style.top = atY(part) + "%";
+      if (part.side > 0) tag.style.left = (100 - BOARD.out + 1) + "%";
+      else tag.style.right = (100 - BOARD.out + 1) + "%";
+      board.appendChild(tag);
     });
 
     wrap.appendChild(board);
