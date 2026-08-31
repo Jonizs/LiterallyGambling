@@ -61,28 +61,30 @@
   // a glint that runs the edge now and then.
   function workpiece(ctx, t) {
     var top = BENCH.top;
-    // Vise bolted to the near corner of the bench.
-    rect(ctx, 26, top - 14, 24, 14, P.iron);
-    rect(ctx, 26, top - 14, 24, 2, P.ironLit);
-    rect(ctx, 26, top - 18, 24, 4, P.ironLit);
-    rect(ctx, 20, top - 11, 6, 3, P.iron);
-    rect(ctx, 30, top - 24, 4, 6, P.iron);
-    // The blade held in its jaws, hilt at the vise, point out to the right.
-    rect(ctx, 48, top - 17, 62, 6, P.steel);
-    rect(ctx, 48, top - 17, 62, 2, P.steelLit);
-    rect(ctx, 110, top - 16, 5, 4, P.steelLit);
-    rect(ctx, 44, top - 19, 4, 10, P.gold);
+    // Vise bolted to the near corner of the bench, standing empty.
+    rect(ctx, 22, top - 14, 22, 14, P.iron);
+    rect(ctx, 22, top - 14, 22, 2, P.ironLit);
+    rect(ctx, 22, top - 18, 22, 4, P.ironLit);
+    rect(ctx, 16, top - 11, 6, 3, P.iron);
+    rect(ctx, 26, top - 24, 4, 6, P.iron);
+    // The piece itself lying flat on the bench top, hilt to the left.
+    rect(ctx, 60, top - 6, 60, 6, P.steel);
+    rect(ctx, 60, top - 6, 60, 2, P.steelLit);
+    rect(ctx, 120, top - 5, 5, 4, P.steelLit);      // the point
+    rect(ctx, 56, top - 8, 4, 10, P.gold);          // guard
+    rect(ctx, 46, top - 5, 10, 4, P.woodDark);      // grip
+    rect(ctx, 43, top - 6, 3, 6, P.gold);           // pommel
     var cycle = (t * 0.35) % 1;
     if (cycle < 0.25) {
-      var at = 50 + (cycle / 0.25) * 56;
-      rect(ctx, at, top - 17, 4, 2, P.steelLit);
-      rect(ctx, at + 1, top - 17, 2, 1, "#ffffff");
+      var at = 62 + (cycle / 0.25) * 54;
+      rect(ctx, at, top - 6, 4, 2, P.steelLit);
+      rect(ctx, at + 1, top - 6, 2, 1, "#ffffff");
     }
-    // A file laid across it, handle to the right.
-    rect(ctx, 66, top - 25, 34, 4, P.stone);
-    rect(ctx, 66, top - 25, 34, 1, P.stoneLit);
-    rect(ctx, 100, top - 27, 10, 7, P.wood);
-    rect(ctx, 100, top - 27, 10, 2, P.woodLit);
+    // A file resting across the blade, handle to the right.
+    rect(ctx, 74, top - 10, 30, 4, P.stone);
+    rect(ctx, 74, top - 10, 30, 1, P.stoneLit);
+    rect(ctx, 104, top - 12, 10, 7, P.wood);
+    rect(ctx, 104, top - 12, 10, 2, P.woodLit);
   }
 
   // Everything else laid out along the bench: papers and blocks, pastes,
@@ -150,12 +152,6 @@
     rect(ctx, 172, 31, 14, 4, P.iron);
     rect(ctx, 182, 35, 4, 14, P.iron);
     rect(ctx, 172, 47, 14, 3, P.ironLit);
-    // Two buffing wheels on their own pegs.
-    [110, 132].forEach(function (x, i) {
-      rect(ctx, x - 8, 40, 16, 16, i ? P.cloth : P.goldLit);
-      rect(ctx, x - 5, 43, 10, 10, i ? "#e8dcc0" : P.gold);
-      rect(ctx, x - 2, 46, 4, 4, P.woodDark);
-    });
     // Hanging lamp: the warm light everything in here is polished by.
     rect(ctx, 200, 0, 2, 18, P.iron);
     rect(ctx, 192, 18, 18, 6, P.goldDark);
