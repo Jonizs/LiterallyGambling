@@ -462,7 +462,7 @@
     var rows = el("div", "rows");
     ctx.state.inventory.forEach(function (item) {
       var row = el("div", "row" + (item.id === polishPiece ? " picked" : ""));
-      row.appendChild(itemLine(item));
+      row.appendChild(pieceLine(item));
       row.appendChild(button(item.id === polishPiece ? "ON BENCH" : "PICK",
         "mini-btn strong", function () {
           polishPiece = item.id;
@@ -473,6 +473,23 @@
     });
     wrap.appendChild(rows);
     return wrap;
+  }
+
+  // What the bench cares about: the piece itself, not its combat numbers.
+  function pieceLine(item) {
+    var line = el("div", "item-line");
+    line.appendChild(I.make(item.icon));
+    line.appendChild(el("span", "item-name", item.name));
+    var meta = el("span", "item-meta");
+    meta.appendChild(el("span", "chip-stat tier", item.tier));
+    meta.appendChild(el("span", "chip-stat band-" + item.band.toLowerCase(),
+      item.band));
+    meta.appendChild(el("span", "chip-stat", item.editionName));
+    meta.appendChild(el("span", "chip-stat",
+      item.enchants.length + "/" + item.slots + " slot" +
+      (item.slots === 1 ? "" : "s")));
+    line.appendChild(meta);
+    return line;
   }
 
   function polishPanel(ctx) {
@@ -495,7 +512,7 @@
     pickBox.type = "button";
     // Empty it says what it is for; filled it shows the piece itself, its
     // icon, its name and everything it carries.
-    if (held) pickBox.appendChild(itemLine(held));
+    if (held) pickBox.appendChild(pieceLine(held));
     else pickBox.appendChild(el("span", null, "Select weapon"));
     pickBox.addEventListener("click", function () {
       polishPicking = true;
