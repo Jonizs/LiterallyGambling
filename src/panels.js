@@ -433,8 +433,11 @@
     var wrap = el("div", "split");
     POLISH_PARTS.forEach(function (part) {
       var pane = el("div", "split-pane " + part.key);
-      pane.appendChild(el("div", "split-title", part.label));
-      pane.appendChild(el("div", "split-work"));
+      // The station's name sits inside its own box, over the work.
+      var box = el("div", "split-work");
+      box.appendChild(el("div", "split-title", part.label));
+      box.appendChild(el("div", "split-fill"));
+      pane.appendChild(box);
       wrap.appendChild(pane);
     });
     // The strip of the left column sanding leaves free, boxed like the rest.
