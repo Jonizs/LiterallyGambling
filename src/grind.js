@@ -61,11 +61,12 @@
   // with a glint that runs the edge now and then.
   function workpiece(ctx, t) {
     var top = BENCH.top;
-    // Vise bolted to the far corner of the bench, standing empty.
-    rect(ctx, 14, top - 14, 22, 14, P.iron);
-    rect(ctx, 14, top - 14, 22, 2, P.ironLit);
-    rect(ctx, 14, top - 18, 22, 4, P.ironLit);
-    rect(ctx, 18, top - 24, 4, 6, P.iron);
+    // Vise bolted to the bench, the piece's handle lying across its jaws.
+    rect(ctx, 32, top - 14, 24, 14, P.iron);
+    rect(ctx, 32, top - 14, 24, 2, P.ironLit);
+    rect(ctx, 32, top - 18, 24, 4, P.ironLit);
+    rect(ctx, 26, top - 11, 6, 3, P.iron);
+    rect(ctx, 36, top - 24, 4, 6, P.iron);
     // The piece itself lying flat on the bench top, hilt to the left.
     rect(ctx, 54, top - 6, 60, 6, P.steel);
     rect(ctx, 54, top - 6, 60, 2, P.steelLit);
@@ -109,18 +110,17 @@
     rect(ctx, 202, top - 10, 8, 4, P.goldLit);
     rect(ctx, 212, top - 14, 2, 14, P.wood);
     rect(ctx, 211, top - 16, 4, 3, P.cloth);
-    // The gem tray at the far end: seats cut, stones waiting.
+    // The empty tray at the far end, waiting for what comes off the piece.
     rect(ctx, 218, top - 8, 32, 8, P.woodDark);
     rect(ctx, 218, top - 8, 32, 1, P.wood);
-    ["#c8455a", "#4a8ad0", "#4fbf6a", "#e0c060"].forEach(function (c, i) {
-      rect(ctx, 221 + i * 8, top - 6, 4, 4, c);
-      rect(ctx, 221 + i * 8, top - 6, 4, 1, "#ffffff");
-    });
-    // Punches and a graver stood in a block behind the tray.
-    rect(ctx, 224, top - 22, 14, 6, P.woodDark);
-    [226, 230, 234].forEach(function (x, i) {
-      rect(ctx, x, top - 30 + i % 2 * 3, 2, 9, P.steel);
-      rect(ctx, x, top - 22, 2, 3, P.iron);
+    // Punches and a graver stood in a solid block behind the tray.
+    ctx.globalAlpha = 1;
+    rect(ctx, 222, top - 24, 20, 8, P.wood);
+    rect(ctx, 222, top - 24, 20, 2, P.woodLit);
+    rect(ctx, 222, top - 17, 20, 1, P.woodDark);
+    [225, 230, 235].forEach(function (x, i) {
+      rect(ctx, x, top - 34 + (i % 2) * 4, 3, 11 - (i % 2) * 4, P.steelLit);
+      rect(ctx, x, top - 24, 3, 5, P.iron);
     });
     // Calipers left open on the bench top.
     rect(ctx, 168, top - 22, 18, 2, P.ironLit);
