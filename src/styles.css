@@ -966,29 +966,32 @@ body {
   padding: var(--gap-xs);
   gap: 2px;
 }
-/* Two lines rather than one long wrap: what it is, then what it carries. */
+/* The piece fills its box: icon down the left, name over the chips beside
+   it, everything stretched to the edges. */
 .pick-box.filled .item-line {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
-  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  gap: 3px var(--gap-xs);
   width: 100%;
+  height: 100%;
+  min-width: 0;
 }
+.pick-box.filled .item-meta { align-content: center; }
 .pick-box.filled .item-name {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* The icon runs the height of the box, the name and chips fill the rest. */
 .pick-box.filled .icon {
-  position: absolute;
-  left: var(--gap-xs);
-  top: 50%;
-  transform: translateY(-50%);
+  grid-row: 1 / 3;
+  align-self: center;
+  height: 100%;
+  width: auto;
+  max-width: 40%;
 }
-.pick-box.filled { position: relative; }
-.pick-box.filled .item-line { padding-left: clamp(18px, calc(2.1 * var(--s)), 42px); }
-.pick-box.filled .icon { width: clamp(14px, calc(1.6 * var(--s)), 34px); }
 .pick-box.filled .item-name {
   font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
 }
