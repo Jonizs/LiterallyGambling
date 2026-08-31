@@ -501,7 +501,7 @@
     { label: "Point", x: 50, y: 7, side: 1 },
     { label: "Fuller", x: 48, y: 20, side: -1 },
     { label: "Centre ridge", x: 52, y: 36, side: 1 },
-    { label: "Ricasso", x: 48, y: 71, side: -1 },
+    { label: "Ricasso", x: 48, y: 71, side: -1, rise: -9, trim: 1.5 },
     { label: "Chappe", x: 52, y: 75, side: 1 },
     { label: "Handle", x: 48, y: 83, side: -1 },
     { label: "Pommel", x: 52, y: 92, side: 1 }
@@ -531,12 +531,20 @@
     svg.setAttribute("class", "anatomy-lines");
     svg.setAttribute("viewBox", "0 0 100 100");
     svg.setAttribute("preserveAspectRatio", "none");
+    // rise lifts the run of a callout off its anchor, so that first step is
+    // a slope rather than a step sideways. The board is 3:2, so a rise of
+    // one and a half units to one across reads as 45 degrees on screen.
+    // trim pulls the far end of a line back a touch.
     ANATOMY.forEach(function (part) {
       var x = atX(part), y = atY(part);
-      var end = part.side > 0 ? 100 - BOARD.out : BOARD.out;
+      var run = y + (part.rise || 0);
+      var end = part.side > 0
+        ? 100 - BOARD.out - (part.trim || 0)
+        : BOARD.out + (part.trim || 0);
       var line = document.createElementNS(SVG_NS, "polyline");
       line.setAttribute("points",
-        x + "," + y + " " + (x + part.side * 6) + "," + y + " " + end + "," + y);
+        x + "," + y + " " + (x + part.side * 6) + "," + run + " " +
+        end + "," + run);
       svg.appendChild(line);
     });
     board.appendChild(svg);
@@ -546,9 +554,10 @@
     ANATOMY.forEach(function (part) {
       var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"),
         part.label);
-      tag.style.top = atY(part) + "%";
-      if (part.side > 0) tag.style.left = (100 - BOARD.out + 1) + "%";
-      else tag.style.right = (100 - BOARD.out + 1) + "%";
+      var trim = part.trim || 0;
+      tag.style.top = (atY(part) + (part.rise || 0)) + "%";
+      if (part.side > 0) tag.style.left = (100 - BOARD.out - trim + 1) + "%";
+      else tag.style.right = (100 - BOARD.out - trim + 1) + "%";
       board.appendChild(tag);
     });
 
