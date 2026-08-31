@@ -57,28 +57,28 @@
     rect(ctx, 182, 107, 12, 4, "#2c4a52");
   }
 
-  // The piece being worked: laid out on the bench with a file over it, and a
-  // glint that runs the edge now and then.
+  // The piece being worked: laid out clear on the bench beside the vise,
+  // with a glint that runs the edge now and then.
   function workpiece(ctx, t) {
     var top = BENCH.top;
+    // Vise bolted to the far corner of the bench, standing empty.
+    rect(ctx, 14, top - 14, 22, 14, P.iron);
+    rect(ctx, 14, top - 14, 22, 2, P.ironLit);
+    rect(ctx, 14, top - 18, 22, 4, P.ironLit);
+    rect(ctx, 18, top - 24, 4, 6, P.iron);
     // The piece itself lying flat on the bench top, hilt to the left.
-    rect(ctx, 48, top - 6, 60, 6, P.steel);
-    rect(ctx, 48, top - 6, 60, 2, P.steelLit);
-    rect(ctx, 108, top - 5, 5, 4, P.steelLit);      // the point
-    rect(ctx, 44, top - 8, 4, 10, P.gold);          // guard
-    rect(ctx, 34, top - 5, 10, 4, P.woodDark);      // grip
-    rect(ctx, 31, top - 6, 3, 6, P.gold);           // pommel
+    rect(ctx, 54, top - 6, 60, 6, P.steel);
+    rect(ctx, 54, top - 6, 60, 2, P.steelLit);
+    rect(ctx, 114, top - 5, 5, 4, P.steelLit);      // the point
+    rect(ctx, 50, top - 8, 4, 10, P.gold);          // guard
+    rect(ctx, 40, top - 5, 10, 4, P.woodDark);      // grip
+    rect(ctx, 37, top - 6, 3, 6, P.gold);           // pommel
     var cycle = (t * 0.35) % 1;
     if (cycle < 0.25) {
-      var at = 50 + (cycle / 0.25) * 54;
+      var at = 56 + (cycle / 0.25) * 54;
       rect(ctx, at, top - 6, 4, 2, P.steelLit);
       rect(ctx, at + 1, top - 6, 2, 1, "#ffffff");
     }
-    // A file resting across the blade, handle to the right.
-    rect(ctx, 62, top - 10, 30, 4, P.stone);
-    rect(ctx, 62, top - 10, 30, 1, P.stoneLit);
-    rect(ctx, 92, top - 12, 10, 7, P.wood);
-    rect(ctx, 92, top - 12, 10, 2, P.woodLit);
   }
 
   // Everything else laid out along the bench: papers and blocks, pastes,
