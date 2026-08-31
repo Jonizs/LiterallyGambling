@@ -493,6 +493,62 @@
     return line;
   }
 
+  // Where each callout hangs off the blade, as a share of the silhouette:
+  // x and y on the piece, and which side the label runs out to.
+  var ANATOMY = [
+    { label: "Point", x: 50, y: 4, side: 1 },
+    { label: "Fuller", x: 44, y: 24, side: -1 },
+    { label: "Centre ridge", x: 56, y: 40, side: 1 },
+    { label: "Ricasso", x: 44, y: 58, side: -1 },
+    { label: "Chappe", x: 56, y: 68, side: 1 },
+    { label: "Handle", x: 44, y: 80, side: -1 },
+    { label: "Pommel", x: 56, y: 94, side: 1 }
+  ];
+
+  var SVG_NS = "http://www.w3.org/2000/svg";
+
+  // The piece as a silhouette in the middle of the bench, with a line drawn
+  // off every part of it that can be worked.
+  function anatomy(item) {
+    var wrap = el("div", "anatomy");
+    var frame = el("div", "anatomy-frame");
+    frame.appendChild(I.shadow(item.icon, "icon anatomy-icon"));
+
+    var svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("class", "anatomy-lines");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("preserveAspectRatio", "none");
+    ANATOMY.forEach(function (part) {
+      var out = part.side > 0 ? 150 : -50;
+      var line = document.createElementNS(SVG_NS, "polyline");
+      line.setAttribute("points",
+        part.x + "," + part.y + " " +
+        (part.x + part.side * 26) + "," + part.y + " " +
+        out + "," + part.y);
+      svg.appendChild(line);
+      var dot = document.createElementNS(SVG_NS, "circle");
+      dot.setAttribute("cx", part.x);
+      dot.setAttribute("cy", part.y);
+      dot.setAttribute("r", 1.6);
+      svg.appendChild(dot);
+    });
+    frame.appendChild(svg);
+
+    // The names themselves are laid over the frame rather than drawn into
+    // the picture, so they keep the menu\u2019s own lettering.
+    ANATOMY.forEach(function (part) {
+      var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"),
+        part.label);
+      tag.style.top = part.y + "%";
+      if (part.side > 0) tag.style.left = "152%";
+      else tag.style.right = "152%";
+      frame.appendChild(tag);
+    });
+
+    wrap.appendChild(frame);
+    return wrap;
+  }
+
   function polishPanel(ctx) {
     if (polishPicking) return polishPicker(ctx);
     var wrap = el("div", "split fade-in");
@@ -501,7 +557,12 @@
       // The station's name sits inside its own box, over the work.
       var box = el("div", "split-work");
       box.appendChild(el("div", "split-title", part.label));
-      box.appendChild(el("div", "split-fill"));
+      var fill = el("div", "split-fill");
+      // With a piece on the bench, modification lays it out part by part.
+      if (part.key === "modification" && heldPiece(ctx)) {
+        fill.appendChild(anatomy(heldPiece(ctx)));
+      }
+      box.appendChild(fill);
       pane.appendChild(box);
       wrap.appendChild(pane);
     });

@@ -925,6 +925,47 @@ body {
   height: 74%;
   align-self: end;
 }
+/* ---------- the piece laid out part by part ----------
+   The silhouette stands in the middle of the modification box and every part
+   that can be worked is called out to one side or the other. */
+.anatomy {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.anatomy-frame {
+  position: relative;
+  height: 84%;
+  aspect-ratio: 2 / 3;
+}
+.anatomy-icon { width: 100%; height: 100%; }
+.anatomy-lines {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.anatomy-lines polyline {
+  fill: none;
+  stroke: rgba(154,160,171,.55);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.anatomy-lines circle { fill: #e2e8f0; }
+.anatomy-tag {
+  position: absolute;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-family: var(--font);
+  font-size: clamp(9px, calc(1.05 * var(--s)), 24px);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #cfd5de;
+  text-shadow: 1px 1px 0 #000;
+}
+.anatomy-tag.left { text-align: right; }
+
 /* Either face of the polish menu fades in rather than cutting over. */
 @keyframes splitFade {
   from { opacity: 0; transform: translateY(4px); }
