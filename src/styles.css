@@ -954,13 +954,33 @@ body {
   cursor: pointer;
 }
 .overlay[data-theme="polish"] .pick-box { color: #eef1f5; }
-/* With a piece in it the box reads as the piece, not as a label. */
+/* With a piece in it the box reads as the piece, not as a label: everything
+   is tightened until it fits the strip rather than scrolling inside it. */
 .pick-box.filled {
   text-transform: none;
   letter-spacing: 0;
   align-items: stretch;
-  justify-content: flex-start;
+  justify-content: center;
   text-align: left;
+  overflow: hidden;
+  padding: var(--gap-xs);
+  gap: 2px;
+}
+.pick-box.filled .item-line {
+  gap: var(--gap-xs);
+  align-items: center;
+  min-width: 0;
+}
+.pick-box.filled .icon { width: clamp(14px, calc(1.6 * var(--s)), 34px); }
+.pick-box.filled .item-name {
+  font-size: clamp(9px, calc(1.1 * var(--s)), 26px);
+}
+.pick-box.filled .item-meta { gap: 2px; }
+.pick-box.filled .chip-stat {
+  font-size: clamp(8px, calc(.9 * var(--s)), 20px);
+  padding: 0 3px;
+  letter-spacing: 0;
+  border-width: 1px;
 }
 @media (hover: hover) {
   .pick-box:hover { border-color: rgba(226,232,240,.8); }
