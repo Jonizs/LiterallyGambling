@@ -978,6 +978,18 @@ body {
   text-transform: uppercase;
   color: #eef2f7;
   text-shadow: 1px 1px 0 #000;
+  /* Each name sits in its own box, and the box lights up under the cursor. */
+  padding: .2em .5em;
+  border: 2px solid rgba(198,205,216,.8);
+  background: rgba(12,16,24,.55);
+  cursor: pointer;
+  transition: color .12s ease-out, border-color .12s ease-out,
+    background .12s ease-out;
+}
+.anatomy-tag:hover {
+  color: #ffd479;
+  border-color: #ffd479;
+  background: rgba(60,44,14,.75);
 }
 .anatomy-tag.left { text-align: right; }
 
