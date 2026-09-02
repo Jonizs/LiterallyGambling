@@ -560,7 +560,31 @@
     });
 
     wrap.appendChild(board);
+    wrap.appendChild(anatomyStats(item));
     return wrap;
+  }
+
+  // The piece's own numbers, spelled out under the diagram.
+  function anatomyStats(item) {
+    var stats = el("div", "anatomy-stats");
+    var rows = [
+      ["Damage", item.damage],
+      ["Armour", item.armor],
+      ["Attack speed", item.attackSpeed],
+      ["Crit chance", item.critChance + "%"],
+      ["Crit damage", item.critDamage + "%"],
+      ["Armour pen", item.armorPen],
+      ["Durability", item.durability],
+      ["Slots", item.enchants.length + "/" + item.slots]
+    ];
+    rows.forEach(function (row) {
+      if (row[1] === undefined || row[1] === null || row[1] === 0) return;
+      var cell = el("div", "anatomy-stat");
+      cell.appendChild(el("span", "anatomy-stat-name", row[0]));
+      cell.appendChild(el("span", "anatomy-stat-value", String(row[1])));
+      stats.appendChild(cell);
+    });
+    return stats;
   }
 
   function polishPanel(ctx) {
