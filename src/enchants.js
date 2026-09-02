@@ -14,10 +14,11 @@
   };
   var ALL_STATS = Object.keys(ROUND);
 
+  // Short enough that a full effect fits on one enchant card.
   var LABEL = {
     damage: "Damage", durability: "Durability",
-    attackSpeed: "Attack speed", critChance: "Crit chance",
-    critDamage: "Crit damage", armorPen: "Armor pen"
+    attackSpeed: "Atk speed", critChance: "C. chance",
+    critDamage: "C. damage", armorPen: "A. pen"
   };
 
   var COST_SHARE = 0.55; // of the piece's sale price, paid to roll the offer
