@@ -1152,6 +1152,14 @@ body {
   background: rgba(60,44,14,.75);
 }
 .anatomy-tag.left { text-align: right; }
+/* A piece with no parts to work says as much where the callouts would be. */
+.anatomy-plain {
+  font-family: var(--font);
+  font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(198,205,216,.55);
+}
 
 /* Either face of the polish menu fades in rather than cutting over. */
 @keyframes splitFade {

@@ -496,47 +496,32 @@
   // percentages, worked out from the art in icons.js. Each piece gets its own
   // list, since a lance and a kunai are not put together like a sword.
   var ANATOMY = {
-    sword: [
-      { label: "Point", x: 50, y: 19, side: 1, rise: -9, trim: 1.5 },
-      { label: "Fuller", x: 47, y: 31, side: -1 },
-      { label: "Centre ridge", x: 53, y: 44, side: 1 },
-      { label: "Ricasso", x: 41, y: 55, side: -1 },
-      { label: "Chappe", x: 60, y: 63, side: 1 },
-      { label: "Handle", x: 44, y: 72, side: -1 },
-      { label: "Pommel", x: 50, y: 81, side: 1, rise: 8, trim: 1.5 }
-    ],
+    // The weak sword is a plain bar of steel: there is nothing on it to work,
+    // so it can be sanded but not modified.
+    sword: [],
     anduril: [
       { label: "Point", x: 50, y: 4, side: 1, rise: -2, trim: 1.5 },
       { label: "Fuller", x: 45, y: 22, side: -1 },
-      { label: "Centre ridge", x: 55, y: 45, side: 1 },
+      { label: "Central ridge", x: 55, y: 45, side: 1 },
       { label: "Ricasso", x: 41, y: 72, side: -1 },
       { label: "Chappe", x: 60, y: 82, side: 1 },
       { label: "Handle", x: 44, y: 91, side: -1 },
       { label: "Pommel", x: 50, y: 97, side: 1, rise: 6, trim: 1.5 }
     ],
     dagger: [
-      { label: "Point", x: 50, y: 21, side: 1, rise: -9, trim: 1.5 },
-      { label: "Fuller", x: 47, y: 31, side: -1 },
-      { label: "Centre ridge", x: 53, y: 42, side: 1 },
-      { label: "Ricasso", x: 43, y: 52, side: -1 },
+      { label: "Blade", x: 47, y: 42, side: -1 },
       { label: "Chappe", x: 62, y: 59, side: 1 },
       { label: "Handle", x: 44, y: 69, side: -1 },
       { label: "Pommel", x: 50, y: 79, side: 1, rise: 8, trim: 1.5 }
     ],
     lance: [
-      { label: "Point", x: 50, y: 19, side: 1, rise: -9, trim: 1.5 },
-      { label: "Fuller", x: 45, y: 30, side: -1 },
-      { label: "Centre ridge", x: 55, y: 39, side: 1 },
-      { label: "Ricasso", x: 36, y: 47, side: -1 },
-      { label: "Chappe", x: 58, y: 55, side: 1 },
-      { label: "Handle", x: 42, y: 68, side: -1 },
-      { label: "Pommel", x: 50, y: 81, side: 1, rise: 8, trim: 1.5 }
+      { label: "Blade", x: 45, y: 30, side: -1 },
+      { label: "Chappe", x: 58, y: 47, side: 1 },
+      { label: "Handle", x: 42, y: 68, side: -1 }
     ],
     bloodbane: [
       { label: "Point", x: 50, y: 17, side: 1, rise: -9, trim: 1.5 },
-      { label: "Fuller", x: 45, y: 28, side: -1 },
-      { label: "Centre ridge", x: 53, y: 43, side: 1 },
-      { label: "Ricasso", x: 41, y: 55, side: -1 },
+      { label: "Central ridge", x: 45, y: 43, side: -1 },
       { label: "Chappe", x: 60, y: 63, side: 1 },
       { label: "Handle", x: 44, y: 73, side: -1 },
       { label: "Pommel", x: 50, y: 82, side: 1, rise: 8, trim: 1.5 }
@@ -544,27 +529,40 @@
     zeus: [
       { label: "Point", x: 50, y: 9, side: 1, rise: -4, trim: 1.5 },
       { label: "Fuller", x: 44, y: 27, side: -1 },
-      { label: "Centre ridge", x: 56, y: 45, side: 1 },
+      { label: "Central ridge", x: 56, y: 45, side: 1 },
       { label: "Ricasso", x: 43, y: 65, side: -1, rise: -9, trim: 1.5 },
       { label: "Chappe", x: 66, y: 74, side: 1 },
       { label: "Handle", x: 44, y: 84, side: -1 },
       { label: "Pommel", x: 50, y: 93, side: 1, rise: 8, trim: 1.5 }
     ],
+    // The kunai carries its own names: the koba down the edge, the muna along
+    // the back, and the ring at the butt.
     crackbolt: [
       { label: "Point", x: 50, y: 8, side: 1, rise: -4, trim: 1.5 },
-      { label: "Fuller", x: 42, y: 26, side: -1 },
-      { label: "Centre ridge", x: 60, y: 41, side: 1 },
+      { label: "Koba", x: 42, y: 26, side: -1 },
+      { label: "Muna", x: 60, y: 41, side: 1, rise: -9, trim: 1.5 },
       { label: "Ricasso", x: 43, y: 54, side: -1 },
       { label: "Chappe", x: 59, y: 61, side: 1 },
-      { label: "Handle", x: 43, y: 69, side: -1 },
-      { label: "Pommel", x: 50, y: 83, side: 1, rise: 8, trim: 1.5 }
+      { label: "Handle", x: 43, y: 69, side: -1, rise: 9, trim: 1.5 },
+      { label: "Ring", x: 50, y: 83, side: 1, rise: 8, trim: 1.5 }
     ]
   };
+
+  // What a piece with no list of its own is called out like.
+  var DEFAULT_PARTS = [
+    { label: "Point", x: 50, y: 19, side: 1, rise: -9, trim: 1.5 },
+    { label: "Fuller", x: 47, y: 31, side: -1 },
+    { label: "Central ridge", x: 53, y: 44, side: 1 },
+    { label: "Ricasso", x: 41, y: 55, side: -1 },
+    { label: "Chappe", x: 60, y: 63, side: 1 },
+    { label: "Handle", x: 44, y: 72, side: -1 },
+    { label: "Pommel", x: 50, y: 81, side: 1, rise: 8, trim: 1.5 }
+  ];
 
   // Anything without a list of its own - an unknown blade, a silhouette - is
   // called out like the sword it is shaped after.
   function partsOf(item) {
-    return ANATOMY[item.icon] || ANATOMY.sword;
+    return ANATOMY[item.icon] || DEFAULT_PARTS;
   }
 
   var SVG_NS = "http://www.w3.org/2000/svg";
@@ -627,6 +625,9 @@
 
     stage.appendChild(board);
     wrap.appendChild(stage);
+    if (!parts.length) {
+      wrap.appendChild(el("div", "anatomy-plain", "Nothing on this piece to modify."));
+    }
     wrap.appendChild(anatomyStats(item));
     return wrap;
   }
