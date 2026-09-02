@@ -113,6 +113,10 @@
   // price. HALF is the crit weight that buys half of what is on offer.
   var CRIT_VALUE_CAP = 10;
   var CRIT_VALUE_HALF = 0.35;
+  // Past the saturation a thin straight line runs on, so a piece that already
+  // crits every swing is still worth sharpening: without it the crit on a
+  // fully enchanted blade is worth nothing at all at the counter.
+  var CRIT_VALUE_TAIL = 0.25;
 
   // Shares of the quality/edition roll the combat stats keep. Damage takes the
   // multiplier whole; speed and crit would run away if they did the same.
@@ -171,7 +175,8 @@
 
   function saleDamage(item) {
     var crit = (item.critChance / 100) * (item.critDamage / 100 - 1);
-    var premium = 1 + (CRIT_VALUE_CAP - 1) * crit / (crit + CRIT_VALUE_HALF);
+    var premium = 1 + (CRIT_VALUE_CAP - 1) * crit / (crit + CRIT_VALUE_HALF) +
+      CRIT_VALUE_TAIL * crit;
     return item.damage * item.attackSpeed * premium;
   }
 
