@@ -946,27 +946,47 @@ body {
   aspect-ratio: 3 / 2;
   max-width: 100%;
 }
-/* The piece's numbers, laid out under the diagram in as many columns as fit. */
+/* The piece's numbers, laid out under the diagram: two columns of stats and
+   what it carries on the right. */
 .anatomy-stats {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 2px var(--gap-sm);
-  align-content: start;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap-sm);
+  align-items: start;
 }
+.anatomy-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .anatomy-stat {
   display: flex;
   justify-content: space-between;
   gap: var(--gap-xs);
-  border-bottom: 2px solid rgba(154,160,171,.25);
-  padding: 1px 0;
   font-family: var(--font);
   font-size: clamp(9px, calc(1.05 * var(--s)), 24px);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.anatomy-stat-name { color: rgba(198,205,216,.85); }
-.anatomy-stat-value { color: #eef2f7; font-weight: 700; }
+/* Every line is called out with the same marker the menus use. */
+.anatomy-stat-name::before { content: "> "; color: rgba(198,205,216,.6); }
+.anatomy-stat-name {
+  color: rgba(198,205,216,.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.anatomy-stat-value { color: #eef2f7; font-weight: 700; white-space: nowrap; }
+/* Each enchant hangs under the slot count. */
+.anatomy-ench {
+  margin-left: var(--gap-sm);
+  font-family: var(--font);
+  font-size: clamp(9px, calc(1.05 * var(--s)), 24px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #eef2f7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.anatomy-ench::before { content: "- "; color: rgba(198,205,216,.6); }
 .anatomy-frame {
   position: absolute;
   left: 30.4%;
