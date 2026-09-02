@@ -591,12 +591,6 @@
     // The board always holds six boxes: what is set, what is still open on
     // this piece, and the rest locked off.
     var slots = el("div", "anatomy-slots");
-    var head = el("div", "anatomy-slots-head");
-    head.appendChild(el("span", "anatomy-stat-name", "Enchants"));
-    head.appendChild(el("span", "anatomy-stat-value",
-      item.enchants.length + "/" + item.slots));
-    slots.appendChild(head);
-
     var list = el("div", "anatomy-ench-list");
     for (var i = 0; i < 6; i++) {
       var entry = item.enchants[i];

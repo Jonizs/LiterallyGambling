@@ -1016,12 +1016,6 @@ body {
   padding-top: var(--gap-xs);
   font-family: var(--font);
 }
-.anatomy-slots-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: var(--gap-xs);
-}
 /* Three to a row, two rows: a full set of six sits in the frame. */
 .anatomy-ench-list {
   display: grid;
