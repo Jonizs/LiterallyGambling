@@ -65,7 +65,7 @@
     items.forEach(function (item) {
       var row = el("div", "row");
       row.appendChild(global.Panels.itemLine(item));
-      row.appendChild(button("SELL " + G.sellPrice(item), "mini-btn", function () {
+      row.appendChild(button("SELL " + G.sellPrice(item), "mini-btn sell-btn", function () {
         var result = G.sell(ctx.state, item.id);
         ctx.setNotice(result.ok
           ? "Sold " + result.item.name + " for " + result.price + " silver."

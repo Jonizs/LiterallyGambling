@@ -597,6 +597,15 @@ body {
   text-shadow: 1px 1px 0 #000;
 }
 .mini-btn.strong { letter-spacing: 1px; font-weight: 700; }
+/* Every SELL in the inventory is the same button, however tall the piece's
+   line is or how long its price runs. */
+.sell-btn {
+  flex: none;
+  align-self: center;
+  min-width: clamp(76px, calc(8.4 * var(--s)), 200px);
+  text-align: center;
+  white-space: nowrap;
+}
 
 /* Typed batch size, sat between FORGE and ALL. */
 .qty-input {
