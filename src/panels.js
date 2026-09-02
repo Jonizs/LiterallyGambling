@@ -745,8 +745,14 @@
       var box = el("button", "sand-box");
       box.type = "button";
       var roll = sandShown(block);
-      box.appendChild(el("span", "sand-name", block.name +
-        (roll ? " (" + global.Sand.windowText(block) + ")" : "")));
+      // The name, with the window it rolls in set small beside it once the
+      // block has been used, so the two still sit on one line.
+      var head = el("span", "sand-name", block.name);
+      var span = el("span", "sand-window",
+        " (" + global.Sand.windowText(block) + ")");
+      if (!roll) span.hidden = true;
+      head.appendChild(span);
+      box.appendChild(head);
       var line = sandLine(block, roll);
       box.appendChild(line);
 
@@ -776,8 +782,7 @@
           ? { text: result.tier, up: true }
           : { text: "\u00d7" + result.mult.toFixed(2), up: result.mult >= 1 };
         sandRoll[block.key] = landed;
-        box.firstChild.textContent = block.name + " (" +
-          global.Sand.windowText(block) + ")";
+        span.hidden = false;
         // The purse and every other block's price change the moment the
         // block is pressed, not when its numbers stop turning.
         ctx.refreshPurse();

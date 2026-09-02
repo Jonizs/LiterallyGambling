@@ -1285,6 +1285,15 @@ body {
   letter-spacing: 1px;
   text-transform: uppercase;
   text-shadow: 1px 1px 0 #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The window it rolls in rides along at half the size. */
+.sand-window {
+  font-size: .55em;
+  letter-spacing: 0;
+  color: rgba(198,205,216,.7);
 }
 /* The window a block rolls in is plain; the roll it lands on is not. */
 .sand-roll {
