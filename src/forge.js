@@ -496,10 +496,10 @@
     this.rect(58, 68, 2, 50, PALETTE.woodDark);
     this.rect(68, 60, 4, 58, PALETTE.woodDark);
     this.rect(67, 56, 6, 6, PALETTE.steel);
-    // Tongs on the floor, out from under the desk.
-    this.rect(66, 140, 34, 3, PALETTE.steel);
-    this.rect(66, 145, 30, 3, PALETTE.steel);
-    this.rect(98, 140, 4, 8, PALETTE.anvilEdge);
+    // Tongs on the floor, over against the left wall.
+    this.rect(32, 140, 34, 3, PALETTE.steel);
+    this.rect(32, 145, 30, 3, PALETTE.steel);
+    this.rect(64, 140, 4, 8, PALETTE.anvilEdge);
     // Brick and coal chunks on the right, clear of the pack.
     this.rect(232, 132, 22, 14, PALETTE.brick);
     this.rect(232, 132, 22, 3, PALETTE.brickLit);
