@@ -512,7 +512,7 @@
       { label: "Ricasso", x: 41, y: 72, side: -1 },
       { label: "Chappe", x: 60, y: 82, side: 1 },
       { label: "Handle", x: 44, y: 91, side: -1 },
-      { label: "Pommel", x: 50, y: 97, side: 1, trim: 1.5 }
+      { label: "Pommel", x: 50, y: 97, side: 1, rise: 6, trim: 1.5 }
     ],
     dagger: [
       { label: "Point", x: 50, y: 21, side: 1, rise: -9, trim: 1.5 },
@@ -545,10 +545,10 @@
       { label: "Point", x: 50, y: 9, side: 1, rise: -4, trim: 1.5 },
       { label: "Fuller", x: 44, y: 27, side: -1 },
       { label: "Centre ridge", x: 56, y: 45, side: 1 },
-      { label: "Ricasso", x: 43, y: 65, side: -1 },
+      { label: "Ricasso", x: 43, y: 65, side: -1, rise: -9, trim: 1.5 },
       { label: "Chappe", x: 66, y: 74, side: 1 },
       { label: "Handle", x: 44, y: 84, side: -1 },
-      { label: "Pommel", x: 50, y: 93, side: 1, trim: 1.5 }
+      { label: "Pommel", x: 50, y: 93, side: 1, rise: 8, trim: 1.5 }
     ],
     crackbolt: [
       { label: "Point", x: 50, y: 8, side: 1, rise: -4, trim: 1.5 },
