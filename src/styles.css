@@ -952,16 +952,23 @@ body {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--gap-sm);
+  gap: calc(2.5 * var(--gap-sm));
   align-items: start;
+  padding: var(--gap-sm) var(--gap-xs) 0;
 }
-.anatomy-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.anatomy-col {
+  display: flex;
+  flex-direction: column;
+  gap: .45em;
+  min-width: 0;
+}
 .anatomy-stat {
   display: flex;
   justify-content: space-between;
-  gap: var(--gap-xs);
+  gap: var(--gap-sm);
   font-family: var(--font);
   font-size: clamp(12px, calc(1.45 * var(--s)), 32px);
+  line-height: 1.25;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -975,6 +982,7 @@ body {
 /* Each enchant hangs under the slot count. */
 .anatomy-ench {
   margin-left: var(--gap-sm);
+  line-height: 1.25;
   font-family: var(--font);
   font-size: clamp(12px, calc(1.45 * var(--s)), 32px);
   text-transform: uppercase;
