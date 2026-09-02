@@ -154,15 +154,6 @@
     };
   }
 
-  // Damage a piece lands per second on average, counting crits as the share
-  // of swings they actually are.
-  function damagePerSecond(item) {
-    var critMult = 1 + (item.critChance / 100) * (item.critDamage / 100 - 1);
-    return item.damage * item.attackSpeed * critMult;
-  }
-
-  // What the damage side of a piece is worth: its output, with crit counted
-  // at the premium the market puts on it.
   // Move whatever crit chance is over the cap into crit damage. Called after
   // anything that can push the chance up.
   function spillCrit(item) {
@@ -173,19 +164,89 @@
     return item;
   }
 
-  function saleDamage(item) {
-    var crit = (item.critChance / 100) * (item.critDamage / 100 - 1);
-    var premium = 1 + (CRIT_VALUE_CAP - 1) * crit / (crit + CRIT_VALUE_HALF) +
-      CRIT_VALUE_TAIL * crit;
-    return item.damage * item.attackSpeed * premium;
+  // How hard a sheet crits, as one number: the share of swings that crit
+  // times what a crit is worth over a plain hit.
+  function critWeight(sheet) {
+    return (sheet.critChance / 100) * (sheet.critDamage / 100 - 1);
   }
 
-  // What a stat sheet fetches before the margin is worked out.
-  function powerOf(item) {
-    return saleDamage(item) * VALUE_PER.dps +
-           item.armor * VALUE_PER.armor +
-           item.durability * VALUE_PER.durability +
-           item.armorPen * VALUE_PER.armorPen;
+  function critPremium(crit) {
+    return 1 + (CRIT_VALUE_CAP - 1) * crit / (crit + CRIT_VALUE_HALF) +
+      CRIT_VALUE_TAIL * crit;
+  }
+
+  // What one more point of crit weight buys, where the sheet already stands.
+  function critSlope(crit) {
+    var half = crit + CRIT_VALUE_HALF;
+    return (CRIT_VALUE_CAP - 1) * CRIT_VALUE_HALF / (half * half) +
+      CRIT_VALUE_TAIL;
+  }
+
+  function saleDamage(item) {
+    return item.damage * item.attackSpeed * critPremium(critWeight(item));
+  }
+
+  // What the sheet a piece came off the anvil with fetches before the margin.
+  function powerOf(sheet) {
+    return saleDamage(sheet) * VALUE_PER.dps +
+           sheet.armor * VALUE_PER.armor +
+           sheet.durability * VALUE_PER.durability +
+           sheet.armorPen * VALUE_PER.armorPen;
+  }
+
+  var WORKED_STATS = ["damage", "attackSpeed", "critChance", "critDamage",
+    "armor", "durability", "armorPen"];
+  // However badly a piece is worked, it is still worth something.
+  var WORKED_FLOOR = 0.05;
+
+  // What one point of a stat is worth on this piece: read off the sheet it
+  // came off the anvil with, so the rate never moves as the piece is worked.
+  // Crit is the exception - it is priced on its own curve rather than a flat
+  // rate, since the market's crit premium bends - but that curve is read
+  // against the forged sheet too, so what crit is worth does not depend on
+  // the damage the piece happens to carry.
+  function worthPer(base) {
+    var premium = critPremium(critWeight(base));
+    return {
+      damage: base.attackSpeed * premium * VALUE_PER.dps,
+      attackSpeed: base.damage * premium * VALUE_PER.dps,
+      armor: VALUE_PER.armor,
+      durability: VALUE_PER.durability,
+      armorPen: VALUE_PER.armorPen
+    };
+  }
+
+  // What the crit on a piece is worth over the crit it was forged with,
+  // priced off the forged damage rather than the damage it carries now.
+  function critShare(item, base) {
+    return base.damage * base.attackSpeed * VALUE_PER.dps *
+      (critPremium(critWeight(item)) - critPremium(critWeight(base)));
+  }
+
+  // Every stat's own share of the work laid on the piece since the anvil,
+  // added into the one number the counter pays on. Nothing multiplies
+  // anything else: working one stat never changes what another is worth.
+  function powerWorked(item, base) {
+    var rate = worthPer(base);
+    var total = powerOf(base) + critShare(item, base);
+    Object.keys(rate).forEach(function (stat) {
+      total += rate[stat] * ((item[stat] || 0) - (base[stat] || 0));
+    });
+    return total;
+  }
+
+  // Work stacked on one piece is worth more than the same work spread over
+  // several: the counter pays a little over the sum for a piece that has had
+  // everything done to it. This is what the old multiplied sheet did on its
+  // own, kept here as one curve over the total rather than as stats winding
+  // each other up, so it never changes what a single stat is worth against
+  // another.
+  var WORKED_STACK = 1.27;
+
+  function workedOf(item, base) {
+    var worked = powerWorked(item, base) / powerOf(base);
+    if (worked <= 0) return WORKED_FLOOR;
+    return Math.max(WORKED_FLOOR, Math.pow(worked, WORKED_STACK));
   }
 
   // What the roll is worth at the counter: the tier it came out at, compressed
@@ -201,7 +262,8 @@
     var recipe = recipeFor(item.recipe);
     // The roll, compressed — then the work laid on since, which is not:
     // enchanting, awakening and polishing pay in full.
-    var worked = powerOf(item) / powerOf(baseStatsOf(item));
+    var base = baseStatsOf(item);
+    var worked = workedOf(item, base);
     // A piece forged under The Way carries its premium for good.
     return Math.max(1, Math.round(
       recipeValue(recipe) * (recipe.margin || MARGIN) * rollLean(item) * worked *
@@ -566,7 +628,6 @@
     xpPercent: xpPercent,
     unlocked: unlocked,
     lockedRecipes: lockedRecipes,
-    damagePerSecond: damagePerSecond,
     saleDamage: saleDamage,
     CRIT_CAP: CRIT_CAP,
     spillCrit: spillCrit,
