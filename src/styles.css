@@ -939,18 +939,23 @@ body {
   /* The diagram rides a little higher than the box's own padding. */
   margin-top: calc(-1 * var(--gap-sm));
 }
-.anatomy-board {
-  position: relative;
-  /* The diagram takes whatever height the stats leave it, so the whole pane
-     fits without ever scrolling. */
+/* The diagram takes whatever height the stats leave it, so the whole pane
+   fits without ever scrolling. */
+.anatomy-stage {
   flex: 1 1 0;
   min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.anatomy-board {
+  position: relative;
+  /* Sized off the stage rather than scaled, so the lines and lettering stay
+     crisp and the pommel's box clears the rule above the stats. */
+  height: 95%;
   aspect-ratio: 3 / 2;
   max-width: 100%;
-  /* A touch smaller than the space it is given, so the pommel's box never
-     sits on the rule above the stats. */
-  transform: scale(.95);
-  transform-origin: top center;
 }
 /* The piece's numbers, laid out under the diagram: two rows of plates run
    the width of the frame, each struck off with a bar in its own colour. */

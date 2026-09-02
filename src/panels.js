@@ -519,6 +519,9 @@
   // of it that can be worked.
   function anatomy(item) {
     var wrap = el("div", "anatomy");
+    // The board sits in a stage of its own so it can be sized against that
+    // rather than scaled, which would soften every line and letter on it.
+    var stage = el("div", "anatomy-stage");
     var board = el("div", "anatomy-board");
 
     var frame = el("div", "anatomy-frame");
@@ -559,7 +562,8 @@
       board.appendChild(tag);
     });
 
-    wrap.appendChild(board);
+    stage.appendChild(board);
+    wrap.appendChild(stage);
     wrap.appendChild(anatomyStats(item));
     return wrap;
   }
