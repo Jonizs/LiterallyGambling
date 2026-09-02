@@ -1291,7 +1291,7 @@ body {
 }
 /* The window it rolls in rides along at half the size. */
 .sand-window {
-  font-size: .55em;
+  font-size: .68em;
   letter-spacing: 0;
   color: rgba(198,205,216,.7);
 }
