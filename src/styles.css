@@ -936,7 +936,9 @@ body {
 }
 .anatomy-board {
   position: relative;
-  height: 100%;
+  /* The pane is the full height of the menu now that socketing is gone, so
+     the diagram keeps the size it had in the top two thirds of it. */
+  height: 66%;
   aspect-ratio: 3 / 2;
   max-width: 100%;
 }
