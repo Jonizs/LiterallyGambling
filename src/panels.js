@@ -696,6 +696,12 @@
       if (part.key === "modification" && heldPiece(ctx)) {
         fill.appendChild(anatomy(heldPiece(ctx)));
       }
+      // Sanding waits with its four boxes, one to a pass.
+      if (part.key === "sanding") {
+        var boxes = el("div", "sand-boxes");
+        for (var i = 0; i < 4; i++) boxes.appendChild(el("div", "sand-box"));
+        fill.appendChild(boxes);
+      }
       box.appendChild(fill);
       pane.appendChild(box);
       wrap.appendChild(pane);
