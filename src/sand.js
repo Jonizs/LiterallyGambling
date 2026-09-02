@@ -22,10 +22,10 @@
   ];
 
   // The cut the bench takes on a first press, and what each press after it on
-  // the same piece costs on top. At 1.45 a fourth press is dearer than the
-  // roll is worth, so a run of bad luck is what ends the session.
+  // the same piece costs on top. At 1.18 a run of six presses still pays on
+  // average and the seventh is where it turns.
   var EDGE = 0.6;
-  var GROWTH = 1.45;
+  var GROWTH = 1.18;
   // The tier press is not a gamble, so it is priced to a thin margin instead.
   var FOAM_EDGE = 0.965;
 
@@ -211,8 +211,15 @@
       value: item[block.stat], gain: G.sellPrice(item) - before };
   }
 
+  // The window a block rolls in, written out.
+  function windowText(block) {
+    return block.tier ? "Tier +1"
+      : "\u00d7" + block.low + " \u2013 \u00d7" + block.high;
+  }
+
   global.Sand = {
     BLOCKS: BLOCKS,
+    windowText: windowText,
     blockFor: blockFor,
     pressesOf: pressesOf,
     nextTier: nextTier,

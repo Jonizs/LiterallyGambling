@@ -693,6 +693,7 @@
   // The modification pane's contents, so a press can redraw the piece's
   // numbers without the whole menu blinking.
   var sandFill = null;
+  var sandPick = null;
 
   function sandShown(block) {
     if (sandRolledOn !== polishPiece) { sandRoll = {}; sandRolledOn = polishPiece; }
@@ -743,8 +744,10 @@
     global.Sand.BLOCKS.forEach(function (block) {
       var box = el("button", "sand-box");
       box.type = "button";
-      box.appendChild(el("span", "sand-name", block.name));
-      var line = sandLine(block, sandShown(block));
+      var roll = sandShown(block);
+      box.appendChild(el("span", "sand-name", block.name +
+        (roll ? " (" + global.Sand.windowText(block) + ")" : "")));
+      var line = sandLine(block, roll);
       box.appendChild(line);
 
       var cost = item ? global.Sand.costFor(item, block) : 0;
@@ -769,23 +772,31 @@
           ctx.setNotice(result.reason);
           return ctx.refresh();
         }
-        var roll = block.tier
+        var landed = block.tier
           ? { text: result.tier, up: true }
           : { text: "\u00d7" + result.mult.toFixed(2), up: result.mult >= 1 };
-        sandRoll[block.key] = roll;
+        sandRoll[block.key] = landed;
+        box.firstChild.textContent = block.name + " (" +
+          global.Sand.windowText(block) + ")";
         // The purse and every other block's price change the moment the
         // block is pressed, not when its numbers stop turning.
         ctx.refreshPurse();
         settleAll();
         box.disabled = true;
-        spinRoll(line, block, roll, function () {
+        spinRoll(line, block, landed, function () {
           settleAll();
           // Only the piece's own numbers are redrawn, so the menu does not
           // blink and the roll stays up in its box.
+          var held = heldPiece(ctx);
           if (sandFill) {
             sandFill.innerHTML = "";
-            var held = heldPiece(ctx);
             if (held) sandFill.appendChild(anatomy(held));
+          }
+          // The box that holds the piece carries its tier, so it is redrawn
+          // as well - a foam pass moves it.
+          if (sandPick && held) {
+            sandPick.innerHTML = "";
+            sandPick.appendChild(pieceLine(held));
           }
         });
       });
@@ -829,6 +840,7 @@
       polishPicking = true;
       ctx.refresh();
     });
+    sandPick = held ? pickBox : null;
     spare.appendChild(pickBox);
     wrap.appendChild(spare);
     if (ctx.notice) wrap.appendChild(el("div", "notice", ctx.notice));
