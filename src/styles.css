@@ -1281,6 +1281,12 @@ body {
 .sand-roll {
   font-size: clamp(8px, calc(.9 * var(--s)), 19px);
   color: rgba(198,205,216,.75);
+  font-variant-numeric: tabular-nums;
+}
+/* Mid-roll the numbers flick past, lit up until they settle. */
+.sand-roll.rolling {
+  color: #ffd479;
+  text-shadow: 1px 1px 0 #000;
 }
 .sand-cost {
   font-size: clamp(9px, calc(1.05 * var(--s)), 22px);

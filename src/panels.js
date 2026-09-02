@@ -683,6 +683,44 @@
     return stats;
   }
 
+  // What each block last rolled on the piece that is on the bench, so the
+  // box keeps showing it after the menu redraws. Swapping pieces clears it.
+  var sandRoll = {};
+  var sandRolledOn = null;
+
+  function sandShown(block) {
+    if (sandRolledOn !== polishPiece) { sandRoll = {}; sandRolledOn = polishPiece; }
+    return sandRoll[block.key];
+  }
+
+  // The block's own line: what it rolls in, or what it last rolled.
+  function sandText(block, shown) {
+    if (shown) return shown;
+    return block.tier ? "Tier +1"
+      : block.label + " \u00d7" + block.low + " \u2013 \u00d7" + block.high;
+  }
+
+  // The roll runs in the box: numbers flick past for a moment and settle on
+  // what the block actually rolled.
+  function spinRoll(line, block, land, done) {
+    var ticks = 12, i = 0;
+    var timer = setInterval(function () {
+      i++;
+      if (i >= ticks) {
+        clearInterval(timer);
+        line.classList.remove("rolling");
+        line.textContent = land;
+        done();
+        return;
+      }
+      line.textContent = block.tier
+        ? "T" + (1 + Math.floor(Math.random() * 20))
+        : "\u00d7" + (block.low + Math.random() * (block.high - block.low))
+            .toFixed(2);
+    }, 45);
+    line.classList.add("rolling");
+  }
+
   // The four blocks at the sanding station. Each says what it rolls and what
   // the next press of it costs on the piece that is on the bench.
   function sandBlocks(ctx) {
@@ -692,9 +730,8 @@
       var box = el("button", "sand-box");
       box.type = "button";
       box.appendChild(el("span", "sand-name", block.name));
-      box.appendChild(el("span", "sand-roll", block.tier
-        ? "Tier +1"
-        : block.label + " \u00d7" + block.low + " \u2013 \u00d7" + block.high));
+      var line = el("span", "sand-roll", sandText(block, sandShown(block)));
+      box.appendChild(line);
 
       var short = item ? global.Sand.shortFor(ctx.state, item, block) : "";
       var cost = item ? global.Sand.costFor(item, block) : 0;
@@ -704,15 +741,14 @@
       if (short) box.title = short;
       box.addEventListener("click", function () {
         var result = global.Sand.press(ctx.state, heldPiece(ctx), block.key);
-        ctx.setNotice(result.ok
-          ? (result.block.tier
-              ? "Sanded up to " + result.tier + " for " + result.cost +
-                " silver \u2014 worth " + result.gain + " more."
-              : result.block.name + ": " + result.block.label + " \u00d7" +
-                result.mult + " \u2192 " + result.value + " for " +
-                result.cost + " silver.")
-          : result.reason);
-        ctx.refresh();
+        if (!result.ok) {
+          ctx.setNotice(result.reason);
+          return ctx.refresh();
+        }
+        var land = block.tier ? result.tier : "\u00d7" + result.mult.toFixed(2);
+        sandRoll[block.key] = land;
+        box.disabled = true;
+        spinRoll(line, block, land, function () { ctx.refresh(); });
       });
       boxes.appendChild(box);
     });
