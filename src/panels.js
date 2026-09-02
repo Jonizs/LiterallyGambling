@@ -564,46 +564,38 @@
     return wrap;
   }
 
-  // The piece's own numbers, spelled out under the diagram: two columns of
-  // stats and, on the right, what it carries.
+  // The piece's own numbers, spelled out under the diagram: one plate a
+  // stat, with what it carries on a wider plate of its own.
   function anatomyStats(item) {
     var stats = el("div", "anatomy-stats");
 
-    function column(entries) {
-      var col = el("div", "anatomy-col");
-      entries.forEach(function (row) {
-        if (row[1] === undefined || row[1] === null || row[1] === 0) return;
-        var line = el("div", "anatomy-stat");
-        line.appendChild(el("span", "anatomy-stat-name", row[0]));
-        line.appendChild(el("span", "anatomy-stat-value", String(row[1])));
-        col.appendChild(line);
-      });
-      return col;
-    }
-
-    stats.appendChild(column([
-      ["Damage", item.damage],
-      ["Armour", item.armor],
-      ["Attack speed", item.attackSpeed],
-      ["Crit chance", item.critChance + "%"]
-    ]));
-    stats.appendChild(column([
-      ["Crit damage", item.critDamage + "%"],
-      ["Armour pen", item.armorPen],
-      ["Durability", item.durability]
-    ]));
+    [
+      ["Damage", item.damage, "dmg"],
+      ["Armour", item.armor, "arm"],
+      ["Attack speed", item.attackSpeed, "spd"],
+      ["Crit chance", item.critChance + "%", "crit"],
+      ["Crit damage", item.critDamage + "%", "crit"],
+      ["Armour pen", item.armorPen, "pen"],
+      ["Durability", item.durability, "dur"]
+    ].forEach(function (row) {
+      if (row[1] === undefined || row[1] === null || row[1] === 0) return;
+      var plate = el("div", "anatomy-stat " + row[2]);
+      plate.appendChild(el("span", "anatomy-stat-name", row[0]));
+      plate.appendChild(el("span", "anatomy-stat-value", String(row[1])));
+      stats.appendChild(plate);
+    });
 
     // The slots the piece has, then every enchant sitting in them.
-    var slots = el("div", "anatomy-col");
-    var head = el("div", "anatomy-stat");
-    head.appendChild(el("span", "anatomy-stat-name", "Enchants"));
-    head.appendChild(el("span", "anatomy-stat-value",
+    var slots = el("div", "anatomy-stat slots");
+    slots.appendChild(el("span", "anatomy-stat-name", "Enchants"));
+    slots.appendChild(el("span", "anatomy-stat-value",
       item.enchants.length + "/" + item.slots));
-    slots.appendChild(head);
+    var list = el("div", "anatomy-ench-list");
     item.enchants.forEach(function (entry) {
-      slots.appendChild(el("div", "anatomy-ench " + entry.rarity,
+      list.appendChild(el("span", "anatomy-ench " + entry.rarity,
         E.label(entry)));
     });
+    slots.appendChild(list);
     stats.appendChild(slots);
 
     return stats;
