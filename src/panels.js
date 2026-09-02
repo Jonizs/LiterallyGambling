@@ -575,8 +575,8 @@
       ["Damage", item.damage, "dmg"],
       ["Armour", item.armor, "arm"],
       ["Attack speed", item.attackSpeed, "spd"],
-      ["Crit chance", item.critChance + "%", "crit"],
-      ["Crit damage", item.critDamage + "%", "crit"],
+      ["C. chance", item.critChance + "%", "crit"],
+      ["C. damage", item.critDamage + "%", "crit"],
       ["Armour pen", item.armorPen, "pen"],
       ["Durability", item.durability, "dur"]
     ].forEach(function (row) {
