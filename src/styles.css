@@ -1060,9 +1060,7 @@ body {
 }
 .anatomy-ench-name {
   font-size: clamp(10px, calc(1.2 * var(--s)), 26px);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -1071,11 +1069,9 @@ body {
 }
 .anatomy-ench-text {
   font-size: clamp(9px, calc(1.02 * var(--s)), 22px);
-  letter-spacing: 1px;
+  letter-spacing: 0;
   color: rgba(198,205,216,.85);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 /* Rarity paints the bar and the name, as it does everywhere else. */
 .anatomy-ench.common { border-left-color: #9aa0ab; }

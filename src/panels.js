@@ -603,8 +603,11 @@
       if (entry) {
         var card = el("div", "anatomy-ench " + entry.rarity);
         card.appendChild(el("span", "anatomy-ench-name", E.label(entry)));
+        // One stat a line, so a two-stat enchant still reads in the box.
         if (entry.text) {
-          card.appendChild(el("span", "anatomy-ench-text", entry.text));
+          entry.text.split(", ").forEach(function (bit) {
+            card.appendChild(el("span", "anatomy-ench-text", bit));
+          });
         }
         list.appendChild(card);
       } else if (i < item.slots) {
