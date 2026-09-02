@@ -939,10 +939,10 @@ body {
 }
 .anatomy-board {
   position: relative;
-  /* The pane is the full height of the menu now that socketing is gone, so
-     the diagram keeps the size it had in the top two thirds of it. */
-  height: 66%;
-  flex: none;
+  /* The diagram takes whatever height the stats leave it, so the whole pane
+     fits without ever scrolling. */
+  flex: 1 1 0;
+  min-height: 0;
   aspect-ratio: 3 / 2;
   max-width: 100%;
 }
@@ -951,11 +951,12 @@ body {
 .anatomy-stats {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
   gap: var(--gap-sm);
   align-items: stretch;
+  flex: none;
   border-top: 2px solid rgba(154,160,171,.35);
-  padding: calc(2 * var(--gap-sm)) var(--gap-xs) 0;
+  padding: var(--gap-sm) var(--gap-xs) 0;
 }
 .anatomy-stat {
   display: flex;
@@ -1181,6 +1182,10 @@ body {
   overflow: auto;
 }
 .split-fill { flex: 1; min-height: 0; }
+/* Modification sizes itself to the box, so nothing in it scrolls. */
+.split-pane.modification, .split-pane.modification .split-work {
+  overflow: hidden;
+}
 .split-title {
   font-family: var(--font);
   font-size: clamp(11px, calc(1.5 * var(--s)), 34px);
