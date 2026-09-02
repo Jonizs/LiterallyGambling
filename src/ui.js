@@ -220,6 +220,7 @@
       saveInfo: saveInfo,
       devBoost: devBoost,
       devUnlockAll: devUnlockAll,
+      devZeus: devZeus,
       startGather: startGather,
       claimGather: claimGather,
       rushGather: rushGather,
@@ -1458,6 +1459,59 @@
     state.xp = 0;
     state.silver = 10000000;
     view.notice = "Dev boost: level 100, 10,000,000 silver.";
+    refresh();
+  }
+
+  // Dev shortcut: a Zeus' Wrath carrying the six longest-named enchants, so
+  // the polish bench can be looked at with a full set on it.
+  function devZeus() {
+    var recipe = G.recipeFor("zeus");
+    if (!recipe) {
+      view.notice = "Dev zeus: no such recipe.";
+      return refresh();
+    }
+    var tier = S.tierAt(100);
+    var band = S.qualityBandAt(100).name;
+    var stats = G.statsFor(recipe, tier.index, band, 1);
+    var item = {
+      id: state.nextId++,
+      name: recipe.name,
+      recipe: recipe.key,
+      icon: recipe.icon,
+      kind: recipe.kind,
+      rarity: 100,
+      tier: tier.name,
+      quality: 100,
+      band: band,
+      slots: 6,
+      edition: 1,
+      editionName: S.editionAt(1),
+      damage: stats.damage,
+      armor: stats.armor,
+      durability: stats.durability,
+      attackSpeed: stats.attackSpeed,
+      critChance: stats.critChance,
+      critDamage: stats.critDamage,
+      armorPen: stats.armorPen,
+      enchants: []
+    };
+
+    // The six whose label runs longest, each at its top tier: the worst case
+    // the enchant cards have to hold.
+    var picks = E.DEFS.slice().sort(function (a, b) {
+      return b.name.length - a.name.length;
+    }).slice(0, 6);
+    picks.forEach(function (def) {
+      E.apply(item, {
+        key: def.key, name: def.name, rarity: def.rarity,
+        tier: def.maxTier, tiered: def.maxTier > 1,
+        text: E.describe(def, def.maxTier)
+      });
+    });
+
+    state.inventory.unshift(item);
+    view.notice = "Dev zeus: a Zeus' Wrath with " + item.enchants.length +
+      " enchants.";
     refresh();
   }
 

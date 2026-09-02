@@ -679,6 +679,17 @@
     }));
     wrap.appendChild(dev);
 
+    var zeus = el("div", "row");
+    var zeusMain = el("div", "row-main");
+    zeusMain.appendChild(el("div", "row-title", "Dev zeus"));
+    zeusMain.appendChild(el("div", "muted",
+      "Drops a Zeus' Wrath carrying the six longest-named enchants."));
+    zeus.appendChild(zeusMain);
+    zeus.appendChild(button("DROP", "mini-btn strong", function () {
+      ctx.devZeus();
+    }));
+    wrap.appendChild(zeus);
+
     var unlock = el("div", "row");
     var unlockMain = el("div", "row-main");
     unlockMain.appendChild(el("div", "row-title", "Dev unlock"));
