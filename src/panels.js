@@ -506,8 +506,8 @@
       { label: "True edge", x: 38, y: 46, side: -1 },
       { label: "Central ridge", x: 55, y: 45, side: 1 },
       { label: "Ricasso", x: 41, y: 72, side: -1 },
-      { label: "Chappe", x: 60, y: 82, side: 1 },
-      { label: "Handle", x: 44, y: 91, side: -1 },
+      { label: "Chappe", x: 60, y: 82, side: 1, rise: -5, trim: 1.5 },
+      { label: "Handle", x: 44, y: 91, side: -1, rise: 5, trim: 1.5 },
       { label: "Pommel", x: 50, y: 97, side: 1, rise: 6, trim: 1.5 }
     ],
     dagger: [
