@@ -954,7 +954,9 @@ body {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: calc(2.5 * var(--gap-sm));
   align-items: start;
-  padding: var(--gap-sm) var(--gap-xs) 0;
+  /* A rule across the pane sets the numbers apart from the diagram. */
+  border-top: 2px solid rgba(154,160,171,.35);
+  padding: calc(2 * var(--gap-sm)) var(--gap-xs) 0;
 }
 .anatomy-col {
   display: flex;
