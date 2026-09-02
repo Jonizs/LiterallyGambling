@@ -502,6 +502,8 @@
     anduril: [
       { label: "Point", x: 50, y: 4, side: 1, rise: -2, trim: 1.5 },
       { label: "Fuller", x: 45, y: 22, side: -1 },
+      // The cutting edge itself: the far left column of the blade.
+      { label: "True edge", x: 38, y: 33, side: -1 },
       { label: "Central ridge", x: 55, y: 45, side: 1 },
       { label: "Ricasso", x: 41, y: 72, side: -1 },
       { label: "Chappe", x: 60, y: 82, side: 1 },
