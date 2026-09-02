@@ -1088,13 +1088,8 @@ body {
   align-self: start;
 }
 .split-pane.modification {
-  grid-area: 1 / 2 / 2 / 3;
+  grid-area: 1 / 2 / 3 / 3;
   border-left: 2px solid rgba(154,160,171,.35);
-}
-.split-pane.socketing {
-  grid-area: 2 / 2 / 3 / 3;
-  border-left: 2px solid rgba(154,160,171,.35);
-  border-top: 2px solid rgba(154,160,171,.35);
 }
 /* The work each station is done in: every one gets a box of its own under
    its heading. */
@@ -1126,11 +1121,10 @@ body {
   .split-pane.sanding { grid-area: 1 / 1 / 2 / 2; }
   .split-pane.spare { display: none; }
   .split-pane.modification {
-    grid-area: 2 / 1 / 3 / 2;
+    grid-area: 2 / 1 / 4 / 2;
     border-left: 0;
     border-top: 2px solid rgba(154,160,171,.35);
   }
-  .split-pane.socketing { grid-area: 3 / 1 / 4 / 2; border-left: 0; }
 }
 
 /* ---------- bars out of a fitting ---------- */

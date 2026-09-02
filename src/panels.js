@@ -420,13 +420,11 @@
   }
 
   // --- polish ---------------------------------------------------------------
-  // One box split three ways rather than three tabs, filling the whole menu:
-  // sanding runs the full height down the left, modification takes the big
-  // box beside it, and socketing is the strip along the bottom.
+  // One box split two ways rather than tabs, filling the whole menu: sanding
+  // runs the full height down the left and modification takes the rest.
   var POLISH_PARTS = [
     { key: "sanding", label: "Sanding" },
-    { key: "modification", label: "Modification" },
-    { key: "socketing", label: "Socketing" }
+    { key: "modification", label: "Modification" }
   ];
 
   // Which piece is on the bench, and whether the menu has faded over to the
