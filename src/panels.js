@@ -507,54 +507,57 @@
     ],
     anduril: [
       { label: "Point", x: 50, y: 4, side: 1, rise: -2, trim: 1.5 },
-      { label: "Rune fuller", x: 45, y: 25, side: -1 },
-      { label: "Gilt edge", x: 59, y: 54, side: 1 },
-      { label: "Crossguard", x: 34, y: 81, side: -1 },
-      { label: "Grip", x: 57, y: 90, side: 1 },
-      { label: "Pommel", x: 50, y: 97, side: -1, trim: 1.5 }
+      { label: "Fuller", x: 45, y: 22, side: -1 },
+      { label: "Centre ridge", x: 55, y: 45, side: 1 },
+      { label: "Ricasso", x: 41, y: 72, side: -1 },
+      { label: "Chappe", x: 60, y: 82, side: 1 },
+      { label: "Handle", x: 44, y: 91, side: -1 },
+      { label: "Pommel", x: 50, y: 97, side: 1, trim: 1.5 }
     ],
     dagger: [
       { label: "Point", x: 50, y: 21, side: 1, rise: -9, trim: 1.5 },
-      { label: "Fuller", x: 47, y: 33, side: -1 },
-      { label: "Edge", x: 58, y: 46, side: 1 },
-      { label: "Guard", x: 34, y: 58, side: -1 },
-      { label: "Grip", x: 57, y: 69, side: 1 },
-      { label: "Pommel", x: 50, y: 80, side: -1, rise: 8, trim: 1.5 }
+      { label: "Fuller", x: 47, y: 31, side: -1 },
+      { label: "Centre ridge", x: 53, y: 42, side: 1 },
+      { label: "Ricasso", x: 43, y: 52, side: -1 },
+      { label: "Chappe", x: 62, y: 59, side: 1 },
+      { label: "Handle", x: 44, y: 69, side: -1 },
+      { label: "Pommel", x: 50, y: 79, side: 1, rise: 8, trim: 1.5 }
     ],
     lance: [
-      { label: "Head", x: 50, y: 19, side: 1, rise: -9, trim: 1.5 },
-      { label: "Blade", x: 40, y: 33, side: -1 },
-      { label: "Socket", x: 59, y: 42, side: 1 },
-      { label: "Vamplate", x: 36, y: 48, side: -1 },
-      { label: "Shaft", x: 58, y: 60, side: 1 },
-      { label: "Binding", x: 42, y: 70, side: -1 },
-      { label: "Butt", x: 50, y: 81, side: 1, rise: 8, trim: 1.5 }
+      { label: "Point", x: 50, y: 19, side: 1, rise: -9, trim: 1.5 },
+      { label: "Fuller", x: 45, y: 30, side: -1 },
+      { label: "Centre ridge", x: 55, y: 39, side: 1 },
+      { label: "Ricasso", x: 36, y: 47, side: -1 },
+      { label: "Chappe", x: 58, y: 55, side: 1 },
+      { label: "Handle", x: 42, y: 68, side: -1 },
+      { label: "Pommel", x: 50, y: 81, side: 1, rise: 8, trim: 1.5 }
     ],
     bloodbane: [
       { label: "Point", x: 50, y: 17, side: 1, rise: -9, trim: 1.5 },
-      { label: "Fuller", x: 45, y: 29, side: -1 },
-      { label: "Flat", x: 58, y: 46, side: 1 },
-      { label: "Crossguard", x: 34, y: 62, side: -1 },
-      { label: "Grip", x: 57, y: 73, side: 1 },
-      { label: "Blood stone", x: 50, y: 82, side: -1, rise: 8, trim: 1.5 }
+      { label: "Fuller", x: 45, y: 28, side: -1 },
+      { label: "Centre ridge", x: 53, y: 43, side: 1 },
+      { label: "Ricasso", x: 41, y: 55, side: -1 },
+      { label: "Chappe", x: 60, y: 63, side: 1 },
+      { label: "Handle", x: 44, y: 73, side: -1 },
+      { label: "Pommel", x: 50, y: 82, side: 1, rise: 8, trim: 1.5 }
     ],
     zeus: [
       { label: "Point", x: 50, y: 9, side: 1, rise: -4, trim: 1.5 },
-      { label: "Pale edge", x: 43, y: 27, side: -1 },
-      { label: "Deep edge", x: 57, y: 45, side: 1 },
-      { label: "Collar", x: 43, y: 68, side: -1 },
-      { label: "Guard", x: 66, y: 76, side: 1 },
-      { label: "Grip", x: 44, y: 84, side: -1 },
+      { label: "Fuller", x: 44, y: 27, side: -1 },
+      { label: "Centre ridge", x: 56, y: 45, side: 1 },
+      { label: "Ricasso", x: 43, y: 65, side: -1 },
+      { label: "Chappe", x: 66, y: 74, side: 1 },
+      { label: "Handle", x: 44, y: 84, side: -1 },
       { label: "Pommel", x: 50, y: 93, side: 1, trim: 1.5 }
     ],
     crackbolt: [
       { label: "Point", x: 50, y: 8, side: 1, rise: -4, trim: 1.5 },
-      { label: "Edge", x: 40, y: 26, side: -1 },
-      { label: "Belly", x: 63, y: 41, side: 1 },
-      { label: "Back", x: 40, y: 53, side: -1 },
-      { label: "Collar", x: 59, y: 61, side: 1 },
-      { label: "Grip", x: 43, y: 69, side: -1 },
-      { label: "Ring", x: 50, y: 83, side: 1, rise: 8, trim: 1.5 }
+      { label: "Fuller", x: 42, y: 26, side: -1 },
+      { label: "Centre ridge", x: 60, y: 41, side: 1 },
+      { label: "Ricasso", x: 43, y: 54, side: -1 },
+      { label: "Chappe", x: 59, y: 61, side: 1 },
+      { label: "Handle", x: 43, y: 69, side: -1 },
+      { label: "Pommel", x: 50, y: 83, side: 1, rise: 8, trim: 1.5 }
     ]
   };
 
