@@ -683,6 +683,42 @@
     return stats;
   }
 
+  // The four blocks at the sanding station. Each says what it rolls and what
+  // the next press of it costs on the piece that is on the bench.
+  function sandBlocks(ctx) {
+    var item = heldPiece(ctx);
+    var boxes = el("div", "sand-boxes");
+    global.Sand.BLOCKS.forEach(function (block) {
+      var box = el("button", "sand-box");
+      box.type = "button";
+      box.appendChild(el("span", "sand-name", block.name));
+      box.appendChild(el("span", "sand-roll", block.tier
+        ? "Tier +1"
+        : block.label + " \u00d7" + block.low + " \u2013 \u00d7" + block.high));
+
+      var short = item ? global.Sand.shortFor(ctx.state, item, block) : "";
+      var cost = item ? global.Sand.costFor(item, block) : 0;
+      box.appendChild(el("span", "sand-cost", item && cost
+        ? cost + " silver" : "\u2014"));
+      box.disabled = !item || !!short;
+      if (short) box.title = short;
+      box.addEventListener("click", function () {
+        var result = global.Sand.press(ctx.state, heldPiece(ctx), block.key);
+        ctx.setNotice(result.ok
+          ? (result.block.tier
+              ? "Sanded up to " + result.tier + " for " + result.cost +
+                " silver \u2014 worth " + result.gain + " more."
+              : result.block.name + ": " + result.block.label + " \u00d7" +
+                result.mult + " \u2192 " + result.value + " for " +
+                result.cost + " silver.")
+          : result.reason);
+        ctx.refresh();
+      });
+      boxes.appendChild(box);
+    });
+    return boxes;
+  }
+
   function polishPanel(ctx) {
     if (polishPicking) return polishPicker(ctx);
     var wrap = el("div", "split fade-in");
@@ -696,12 +732,9 @@
       if (part.key === "modification" && heldPiece(ctx)) {
         fill.appendChild(anatomy(heldPiece(ctx)));
       }
-      // Sanding waits with its four boxes, one to a pass.
-      if (part.key === "sanding") {
-        var boxes = el("div", "sand-boxes");
-        for (var i = 0; i < 4; i++) boxes.appendChild(el("div", "sand-box"));
-        fill.appendChild(boxes);
-      }
+      // Sanding is four blocks, one to a box: press one and it works the
+      // piece on the bench.
+      if (part.key === "sanding") fill.appendChild(sandBlocks(ctx));
       box.appendChild(fill);
       pane.appendChild(box);
       wrap.appendChild(pane);

@@ -151,6 +151,16 @@
     // How many times this piece has been stripped, so the next reforge is
     // priced where it left off.
     if (raw.reforges) item.reforges = whole(raw.reforges, 0);
+    // How many times each sanding block has been pressed on this piece, so
+    // the next press is priced where the last one left off.
+    if (raw.sanded && typeof raw.sanded === "object") {
+      var sanded = {};
+      global.Sand.BLOCKS.forEach(function (block) {
+        var used = whole(raw.sanded[block.key], 0);
+        if (used > 0) sanded[block.key] = used;
+      });
+      if (Object.keys(sanded).length) item.sanded = sanded;
+    }
     return item;
   }
 

@@ -1259,9 +1259,39 @@ body {
   gap: var(--gap-sm);
 }
 .sand-box {
-  border: 2px solid rgba(154,160,171,.3);
-  background: rgba(10,10,12,.45);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
   min-height: 0;
+  padding: var(--gap-xs) var(--gap-sm);
+  border: 2px solid rgba(154,160,171,.4);
+  background: rgba(10,10,12,.45);
+  font-family: var(--font);
+  color: #eef2f7;
+  text-align: left;
+  cursor: pointer;
+}
+.sand-name {
+  font-size: clamp(10px, calc(1.2 * var(--s)), 26px);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 0 #000;
+}
+.sand-roll {
+  font-size: clamp(8px, calc(.9 * var(--s)), 19px);
+  color: rgba(198,205,216,.75);
+}
+.sand-cost {
+  font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
+  color: var(--gold-lit, #ffd479);
+}
+.sand-box:disabled { opacity: .5; cursor: not-allowed; }
+@media (hover: hover) {
+  .sand-box:not(:disabled):hover {
+    border-color: #ffd479;
+    background: rgba(40,32,14,.6);
+  }
 }
 
 /* The work each station is done in: every one gets a box of its own under
