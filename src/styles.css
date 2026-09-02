@@ -947,6 +947,10 @@ body {
   min-height: 0;
   aspect-ratio: 3 / 2;
   max-width: 100%;
+  /* A touch smaller than the space it is given, so the pommel's box never
+     sits on the rule above the stats. */
+  transform: scale(.95);
+  transform-origin: top center;
 }
 /* The piece's numbers, laid out under the diagram: two rows of plates run
    the width of the frame, each struck off with a bar in its own colour. */
