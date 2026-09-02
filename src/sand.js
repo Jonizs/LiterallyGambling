@@ -16,8 +16,8 @@
       low: 0.9, high: 1.15, places: 0 },
     { key: "rubber", name: "Rubber block", stat: "durability",
       label: "Durability", low: 0.85, high: 1.2, places: 0 },
-    { key: "radius", name: "Radiused", stat: "critChance", label: "Crit chance",
-      low: 0.8, high: 1.25, places: 1 },
+    { key: "radius", name: "Radiused", stat: "critDamage", label: "Crit damage",
+      low: 0.8, high: 1.25, places: 0 },
     { key: "foam", name: "Soft foam", tier: true, label: "Tier" }
   ];
 
@@ -65,6 +65,7 @@
     out[block.stat] = Math.max(block.places ? 0.1 : 1,
       round(out[block.stat] * mult, block.places));
     if (block.stat === "critChance") G.spillCrit(out);
+
     return out;
   }
 
