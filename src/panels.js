@@ -491,19 +491,78 @@
     return line;
   }
 
-  // Where each callout hangs off the blade. The weapon sprites are drawn on
-  // a 32 x 48 half-unit grid, so these are that grid read as percentages:
-  // point at the tip, fuller and ridge down the blade, ricasso above the
-  // guard, then the chappe, the grip and the pommel.
-  var ANATOMY = [
-    { label: "Point", x: 50, y: 7, side: 1, rise: -9, trim: 1.5 },
-    { label: "Fuller", x: 48, y: 20, side: -1 },
-    { label: "Centre ridge", x: 52, y: 36, side: 1 },
-    { label: "Ricasso", x: 48, y: 71, side: -1, rise: -9, trim: 1.5 },
-    { label: "Chappe", x: 52, y: 75, side: 1 },
-    { label: "Handle", x: 48, y: 83, side: -1 },
-    { label: "Pommel", x: 52, y: 92, side: 1, rise: 9, trim: 1.5 }
-  ];
+  // Where each callout hangs off the piece. Every weapon is painted on the
+  // same 32 x 48 half-unit tile, so a part's spot is that tile read as
+  // percentages, worked out from the art in icons.js. Each piece gets its own
+  // list, since a lance and a kunai are not put together like a sword.
+  var ANATOMY = {
+    sword: [
+      { label: "Point", x: 50, y: 19, side: 1, rise: -9, trim: 1.5 },
+      { label: "Fuller", x: 47, y: 31, side: -1 },
+      { label: "Centre ridge", x: 53, y: 44, side: 1 },
+      { label: "Ricasso", x: 41, y: 55, side: -1 },
+      { label: "Chappe", x: 60, y: 63, side: 1 },
+      { label: "Handle", x: 44, y: 72, side: -1 },
+      { label: "Pommel", x: 50, y: 81, side: 1, rise: 8, trim: 1.5 }
+    ],
+    anduril: [
+      { label: "Point", x: 50, y: 4, side: 1, rise: -2, trim: 1.5 },
+      { label: "Rune fuller", x: 45, y: 25, side: -1 },
+      { label: "Gilt edge", x: 59, y: 54, side: 1 },
+      { label: "Crossguard", x: 34, y: 81, side: -1 },
+      { label: "Grip", x: 57, y: 90, side: 1 },
+      { label: "Pommel", x: 50, y: 97, side: -1, trim: 1.5 }
+    ],
+    dagger: [
+      { label: "Point", x: 50, y: 21, side: 1, rise: -9, trim: 1.5 },
+      { label: "Fuller", x: 47, y: 33, side: -1 },
+      { label: "Edge", x: 58, y: 46, side: 1 },
+      { label: "Guard", x: 34, y: 58, side: -1 },
+      { label: "Grip", x: 57, y: 69, side: 1 },
+      { label: "Pommel", x: 50, y: 80, side: -1, rise: 8, trim: 1.5 }
+    ],
+    lance: [
+      { label: "Head", x: 50, y: 19, side: 1, rise: -9, trim: 1.5 },
+      { label: "Blade", x: 40, y: 33, side: -1 },
+      { label: "Socket", x: 59, y: 42, side: 1 },
+      { label: "Vamplate", x: 36, y: 48, side: -1 },
+      { label: "Shaft", x: 58, y: 60, side: 1 },
+      { label: "Binding", x: 42, y: 70, side: -1 },
+      { label: "Butt", x: 50, y: 81, side: 1, rise: 8, trim: 1.5 }
+    ],
+    bloodbane: [
+      { label: "Point", x: 50, y: 17, side: 1, rise: -9, trim: 1.5 },
+      { label: "Fuller", x: 45, y: 29, side: -1 },
+      { label: "Flat", x: 58, y: 46, side: 1 },
+      { label: "Crossguard", x: 34, y: 62, side: -1 },
+      { label: "Grip", x: 57, y: 73, side: 1 },
+      { label: "Blood stone", x: 50, y: 82, side: -1, rise: 8, trim: 1.5 }
+    ],
+    zeus: [
+      { label: "Point", x: 50, y: 9, side: 1, rise: -4, trim: 1.5 },
+      { label: "Pale edge", x: 43, y: 27, side: -1 },
+      { label: "Deep edge", x: 57, y: 45, side: 1 },
+      { label: "Collar", x: 43, y: 68, side: -1 },
+      { label: "Guard", x: 66, y: 76, side: 1 },
+      { label: "Grip", x: 44, y: 84, side: -1 },
+      { label: "Pommel", x: 50, y: 93, side: 1, trim: 1.5 }
+    ],
+    crackbolt: [
+      { label: "Point", x: 50, y: 8, side: 1, rise: -4, trim: 1.5 },
+      { label: "Edge", x: 40, y: 26, side: -1 },
+      { label: "Belly", x: 63, y: 41, side: 1 },
+      { label: "Back", x: 40, y: 53, side: -1 },
+      { label: "Collar", x: 59, y: 61, side: 1 },
+      { label: "Grip", x: 43, y: 69, side: -1 },
+      { label: "Ring", x: 50, y: 83, side: 1, rise: 8, trim: 1.5 }
+    ]
+  };
+
+  // Anything without a list of its own - an unknown blade, a silhouette - is
+  // called out like the sword it is shaped after.
+  function partsOf(item) {
+    return ANATOMY[item.icon] || ANATOMY.sword;
+  }
 
   var SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -518,6 +577,7 @@
   // The piece in the middle of the bench, with a line drawn off every part
   // of it that can be worked.
   function anatomy(item) {
+    var parts = partsOf(item);
     var wrap = el("div", "anatomy");
     // The board sits in a stage of its own so it can be sized against that
     // rather than scaled, which would soften every line and letter on it.
@@ -536,7 +596,7 @@
     // a slope rather than a step sideways. The board is 3:2, so a rise of
     // one and a half units to one across reads as 45 degrees on screen.
     // trim pulls the far end of a line back a touch.
-    ANATOMY.forEach(function (part) {
+    parts.forEach(function (part) {
       var x = atX(part), y = atY(part);
       var run = y + (part.rise || 0);
       var end = part.side > 0
@@ -552,7 +612,7 @@
 
     // The names are laid over the board rather than drawn into the picture,
     // so they keep the menu's own lettering.
-    ANATOMY.forEach(function (part) {
+    parts.forEach(function (part) {
       var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"),
         part.label);
       var trim = part.trim || 0;
