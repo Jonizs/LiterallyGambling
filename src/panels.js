@@ -735,6 +735,11 @@
   function sandBlocks(ctx) {
     var item = heldPiece(ctx);
     var boxes = el("div", "sand-boxes");
+    // Every box's own price line, so one press re-prices the whole station at
+    // once: a roll moves what the other blocks are worth, and the bench must
+    // not still be showing what they cost before it.
+    var settlers = [];
+    function settleAll() { settlers.forEach(function (fn) { fn(); }); }
     global.Sand.BLOCKS.forEach(function (block) {
       var box = el("button", "sand-box");
       box.type = "button";
@@ -755,6 +760,7 @@
         box.disabled = !!stop;
         box.title = stop || "";
       }
+      settlers.push(settle);
       settle();
 
       box.addEventListener("click", function () {
@@ -767,11 +773,13 @@
           ? { text: result.tier, up: true }
           : { text: "\u00d7" + result.mult.toFixed(2), up: result.mult >= 1 };
         sandRoll[block.key] = roll;
-        box.disabled = true;
-        // The purse changed the moment the block was pressed.
+        // The purse and every other block's price change the moment the
+        // block is pressed, not when its numbers stop turning.
         ctx.refreshPurse();
+        settleAll();
+        box.disabled = true;
         spinRoll(line, block, roll, function () {
-          settle();
+          settleAll();
           // Only the piece's own numbers are redrawn, so the menu does not
           // blink and the roll stays up in its box.
           if (sandFill) {
