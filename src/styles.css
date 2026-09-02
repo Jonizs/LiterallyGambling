@@ -971,16 +971,16 @@ body {
   flex-direction: column;
   gap: 1px;
   min-width: 0;
-  padding: var(--gap-xs) var(--gap-sm);
+  padding: 0 var(--gap-sm);
   border: 2px solid rgba(154,160,171,.3);
-  border-left-width: 6px;
+  border-left-width: 5px;
   border-left-color: rgba(198,205,216,.55);
   background: rgba(10,10,12,.45);
   font-family: var(--font);
   line-height: 1.2;
 }
 .anatomy-stat-name {
-  font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
+  font-size: clamp(8px, calc(.85 * var(--s)), 18px);
   letter-spacing: 1px;
   text-transform: uppercase;
   color: rgba(198,205,216,.7);
@@ -989,7 +989,7 @@ body {
   white-space: nowrap;
 }
 .anatomy-stat-value {
-  font-size: clamp(14px, calc(1.7 * var(--s)), 36px);
+  font-size: clamp(11px, calc(1.2 * var(--s)), 26px);
   font-weight: 700;
   color: #eef2f7;
   text-shadow: 1px 1px 0 #000;
