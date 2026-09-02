@@ -934,8 +934,10 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: var(--gap-sm);
+  gap: var(--gap-xs);
   min-height: 0;
+  /* The diagram rides a little higher than the box's own padding. */
+  margin-top: calc(-1 * var(--gap-sm));
 }
 .anatomy-board {
   position: relative;
@@ -1017,6 +1019,7 @@ body {
 .anatomy-slots-head {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: var(--gap-xs);
 }
 /* Three to a row, two rows: a full set of six sits in the frame. */
@@ -1029,13 +1032,31 @@ body {
 .anatomy-ench {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 1px;
   min-width: 0;
+  min-height: 2.6em;
   padding: 1px var(--gap-sm);
   border: 2px solid rgba(154,160,171,.45);
   border-left-width: 6px;
   background: rgba(20,22,28,.7);
+  font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
+  letter-spacing: 1px;
+  text-transform: uppercase;
   line-height: 1.2;
+}
+/* A slot the piece has but has not filled, and one it does not have at all. */
+.anatomy-ench.open {
+  border-style: dashed;
+  border-left-color: rgba(198,205,216,.45);
+  color: rgba(198,205,216,.55);
+  background: rgba(20,22,28,.35);
+}
+.anatomy-ench.locked {
+  border-color: rgba(154,160,171,.2);
+  border-left-color: rgba(154,160,171,.25);
+  color: rgba(198,205,216,.25);
+  background: rgba(20,22,28,.2);
 }
 .anatomy-ench-name {
   font-size: clamp(10px, calc(1.2 * var(--s)), 26px);

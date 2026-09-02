@@ -588,8 +588,8 @@
     });
     stats.appendChild(grid);
 
-    // The slots the piece has, then every enchant sitting in them with the
-    // numbers it actually moves.
+    // The board always holds six boxes: what is set, what is still open on
+    // this piece, and the rest locked off.
     var slots = el("div", "anatomy-slots");
     var head = el("div", "anatomy-slots-head");
     head.appendChild(el("span", "anatomy-stat-name", "Enchants"));
@@ -598,14 +598,20 @@
     slots.appendChild(head);
 
     var list = el("div", "anatomy-ench-list");
-    item.enchants.forEach(function (entry) {
-      var card = el("div", "anatomy-ench " + entry.rarity);
-      card.appendChild(el("span", "anatomy-ench-name", E.label(entry)));
-      if (entry.text) card.appendChild(el("span", "anatomy-ench-text", entry.text));
-      list.appendChild(card);
-    });
-    if (!item.enchants.length) {
-      list.appendChild(el("span", "anatomy-ench-empty", "No enchants set."));
+    for (var i = 0; i < 6; i++) {
+      var entry = item.enchants[i];
+      if (entry) {
+        var card = el("div", "anatomy-ench " + entry.rarity);
+        card.appendChild(el("span", "anatomy-ench-name", E.label(entry)));
+        if (entry.text) {
+          card.appendChild(el("span", "anatomy-ench-text", entry.text));
+        }
+        list.appendChild(card);
+      } else if (i < item.slots) {
+        list.appendChild(el("div", "anatomy-ench open", "Empty"));
+      } else {
+        list.appendChild(el("div", "anatomy-ench locked", "Locked"));
+      }
     }
     slots.appendChild(list);
     stats.appendChild(slots);
