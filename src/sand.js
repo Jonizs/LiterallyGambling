@@ -97,9 +97,30 @@
     return out;
   }
 
+  // Working out a gain prices the piece nine times over, and the menu asks
+  // for every block's gain several times a draw, so the answer is kept until
+  // the piece itself changes.
+  var cache = {};
+
+  function signOf(item) {
+    return [item.id, item.rarity, item.damage, item.armor, item.durability,
+      item.attackSpeed, item.critChance, item.critDamage, item.armorPen,
+      item.enchants.length].join(":");
+  }
+
+  function gainOf(item, block) {
+    var key = signOf(item) + "|" + block.key;
+    if (!(key in cache)) {
+      if (cache.count > 200) cache = {};
+      cache[key] = measure(item, block);
+      cache.count = (cache.count || 0) + 1;
+    }
+    return cache[key];
+  }
+
   // What one press is expected to add to what the piece fetches. A block that
   // can only lose is worth nothing, and is priced at nothing.
-  function gainOf(item, block) {
+  function measure(item, block) {
     var now = G.sellPrice(item);
     if (block.tier) {
       var up = withTier(item);
