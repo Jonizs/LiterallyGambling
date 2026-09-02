@@ -1008,9 +1008,8 @@ body {
 /* What the piece carries: the slot count, then a card an enchant. */
 .anatomy-slots {
   display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--gap-xs) var(--gap-sm);
+  flex-direction: column;
+  gap: var(--gap-xs);
   border-top: 2px solid rgba(154,160,171,.25);
   padding-top: var(--gap-xs);
   font-family: var(--font);
@@ -1020,9 +1019,10 @@ body {
   align-items: baseline;
   gap: var(--gap-xs);
 }
+/* Three to a row, two rows: a full set of six sits in the frame. */
 .anatomy-ench-list {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--gap-xs);
   min-width: 0;
 }
@@ -1030,6 +1030,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1px;
+  min-width: 0;
   padding: 1px var(--gap-sm);
   border: 2px solid rgba(154,160,171,.45);
   border-left-width: 6px;
@@ -1038,6 +1039,9 @@ body {
 }
 .anatomy-ench-name {
   font-size: clamp(10px, calc(1.2 * var(--s)), 26px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -1048,6 +1052,9 @@ body {
   font-size: clamp(9px, calc(1.02 * var(--s)), 22px);
   letter-spacing: 1px;
   color: rgba(198,205,216,.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 /* Rarity paints the bar and the name, as it does everywhere else. */
 .anatomy-ench.common { border-left-color: #9aa0ab; }
