@@ -946,17 +946,23 @@ body {
   aspect-ratio: 3 / 2;
   max-width: 100%;
 }
-/* The piece's numbers, laid out under the diagram: a plate a stat, each one
-   struck off with a bar in its own colour. */
+/* The piece's numbers, laid out under the diagram: two rows of plates run
+   the width of the frame, each struck off with a bar in its own colour. */
 .anatomy-stats {
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+  display: flex;
+  flex-direction: column;
   gap: var(--gap-sm);
-  align-items: stretch;
   flex: none;
   border-top: 2px solid rgba(154,160,171,.35);
   padding: var(--gap-sm) var(--gap-xs) 0;
+}
+.anatomy-grid {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--gap-sm);
 }
 .anatomy-stat {
   display: flex;
@@ -999,23 +1005,61 @@ body {
 .anatomy-stat.pen { border-left-color: #c58ce0; }
 .anatomy-stat.pen .anatomy-stat-value { color: #e7c7f5; }
 .anatomy-stat.dur { border-left-color: #9aa0ab; }
-/* The slots plate runs the width of the row and carries the enchants. */
-.anatomy-stat.slots { grid-column: 1 / -1; border-left-color: #86d7d0; }
-.anatomy-stat.slots .anatomy-stat-value { color: #b6efe9; }
+/* What the piece carries: the slot count, then a card an enchant. */
+.anatomy-slots {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--gap-xs) var(--gap-sm);
+  border-top: 2px solid rgba(154,160,171,.25);
+  padding-top: var(--gap-xs);
+  font-family: var(--font);
+}
+.anatomy-slots-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gap-xs);
+}
 .anatomy-ench-list {
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap-xs);
-  margin-top: var(--gap-xs);
+  min-width: 0;
 }
 .anatomy-ench {
-  padding: 1px var(--gap-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 1px var(--gap-sm);
   border: 2px solid rgba(154,160,171,.45);
+  border-left-width: 6px;
   background: rgba(20,22,28,.7);
-  font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
+  line-height: 1.2;
+}
+.anatomy-ench-name {
+  font-size: clamp(10px, calc(1.2 * var(--s)), 26px);
+  font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: #eef2f7;
+  text-shadow: 1px 1px 0 #000;
+}
+.anatomy-ench-text {
+  font-size: clamp(9px, calc(1.02 * var(--s)), 22px);
+  letter-spacing: 1px;
+  color: rgba(198,205,216,.85);
+}
+/* Rarity paints the bar and the name, as it does everywhere else. */
+.anatomy-ench.common { border-left-color: #9aa0ab; }
+.anatomy-ench.uncommon { border-left-color: #9ad17a; }
+.anatomy-ench.uncommon .anatomy-ench-name { color: #cdf0b6; }
+.anatomy-ench.rare { border-left-color: #7fa9ff; }
+.anatomy-ench.rare .anatomy-ench-name { color: #c3d8f2; }
+.anatomy-ench-empty {
+  font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(198,205,216,.55);
 }
 .anatomy-frame {
   position: absolute;

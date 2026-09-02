@@ -564,11 +564,13 @@
     return wrap;
   }
 
-  // The piece's own numbers, spelled out under the diagram: one plate a
-  // stat, with what it carries on a wider plate of its own.
+  // The piece's own numbers, spelled out under the diagram: two rows of
+  // plates across the frame, with what it carries beneath them.
   function anatomyStats(item) {
     var stats = el("div", "anatomy-stats");
 
+    // Paired down the columns, so crit damage sits under crit chance.
+    var grid = el("div", "anatomy-grid");
     [
       ["Damage", item.damage, "dmg"],
       ["Armour", item.armor, "arm"],
@@ -582,19 +584,29 @@
       var plate = el("div", "anatomy-stat " + row[2]);
       plate.appendChild(el("span", "anatomy-stat-name", row[0]));
       plate.appendChild(el("span", "anatomy-stat-value", String(row[1])));
-      stats.appendChild(plate);
+      grid.appendChild(plate);
     });
+    stats.appendChild(grid);
 
-    // The slots the piece has, then every enchant sitting in them.
-    var slots = el("div", "anatomy-stat slots");
-    slots.appendChild(el("span", "anatomy-stat-name", "Enchants"));
-    slots.appendChild(el("span", "anatomy-stat-value",
+    // The slots the piece has, then every enchant sitting in them with the
+    // numbers it actually moves.
+    var slots = el("div", "anatomy-slots");
+    var head = el("div", "anatomy-slots-head");
+    head.appendChild(el("span", "anatomy-stat-name", "Enchants"));
+    head.appendChild(el("span", "anatomy-stat-value",
       item.enchants.length + "/" + item.slots));
+    slots.appendChild(head);
+
     var list = el("div", "anatomy-ench-list");
     item.enchants.forEach(function (entry) {
-      list.appendChild(el("span", "anatomy-ench " + entry.rarity,
-        E.label(entry)));
+      var card = el("div", "anatomy-ench " + entry.rarity);
+      card.appendChild(el("span", "anatomy-ench-name", E.label(entry)));
+      if (entry.text) card.appendChild(el("span", "anatomy-ench-text", entry.text));
+      list.appendChild(card);
     });
+    if (!item.enchants.length) {
+      list.appendChild(el("span", "anatomy-ench-empty", "No enchants set."));
+    }
     slots.appendChild(list);
     stats.appendChild(slots);
 
