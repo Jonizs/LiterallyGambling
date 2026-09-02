@@ -113,6 +113,22 @@
     return Math.max(0, total / SAMPLES);
   }
 
+  // What the three gambling blocks are worth on this piece on average. A
+  // block far under it has nothing left to give - crit damage on a piece that
+  // already crits every swing and past what the market pays for - and is shut
+  // rather than sold for pennies.
+  var DEAD_SHARE = 0.08;
+
+  function sharedGain(item) {
+    var total = 0, count = 0;
+    BLOCKS.forEach(function (block) {
+      if (block.tier) return;
+      total += gainOf(item, block);
+      count++;
+    });
+    return count ? total / count : 0;
+  }
+
   // What the next press costs: the expected gain, discounted so the press
   // pays, then climbed by however many times this block has been used here.
   function costFor(item, block) {
@@ -131,6 +147,9 @@
       return "That piece has already had its foam pass.";
     }
     if (block.tier && !nextTier(item)) return "That piece is already at T20.";
+    if (!block.tier && gainOf(item, block) < sharedGain(item) * DEAD_SHARE) {
+      return "Nothing left for that block to work on this piece.";
+    }
     var cost = costFor(item, block);
     if (!cost) return "Nothing left for that block to work.";
     if (state.silver < cost) {
