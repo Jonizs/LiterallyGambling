@@ -683,33 +683,40 @@
     return stats;
   }
 
-  // What each block last rolled on the piece that is on the bench, so the
-  // box keeps showing it after the menu redraws. Swapping pieces clears it.
+  // What each block last rolled on the piece that is on the bench, so the box
+  // keeps showing it after the menu redraws. Swapping pieces clears it.
   var sandRoll = {};
   var sandRolledOn = null;
+  // The modification pane's contents, so a press can redraw the piece's
+  // numbers without the whole menu blinking.
+  var sandFill = null;
 
   function sandShown(block) {
     if (sandRolledOn !== polishPiece) { sandRoll = {}; sandRolledOn = polishPiece; }
     return sandRoll[block.key];
   }
 
-  // The block's own line: what it rolls in, or what it last rolled.
-  function sandText(block, shown) {
-    if (shown) return shown;
-    return block.tier ? "Tier +1"
-      : block.label + " \u00d7" + block.low + " \u2013 \u00d7" + block.high;
+  // The block's line: plain text for the window it rolls in, and the roll
+  // itself struck large once it has been pressed.
+  function sandLine(block, roll) {
+    if (!roll) {
+      return el("span", "sand-roll", block.tier ? "Tier +1"
+        : block.label + " \u00d7" + block.low + " \u2013 \u00d7" + block.high);
+    }
+    return el("span", "sand-roll rolled " + (roll.up ? "up" : "down"), roll.text);
   }
 
   // The roll runs in the box: numbers flick past for a moment and settle on
   // what the block actually rolled.
-  function spinRoll(line, block, land, done) {
+  function spinRoll(line, block, roll, done) {
     var ticks = 12, i = 0;
+    line.className = "sand-roll rolled rolling";
     var timer = setInterval(function () {
       i++;
       if (i >= ticks) {
         clearInterval(timer);
-        line.classList.remove("rolling");
-        line.textContent = land;
+        line.className = "sand-roll rolled " + (roll.up ? "up" : "down");
+        line.textContent = roll.text;
         done();
         return;
       }
@@ -718,7 +725,6 @@
         : "\u00d7" + (block.low + Math.random() * (block.high - block.low))
             .toFixed(2);
     }, 45);
-    line.classList.add("rolling");
   }
 
   // The four blocks at the sanding station. Each says what it rolls and what
@@ -730,25 +736,47 @@
       var box = el("button", "sand-box");
       box.type = "button";
       box.appendChild(el("span", "sand-name", block.name));
-      var line = el("span", "sand-roll", sandText(block, sandShown(block)));
+      var line = sandLine(block, sandShown(block));
       box.appendChild(line);
 
-      var short = item ? global.Sand.shortFor(ctx.state, item, block) : "";
       var cost = item ? global.Sand.costFor(item, block) : 0;
-      box.appendChild(el("span", "sand-cost", item && cost
-        ? cost + " silver" : "\u2014"));
-      box.disabled = !item || !!short;
-      if (short) box.title = short;
+      var price = el("span", "sand-cost", item && cost ? cost + " silver"
+        : "\u2014");
+      box.appendChild(price);
+
+      function settle() {
+        var held = heldPiece(ctx);
+        var stop = held ? global.Sand.shortFor(ctx.state, held, block) : "x";
+        var next = held ? global.Sand.costFor(held, block) : 0;
+        price.textContent = held && next && !stop ? next + " silver" : "\u2014";
+        box.disabled = !!stop;
+        box.title = stop || "";
+      }
+      settle();
+
       box.addEventListener("click", function () {
         var result = global.Sand.press(ctx.state, heldPiece(ctx), block.key);
         if (!result.ok) {
           ctx.setNotice(result.reason);
           return ctx.refresh();
         }
-        var land = block.tier ? result.tier : "\u00d7" + result.mult.toFixed(2);
-        sandRoll[block.key] = land;
+        var roll = block.tier
+          ? { text: result.tier, up: true }
+          : { text: "\u00d7" + result.mult.toFixed(2), up: result.mult >= 1 };
+        sandRoll[block.key] = roll;
         box.disabled = true;
-        spinRoll(line, block, land, function () { ctx.refresh(); });
+        // The purse changed the moment the block was pressed.
+        ctx.refreshPurse();
+        spinRoll(line, block, roll, function () {
+          settle();
+          // Only the piece's own numbers are redrawn, so the menu does not
+          // blink and the roll stays up in its box.
+          if (sandFill) {
+            sandFill.innerHTML = "";
+            var held = heldPiece(ctx);
+            if (held) sandFill.appendChild(anatomy(held));
+          }
+        });
       });
       boxes.appendChild(box);
     });
@@ -765,8 +793,9 @@
       box.appendChild(el("div", "split-title", part.label));
       var fill = el("div", "split-fill");
       // With a piece on the bench, modification lays it out part by part.
-      if (part.key === "modification" && heldPiece(ctx)) {
-        fill.appendChild(anatomy(heldPiece(ctx)));
+      if (part.key === "modification") {
+        sandFill = fill;
+        if (heldPiece(ctx)) fill.appendChild(anatomy(heldPiece(ctx)));
       }
       // Sanding is four blocks, one to a box: press one and it works the
       // piece on the bench.

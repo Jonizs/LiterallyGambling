@@ -1278,16 +1278,22 @@ body {
   text-transform: uppercase;
   text-shadow: 1px 1px 0 #000;
 }
+/* The window a block rolls in is plain; the roll it lands on is not. */
 .sand-roll {
+  font-size: clamp(8px, calc(.9 * var(--s)), 19px);
+  color: rgba(198,205,216,.75);
+  font-variant-numeric: tabular-nums;
+}
+.sand-roll.rolled {
   font-size: clamp(11px, calc(1.35 * var(--s)), 30px);
   font-weight: 700;
   letter-spacing: 1px;
-  color: #ff4d4d;
   text-shadow: 1px 1px 0 #000;
-  font-variant-numeric: tabular-nums;
 }
-/* Mid-roll the numbers flick past, burning brighter until they settle. */
-.sand-roll.rolling { color: #ff8a5c; }
+.sand-roll.rolled.up { color: #5ce06a; }
+.sand-roll.rolled.down { color: #ff4d4d; }
+/* Mid-roll the numbers flick past before they settle either way. */
+.sand-roll.rolling { color: #ffd479; }
 .sand-cost {
   font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
   color: var(--gold-lit, #ffd479);

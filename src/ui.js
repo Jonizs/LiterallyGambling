@@ -207,6 +207,8 @@
       pending: view.pending,
       machine: view.machine,
       setNotice: function (text) { view.notice = text; },
+      // The purse alone, for work that redraws part of a panel itself.
+      refreshPurse: function () { renderPurse(); Save.schedule(state); },
       queue: queueStrike,
       offer: offerView(),
       rollEnchant: rollEnchant,

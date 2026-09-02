@@ -127,6 +127,9 @@
   // Why a press cannot be made, or "" when it can.
   function shortFor(state, item, block) {
     if (!item) return "Set a piece on the bench first.";
+    if (block.tier && pressesOf(item, block) > 0) {
+      return "That piece has already had its foam pass.";
+    }
     if (block.tier && !nextTier(item)) return "That piece is already at T20.";
     var cost = costFor(item, block);
     if (!cost) return "Nothing left for that block to work.";
