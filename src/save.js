@@ -171,6 +171,15 @@
       });
       if (Object.keys(base).length) item.sandBase = base;
     }
+    // Which blocks have already landed their best here, so a maxed block
+    // stays shut after a reload.
+    if (raw.maxed && typeof raw.maxed === "object") {
+      var maxed = {};
+      global.Sand.BLOCKS.forEach(function (block) {
+        if (raw.maxed[block.key]) maxed[block.key] = true;
+      });
+      if (Object.keys(maxed).length) item.maxed = maxed;
+    }
     // What each block last landed on, so the bench still shows the piece's
     // own rolls after a reload.
     if (raw.rolls && typeof raw.rolls === "object") {

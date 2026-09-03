@@ -76,6 +76,12 @@
     return mult.toFixed(2) === block.high.toFixed(2);
   }
 
+  // Whether this block has already landed its best on this piece. There is
+  // nothing above it, so the block is done here.
+  function maxedOn(item, block) {
+    return !!(item && item.maxed && item.maxed[block.key]);
+  }
+
   // What a block's stat stood at before the block was ever pressed on this
   // piece. A roll replaces the stat rather than stacking on the last one, so
   // every press is measured off this and nothing else.
@@ -194,6 +200,9 @@
       return "That piece has already had its foam pass.";
     }
     if (block.tier && !nextTier(item)) return "That piece is already at T20.";
+    if (maxedOn(item, block)) {
+      return "That block has already landed its best on this piece.";
+    }
     var cost = costFor(item, block);
     if (state.silver < cost) {
       return "Not enough silver. That press costs " + cost + ".";
@@ -249,8 +258,14 @@
     item[block.stat] = worked[block.stat];
     item.critChance = worked.critChance;
     item.critDamage = worked.critDamage;
+    var best = isMax(block, mult);
+    // The top of the window is the end of the road for that block here.
+    if (best) {
+      if (!item.maxed) item.maxed = {};
+      item.maxed[block.key] = true;
+    }
     return { ok: true, block: block, cost: cost, mult: round(mult, 3),
-      max: isMax(block, mult), value: item[block.stat],
+      max: best, value: item[block.stat],
       gain: G.sellPrice(item) - before };
   }
 
@@ -267,6 +282,7 @@
     lowFor: lowFor,
     blockFor: blockFor,
     pressesOf: pressesOf,
+    maxedOn: maxedOn,
     nextTier: nextTier,
     costFor: costFor,
     shortFor: shortFor,

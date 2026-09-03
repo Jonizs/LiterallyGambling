@@ -819,6 +819,7 @@
 
       // Why a shut box is shut, short enough to sit on the price line.
       function stopText(stop, held, block) {
+        if (/landed its best/.test(stop)) return "Maxed";
         if (/foam pass/.test(stop)) return "Foam used";
         if (/T20/.test(stop)) return "Top tier";
         if (/Not enough silver/.test(stop)) {
@@ -843,6 +844,10 @@
         // A spent foam block stays bright, but with nothing on the bench it
         // is shut like any other box.
         box.classList.toggle("tier", !!(block.tier && held));
+        // A block that has landed its best keeps its lit frame whatever the
+        // purse says.
+        box.classList.toggle("maxed",
+          !!(held && global.Sand.maxedOn(held, block)));
         box.disabled = !!stop;
         box.title = stop || "";
       }
