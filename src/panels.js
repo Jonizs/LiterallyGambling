@@ -713,7 +713,12 @@
   // itself struck large once it has been pressed.
   function sandLine(item, block, roll) {
     if (!roll) {
-      if (block.tier) return el("span", "sand-roll", "Tier +1");
+      // A piece foamed before the bench kept its rolls has the press on
+      // record but nothing landed, so the press count stands in for it.
+      if (block.tier) {
+        var used = item && global.Sand.pressesOf(item, block) > 0;
+        return el("span", "sand-roll" + (used ? " rolled up" : ""), "Tier +1");
+      }
       return el("span", "sand-roll", block.label + " \u00d7" +
         global.Sand.lowFor(item, block).toFixed(2) + " \u2013 \u00d7" +
         block.high.toFixed(2));
