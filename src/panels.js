@@ -717,14 +717,14 @@
       // record but nothing landed, so the press count stands in for it.
       if (block.tier) {
         var used = item && global.Sand.pressesOf(item, block) > 0;
-        return el("span", "sand-roll" + (used ? " rolled up" : ""), "Tier +1");
+        return el("span", "sand-roll" + (used ? " rolled gold" : ""), "Tier +1");
       }
       return el("span", "sand-roll", block.label + " \u00d7" +
         global.Sand.lowFor(item, block).toFixed(2) + " \u2013 \u00d7" +
         block.high.toFixed(2));
     }
     return el("span", "sand-roll rolled " +
-      (roll.gold ? "gold" : roll.up ? "up" : "down"), roll.text);
+      (roll.gold || block.tier ? "gold" : roll.up ? "up" : "down"), roll.text);
   }
 
   // A roll at the top of the window throws pixels out of the box it landed
@@ -747,15 +747,16 @@
   // Foam does not roll anything, so its box does not flick through numbers:
   // the tier is simply lifted into place, once.
   function liftRoll(line, roll, done) {
-    line.className = "sand-roll rolled up lifting";
+    line.className = "sand-roll rolled gold lifting";
     line.textContent = roll.text;
     var over = false;
     function end() {
       if (over) return;
       over = true;
-      line.className = "sand-roll rolled up";
+      line.className = "sand-roll rolled gold";
       done();
     }
+    if (line.parentNode) line.parentNode.classList.add("maxed");
     line.addEventListener("animationend", end);
     setTimeout(end, 900);
   }
@@ -846,8 +847,9 @@
         box.classList.toggle("tier", !!(block.tier && held));
         // A block that has landed its best keeps its lit frame whatever the
         // purse says.
-        box.classList.toggle("maxed",
-          !!(held && global.Sand.maxedOn(held, block)));
+        box.classList.toggle("maxed", !!(held &&
+          (global.Sand.maxedOn(held, block) ||
+            (block.tier && global.Sand.pressesOf(held, block) > 0))));
         box.disabled = !!stop;
         box.title = stop || "";
       }
@@ -864,7 +866,7 @@
           return ctx.refresh();
         }
         var landed = block.tier
-          ? { text: "Tier +1", up: true }
+          ? { text: "Tier +1", up: true, gold: true }
           : { text: "\u00d7" + result.mult.toFixed(2), up: result.mult >= 1,
               gold: result.max, low: rolledLow };
         var piece = heldPiece(ctx);
