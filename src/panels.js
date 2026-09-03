@@ -777,7 +777,7 @@
     var settlers = [];
     function settleAll() { settlers.forEach(function (fn) { fn(); }); }
     global.Sand.BLOCKS.forEach(function (block) {
-      var box = el("button", "sand-box" + (block.tier ? " tier" : ""));
+      var box = el("button", "sand-box");
       box.type = "button";
       var roll = sandShown(item, block);
       // The name, with the window it rolls in set small beside it once the
@@ -801,7 +801,10 @@
         var stop = held ? global.Sand.shortFor(ctx.state, held, block) : "x";
         var next = held ? global.Sand.costFor(held, block) : 0;
         price.textContent = held && next && !stop ? next + " silver"
-          : (block.tier ? "\u00a0" : "\u2014");
+          : (block.tier && held ? "\u00a0" : "\u2014");
+        // A spent foam block stays bright, but with nothing on the bench it
+        // is shut like any other box.
+        box.classList.toggle("tier", !!(block.tier && held));
         box.disabled = !!stop;
         box.title = stop || "";
       }
