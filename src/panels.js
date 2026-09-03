@@ -811,7 +811,6 @@
         if (/Not enough silver/.test(stop)) {
           return "Need " + global.Sand.costFor(held, block) + " silver";
         }
-        if (/Nothing left/.test(stop)) return "Nothing left to work";
         return "\u2014";
       }
 
@@ -819,6 +818,9 @@
         var held = heldPiece(ctx);
         var stop = held ? global.Sand.shortFor(ctx.state, held, block) : "x";
         var next = held ? global.Sand.costFor(held, block) : 0;
+        // The window climbs with every press, so the line beside the name is
+        // rewritten rather than left showing the one it opened on.
+        span.textContent = " (" + global.Sand.windowText(block, held) + ")";
         // A shut box says why on its price line rather than leaving the
         // player clicking at a dash.
         price.textContent = !held ? "\u2014"

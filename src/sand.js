@@ -21,25 +21,22 @@
     { key: "foam", name: "Soft foam", tier: true, label: "Tier" }
   ];
 
-  // The cut the bench takes on a first press, and what each press after it on
-  // the same piece costs on top. At 1.18 a run of six presses still pays on
-  // average and the seventh is where it turns.
-  var EDGE = 0.6;
-  var GROWTH = 1.18;
+  // A press is priced off the best the block could do on this piece: the first
+  // one costs a small share of that, and every press after it on the same
+  // piece costs a fifth again on top. Six presses come to a shade under nine
+  // tenths of the best roll, so a run that far still pays; the seventh puts
+  // the run past it and it never pays again - which does not stop anyone
+  // pressing it.
+  var EDGE = 0.09;
+  var GROWTH = 1.2;
   // The tier press is not a gamble, so it is priced to a thin margin instead.
   var FOAM_EDGE = 0.965;
 
-  // Every press of a block on a piece drops the bottom of its window a little,
-  // so a piece that has been worked a while can lose more on a bad roll than
-  // it could on its first press. The floor stops it running away entirely.
+  // Every press of a block on a piece lifts the bottom of its window, so a
+  // piece that has been worked a while cannot land as badly as it could on
+  // its first press. The window never closes to less than this.
   var LOW_STEP = 0.01;
-  var LOW_FLOOR = 0.5;
-
-  // How many points across the window are averaged to price a press. The
-  // damage and durability windows are straight lines, but the crit premium
-  // saturates, so its expected gain has to be sampled rather than read off
-  // the middle of the window.
-  var SAMPLES = 9;
+  var LOW_GAP = 0.02;
 
   function blockFor(key) {
     for (var i = 0; i < BLOCKS.length; i++) {
@@ -65,12 +62,12 @@
     return (item && item.sanded && item.sanded[block.key]) || 0;
   }
 
-  // The bottom of a block's window on this piece, worn down by every press
+  // The bottom of a block's window on this piece, lifted by every press
   // already made with it.
   function lowFor(item, block) {
     if (block.tier) return 0;
-    var worn = block.low - LOW_STEP * pressesOf(item, block);
-    return Math.max(LOW_FLOOR, round(worn, 2));
+    var lifted = block.low + LOW_STEP * pressesOf(item, block);
+    return Math.min(round(block.high - LOW_GAP, 2), round(lifted, 2));
   }
 
   // A roll that lands at the very top of the window, read off the two places
@@ -144,45 +141,25 @@
     return cache[key];
   }
 
-  // What one press is expected to add to what the piece fetches. A block that
-  // can only lose is worth nothing, and is priced at nothing.
+  // The best a press could do on this piece: what the top of the window is
+  // worth over what the piece fetches now. Foam is not a gamble, so its
+  // measure is simply the tier it buys.
   function measure(item, block) {
     var now = G.sellPrice(item);
     if (block.tier) {
       var up = withTier(item);
       return up ? Math.max(0, G.sellPrice(up) - now) : 0;
     }
-    var total = 0;
-    var low = lowFor(item, block);
-    for (var i = 0; i < SAMPLES; i++) {
-      var mult = low + (block.high - low) * (i / (SAMPLES - 1));
-      total += G.sellPrice(withStat(item, block, mult)) - now;
-    }
-    return Math.max(0, total / SAMPLES);
+    return Math.max(0, G.sellPrice(withStat(item, block, block.high)) - now);
   }
 
-  // What the three gambling blocks are worth on this piece on average. A
-  // block far under it has nothing left to give - crit damage on a piece that
-  // already crits every swing and past what the market pays for - and is shut
-  // rather than sold for pennies.
-  var DEAD_SHARE = 0.08;
-
-  function sharedGain(item) {
-    var total = 0, count = 0;
-    BLOCKS.forEach(function (block) {
-      if (block.tier) return;
-      total += gainOf(item, block);
-      count++;
-    });
-    return count ? total / count : 0;
-  }
-
-  // What the next press costs: the expected gain, discounted so the press
-  // pays, then climbed by however many times this block has been used here.
+  // What the next press costs: a share of the best roll on this piece, climbed
+  // by however many times this block has already been used here. Nothing is
+  // ever shut - a block whose best roll is worth nothing still presses for a
+  // single silver.
   function costFor(item, block) {
     if (!item) return 0;
     var gain = gainOf(item, block);
-    if (gain <= 0) return 0;
     if (block.tier) return Math.max(1, Math.floor(gain * FOAM_EDGE));
     return Math.max(1, Math.round(gain * EDGE *
       Math.pow(GROWTH, pressesOf(item, block))));
@@ -195,11 +172,7 @@
       return "That piece has already had its foam pass.";
     }
     if (block.tier && !nextTier(item)) return "That piece is already at T20.";
-    if (!block.tier && gainOf(item, block) < sharedGain(item) * DEAD_SHARE) {
-      return "Nothing left for that block to work on this piece.";
-    }
     var cost = costFor(item, block);
-    if (!cost) return "Nothing left for that block to work.";
     if (state.silver < cost) {
       return "Not enough silver. That press costs " + cost + ".";
     }
