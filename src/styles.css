@@ -1327,6 +1327,8 @@ body {
 }
 /* Mid-roll the numbers flick past before they settle either way. */
 .sand-roll.rolling { color: #ffd479; }
+/* A shut box says why in place of its price. */
+.sand-cost.shut { color: rgba(198,205,216,.65); }
 .sand-cost {
   font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
   color: var(--gold-lit, #ffd479);

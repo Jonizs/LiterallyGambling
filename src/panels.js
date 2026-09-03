@@ -804,12 +804,27 @@
         : (block.tier ? "\u00a0" : "\u2014"));
       box.appendChild(price);
 
+      // Why a shut box is shut, short enough to sit on the price line.
+      function stopText(stop, held, block) {
+        if (/foam pass/.test(stop)) return "Foam used";
+        if (/T20/.test(stop)) return "Top tier";
+        if (/Not enough silver/.test(stop)) {
+          return "Need " + global.Sand.costFor(held, block) + " silver";
+        }
+        if (/Nothing left/.test(stop)) return "Nothing left to work";
+        return "\u2014";
+      }
+
       function settle() {
         var held = heldPiece(ctx);
         var stop = held ? global.Sand.shortFor(ctx.state, held, block) : "x";
         var next = held ? global.Sand.costFor(held, block) : 0;
-        price.textContent = held && next && !stop ? next + " silver"
-          : (block.tier && held ? "\u00a0" : "\u2014");
+        // A shut box says why on its price line rather than leaving the
+        // player clicking at a dash.
+        price.textContent = !held ? "\u2014"
+          : stop ? stopText(stop, held, block)
+          : next + " silver";
+        price.classList.toggle("shut", !!(held && stop));
         // A spent foam block stays bright, but with nothing on the bench it
         // is shut like any other box.
         box.classList.toggle("tier", !!(block.tier && held));
