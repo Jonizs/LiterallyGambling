@@ -171,6 +171,18 @@
       });
       if (Object.keys(base).length) item.sandBase = base;
     }
+    // What tier each worked part of the piece sits at.
+    if (raw.parts && typeof raw.parts === "object") {
+      var parts = {};
+      Object.keys(raw.parts).forEach(function (label) {
+        if (typeof label !== "string" || label.length > 40) return;
+        var at = whole(raw.parts[label], 0);
+        if (at > 0) {
+          parts[label] = global.PartTiers.tierAt(at).index;
+        }
+      });
+      if (Object.keys(parts).length) item.parts = parts;
+    }
     // Which blocks have already landed their best here, so a maxed block
     // stays shut after a reload.
     if (raw.maxed && typeof raw.maxed === "object") {

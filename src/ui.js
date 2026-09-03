@@ -223,6 +223,7 @@
       devBoost: devBoost,
       devUnlockAll: devUnlockAll,
       devWeapons: devWeapons,
+      devParts: devParts,
       startGather: startGather,
       claimGather: claimGather,
       rushGather: rushGather,
@@ -1514,6 +1515,54 @@
     });
     view.notice = "Dev weapons: " + made + " piece" + (made === 1 ? "" : "s") +
       ", each with six enchants.";
+    refresh();
+  }
+
+  // Dev shortcut: one Midas' Anduril with five of its parts each worked to a
+  // different tier, so the part bench can be seen at every rung of the ladder.
+  function devParts() {
+    var recipe = null;
+    window.Game.RECIPES.forEach(function (entry) {
+      if (entry.key === "anduril") recipe = entry;
+    });
+    if (!recipe) {
+      view.notice = "Part test: no Anduril in the book.";
+      return refresh();
+    }
+    var tier = S.tierAt(700);
+    var band = S.qualityBandAt(90).name;
+    var stats = G.statsFor(recipe, tier.index, band, 1);
+    var item = {
+      id: state.nextId++,
+      name: recipe.name,
+      recipe: recipe.key,
+      icon: recipe.icon,
+      kind: recipe.kind,
+      rarity: 700,
+      tier: tier.name,
+      quality: 90,
+      band: band,
+      slots: 4,
+      edition: 1,
+      editionName: S.editionAt(1),
+      damage: stats.damage,
+      armor: stats.armor,
+      durability: stats.durability,
+      attackSpeed: stats.attackSpeed,
+      critChance: stats.critChance,
+      critDamage: stats.critDamage,
+      armorPen: stats.armorPen,
+      enchants: [],
+      parts: {}
+    };
+    // The first five callouts on the blade, one to a rung.
+    ["Point", "Fuller", "True edge", "Central ridge", "Ricasso"]
+      .forEach(function (label, i) {
+        window.PartTiers.setTier(item, label, i + 1);
+      });
+    state.inventory.unshift(item);
+    view.notice = "Part test: one " + recipe.name + " with five parts, " +
+      "Earthbound through Void-Touched.";
     refresh();
   }
 

@@ -637,6 +637,8 @@
         part.label);
       // A part opens onto a bench of its own. The one already open is not a
       // way back in to itself.
+      tierSkin(tag, global.PartTiers.tierOf(item, part.label));
+      tag.classList.add("tiered");
       if (only) tag.classList.add("open");
       else {
         tag.addEventListener("click", function () {
@@ -937,11 +939,42 @@
     return boxes;
   }
 
+  // What a part is worth, five boxes down the station beside it. The first
+  // is the tier it has been worked up to; the rest are waiting on what they
+  // will hold.
+  var PART_ROWS = ["Tier", "\u2014", "\u2014", "\u2014", "\u2014"];
+
+  function partStats(item, label) {
+    var tier = global.PartTiers.tierOf(item, label);
+    var boxes = el("div", "part-boxes");
+    PART_ROWS.forEach(function (name, i) {
+      var box = el("div", "part-stat" + (i ? "" : " tier-stat"));
+      box.appendChild(el("span", "part-stat-name", i ? name : "Tier"));
+      box.appendChild(el("span", "part-stat-value",
+        i ? "\u2014" : tier.name));
+      boxes.appendChild(box);
+    });
+    return boxes;
+  }
+
+  // The colours the bench wears while a part of this tier is on it.
+  function tierSkin(el2, tier) {
+    el2.style.setProperty("--pt-ink", tier.ink);
+    el2.style.setProperty("--pt-ink2", tier.ink2);
+    el2.style.setProperty("--pt-edge", tier.edge);
+    el2.style.setProperty("--pt-back", tier.back);
+    el2.style.setProperty("--pt-glow", tier.glow);
+    return el2;
+  }
+
   function polishPanel(ctx) {
     if (polishPicking) return polishPicker(ctx);
     onPartOpen = function () { ctx.refresh(); };
     var open = partOpenOn(heldPiece(ctx));
-    var wrap = el("div", "split fade-in");
+    var wrap = el("div", "split fade-in" + (open ? " part-open" : ""));
+    if (open) {
+      tierSkin(wrap, global.PartTiers.tierOf(heldPiece(ctx), open));
+    }
     POLISH_PARTS.forEach(function (part) {
       var pane = el("div", "split-pane " + part.key);
       // The station's name sits inside its own box, over the work. With a
@@ -956,10 +989,10 @@
         modFill(fill, heldPiece(ctx));
       }
       // Sanding is four blocks, one to a box: press one and it works the
-      // piece on the bench. A part's own bench has none of them yet.
+      // piece on the bench. A part on the bench puts its own numbers there.
       if (part.key === "sanding") {
         fill.appendChild(open
-          ? el("div", "empty mod-empty", "Nothing to work on this part yet")
+          ? partStats(heldPiece(ctx), open)
           : sandBlocks(ctx));
       }
       box.appendChild(fill);
@@ -1035,6 +1068,17 @@
       ctx.devWeapons();
     }));
     wrap.appendChild(weapons);
+
+    var parts = el("div", "row");
+    var partsMain = el("div", "row-main");
+    partsMain.appendChild(el("div", "row-title", "Part test"));
+    partsMain.appendChild(el("div", "muted",
+      "Drops a Midas' Anduril with five parts, one at each part tier."));
+    parts.appendChild(partsMain);
+    parts.appendChild(button("PART TEST", "mini-btn strong", function () {
+      ctx.devParts();
+    }));
+    wrap.appendChild(parts);
 
     var unlock = el("div", "row");
     var unlockMain = el("div", "row-main");
