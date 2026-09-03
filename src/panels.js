@@ -600,9 +600,13 @@
     var stage = el("div", "anatomy-stage");
     var board = el("div", "anatomy-board");
 
-    var frame = el("div", "anatomy-frame");
-    frame.appendChild(I.make(item.icon, "icon anatomy-icon"));
-    board.appendChild(frame);
+    // On a part's own bench the piece it came off is not the subject, so the
+    // board is left empty for what the part itself will carry.
+    if (!only) {
+      var frame = el("div", "anatomy-frame");
+      frame.appendChild(I.make(item.icon, "icon anatomy-icon"));
+      board.appendChild(frame);
+    }
 
     var svg = document.createElementNS(SVG_NS, "svg");
     svg.setAttribute("class", "anatomy-lines");
