@@ -701,11 +701,7 @@
   // itself struck large once it has been pressed.
   function sandLine(item, block, roll) {
     if (!roll) {
-      // Foam only ever does the one thing, so it says so in the big green
-      // roll text - but only with a piece on the bench to say it about.
-      if (block.tier) {
-        return el("span", "sand-roll" + (item ? " rolled up" : ""), "Tier +1");
-      }
+      if (block.tier) return el("span", "sand-roll", "Tier +1");
       return el("span", "sand-roll",
         block.label + " \u00d7" + block.low + " \u2013 \u00d7" + block.high);
     }
