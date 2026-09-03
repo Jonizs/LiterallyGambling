@@ -487,6 +487,10 @@
     meta.appendChild(el("span", "chip-stat",
       item.enchants.length + "/" + item.slots + " slot" +
       (item.slots === 1 ? "" : "s")));
+    // What the piece fetches, so the bench can be read against what a press
+    // costs without leaving the menu.
+    meta.appendChild(el("span", "chip-stat price",
+      G.sellPrice(item) + " silver"));
     line.appendChild(meta);
     return line;
   }
