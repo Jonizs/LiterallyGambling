@@ -704,8 +704,11 @@
   // itself struck large once it has been pressed.
   function sandLine(block, roll) {
     if (!roll) {
-      return el("span", "sand-roll", block.tier ? "Tier +1"
-        : block.label + " \u00d7" + block.low + " \u2013 \u00d7" + block.high);
+      // Foam only ever does the one thing, so it says so in the big green
+      // roll text from the start rather than waiting on a press.
+      if (block.tier) return el("span", "sand-roll rolled up", "Tier +1");
+      return el("span", "sand-roll",
+        block.label + " \u00d7" + block.low + " \u2013 \u00d7" + block.high);
     }
     return el("span", "sand-roll rolled " + (roll.up ? "up" : "down"), roll.text);
   }
