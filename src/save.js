@@ -168,7 +168,8 @@
       global.Sand.BLOCKS.forEach(function (block) {
         var roll = raw.rolls[block.key];
         if (roll && typeof roll.text === "string") {
-          rolls[block.key] = { text: roll.text.slice(0, 12), up: !!roll.up };
+          rolls[block.key] = { text: roll.text.slice(0, 12), up: !!roll.up,
+            gold: !!roll.gold };
         }
       });
       if (Object.keys(rolls).length) item.rolls = rolls;

@@ -702,10 +702,29 @@
   function sandLine(item, block, roll) {
     if (!roll) {
       if (block.tier) return el("span", "sand-roll", "Tier +1");
-      return el("span", "sand-roll",
-        block.label + " \u00d7" + block.low + " \u2013 \u00d7" + block.high);
+      return el("span", "sand-roll", block.label + " \u00d7" +
+        global.Sand.lowFor(item, block).toFixed(2) + " \u2013 \u00d7" +
+        block.high.toFixed(2));
     }
-    return el("span", "sand-roll rolled " + (roll.up ? "up" : "down"), roll.text);
+    return el("span", "sand-roll rolled " +
+      (roll.gold ? "gold" : roll.up ? "up" : "down"), roll.text);
+  }
+
+  // A roll at the top of the window throws pixels out of the box it landed
+  // in. They clear themselves up once they have fallen.
+  function burst(box) {
+    for (var i = 0; i < 18; i++) {
+      var bit = el("span", "sand-spark");
+      bit.style.left = (15 + Math.random() * 70) + "%";
+      bit.style.top = (30 + Math.random() * 40) + "%";
+      bit.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
+      bit.style.setProperty("--dy", (-30 - Math.random() * 70) + "px");
+      bit.style.animationDelay = (Math.random() * 0.12) + "s";
+      bit.addEventListener("animationend", function () {
+        if (this.parentNode) this.parentNode.removeChild(this);
+      });
+      box.appendChild(bit);
+    }
   }
 
   // The roll runs in the box: numbers flick past for a moment and settle on
@@ -717,14 +736,16 @@
       i++;
       if (i >= ticks) {
         clearInterval(timer);
-        line.className = "sand-roll rolled " + (roll.up ? "up" : "down");
+        line.className = "sand-roll rolled " +
+          (roll.gold ? "gold" : roll.up ? "up" : "down");
         line.textContent = roll.text;
+        if (roll.gold) burst(line.parentNode);
         done();
         return;
       }
       line.textContent = block.tier
         ? "T" + (1 + Math.floor(Math.random() * 20))
-        : "\u00d7" + (block.low + Math.random() * (block.high - block.low))
+        : "\u00d7" + (roll.low + Math.random() * (block.high - roll.low))
             .toFixed(2);
     }, 45);
   }
@@ -747,7 +768,7 @@
       // block has been used, so the two still sit on one line.
       var head = el("span", "sand-name", block.name);
       var span = el("span", "sand-window",
-        " (" + global.Sand.windowText(block) + ")");
+        " (" + global.Sand.windowText(block, item) + ")");
       if (!roll) span.hidden = true;
       head.appendChild(span);
       box.appendChild(head);
@@ -772,6 +793,9 @@
       settle();
 
       box.addEventListener("click", function () {
+        // The window the press rolled on, kept for the numbers that flick
+        // past before it settles.
+        var rolledLow = global.Sand.lowFor(heldPiece(ctx), block);
         var result = global.Sand.press(ctx.state, heldPiece(ctx), block.key);
         if (!result.ok) {
           ctx.setNotice(result.reason);
@@ -779,7 +803,8 @@
         }
         var landed = block.tier
           ? { text: "Tier +1", up: true }
-          : { text: "\u00d7" + result.mult.toFixed(2), up: result.mult >= 1 };
+          : { text: "\u00d7" + result.mult.toFixed(2), up: result.mult >= 1,
+              gold: result.max, low: rolledLow };
         var piece = heldPiece(ctx);
         if (piece) {
           if (!piece.rolls) piece.rolls = {};

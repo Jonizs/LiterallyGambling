@@ -29,6 +29,12 @@
   // The tier press is not a gamble, so it is priced to a thin margin instead.
   var FOAM_EDGE = 0.965;
 
+  // Every press of a block on a piece drops the bottom of its window a little,
+  // so a piece that has been worked a while can lose more on a bad roll than
+  // it could on its first press. The floor stops it running away entirely.
+  var LOW_STEP = 0.01;
+  var LOW_FLOOR = 0.5;
+
   // How many points across the window are averaged to price a press. The
   // damage and durability windows are straight lines, but the crit premium
   // saturates, so its expected gain has to be sampled rather than read off
@@ -57,6 +63,20 @@
   // How many times this block has been pressed on this piece.
   function pressesOf(item, block) {
     return (item.sanded && item.sanded[block.key]) || 0;
+  }
+
+  // The bottom of a block's window on this piece, worn down by every press
+  // already made with it.
+  function lowFor(item, block) {
+    if (block.tier) return 0;
+    var worn = block.low - LOW_STEP * pressesOf(item, block);
+    return Math.max(LOW_FLOOR, round(worn, 2));
+  }
+
+  // A roll that lands at the very top of the window, read off the two places
+  // the bench shows, so what is called a maximum is what is displayed.
+  function isMax(block, mult) {
+    return mult.toFixed(2) === block.high.toFixed(2);
   }
 
   // The piece as it would stand with one stat multiplied.
@@ -102,8 +122,14 @@
   // the piece itself changes.
   var cache = {};
 
+  function pressSign(item) {
+    var out = [];
+    BLOCKS.forEach(function (block) { out.push(pressesOf(item, block)); });
+    return out.join(",");
+  }
+
   function signOf(item) {
-    return [item.id, item.rarity, item.damage, item.armor, item.durability,
+    return [item.id, pressSign(item), item.rarity, item.damage, item.armor, item.durability,
       item.attackSpeed, item.critChance, item.critDamage, item.armorPen,
       item.enchants.length].join(":");
   }
@@ -127,8 +153,9 @@
       return up ? Math.max(0, G.sellPrice(up) - now) : 0;
     }
     var total = 0;
+    var low = lowFor(item, block);
     for (var i = 0; i < SAMPLES; i++) {
-      var mult = block.low + (block.high - block.low) * (i / (SAMPLES - 1));
+      var mult = low + (block.high - low) * (i / (SAMPLES - 1));
       total += G.sellPrice(withStat(item, block, mult)) - now;
     }
     return Math.max(0, total / SAMPLES);
@@ -187,6 +214,8 @@
 
     var cost = costFor(item, block);
     var before = G.sellPrice(item);
+    var low = lowFor(item, block);
+    var mult = low + Math.random() * (block.high - low);
     state.silver -= cost;
     if (!item.sanded) item.sanded = {};
     item.sanded[block.key] = pressesOf(item, block) + 1;
@@ -202,24 +231,28 @@
         gain: G.sellPrice(item) - before };
     }
 
-    var mult = block.low + Math.random() * (block.high - block.low);
+    // The window is read before the press is counted, so this press rolls on
+    // the window the bench was showing.
     var worked = withStat(item, block, mult);
     item[block.stat] = worked[block.stat];
     item.critChance = worked.critChance;
     item.critDamage = worked.critDamage;
     return { ok: true, block: block, cost: cost, mult: round(mult, 3),
-      value: item[block.stat], gain: G.sellPrice(item) - before };
+      max: isMax(block, mult), value: item[block.stat],
+      gain: G.sellPrice(item) - before };
   }
 
   // The window a block rolls in, written out.
-  function windowText(block) {
+  function windowText(block, item) {
     return block.tier ? "Tier +1"
-      : "\u00d7" + block.low + " \u2013 \u00d7" + block.high;
+      : "\u00d7" + lowFor(item, block).toFixed(2) + " \u2013 \u00d7" +
+        block.high.toFixed(2);
   }
 
   global.Sand = {
     BLOCKS: BLOCKS,
     windowText: windowText,
+    lowFor: lowFor,
     blockFor: blockFor,
     pressesOf: pressesOf,
     nextTier: nextTier,

@@ -1267,6 +1267,8 @@ body {
   gap: var(--gap-sm);
 }
 .sand-box {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1308,12 +1310,31 @@ body {
   text-shadow: 1px 1px 0 #000;
 }
 .sand-roll.rolled.up { color: #5ce06a; }
+/* The top of the window is worth more than a good roll, so it reads gold. */
+.sand-roll.rolled.gold {
+  color: #ffd479;
+  text-shadow: 1px 1px 0 #000, 0 0 8px rgba(255,212,121,.75);
+}
 .sand-roll.rolled.down { color: #ff4d4d; }
 /* Mid-roll the numbers flick past before they settle either way. */
 .sand-roll.rolling { color: #ffd479; }
 .sand-cost {
   font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
   color: var(--gold-lit, #ffd479);
+}
+/* The pixels a maximum roll throws out of its box. */
+.sand-spark {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #ffd479;
+  box-shadow: 0 0 4px rgba(255,212,121,.9);
+  pointer-events: none;
+  animation: sand-spark .7s ease-out forwards;
+}
+@keyframes sand-spark {
+  0% { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)); opacity: 0; }
 }
 .sand-box:disabled { opacity: .5; cursor: not-allowed; }
 /* Foam does one thing once, so a spent block reads as done rather than
