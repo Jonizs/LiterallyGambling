@@ -1121,7 +1121,7 @@ body {
 }
 .anatomy-lines polyline {
   fill: none;
-  stroke: rgba(198,205,216,.8);
+  stroke: rgba(154,160,171,.5);
   stroke-width: 2;
   stroke-linecap: butt;
   stroke-linejoin: miter;
@@ -1137,12 +1137,13 @@ body {
   -webkit-text-stroke: .5px currentColor;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: #eef2f7;
+  /* Parts are not worked yet, so name and box both sit back in grey. */
+  color: #9aa0ab;
   text-shadow: 1px 1px 0 #000;
   /* Each name sits in its own box, and the box lights up under the cursor. */
   padding: .2em .5em;
-  border: 2px solid rgba(198,205,216,.8);
-  background: rgba(12,16,24,.55);
+  border: 2px solid rgba(154,160,171,.45);
+  background: rgba(16,18,22,.55);
   cursor: pointer;
   transition: color .12s ease-out, border-color .12s ease-out,
     background .12s ease-out;
