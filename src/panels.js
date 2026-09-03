@@ -725,13 +725,13 @@
   // A roll at the top of the window throws pixels out of the box it landed
   // in. They clear themselves up once they have fallen.
   function burst(box) {
-    for (var i = 0; i < 18; i++) {
+    for (var i = 0; i < 34; i++) {
       var bit = el("span", "sand-spark");
       bit.style.left = (15 + Math.random() * 70) + "%";
       bit.style.top = (30 + Math.random() * 40) + "%";
-      bit.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
-      bit.style.setProperty("--dy", (-30 - Math.random() * 70) + "px");
-      bit.style.animationDelay = (Math.random() * 0.12) + "s";
+      bit.style.setProperty("--dx", (Math.random() * 200 - 100) + "px");
+      bit.style.setProperty("--dy", (-40 - Math.random() * 110) + "px");
+      bit.style.animationDelay = (Math.random() * 0.2) + "s";
       bit.addEventListener("animationend", function () {
         if (this.parentNode) this.parentNode.removeChild(this);
       });
@@ -767,7 +767,10 @@
         line.className = "sand-roll rolled " +
           (roll.gold ? "gold" : roll.up ? "up" : "down");
         line.textContent = roll.text;
-        if (roll.gold) burst(line.parentNode);
+        if (roll.gold) {
+          line.parentNode.classList.add("maxed");
+          burst(line.parentNode);
+        }
         done();
         return;
       }
@@ -801,6 +804,7 @@
       head.appendChild(span);
       box.appendChild(head);
       var line = sandLine(item, block, roll);
+      if (roll && roll.gold) box.classList.add("maxed");
       box.appendChild(line);
 
       var cost = item ? global.Sand.costFor(item, block) : 0;
