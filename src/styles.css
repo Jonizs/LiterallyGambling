@@ -1316,6 +1316,9 @@ body {
   color: var(--gold-lit, #ffd479);
 }
 .sand-box:disabled { opacity: .5; cursor: not-allowed; }
+/* Foam does one thing once, so a spent block reads as done rather than
+   greyed out. */
+.sand-box.tier:disabled { opacity: 1; }
 @media (hover: hover) {
   .sand-box:not(:disabled):hover {
     border-color: #ffd479;

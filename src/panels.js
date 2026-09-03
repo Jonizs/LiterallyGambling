@@ -745,7 +745,7 @@
     var settlers = [];
     function settleAll() { settlers.forEach(function (fn) { fn(); }); }
     global.Sand.BLOCKS.forEach(function (block) {
-      var box = el("button", "sand-box");
+      var box = el("button", "sand-box" + (block.tier ? " tier" : ""));
       box.type = "button";
       var roll = sandShown(block);
       // The name, with the window it rolls in set small beside it once the
@@ -761,14 +761,15 @@
 
       var cost = item ? global.Sand.costFor(item, block) : 0;
       var price = el("span", "sand-cost", item && cost ? cost + " silver"
-        : "\u2014");
+        : (block.tier ? "\u00a0" : "\u2014"));
       box.appendChild(price);
 
       function settle() {
         var held = heldPiece(ctx);
         var stop = held ? global.Sand.shortFor(ctx.state, held, block) : "x";
         var next = held ? global.Sand.costFor(held, block) : 0;
-        price.textContent = held && next && !stop ? next + " silver" : "\u2014";
+        price.textContent = held && next && !stop ? next + " silver"
+          : (block.tier ? "\u00a0" : "\u2014");
         box.disabled = !!stop;
         box.title = stop || "";
       }
