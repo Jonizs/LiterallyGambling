@@ -1370,6 +1370,17 @@ body {
   overflow: auto;
 }
 .split-fill { flex: 1; min-height: 0; }
+/* With nothing on the bench, modification says so in the middle of its box. */
+.mod-empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: clamp(10px, calc(1.1 * var(--s)), 24px);
+}
 /* Modification sizes itself to the box, so nothing in it scrolls. */
 .split-pane.modification, .split-pane.modification .split-work {
   overflow: hidden;

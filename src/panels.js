@@ -686,6 +686,14 @@
     return stats;
   }
 
+  // What the modification pane holds: the piece laid out part by part, or a
+  // line telling the player to put one on the bench.
+  function modFill(fill, held) {
+    fill.innerHTML = "";
+    fill.appendChild(held ? anatomy(held)
+      : el("div", "empty mod-empty", "Select a weapon"));
+  }
+
   // The modification pane's contents, so a press can redraw the piece's
   // numbers without the whole menu blinking.
   var sandFill = null;
@@ -841,10 +849,7 @@
           // Only the piece's own numbers are redrawn, so the menu does not
           // blink and the roll stays up in its box.
           var held = heldPiece(ctx);
-          if (sandFill) {
-            sandFill.innerHTML = "";
-            if (held) sandFill.appendChild(anatomy(held));
-          }
+          if (sandFill) modFill(sandFill, held);
           // The box that holds the piece carries its tier, so it is redrawn
           // as well - a foam pass moves it.
           if (sandPick && held) {
@@ -870,7 +875,7 @@
       // With a piece on the bench, modification lays it out part by part.
       if (part.key === "modification") {
         sandFill = fill;
-        if (heldPiece(ctx)) fill.appendChild(anatomy(heldPiece(ctx)));
+        modFill(fill, heldPiece(ctx));
       }
       // Sanding is four blocks, one to a box: press one and it works the
       // piece on the bench.
