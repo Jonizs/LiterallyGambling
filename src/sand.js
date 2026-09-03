@@ -76,11 +76,23 @@
     return mult.toFixed(2) === block.high.toFixed(2);
   }
 
-  // The piece as it would stand with one stat multiplied.
+  // What a block's stat stood at before the block was ever pressed on this
+  // piece. A roll replaces the stat rather than stacking on the last one, so
+  // every press is measured off this and nothing else.
+  function baseOf(item, block) {
+    if (item.sandBase && typeof item.sandBase[block.stat] === "number") {
+      return item.sandBase[block.stat];
+    }
+    return item[block.stat];
+  }
+
+  // The piece as it would stand with one stat rolled: the multiplier is put
+  // on the stat's own base, so x1.1 then x0.92 is x0.92 of the piece as it
+  // was, not the two of them multiplied together.
   function withStat(item, block, mult) {
     var out = copy(item);
     out[block.stat] = Math.max(block.places ? 0.1 : 1,
-      round(out[block.stat] * mult, block.places));
+      round(baseOf(item, block) * mult, block.places));
     if (block.stat === "critChance") G.spillCrit(out);
 
     return out;
@@ -125,8 +137,15 @@
     return out.join(",");
   }
 
+  function baseSign(item) {
+    if (!item.sandBase) return "";
+    return Object.keys(item.sandBase).sort().map(function (key) {
+      return key + "=" + item.sandBase[key];
+    }).join(",");
+  }
+
   function signOf(item) {
-    return [item.id, pressSign(item), item.rarity, item.damage, item.armor, item.durability,
+    return [item.id, pressSign(item), baseSign(item), item.rarity, item.damage, item.armor, item.durability,
       item.attackSpeed, item.critChance, item.critDamage, item.armorPen,
       item.enchants.length].join(":");
   }
@@ -142,15 +161,18 @@
   }
 
   // The best a press could do on this piece: what the top of the window is
-  // worth over what the piece fetches now. Foam is not a gamble, so its
-  // measure is simply the tier it buys.
+  // worth over the piece as the block found it. Since a roll replaces rather
+  // than stacks, that span is the same on the first press and the tenth, so
+  // the price of a press only climbs with the growth on it. Foam is not a
+  // gamble, so its measure is simply the tier it buys.
   function measure(item, block) {
-    var now = G.sellPrice(item);
     if (block.tier) {
       var up = withTier(item);
-      return up ? Math.max(0, G.sellPrice(up) - now) : 0;
+      return up ? Math.max(0, G.sellPrice(up) - G.sellPrice(item)) : 0;
     }
-    return Math.max(0, G.sellPrice(withStat(item, block, block.high)) - now);
+    var floorPrice = G.sellPrice(withStat(item, block, 1));
+    return Math.max(0,
+      G.sellPrice(withStat(item, block, block.high)) - floorPrice);
   }
 
   // What the next press costs: a share of the best roll on this piece, climbed
@@ -190,11 +212,28 @@
     var low = lowFor(item, block);
     var mult = low + Math.random() * (block.high - low);
     state.silver -= cost;
+    // The stat as the block first found it, kept so every later roll is put
+    // on it rather than on the roll before.
+    if (!block.tier) {
+      if (!item.sandBase) item.sandBase = {};
+      if (typeof item.sandBase[block.stat] !== "number") {
+        item.sandBase[block.stat] = item[block.stat];
+      }
+    }
     if (!item.sanded) item.sanded = {};
     item.sanded[block.key] = pressesOf(item, block) + 1;
 
     if (block.tier) {
       var up = withTier(item);
+      // A tier lifts the stats themselves, so anything the bench is rolling
+      // off is lifted with them and keeps its share.
+      if (item.sandBase) {
+        ["damage", "durability"].forEach(function (stat) {
+          if (typeof item.sandBase[stat] !== "number" || !item[stat]) return;
+          item.sandBase[stat] = Math.max(1,
+            Math.round(item.sandBase[stat] * (up[stat] / item[stat])));
+        });
+      }
       item.rarity = up.rarity;
       item.tier = up.tier;
       item.damage = up.damage;

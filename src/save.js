@@ -161,6 +161,16 @@
       });
       if (Object.keys(sanded).length) item.sanded = sanded;
     }
+    // What each sanded stat stood at before the bench first touched it, so a
+    // roll after a reload still replaces rather than stacks.
+    if (raw.sandBase && typeof raw.sandBase === "object") {
+      var base = {};
+      ["damage", "durability", "critDamage"].forEach(function (stat) {
+        var was = num(raw.sandBase[stat], 0);
+        if (was > 0) base[stat] = was;
+      });
+      if (Object.keys(base).length) item.sandBase = base;
+    }
     // What each block last landed on, so the bench still shows the piece's
     // own rolls after a reload.
     if (raw.rolls && typeof raw.rolls === "object") {
