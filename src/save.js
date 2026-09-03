@@ -161,6 +161,18 @@
       });
       if (Object.keys(sanded).length) item.sanded = sanded;
     }
+    // What each block last landed on, so the bench still shows the piece's
+    // own rolls after a reload.
+    if (raw.rolls && typeof raw.rolls === "object") {
+      var rolls = {};
+      global.Sand.BLOCKS.forEach(function (block) {
+        var roll = raw.rolls[block.key];
+        if (roll && typeof roll.text === "string") {
+          rolls[block.key] = { text: roll.text.slice(0, 12), up: !!roll.up };
+        }
+      });
+      if (Object.keys(rolls).length) item.rolls = rolls;
+    }
     return item;
   }
 

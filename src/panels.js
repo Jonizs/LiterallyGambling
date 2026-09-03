@@ -686,27 +686,26 @@
     return stats;
   }
 
-  // What each block last rolled on the piece that is on the bench, so the box
-  // keeps showing it after the menu redraws. Swapping pieces clears it.
-  var sandRoll = {};
-  var sandRolledOn = null;
   // The modification pane's contents, so a press can redraw the piece's
   // numbers without the whole menu blinking.
   var sandFill = null;
   var sandPick = null;
 
-  function sandShown(block) {
-    if (sandRolledOn !== polishPiece) { sandRoll = {}; sandRolledOn = polishPiece; }
-    return sandRoll[block.key];
+  // What each block last rolled is kept on the piece itself, so closing the
+  // menu or swapping pieces and coming back still shows what it landed on.
+  function sandShown(item, block) {
+    return item && item.rolls ? item.rolls[block.key] : null;
   }
 
   // The block's line: plain text for the window it rolls in, and the roll
   // itself struck large once it has been pressed.
-  function sandLine(block, roll) {
+  function sandLine(item, block, roll) {
     if (!roll) {
       // Foam only ever does the one thing, so it says so in the big green
-      // roll text from the start rather than waiting on a press.
-      if (block.tier) return el("span", "sand-roll rolled up", "Tier +1");
+      // roll text - but only with a piece on the bench to say it about.
+      if (block.tier) {
+        return el("span", "sand-roll" + (item ? " rolled up" : ""), "Tier +1");
+      }
       return el("span", "sand-roll",
         block.label + " \u00d7" + block.low + " \u2013 \u00d7" + block.high);
     }
@@ -747,7 +746,7 @@
     global.Sand.BLOCKS.forEach(function (block) {
       var box = el("button", "sand-box" + (block.tier ? " tier" : ""));
       box.type = "button";
-      var roll = sandShown(block);
+      var roll = sandShown(item, block);
       // The name, with the window it rolls in set small beside it once the
       // block has been used, so the two still sit on one line.
       var head = el("span", "sand-name", block.name);
@@ -756,7 +755,7 @@
       if (!roll) span.hidden = true;
       head.appendChild(span);
       box.appendChild(head);
-      var line = sandLine(block, roll);
+      var line = sandLine(item, block, roll);
       box.appendChild(line);
 
       var cost = item ? global.Sand.costFor(item, block) : 0;
@@ -785,7 +784,11 @@
         var landed = block.tier
           ? { text: "Tier +1", up: true }
           : { text: "\u00d7" + result.mult.toFixed(2), up: result.mult >= 1 };
-        sandRoll[block.key] = landed;
+        var piece = heldPiece(ctx);
+        if (piece) {
+          if (!piece.rolls) piece.rolls = {};
+          piece.rolls[block.key] = landed;
+        }
         span.hidden = false;
         // The purse and every other block's price change the moment the
         // block is pressed, not when its numbers stop turning.
