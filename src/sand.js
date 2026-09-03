@@ -62,7 +62,7 @@
 
   // How many times this block has been pressed on this piece.
   function pressesOf(item, block) {
-    return (item.sanded && item.sanded[block.key]) || 0;
+    return (item && item.sanded && item.sanded[block.key]) || 0;
   }
 
   // The bottom of a block's window on this piece, worn down by every press
