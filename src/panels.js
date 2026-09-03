@@ -727,6 +727,22 @@
     }
   }
 
+  // Foam does not roll anything, so its box does not flick through numbers:
+  // the tier is simply lifted into place, once.
+  function liftRoll(line, roll, done) {
+    line.className = "sand-roll rolled up lifting";
+    line.textContent = roll.text;
+    var over = false;
+    function end() {
+      if (over) return;
+      over = true;
+      line.className = "sand-roll rolled up";
+      done();
+    }
+    line.addEventListener("animationend", end);
+    setTimeout(end, 900);
+  }
+
   // The roll runs in the box: numbers flick past for a moment and settle on
   // what the block actually rolled.
   function spinRoll(line, block, roll, done) {
@@ -816,7 +832,8 @@
         ctx.refreshPurse();
         settleAll();
         box.disabled = true;
-        spinRoll(line, block, landed, function () {
+        (block.tier ? function (l, b, r, fn) { liftRoll(l, r, fn); }
+          : spinRoll)(line, block, landed, function () {
           settleAll();
           // Only the piece's own numbers are redrawn, so the menu does not
           // blink and the roll stays up in its box.
