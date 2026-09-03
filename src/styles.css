@@ -1148,6 +1148,32 @@ body {
   transition: color .12s ease-out, border-color .12s ease-out,
     background .12s ease-out;
 }
+/* The part the bench has open is lit and not a door back into itself. */
+.anatomy-tag.open {
+  color: #ffd479;
+  border-color: #ffd479;
+  background: rgba(60,44,14,.75);
+  cursor: default;
+}
+/* The box that names an open part, in place of the piece line. */
+.pick-box.part-box {
+  flex-direction: column;
+  gap: 2px;
+}
+.part-name {
+  font-size: clamp(11px, calc(1.35 * var(--s)), 30px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffd479;
+  text-shadow: 1px 1px 0 #000;
+}
+.part-back {
+  font-size: clamp(8px, calc(.95 * var(--s)), 20px);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(198,205,216,.7);
+}
 .anatomy-tag:hover {
   color: #ffd479;
   border-color: #ffd479;

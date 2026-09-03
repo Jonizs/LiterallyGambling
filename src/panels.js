@@ -431,6 +431,9 @@
   // screen that picks one.
   var polishPiece = null;
   var polishPicking = false;
+  // The part of the piece the bench has opened, or null while the whole
+  // piece is on it. Picking another piece drops back to the piece itself.
+  var polishPart = null;
 
   function heldPiece(ctx) {
     var found = null;
@@ -464,6 +467,7 @@
       row.appendChild(button(item.id === polishPiece ? "ON BENCH" : "PICK",
         "mini-btn strong", function () {
           polishPiece = item.id;
+          polishPart = null;
           polishPicking = false;
           ctx.refresh();
         }));
@@ -573,6 +577,9 @@
 
   var SVG_NS = "http://www.w3.org/2000/svg";
 
+  // Set by the polish menu so a callout can redraw it when a part is opened.
+  var onPartOpen = function () {};
+
   // The diagram is a fixed 3:2 board so everything can be placed in one set
   // of coordinates: the piece stands in the middle 39% of it, 6% clear top
   // and bottom, and the callouts run out to the columns either side.
@@ -583,8 +590,10 @@
 
   // The piece in the middle of the bench, with a line drawn off every part
   // of it that can be worked.
-  function anatomy(item) {
-    var parts = partsOf(item);
+  function anatomy(item, only) {
+    var parts = partsOf(item).filter(function (part) {
+      return !only || part.label === only;
+    });
     var wrap = el("div", "anatomy");
     // The board sits in a stage of its own so it can be sized against that
     // rather than scaled, which would soften every line and letter on it.
@@ -622,6 +631,15 @@
     parts.forEach(function (part) {
       var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"),
         part.label);
+      // A part opens onto a bench of its own. The one already open is not a
+      // way back in to itself.
+      if (only) tag.classList.add("open");
+      else {
+        tag.addEventListener("click", function () {
+          polishPart = part.label;
+          onPartOpen();
+        });
+      }
       var trim = part.trim || 0;
       tag.style.top = (atY(part) + (part.rise || 0)) + "%";
       if (part.side > 0) tag.style.left = (100 - BOARD.out - trim + 1) + "%";
@@ -631,10 +649,12 @@
 
     stage.appendChild(board);
     wrap.appendChild(stage);
-    if (!parts.length) {
+    if (!parts.length && !only) {
       wrap.appendChild(el("div", "anatomy-plain", "Nothing on this piece to modify."));
     }
-    wrap.appendChild(anatomyStats(item));
+    // A part on its own bench is shown by itself: the piece's own numbers
+    // belong to the piece, not to the part.
+    if (!only) wrap.appendChild(anatomyStats(item));
     return wrap;
   }
 
@@ -694,8 +714,21 @@
   // line telling the player to put one on the bench.
   function modFill(fill, held) {
     fill.innerHTML = "";
-    fill.appendChild(held ? anatomy(held)
-      : el("div", "empty mod-empty", "Select a weapon"));
+    if (!held) {
+      fill.appendChild(el("div", "empty mod-empty", "Select a weapon"));
+      return;
+    }
+    fill.appendChild(anatomy(held, partOpenOn(held)));
+  }
+
+  // The part the bench has open on this piece, or null - a part named on one
+  // piece does not carry over to a piece that has no such part.
+  function partOpenOn(item) {
+    if (!polishPart || !item) return null;
+    var found = partsOf(item).some(function (part) {
+      return part.label === polishPart;
+    });
+    return found ? polishPart : null;
   }
 
   // The modification pane's contents, so a press can redraw the piece's
@@ -902,6 +935,8 @@
 
   function polishPanel(ctx) {
     if (polishPicking) return polishPicker(ctx);
+    onPartOpen = function () { ctx.refresh(); };
+    var open = partOpenOn(heldPiece(ctx));
     var wrap = el("div", "split fade-in");
     POLISH_PARTS.forEach(function (part) {
       var pane = el("div", "split-pane " + part.key);
@@ -915,8 +950,12 @@
         modFill(fill, heldPiece(ctx));
       }
       // Sanding is four blocks, one to a box: press one and it works the
-      // piece on the bench.
-      if (part.key === "sanding") fill.appendChild(sandBlocks(ctx));
+      // piece on the bench. A part's own bench has none of them yet.
+      if (part.key === "sanding") {
+        fill.appendChild(open
+          ? el("div", "empty mod-empty", "Nothing to work on this part yet")
+          : sandBlocks(ctx));
+      }
       box.appendChild(fill);
       pane.appendChild(box);
       wrap.appendChild(pane);
@@ -928,11 +967,20 @@
     var pickBox = el("button", "split-work pick-box" + (held ? " filled" : ""));
     pickBox.type = "button";
     // Empty it says what it is for; filled it shows the piece itself, its
-    // icon, its name and everything it carries.
-    if (held) pickBox.appendChild(pieceLine(held));
-    else pickBox.appendChild(el("span", null, "Select weapon"));
+    // icon, its name and everything it carries. With a part open it is the
+    // part that is named there, and pressing it puts the piece back.
+    if (open) {
+      pickBox.classList.add("part-box");
+      pickBox.appendChild(el("span", "part-name", open));
+      pickBox.appendChild(el("span", "part-back", "Back to " + held.name));
+    } else if (held) {
+      pickBox.appendChild(pieceLine(held));
+    } else {
+      pickBox.appendChild(el("span", null, "Select weapon"));
+    }
     pickBox.addEventListener("click", function () {
-      polishPicking = true;
+      if (open) polishPart = null;
+      else polishPicking = true;
       ctx.refresh();
     });
     sandPick = held ? pickBox : null;
