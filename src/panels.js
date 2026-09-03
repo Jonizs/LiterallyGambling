@@ -612,7 +612,7 @@
     // a slope rather than a step sideways. The board is 3:2, so a rise of
     // one and a half units to one across reads as 45 degrees on screen.
     // trim pulls the far end of a line back a touch.
-    parts.forEach(function (part) {
+    (only ? [] : parts).forEach(function (part) {
       var x = atX(part), y = atY(part);
       var run = y + (part.rise || 0);
       var end = part.side > 0
@@ -628,7 +628,7 @@
 
     // The names are laid over the board rather than drawn into the picture,
     // so they keep the menu's own lettering.
-    parts.forEach(function (part) {
+    (only ? [] : parts).forEach(function (part) {
       var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"),
         part.label);
       // A part opens onto a bench of its own. The one already open is not a
@@ -940,9 +940,11 @@
     var wrap = el("div", "split fade-in");
     POLISH_PARTS.forEach(function (part) {
       var pane = el("div", "split-pane " + part.key);
-      // The station's name sits inside its own box, over the work.
+      // The station's name sits inside its own box, over the work. With a
+      // part on the bench the right-hand station is that part's own numbers.
       var box = el("div", "split-work");
-      box.appendChild(el("div", "split-title", part.label));
+      box.appendChild(el("div", "split-title",
+        open && part.key === "sanding" ? "Part stats" : part.label));
       var fill = el("div", "split-fill");
       // With a piece on the bench, modification lays it out part by part.
       if (part.key === "modification") {
