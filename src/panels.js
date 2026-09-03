@@ -779,7 +779,7 @@
           return ctx.refresh();
         }
         var landed = block.tier
-          ? { text: result.tier, up: true }
+          ? { text: "Tier +1", up: true }
           : { text: "\u00d7" + result.mult.toFixed(2), up: result.mult >= 1 };
         sandRoll[block.key] = landed;
         span.hidden = false;
