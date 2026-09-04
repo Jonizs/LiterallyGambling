@@ -957,8 +957,11 @@
     return boxes;
   }
 
-  // The colours the bench wears while a part of this tier is on it.
+  // The colours the bench wears while a part of this tier is on it. The tier
+  // is named on the element too, so a rung with a life of its own - the
+  // void's drifting hue - can be picked out in the stylesheet.
   function tierSkin(el2, tier) {
+    el2.classList.add("pt-" + tier.key);
     el2.style.setProperty("--pt-ink", tier.ink);
     el2.style.setProperty("--pt-ink2", tier.ink2);
     el2.style.setProperty("--pt-edge", tier.edge);
