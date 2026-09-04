@@ -1112,6 +1112,9 @@ body {
   justify-content: center;
 }
 .anatomy .anatomy-icon { height: 100%; width: auto; }
+/* A part drawn on the broad tile is sized off the frame's width instead, so
+   it runs wider than a blade ever could. */
+.anatomy .anatomy-icon.broad { width: 100%; height: auto; }
 /* The part stands in the frame the whole piece stands in. */
 .part-frame {
   display: flex;

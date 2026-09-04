@@ -1203,17 +1203,19 @@
     },
     // The rain guard, cut leather over a steel collar.
     "anat-chappe": function (c) {
-      hpx(c, 4, 16, 24, 3, C.steelDark);
-      hpx(c, 4, 16, 24, 1, C.steel);
-      hpx(c, 0, 19, 32, 5, C.leather);
-      hpx(c, 0, 19, 5, 5, C.leatherLit);
-      hpx(c, 27, 19, 5, 5, C.leatherDark);
-      hpx(c, 4, 24, 24, 3, C.leather);
-      hpx(c, 9, 27, 14, 2, C.leatherDark);
-      hpx(c, 13, 29, 6, 2, C.leatherDark);
-      hpx(c, 2, 20, 28, 1, C.leatherLit);
-      hpx(c, 13, 14, 6, 2, C.gold);
-      hpx(c, 14, 13, 3, 1, C.goldLit);
+      // Drawn across the broad tile: the flap runs the full span of it and
+      // sits shallow, the way a rain guard hangs.
+      hpx(c, 6, 6, 40, 3, C.steelDark);      // the collar it hangs off
+      hpx(c, 6, 6, 40, 1, C.steel);
+      hpx(c, 0, 9, 52, 6, C.leather);        // the flap itself
+      hpx(c, 0, 9, 7, 6, C.leatherLit);
+      hpx(c, 45, 9, 7, 6, C.leatherDark);
+      hpx(c, 3, 11, 46, 1, C.leatherLit);    // the crease along it
+      hpx(c, 5, 15, 42, 4, C.leather);       // the skirt below
+      hpx(c, 12, 19, 28, 3, C.leatherDark);
+      hpx(c, 20, 22, 12, 2, C.leatherDark);
+      hpx(c, 22, 3, 8, 3, C.gold);           // the stud it is pinned by
+      hpx(c, 23, 2, 4, 1, C.goldLit);
     },
     // A wrapped grip on its own, collared at both ends.
     "anat-handle": function (c) {
@@ -1318,6 +1320,10 @@
 
   var GRID = 16;
   var WEAPON_H = 24;            // units down the tile a weapon gets
+  var WIDE_W = 26;              // units across the tile a broad part gets
+  // Parts that lie across rather than stand up get a tile of their own, so
+  // they are not squeezed into a blade's proportions.
+  var WIDE = { "anat-chappe": 1 };
   var WEAPON = {
     sword: 1, lance: 1, dagger: 1, crackbolt: 1, bloodbane: 1, zeus: 1,
     anduril: 1,
@@ -1331,13 +1337,15 @@
   });
 
   function canvas(className, key) {
+    var wide = !!WIDE[key];
     var weapon = !!WEAPON[key];
-    var step = weapon ? 2 : 1;              // subpixels to a unit
+    var step = weapon || wide ? 2 : 1;      // subpixels to a unit
     var node = document.createElement("canvas");
-    node.width = GRID * step;
-    node.height = (weapon ? WEAPON_H : GRID) * step;
-    // .tall carries the taller aspect ratio through to the CSS.
-    node.className = (className || "icon") + (weapon ? " tall" : "");
+    node.width = (wide ? WIDE_W : GRID) * step;
+    node.height = (wide ? GRID : weapon ? WEAPON_H : GRID) * step;
+    // .tall and .broad carry the tile's shape through to the CSS.
+    node.className = (className || "icon") +
+      (wide ? " broad" : weapon ? " tall" : "");
     var ctx = node.getContext("2d");
     ctx.imageSmoothingEnabled = false;
     ctx.scale(step, step);
