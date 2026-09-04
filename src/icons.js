@@ -1203,17 +1203,17 @@
     },
     // The rain guard, cut leather over a steel collar.
     "anat-chappe": function (c) {
-      hpx(c, 5, 12, 22, 4, C.steelDark);
-      hpx(c, 5, 12, 22, 2, C.steel);
-      hpx(c, 2, 16, 28, 8, C.leather);
-      hpx(c, 2, 16, 5, 8, C.leatherLit);
-      hpx(c, 25, 16, 5, 8, C.leatherDark);
-      hpx(c, 5, 24, 22, 4, C.leather);
-      hpx(c, 8, 28, 16, 4, C.leatherDark);
-      hpx(c, 12, 32, 8, 3, C.leatherDark);
-      hpx(c, 4, 18, 22, 1, C.leatherLit);
-      hpx(c, 12, 10, 8, 2, C.gold);
-      hpx(c, 13, 9, 3, 1, C.goldLit);
+      hpx(c, 4, 16, 24, 3, C.steelDark);
+      hpx(c, 4, 16, 24, 1, C.steel);
+      hpx(c, 0, 19, 32, 5, C.leather);
+      hpx(c, 0, 19, 5, 5, C.leatherLit);
+      hpx(c, 27, 19, 5, 5, C.leatherDark);
+      hpx(c, 4, 24, 24, 3, C.leather);
+      hpx(c, 9, 27, 14, 2, C.leatherDark);
+      hpx(c, 13, 29, 6, 2, C.leatherDark);
+      hpx(c, 2, 20, 28, 1, C.leatherLit);
+      hpx(c, 13, 14, 6, 2, C.gold);
+      hpx(c, 14, 13, 3, 1, C.goldLit);
     },
     // A wrapped grip on its own, collared at both ends.
     "anat-handle": function (c) {
