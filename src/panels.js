@@ -588,6 +588,27 @@
   function atX(part) { return BOARD.left + part.x * BOARD.span / 100; }
   function atY(part) { return BOARD.top + part.y * BOARD.height / 100; }
 
+  // The part itself, blown up in the frame the whole piece stands in on the
+  // bench: the icon is scaled about its own anchor, so the part is what sits
+  // in the middle and the rest of the piece runs off the edges.
+  var PART_ZOOM = 3.2;
+
+  function partFrame(item, label) {
+    var found = null;
+    partsOf(item).forEach(function (part) {
+      if (part.label === label) found = part;
+    });
+    var frame = el("div", "anatomy-frame part-frame");
+    var zoom = el("div", "part-zoom");
+    if (found) {
+      zoom.style.transformOrigin = found.x + "% " + found.y + "%";
+    }
+    zoom.style.transform = "scale(" + PART_ZOOM + ")";
+    zoom.appendChild(I.make(item.icon, "icon anatomy-icon"));
+    frame.appendChild(zoom);
+    return frame;
+  }
+
   // The piece in the middle of the bench, with a line drawn off every part
   // of it that can be worked.
   function anatomy(item, only) {
@@ -600,12 +621,15 @@
     var stage = el("div", "anatomy-stage");
     var board = el("div", "anatomy-board");
 
-    // On a part's own bench the piece it came off is not the subject, so the
-    // board is left empty for what the part itself will carry.
     if (!only) {
       var frame = el("div", "anatomy-frame");
       frame.appendChild(I.make(item.icon, "icon anatomy-icon"));
       board.appendChild(frame);
+    } else {
+      // A part on its own bench fills the space the whole piece had: the
+      // piece is drawn large and pushed so the part itself is what the
+      // frame holds.
+      board.appendChild(partFrame(item, only));
     }
 
     var svg = document.createElementNS(SVG_NS, "svg");
@@ -657,6 +681,8 @@
 
     stage.appendChild(board);
     wrap.appendChild(stage);
+    // A rule under the part, where the piece's own numbers would start.
+    if (only) wrap.appendChild(el("div", "part-rule"));
     if (!parts.length && !only) {
       wrap.appendChild(el("div", "anatomy-plain", "Nothing on this piece to modify."));
     }

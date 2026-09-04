@@ -1112,6 +1112,26 @@ body {
   justify-content: center;
 }
 .anatomy .anatomy-icon { height: 100%; width: auto; }
+/* A part fills the frame the piece stands in, scaled about its own anchor
+   and clipped to it. */
+.part-frame { overflow: hidden; }
+.part-zoom {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+/* The rule that closes the part off, where the piece's numbers would begin. */
+.part-rule {
+  height: 0;
+  margin: var(--gap-sm) 0 0;
+  border-top: 2px solid var(--pt-edge, rgba(154,160,171,.4));
+  border-image: linear-gradient(100deg,
+    var(--pt-edge, rgba(154,160,171,.4)),
+    var(--pt-edgem, rgba(154,160,171,.4)) 50%,
+    var(--pt-edge2, rgba(154,160,171,.4))) 1;
+}
 .anatomy-lines {
   position: absolute;
   inset: 0;
