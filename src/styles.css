@@ -1211,23 +1211,23 @@ body {
 .pt-void .part-name,
 .anatomy-tag.tiered.pt-void .tag-ink {
   /* Every stop stays light enough to read on the void's black ground - the
-     band that travels is a brightening, not a darkening. */
-  background-image: linear-gradient(100deg,
-    #b98cff 0%, #d9c4ff 14%, #f2eaff 24%, #9fe4ff 34%, #d9c4ff 46%,
-    #b98cff 62%, #a97fff 80%, #b98cff 100%);
-  background-size: 300% 100%;
+     band that travels is a brightening, not a darkening. The ramp repeats on
+     a fixed run and the sweep moves it by exactly that run, so the loop has
+     no seam and no drift. */
+  background-image: repeating-linear-gradient(90deg,
+    #b98cff 0em, #d9c4ff 1.6em, #f2eaff 2.6em, #9fe4ff 3.6em,
+    #d9c4ff 4.8em, #b98cff 7em);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   /* No shadow under it: the ground is already black, and stacking one on a
      clipped gradient smears the letters instead of lifting them. */
   text-shadow: none;
-  animation: void-sweep 4.5s linear infinite;
+  animation: void-sweep 5s linear infinite;
 }
-.anatomy-tag.tiered.pt-void .tag-ink { -webkit-text-stroke: 0; }
 @keyframes void-sweep {
-  from { background-position: 0% 50%; }
-  to { background-position: -300% 50%; }
+  from { background-position-x: 0em; }
+  to { background-position-x: -7em; }
 }
 /* Flame-Cleansed burns up the letters rather than across them: ember red at
    their feet, orange through the body, white-gold off the top, and the whole
@@ -1237,22 +1237,21 @@ body {
 .pt-flame .part-stat-value,
 .pt-flame .part-name.pt-flame,
 .anatomy-tag.tiered.pt-flame .tag-ink {
-  /* The ramp comes back to the colour it started on, so the climb loops
-     without a seam - the heat shifts hue rather than snapping over. */
-  background-image: linear-gradient(0deg,
-    #e2451f 0%, #ff6a1a 14%, #ff9c22 28%, #ffc93c 40%, #fff2c0 50%,
-    #ffc93c 60%, #ff9c22 72%, #ff6a1a 86%, #e2451f 100%);
-  background-size: 100% 220%;
+  /* One run of the ramp ends on the colour it began with and repeats, and the
+     climb moves it by exactly one run, so the heat only ever shifts hue. */
+  background-image: repeating-linear-gradient(0deg,
+    #e2451f 0em, #ff6a1a 1em, #ff9c22 1.9em, #ffc93c 2.6em, #fff2c0 3.2em,
+    #ffc93c 3.8em, #ff9c22 4.5em, #ff6a1a 5.4em, #e2451f 6.4em);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: none;
-  animation: flame-rise 2.6s linear infinite;
+  animation: flame-rise 3.4s linear infinite;
 }
 .anatomy-tag.tiered.pt-flame .tag-ink { -webkit-text-stroke: 0; }
 @keyframes flame-rise {
-  from { background-position: 50% 0%; }
-  to { background-position: 50% 220%; }
+  from { background-position-y: 0em; }
+  to { background-position-y: 6.4em; }
 }
 .part-stat.tier-stat .part-stat-name { color: var(--pt-ink2, #c6cdd8); }
 /* With a part open the whole face of the menu takes its tier's colours. */
