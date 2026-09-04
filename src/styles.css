@@ -1183,30 +1183,54 @@ body {
 /* The tier box wears the tier's own colours, and so does the bench around it. */
 .part-stat.tier-stat {
   border-color: var(--pt-edge, rgba(154,160,171,.4));
-  background: var(--pt-back, rgba(10,10,12,.45));
-  box-shadow: inset 0 0 18px var(--pt-glow, transparent);
+  /* The box itself fades from the tier's ground into the bench's dark. */
+  background-image: linear-gradient(100deg,
+    var(--pt-back, rgba(10,10,12,.45)), rgba(10,10,12,.7));
+  box-shadow: inset 0 0 14px var(--pt-glow, transparent);
 }
+/* A tier's two colours run into one another across its own name. */
 .part-stat.tier-stat .part-stat-value {
   color: var(--pt-ink, #eef2f7);
-  text-shadow: 1px 1px 0 #000, 0 0 10px var(--pt-glow, transparent);
+  background-image: linear-gradient(100deg,
+    var(--pt-ink, #eef2f7) 5%, var(--pt-ink2, #c6cdd8) 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(1px 1px 0 #000)
+    drop-shadow(0 0 6px var(--pt-glow, transparent));
 }
 .part-stat.tier-stat .part-stat-name { color: var(--pt-ink2, #c6cdd8); }
 /* With a part open the whole face of the menu takes its tier's colours. */
 .split.part-open .split-work {
   border-color: var(--pt-edge, rgba(154,160,171,.35));
-  box-shadow: inset 0 0 26px var(--pt-glow, transparent);
+  box-shadow: inset 0 0 18px var(--pt-glow, transparent);
 }
 .split.part-open .split-title { color: var(--pt-ink, #eef2f7); }
 .split.part-open .part-name {
   color: var(--pt-ink, #ffd479);
-  text-shadow: 1px 1px 0 #000, 0 0 12px var(--pt-glow, transparent);
+  background-image: linear-gradient(100deg,
+    var(--pt-ink, #ffd479) 5%, var(--pt-ink2, #c6cdd8) 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(1px 1px 0 #000)
+    drop-shadow(0 0 6px var(--pt-glow, transparent));
 }
 .split.part-open .part-back { color: var(--pt-ink2, rgba(198,205,216,.7)); }
 /* Back on the piece, each callout carries the tier of its own part. */
 .anatomy-tag.tiered {
   color: var(--pt-ink, #9aa0ab);
   border-color: var(--pt-edge, rgba(154,160,171,.45));
-  background: var(--pt-back, rgba(16,18,22,.55));
+  /* The ground under the name runs from one of the tier's colours to the
+     other, so a two-toned tier reads as the mix it is. */
+  background-image: linear-gradient(100deg,
+    var(--pt-back, rgba(16,18,22,.55)), rgba(10,10,14,.75)),
+    linear-gradient(100deg, var(--pt-ink, #9aa0ab), var(--pt-ink2, #9aa0ab));
+  background-blend-mode: multiply;
+}
+/* The lettering fades across the two the same way. */
+.anatomy-tag.tiered {
+  -webkit-text-stroke: 0;
 }
 /* The part the bench has open is lit and not a door back into itself. */
 .anatomy-tag.open {
@@ -1238,7 +1262,7 @@ body {
   color: var(--pt-ink, #ffd479);
   border-color: var(--pt-ink, #ffd479);
   background: var(--pt-back, rgba(60,44,14,.75));
-  box-shadow: 0 0 14px var(--pt-glow, rgba(255,212,121,.5));
+  box-shadow: 0 0 10px var(--pt-glow, rgba(255,212,121,.15));
 }
 .anatomy-tag.left { text-align: right; }
 /* A piece with no parts to work says as much where the callouts would be. */
