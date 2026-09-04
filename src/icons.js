@@ -1203,19 +1203,16 @@
     },
     // The rain guard, cut leather over a steel collar.
     "anat-chappe": function (c) {
-      // Drawn across the broad tile: the flap runs the full span of it and
-      // sits shallow, the way a rain guard hangs.
-      hpx(c, 6, 6, 40, 3, C.steelDark);      // the collar it hangs off
-      hpx(c, 6, 6, 40, 1, C.steel);
-      hpx(c, 0, 9, 52, 6, C.leather);        // the flap itself
-      hpx(c, 0, 9, 7, 6, C.leatherLit);
-      hpx(c, 45, 9, 7, 6, C.leatherDark);
+      // Just the flap: no stud over it, no steel behind it, and nothing dark
+      // hanging under it - run right out to the edges of the broad tile.
+      hpx(c, 0, 9, 52, 8, C.leather);        // the body of it
+      hpx(c, 0, 9, 8, 8, C.leatherLit);
+      hpx(c, 44, 9, 8, 8, C.leatherDark);
       hpx(c, 3, 11, 46, 1, C.leatherLit);    // the crease along it
-      hpx(c, 5, 15, 42, 4, C.leather);       // the skirt below
-      hpx(c, 12, 19, 28, 3, C.leatherDark);
-      hpx(c, 20, 22, 12, 2, C.leatherDark);
-      hpx(c, 22, 3, 8, 3, C.gold);           // the stud it is pinned by
-      hpx(c, 23, 2, 4, 1, C.goldLit);
+      hpx(c, 0, 17, 52, 6, C.leather);       // the skirt below, just as wide
+      hpx(c, 0, 17, 8, 6, C.leatherLit);
+      hpx(c, 44, 17, 8, 6, C.leatherDark);
+      hpx(c, 3, 21, 46, 1, C.leatherLit);
     },
     // A wrapped grip on its own, collared at both ends.
     "anat-handle": function (c) {
