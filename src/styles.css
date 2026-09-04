@@ -1215,8 +1215,19 @@ body {
      a fixed run and the sweep moves it by exactly that run, so the loop has
      no seam and no drift. */
   background-image: repeating-linear-gradient(90deg,
-    #b98cff 0em, #d9c4ff 1.6em, #f2eaff 3.2em, #9fe4ff 4.8em,
-    #d9c4ff 6.4em, #b98cff 8em);
+    #b080ff 0.00em, #b182ff 0.17em, #b486ff 0.33em, #b98cff 0.50em,
+    #be94ff 0.67em, #c49cff 0.83em, #caa4ff 1.00em, #cfabff 1.17em,
+    #d3b0ff 1.33em, #d6b3ff 1.50em, #d6b4ff 1.67em, #d8b7ff 1.83em,
+    #dabdff 2.00em, #dec4ff 2.17em, #e2cdff 2.33em, #e7d5ff 2.50em,
+    #ebddff 2.67em, #eee5ff 2.83em, #f1eaff 3.00em, #f2ecff 3.17em,
+    #f0ecff 3.33em, #eaebff 3.50em, #e1eaff 3.67em, #d5e9ff 3.83em,
+    #c8e8ff 4.00em, #bce7ff 4.17em, #b0e6ff 4.33em, #a7e5ff 4.50em,
+    #a1e4ff 4.67em, #9fe4ff 4.83em, #a1e2ff 5.00em, #a6deff 5.17em,
+    #add8ff 5.33em, #b5d0ff 5.50em, #bec9ff 5.67em, #c6c2ff 5.83em,
+    #cdbcff 6.00em, #d3b7ff 6.17em, #d6b4ff 6.33em, #d6b3ff 6.50em,
+    #d3b0ff 6.67em, #cfabff 6.83em, #caa4ff 7.00em, #c49cff 7.17em,
+    #be94ff 7.33em, #b98cff 7.50em, #b486ff 7.67em, #b182ff 7.83em,
+    #b080ff 8.00em);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1240,8 +1251,19 @@ body {
   /* One run of the ramp ends on the colour it began with and repeats, and the
      climb moves it by exactly one run, so the heat only ever shifts hue. */
   background-image: repeating-linear-gradient(0deg,
-    #e2451f 0em, #ff6a1a 1em, #ff9c22 2em, #ffc93c 3em, #fff2c0 4em,
-    #ffc93c 5em, #ff9c22 6em, #ff6a1a 7em, #e2451f 8em);
+    #e24514 0.00em, #e34714 0.17em, #e74d14 0.33em, #eb5514 0.50em,
+    #f05e14 0.67em, #f66814 0.83em, #fa7014 1.00em, #fe7614 1.17em,
+    #ff7814 1.33em, #ff7b15 1.50em, #ff8319 1.67em, #ff8e1d 1.83em,
+    #ff9b23 2.00em, #ffa829 2.17em, #ffb32d 2.33em, #ffbb31 2.50em,
+    #ffbe32 2.67em, #ffc039 2.83em, #ffc74c 3.00em, #ffd066 3.17em,
+    #ffda84 3.33em, #ffe4a2 3.50em, #ffedbc 3.67em, #fff4cf 3.83em,
+    #fff6d6 4.00em, #fff4cf 4.17em, #ffedbc 4.33em, #ffe4a2 4.50em,
+    #ffda84 4.67em, #ffd066 4.83em, #ffc74c 5.00em, #ffc039 5.17em,
+    #ffbe32 5.33em, #ffbb31 5.50em, #ffb32d 5.67em, #ffa829 5.83em,
+    #ff9b23 6.00em, #ff8e1d 6.17em, #ff8319 6.33em, #ff7b15 6.50em,
+    #ff7814 6.67em, #fe7614 6.83em, #fa7014 7.00em, #f66814 7.17em,
+    #f05e14 7.33em, #eb5514 7.50em, #e74d14 7.67em, #e34714 7.83em,
+    #e24514 8.00em);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
