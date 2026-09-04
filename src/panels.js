@@ -588,24 +588,12 @@
   function atX(part) { return BOARD.left + part.x * BOARD.span / 100; }
   function atY(part) { return BOARD.top + part.y * BOARD.height / 100; }
 
-  // The part itself, blown up in the frame the whole piece stands in on the
-  // bench: the icon is scaled about its own anchor, so the part is what sits
-  // in the middle and the rest of the piece runs off the edges.
-  var PART_ZOOM = 3.2;
-
-  function partFrame(item, label) {
-    var found = null;
-    partsOf(item).forEach(function (part) {
-      if (part.label === label) found = part;
-    });
+  // The part as a piece of its own - the fitting itself, drawn the way a shop
+  // would hang it up - standing in the frame the whole weapon stands in.
+  function partFrame(label) {
     var frame = el("div", "anatomy-frame part-frame");
-    var zoom = el("div", "part-zoom");
-    if (found) {
-      zoom.style.transformOrigin = found.x + "% " + found.y + "%";
-    }
-    zoom.style.transform = "scale(" + PART_ZOOM + ")";
-    zoom.appendChild(I.make(item.icon, "icon anatomy-icon"));
-    frame.appendChild(zoom);
+    frame.appendChild(I.make("anat-" + label.toLowerCase(),
+      "icon anatomy-icon"));
     return frame;
   }
 
@@ -629,7 +617,7 @@
       // A part on its own bench fills the space the whole piece had: the
       // piece is drawn large and pushed so the part itself is what the
       // frame holds.
-      board.appendChild(partFrame(item, only));
+      board.appendChild(partFrame(only));
     }
 
     var svg = document.createElementNS(SVG_NS, "svg");

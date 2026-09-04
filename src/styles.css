@@ -1112,15 +1112,11 @@ body {
   justify-content: center;
 }
 .anatomy .anatomy-icon { height: 100%; width: auto; }
-/* A part fills the frame the piece stands in, scaled about its own anchor
-   and clipped to it. */
-.part-frame { overflow: hidden; }
-.part-zoom {
-  height: 100%;
+/* The part stands in the frame the whole piece stands in. */
+.part-frame {
   display: flex;
   align-items: center;
   justify-content: center;
-  will-change: transform;
 }
 /* The rule that closes the part off, where the piece's numbers would begin. */
 .part-rule {

@@ -1132,6 +1132,183 @@
   // and 24 down, at two subpixels to the unit, so 32x48 pixels. Everything else
   // stays a square 16x16. The context is scaled either way, so a draw function
   // works in units and a weapon reaches for half-units with hpx().
+  // Every anatomy part is a piece in its own right - the sort of fitting a
+  // shop would hang on a hook - drawn on the same tall fine grid a weapon
+  // uses so it stands in the frame the piece stands in.
+  var ANATOMY_PARTS = {
+    // A blade tip, cut off square at the shoulder.
+    "anat-point": function (c) {
+      hpx(c, 15, 6, 2, 3, C.steelLit);
+      hpx(c, 14, 9, 4, 4, C.steel);
+      hpx(c, 14, 9, 2, 4, C.steelLit);
+      hpx(c, 12, 13, 8, 8, C.steel);
+      hpx(c, 12, 13, 3, 8, C.steelLit);
+      hpx(c, 19, 13, 1, 8, C.steelDark);
+      hpx(c, 15, 10, 2, 12, "#f6f9ff");
+      hpx(c, 11, 21, 10, 10, C.steel);
+      hpx(c, 11, 21, 3, 10, C.steelLit);
+      hpx(c, 20, 21, 1, 10, C.steelDark);
+      hpx(c, 10, 31, 12, 3, C.steelDark);
+      hpx(c, 10, 34, 12, 2, C.gold);
+      hpx(c, 11, 35, 4, 1, C.goldLit);
+    },
+    // A grooved blade section: the fuller cut deep down the middle.
+    "anat-fuller": function (c) {
+      hpx(c, 10, 6, 12, 34, C.steel);
+      hpx(c, 10, 6, 3, 34, C.steelLit);
+      hpx(c, 20, 6, 2, 34, C.steelDark);
+      hpx(c, 14, 8, 4, 30, "#5d616e");
+      hpx(c, 14, 8, 1, 30, "#42454f");
+      hpx(c, 17, 8, 1, 30, C.steelLit);
+      hpx(c, 10, 4, 12, 2, C.goldDark);
+      hpx(c, 10, 40, 12, 2, C.goldDark);
+      hpx(c, 11, 40, 4, 1, C.goldLit);
+    },
+    // The cutting edge itself, ground to a bright bevel.
+    "anat-true edge": function (c) {
+      hpx(c, 12, 6, 10, 36, C.steel);
+      hpx(c, 12, 6, 2, 36, "#ffffff");
+      hpx(c, 14, 6, 2, 36, C.steelLit);
+      hpx(c, 20, 6, 2, 36, C.steelDark);
+      hpx(c, 16, 12, 1, 24, C.steelLit);
+      hpx(c, 12, 4, 10, 2, C.goldDark);
+      hpx(c, 12, 42, 10, 2, C.goldDark);
+    },
+    // A diamond section, the ridge running proud down its spine.
+    "anat-central ridge": function (c) {
+      hpx(c, 10, 6, 12, 36, C.steelDark);
+      hpx(c, 12, 6, 8, 36, C.steel);
+      hpx(c, 15, 6, 2, 36, "#f4f7ff");
+      hpx(c, 14, 8, 1, 32, C.steelLit);
+      hpx(c, 17, 8, 1, 32, C.steelLit);
+      hpx(c, 10, 6, 1, 36, "#4a4d57");
+      hpx(c, 21, 6, 1, 36, "#4a4d57");
+      hpx(c, 10, 42, 12, 2, C.goldDark);
+    },
+    // The blunt heel of the blade, stamped by the smith.
+    "anat-ricasso": function (c) {
+      hpx(c, 11, 10, 10, 26, C.steel);
+      hpx(c, 11, 10, 3, 26, C.steelLit);
+      hpx(c, 19, 10, 2, 26, C.steelDark);
+      hpx(c, 13, 16, 6, 6, C.steelDark);
+      hpx(c, 14, 17, 4, 4, C.gold);
+      hpx(c, 15, 18, 2, 2, C.goldLit);
+      hpx(c, 10, 8, 12, 2, C.goldDark);
+      hpx(c, 10, 36, 12, 3, C.gold);
+      hpx(c, 11, 37, 4, 1, C.goldLit);
+      hpx(c, 12, 39, 8, 3, C.leather);
+      hpx(c, 12, 39, 2, 3, C.leatherLit);
+    },
+    // The rain guard, cut leather over a steel collar.
+    "anat-chappe": function (c) {
+      hpx(c, 8, 12, 16, 4, C.steelDark);
+      hpx(c, 8, 12, 16, 2, C.steel);
+      hpx(c, 6, 16, 20, 8, C.leather);
+      hpx(c, 6, 16, 4, 8, C.leatherLit);
+      hpx(c, 22, 16, 4, 8, C.leatherDark);
+      hpx(c, 8, 24, 16, 4, C.leather);
+      hpx(c, 10, 28, 12, 4, C.leatherDark);
+      hpx(c, 13, 32, 6, 3, C.leatherDark);
+      hpx(c, 9, 18, 14, 1, C.leatherLit);
+      hpx(c, 12, 10, 8, 2, C.gold);
+      hpx(c, 13, 9, 3, 1, C.goldLit);
+    },
+    // A wrapped grip on its own, collared at both ends.
+    "anat-handle": function (c) {
+      hpx(c, 12, 8, 8, 4, C.gold);
+      hpx(c, 13, 9, 3, 1, C.goldLit);
+      hpx(c, 12, 12, 8, 24, C.leather);
+      hpx(c, 12, 12, 2, 24, C.leatherLit);
+      hpx(c, 18, 12, 2, 24, C.leatherDark);
+      hpx(c, 12, 15, 8, 2, C.leatherDark);
+      hpx(c, 12, 20, 8, 2, C.leatherDark);
+      hpx(c, 12, 25, 8, 2, C.leatherDark);
+      hpx(c, 12, 30, 8, 2, C.leatherDark);
+      hpx(c, 11, 36, 10, 4, C.gold);
+      hpx(c, 12, 37, 4, 1, C.goldLit);
+      hpx(c, 11, 40, 10, 2, C.goldDark);
+    },
+    // The counterweight, a gold knop with a stone set in it.
+    "anat-pommel": function (c) {
+      hpx(c, 13, 10, 6, 3, C.goldDark);
+      hpx(c, 10, 13, 12, 4, C.gold);
+      hpx(c, 8, 17, 16, 10, C.gold);
+      hpx(c, 8, 17, 4, 10, C.goldLit);
+      hpx(c, 21, 17, 3, 10, C.goldDark);
+      hpx(c, 10, 27, 12, 4, C.gold);
+      hpx(c, 12, 31, 8, 3, C.goldDark);
+      hpx(c, 13, 19, 6, 6, "#4a2f6b");
+      hpx(c, 14, 20, 4, 4, "#8a5ad0");
+      hpx(c, 15, 21, 2, 2, "#d9c2ff");
+      hpx(c, 10, 34, 12, 2, C.goldDark);
+    },
+    // A short blade blank, ground and ready.
+    "anat-blade": function (c) {
+      hpx(c, 15, 5, 2, 3, C.steelLit);
+      hpx(c, 13, 8, 6, 4, C.steel);
+      hpx(c, 11, 12, 10, 24, C.steel);
+      hpx(c, 11, 12, 3, 24, C.steelLit);
+      hpx(c, 19, 12, 2, 24, C.steelDark);
+      hpx(c, 15, 10, 2, 24, "#eef2ff");
+      hpx(c, 10, 36, 12, 3, C.goldDark);
+      hpx(c, 10, 39, 12, 2, C.gold);
+      hpx(c, 11, 39, 4, 1, C.goldLit);
+      hpx(c, 14, 41, 4, 3, C.leather);
+    },
+    // A cut gear, teeth all round.
+    "anat-gear": function (c) {
+      hpx(c, 8, 16, 16, 16, C.steel);
+      hpx(c, 8, 16, 5, 16, C.steelLit);
+      hpx(c, 20, 16, 4, 16, C.steelDark);
+      hpx(c, 10, 12, 4, 4, C.steel);
+      hpx(c, 18, 12, 4, 4, C.steel);
+      hpx(c, 10, 32, 4, 4, C.steelDark);
+      hpx(c, 18, 32, 4, 4, C.steelDark);
+      hpx(c, 4, 20, 4, 4, C.steelLit);
+      hpx(c, 4, 26, 4, 4, C.steel);
+      hpx(c, 24, 20, 4, 4, C.steel);
+      hpx(c, 24, 26, 4, 4, C.steelDark);
+      hpx(c, 13, 21, 6, 6, "#3d4049");
+      hpx(c, 14, 22, 4, 4, C.shadow);
+      hpx(c, 10, 18, 6, 1, C.steelLit);
+    },
+    // A plain band ring, seen face on.
+    "anat-ring": function (c) {
+      hpx(c, 9, 14, 14, 4, C.gold);
+      hpx(c, 7, 18, 18, 12, C.gold);
+      hpx(c, 9, 30, 14, 4, C.gold);
+      hpx(c, 7, 18, 4, 12, C.goldLit);
+      hpx(c, 21, 18, 4, 12, C.goldDark);
+      hpx(c, 12, 18, 8, 12, C.shadow);
+      hpx(c, 11, 17, 10, 2, C.goldDark);
+      hpx(c, 11, 29, 10, 2, C.goldDark);
+      hpx(c, 9, 20, 2, 4, C.goldLit);
+    },
+    // Koba: the tip's own small facet, kept as a wedge.
+    "anat-koba": function (c) {
+      hpx(c, 18, 8, 4, 4, C.steelLit);
+      hpx(c, 15, 12, 8, 5, C.steel);
+      hpx(c, 12, 17, 12, 6, C.steel);
+      hpx(c, 12, 17, 3, 6, C.steelLit);
+      hpx(c, 9, 23, 15, 7, C.steel);
+      hpx(c, 9, 23, 3, 7, "#ffffff");
+      hpx(c, 21, 12, 2, 18, C.steelDark);
+      hpx(c, 9, 30, 15, 4, C.steelDark);
+      hpx(c, 9, 34, 15, 2, C.goldDark);
+    },
+    // Muna: the spine of the blade, thick and unsharpened.
+    "anat-muna": function (c) {
+      hpx(c, 11, 6, 10, 34, C.steelDark);
+      hpx(c, 13, 6, 8, 34, C.steel);
+      hpx(c, 16, 6, 3, 34, C.steelLit);
+      hpx(c, 11, 6, 2, 34, "#42454f");
+      hpx(c, 19, 10, 1, 26, "#f2f5ff");
+      hpx(c, 11, 4, 10, 2, C.goldDark);
+      hpx(c, 11, 40, 10, 2, C.goldDark);
+      hpx(c, 12, 40, 4, 1, C.goldLit);
+    }
+  };
+
   var GRID = 16;
   var WEAPON_H = 24;            // units down the tile a weapon gets
   var WEAPON = {
@@ -1140,6 +1317,11 @@
     "sword-silhouette-1": 1, "sword-silhouette-2": 1, "sword-silhouette-3": 1,
     "sword-silhouette-4": 1, "sword-silhouette-5": 1
   };
+
+  Object.keys(ANATOMY_PARTS).forEach(function (key) {
+    DRAW[key] = ANATOMY_PARTS[key];
+    WEAPON[key] = 1;
+  });
 
   function canvas(className, key) {
     var weapon = !!WEAPON[key];
