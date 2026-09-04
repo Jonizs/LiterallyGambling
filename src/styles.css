@@ -1240,9 +1240,13 @@ body {
 }
 /* Under the lettering the box itself is not still: a soft rift of light
    drifts across the black and breathes with it. */
+.part-stat.tier-stat.pt-void {
+  position: relative;
+}
+/* The callout is already placed absolutely on the board, so it is left
+   where it is - only what it clips changes. */
 .part-stat.tier-stat.pt-void,
 .anatomy-tag.tiered.pt-void {
-  position: relative;
   overflow: hidden;
   isolation: isolate;
 }
