@@ -1237,10 +1237,12 @@ body {
 .pt-flame .part-stat-value,
 .pt-flame .part-name.pt-flame,
 .anatomy-tag.tiered.pt-flame .tag-ink {
+  /* The ramp comes back to the colour it started on, so the climb loops
+     without a seam - the heat shifts hue rather than snapping over. */
   background-image: linear-gradient(0deg,
-    #e2451f 0%, #ff6a1a 22%, #ff9c22 42%, #ffc93c 62%, #ffe98a 82%,
-    #fff6cf 100%);
-  background-size: 100% 260%;
+    #e2451f 0%, #ff6a1a 14%, #ff9c22 28%, #ffc93c 40%, #fff2c0 50%,
+    #ffc93c 60%, #ff9c22 72%, #ff6a1a 86%, #e2451f 100%);
+  background-size: 100% 220%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1250,7 +1252,7 @@ body {
 .anatomy-tag.tiered.pt-flame .tag-ink { -webkit-text-stroke: 0; }
 @keyframes flame-rise {
   from { background-position: 50% 0%; }
-  to { background-position: 50% 260%; }
+  to { background-position: 50% 220%; }
 }
 .part-stat.tier-stat .part-stat-name { color: var(--pt-ink2, #c6cdd8); }
 /* With a part open the whole face of the menu takes its tier's colours. */
