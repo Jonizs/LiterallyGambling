@@ -159,13 +159,13 @@
     // shorter than the tile is centred on it, so here that is 8 rows down.
     lance: function (c) {
       var i;
-      hpx(c, 15, 8, 2, 2, C.steelLit);        // head, couched straight up
-      for (i = 0; i < 2; i++) hpx(c, 14 + i * 2, 10, 2, 2, i ? C.steelDark : C.steelLit);
+      hpx(c, 15, 11, 2, 2, C.steelLit);       // head, couched straight up
+      for (i = 0; i < 2; i++) hpx(c, 14 + i * 2, 13, 2, 2, i ? C.steelDark : C.steelLit);
       for (i = 0; i < 3; i++) {
-        hpx(c, 13 + i * 2, 12, 2, 3, i === 0 ? C.steelLit : i === 1 ? C.steel : C.steelDark);
+        hpx(c, 13 + i * 2, 15, 2, 2, i === 0 ? C.steelLit : i === 1 ? C.steel : C.steelDark);
       }
       for (i = 0; i < 4; i++) {
-        hpx(c, 12 + i * 2, 15, 2, 4, i === 0 ? C.steelLit : i < 3 ? C.steel : C.steelDark);
+        hpx(c, 12 + i * 2, 17, 2, 2, i === 0 ? C.steelLit : i < 3 ? C.steel : C.steelDark);
       }
       for (i = 0; i < 3; i++) {               // shoulders back down to the socket
         hpx(c, 13 + i * 2, 19, 2, 2, i === 0 ? C.steelLit : i === 1 ? C.steel : C.steelDark);
@@ -1149,67 +1149,69 @@
       hpx(c, 11, 21, 3, 10, C.steelLit);
       hpx(c, 20, 21, 1, 10, C.steelDark);
       hpx(c, 10, 31, 12, 3, C.steelDark);
-      hpx(c, 10, 34, 12, 2, C.gold);
-      hpx(c, 11, 35, 4, 1, C.goldLit);
+      hpx(c, 11, 34, 10, 2, "#4a4d57");
     },
     // A grooved blade section: the fuller cut deep down the middle.
     "anat-fuller": function (c) {
-      hpx(c, 10, 6, 12, 34, C.steel);
-      hpx(c, 10, 6, 3, 34, C.steelLit);
-      hpx(c, 20, 6, 2, 34, C.steelDark);
+      hpx(c, 12, 6, 8, 34, C.steel);
+      hpx(c, 12, 6, 2, 34, C.steelLit);
+      hpx(c, 19, 6, 1, 34, C.steelDark);
       hpx(c, 14, 8, 4, 30, "#5d616e");
       hpx(c, 14, 8, 1, 30, "#42454f");
       hpx(c, 17, 8, 1, 30, C.steelLit);
-      hpx(c, 10, 4, 12, 2, C.goldDark);
-      hpx(c, 10, 40, 12, 2, C.goldDark);
-      hpx(c, 11, 40, 4, 1, C.goldLit);
+      hpx(c, 12, 4, 8, 2, C.goldDark);
+      hpx(c, 12, 40, 8, 2, C.goldDark);
+      hpx(c, 13, 40, 3, 1, C.goldLit);
     },
     // The cutting edge itself, ground to a bright bevel.
     "anat-true edge": function (c) {
       hpx(c, 12, 6, 10, 36, C.steel);
-      hpx(c, 12, 6, 2, 36, "#ffffff");
-      hpx(c, 14, 6, 2, 36, C.steelLit);
-      hpx(c, 20, 6, 2, 36, C.steelDark);
-      hpx(c, 16, 12, 1, 24, C.steelLit);
+      hpx(c, 12, 6, 1, 36, "#ffffff");
+      hpx(c, 13, 6, 1, 36, "#eef3ff");
+      hpx(c, 14, 6, 1, 36, C.steelLit);
+      hpx(c, 15, 6, 1, 36, "#cdd2df");
+      hpx(c, 16, 6, 1, 36, C.steel);
+      hpx(c, 17, 6, 1, 36, "#9fa4b1");
+      hpx(c, 18, 6, 1, 36, "#8b909d");
+      hpx(c, 19, 6, 1, 36, "#6c707e");
+      hpx(c, 20, 6, 1, 36, "#585c68");
+      hpx(c, 21, 6, 1, 36, "#464a54");
       hpx(c, 12, 4, 10, 2, C.goldDark);
       hpx(c, 12, 42, 10, 2, C.goldDark);
     },
     // A diamond section, the ridge running proud down its spine.
     "anat-central ridge": function (c) {
-      hpx(c, 10, 6, 12, 36, C.steelDark);
-      hpx(c, 12, 6, 8, 36, C.steel);
+      hpx(c, 13, 6, 6, 36, C.steel);
+      hpx(c, 13, 6, 1, 36, "#4a4d57");
+      hpx(c, 18, 6, 1, 36, "#4a4d57");
       hpx(c, 15, 6, 2, 36, "#f4f7ff");
-      hpx(c, 14, 8, 1, 32, C.steelLit);
-      hpx(c, 17, 8, 1, 32, C.steelLit);
-      hpx(c, 10, 6, 1, 36, "#4a4d57");
-      hpx(c, 21, 6, 1, 36, "#4a4d57");
-      hpx(c, 10, 42, 12, 2, C.goldDark);
+      hpx(c, 13, 42, 6, 2, C.goldDark);
     },
     // The blunt heel of the blade, stamped by the smith.
     "anat-ricasso": function (c) {
-      hpx(c, 11, 10, 10, 26, C.steel);
-      hpx(c, 11, 10, 3, 26, C.steelLit);
-      hpx(c, 19, 10, 2, 26, C.steelDark);
-      hpx(c, 13, 16, 6, 6, C.steelDark);
-      hpx(c, 14, 17, 4, 4, C.gold);
-      hpx(c, 15, 18, 2, 2, C.goldLit);
-      hpx(c, 10, 8, 12, 2, C.goldDark);
-      hpx(c, 10, 36, 12, 3, C.gold);
-      hpx(c, 11, 37, 4, 1, C.goldLit);
-      hpx(c, 12, 39, 8, 3, C.leather);
-      hpx(c, 12, 39, 2, 3, C.leatherLit);
+      hpx(c, 8, 15, 16, 18, C.steel);
+      hpx(c, 8, 15, 4, 18, C.steelLit);
+      hpx(c, 21, 15, 3, 18, C.steelDark);
+      hpx(c, 12, 20, 8, 8, C.steelDark);
+      hpx(c, 13, 21, 6, 6, C.gold);
+      hpx(c, 14, 22, 3, 3, C.goldLit);
+      hpx(c, 7, 13, 18, 2, C.goldDark);
+      hpx(c, 7, 33, 18, 3, C.gold);
+      hpx(c, 8, 34, 5, 1, C.goldLit);
+      hpx(c, 11, 36, 10, 3, C.leather);
+      hpx(c, 11, 36, 2, 3, C.leatherLit);
     },
     // The rain guard, cut leather over a steel collar.
     "anat-chappe": function (c) {
-      hpx(c, 8, 12, 16, 4, C.steelDark);
-      hpx(c, 8, 12, 16, 2, C.steel);
-      hpx(c, 6, 16, 20, 8, C.leather);
-      hpx(c, 6, 16, 4, 8, C.leatherLit);
-      hpx(c, 22, 16, 4, 8, C.leatherDark);
-      hpx(c, 8, 24, 16, 4, C.leather);
-      hpx(c, 10, 28, 12, 4, C.leatherDark);
-      hpx(c, 13, 32, 6, 3, C.leatherDark);
-      hpx(c, 9, 18, 14, 1, C.leatherLit);
+      hpx(c, 5, 12, 22, 4, C.steelDark);
+      hpx(c, 5, 12, 22, 2, C.steel);
+      hpx(c, 2, 16, 28, 8, C.leather);
+      hpx(c, 2, 16, 5, 8, C.leatherLit);
+      hpx(c, 25, 16, 5, 8, C.leatherDark);
+      hpx(c, 5, 24, 22, 4, C.leather);
+      hpx(c, 8, 28, 16, 4, C.leatherDark);
+      hpx(c, 12, 32, 8, 3, C.leatherDark);
+      hpx(c, 4, 18, 22, 1, C.leatherLit);
       hpx(c, 12, 10, 8, 2, C.gold);
       hpx(c, 13, 9, 3, 1, C.goldLit);
     },
@@ -1286,23 +1288,28 @@
     },
     // Koba: the tip's own small facet, kept as a wedge.
     "anat-koba": function (c) {
-      hpx(c, 18, 8, 4, 4, C.steelLit);
-      hpx(c, 15, 12, 8, 5, C.steel);
-      hpx(c, 12, 17, 12, 6, C.steel);
-      hpx(c, 12, 17, 3, 6, C.steelLit);
-      hpx(c, 9, 23, 15, 7, C.steel);
-      hpx(c, 9, 23, 3, 7, "#ffffff");
-      hpx(c, 21, 12, 2, 18, C.steelDark);
-      hpx(c, 9, 30, 15, 4, C.steelDark);
-      hpx(c, 9, 34, 15, 2, C.goldDark);
+      // The tip sits on the right and the back runs dead straight down it,
+      // so the piece reads as one half of a kunai's head.
+      hpx(c, 20, 8, 2, 3, C.steelLit);
+      hpx(c, 17, 11, 5, 4, C.steel);
+      hpx(c, 17, 11, 2, 4, C.steelLit);
+      hpx(c, 14, 15, 8, 5, C.steel);
+      hpx(c, 14, 15, 3, 5, C.steelLit);
+      hpx(c, 11, 20, 11, 6, C.steel);
+      hpx(c, 11, 20, 3, 6, "#eef2ff");
+      hpx(c, 8, 26, 14, 7, C.steel);
+      hpx(c, 8, 26, 3, 7, "#ffffff");
+      hpx(c, 21, 8, 1, 25, C.steelDark);
+      hpx(c, 8, 33, 14, 3, C.steelDark);
+      hpx(c, 8, 36, 14, 2, C.goldDark);
     },
     // Muna: the spine of the blade, thick and unsharpened.
     "anat-muna": function (c) {
-      hpx(c, 11, 6, 10, 34, C.steelDark);
-      hpx(c, 13, 6, 8, 34, C.steel);
-      hpx(c, 16, 6, 3, 34, C.steelLit);
+      hpx(c, 11, 6, 10, 34, C.steel);
       hpx(c, 11, 6, 2, 34, "#42454f");
-      hpx(c, 19, 10, 1, 26, "#f2f5ff");
+      hpx(c, 19, 6, 2, 34, C.steelDark);
+      hpx(c, 14, 8, 4, 30, "#5d616e");
+      hpx(c, 15, 8, 2, 30, "#f2f5ff");
       hpx(c, 11, 4, 10, 2, C.goldDark);
       hpx(c, 11, 40, 10, 2, C.goldDark);
       hpx(c, 12, 40, 4, 1, C.goldLit);
