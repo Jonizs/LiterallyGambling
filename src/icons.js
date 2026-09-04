@@ -1203,16 +1203,23 @@
     },
     // The rain guard, cut leather over a steel collar.
     "anat-chappe": function (c) {
-      // Just the flap: no stud over it, no steel behind it, and nothing dark
-      // hanging under it - run right out to the edges of the broad tile.
-      hpx(c, 0, 9, 52, 8, C.leather);        // the body of it
-      hpx(c, 0, 9, 8, 8, C.leatherLit);
-      hpx(c, 44, 9, 8, 8, C.leatherDark);
-      hpx(c, 3, 11, 46, 1, C.leatherLit);    // the crease along it
-      hpx(c, 0, 17, 52, 6, C.leather);       // the skirt below, just as wide
-      hpx(c, 0, 17, 8, 6, C.leatherLit);
-      hpx(c, 44, 17, 8, 6, C.leatherDark);
-      hpx(c, 3, 21, 46, 1, C.leatherLit);
+      // A wide flap whose underside is cut in a shallow curve: each row down
+      // the bottom edge pulls further in at both ends, so the piece sweeps
+      // rather than ending square.
+      var CUT = [0, 0, 1, 3, 6, 10, 15];      // how far in each row is drawn
+      var y;
+      hpx(c, 0, 6, 52, 10, C.leather);        // the body of it
+      hpx(c, 0, 6, 8, 10, C.leatherLit);
+      hpx(c, 44, 6, 8, 10, C.leatherDark);
+      hpx(c, 3, 8, 46, 1, C.leatherLit);      // the crease along it
+      for (y = 0; y < CUT.length; y++) {      // the curve under it
+        var cut = CUT[y];
+        var wide = 52 - cut * 2;
+        hpx(c, cut, 16 + y * 2, wide, 2, C.leather);
+        hpx(c, cut, 16 + y * 2, 6, 2, C.leatherLit);
+        hpx(c, 52 - cut - 6, 16 + y * 2, 6, 2, C.leatherDark);
+      }
+      hpx(c, 6, 20, 40, 1, C.leatherLit);     // a second crease over the sweep
     },
     // A wrapped grip on its own, collared at both ends.
     "anat-handle": function (c) {
