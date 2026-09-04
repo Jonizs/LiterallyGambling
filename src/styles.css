@@ -1040,6 +1040,9 @@ body {
 .anatomy-ench-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Every row takes the height of the deepest card in the list, so an empty
+     slot is the same card as a filled one rather than a shorter stub. */
+  grid-auto-rows: 1fr;
   gap: var(--gap-xs);
   min-width: 0;
 }
