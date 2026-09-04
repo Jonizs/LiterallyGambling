@@ -1214,7 +1214,9 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(1px 1px 0 #000) drop-shadow(0 0 1px rgba(0,0,0,.9));
+  /* No shadow under it: the ground is already black, and stacking one on a
+     clipped gradient smears the letters instead of lifting them. */
+  text-shadow: none;
   animation: void-sweep 4.5s linear infinite;
 }
 .anatomy-tag.tiered.pt-void .tag-ink { -webkit-text-stroke: 0; }
