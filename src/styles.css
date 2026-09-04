@@ -1215,19 +1215,19 @@ body {
      a fixed run and the sweep moves it by exactly that run, so the loop has
      no seam and no drift. */
   background-image: repeating-linear-gradient(90deg,
-    #b98cff 0em, #d9c4ff 1.6em, #f2eaff 2.6em, #9fe4ff 3.6em,
-    #d9c4ff 4.8em, #b98cff 7em);
+    #b98cff 0em, #d9c4ff 1.6em, #f2eaff 3.2em, #9fe4ff 4.8em,
+    #d9c4ff 6.4em, #b98cff 8em);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   /* No shadow under it: the ground is already black, and stacking one on a
      clipped gradient smears the letters instead of lifting them. */
   text-shadow: none;
-  animation: void-sweep 5s linear infinite;
+  animation: void-sweep 9s linear infinite;
 }
 @keyframes void-sweep {
   from { background-position-x: 0em; }
-  to { background-position-x: -7em; }
+  to { background-position-x: -8em; }
 }
 /* Flame-Cleansed burns up the letters rather than across them: ember red at
    their feet, orange through the body, white-gold off the top, and the whole
@@ -1240,18 +1240,18 @@ body {
   /* One run of the ramp ends on the colour it began with and repeats, and the
      climb moves it by exactly one run, so the heat only ever shifts hue. */
   background-image: repeating-linear-gradient(0deg,
-    #e2451f 0em, #ff6a1a 1em, #ff9c22 1.9em, #ffc93c 2.6em, #fff2c0 3.2em,
-    #ffc93c 3.8em, #ff9c22 4.5em, #ff6a1a 5.4em, #e2451f 6.4em);
+    #e2451f 0em, #ff6a1a 1em, #ff9c22 2em, #ffc93c 3em, #fff2c0 4em,
+    #ffc93c 5em, #ff9c22 6em, #ff6a1a 7em, #e2451f 8em);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: none;
-  animation: flame-rise 3.4s linear infinite;
+  animation: flame-rise 7s linear infinite;
 }
 .anatomy-tag.tiered.pt-flame .tag-ink { -webkit-text-stroke: 0; }
 @keyframes flame-rise {
   from { background-position-y: 0em; }
-  to { background-position-y: 6.4em; }
+  to { background-position-y: 8em; }
 }
 .part-stat.tier-stat .part-stat-name { color: var(--pt-ink2, #c6cdd8); }
 /* With a part open the whole face of the menu takes its tier's colours. */
