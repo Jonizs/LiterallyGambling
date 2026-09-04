@@ -1205,13 +1205,16 @@ body {
 .pt-void .part-stat-value,
 .pt-void .part-name,
 .anatomy-tag.tiered.pt-void .tag-ink {
+  /* Every stop stays light enough to read on the void's black ground - the
+     band that travels is a brightening, not a darkening. */
   background-image: linear-gradient(100deg,
-    #6f4bd8 0%, #c39dff 18%, #7fd2ff 32%, #c39dff 46%, #6f4bd8 64%,
-    #3f5ec9 82%, #6f4bd8 100%);
+    #b98cff 0%, #d9c4ff 14%, #f2eaff 24%, #9fe4ff 34%, #d9c4ff 46%,
+    #b98cff 62%, #a97fff 80%, #b98cff 100%);
   background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  filter: drop-shadow(1px 1px 0 #000) drop-shadow(0 0 1px rgba(0,0,0,.9));
   animation: void-sweep 4.5s linear infinite;
 }
 .anatomy-tag.tiered.pt-void .tag-ink { -webkit-text-stroke: 0; }
