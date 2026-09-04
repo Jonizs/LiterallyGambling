@@ -1185,13 +1185,15 @@ body {
    and the light it throws all cross it the same way. */
 .part-stat.tier-stat {
   background-color: var(--pt-back, rgba(10,10,12,.45));
-  background-image: linear-gradient(100deg,
-    var(--pt-glow, transparent), var(--pt-glow2, transparent));
+  background-image: linear-gradient(100deg, var(--pt-glow, transparent),
+    var(--pt-glowm, transparent) 50%, var(--pt-glow2, transparent));
   border-color: var(--pt-edge, rgba(154,160,171,.4));
   border-image: linear-gradient(100deg,
     var(--pt-edge, rgba(154,160,171,.4)),
+    var(--pt-edgem, rgba(154,160,171,.4)) 50%,
     var(--pt-edge2, rgba(154,160,171,.4))) 1;
   box-shadow: inset 14px 0 20px -14px var(--pt-glow, transparent),
+    inset 0 0 22px -8px var(--pt-glowm, transparent),
     inset -14px 0 20px -14px var(--pt-glow2, transparent);
 }
 .part-stat.tier-stat .part-stat-value {
@@ -1204,6 +1206,7 @@ body {
   border-color: var(--pt-edge, rgba(154,160,171,.35));
   border-image: linear-gradient(100deg,
     var(--pt-edge, rgba(154,160,171,.35)),
+    var(--pt-edgem, rgba(154,160,171,.35)) 50%,
     var(--pt-edge2, rgba(154,160,171,.35))) 1;
   box-shadow: inset 20px 0 26px -20px var(--pt-glow, transparent),
     inset -20px 0 26px -20px var(--pt-glow2, transparent);
@@ -1220,11 +1223,12 @@ body {
 .anatomy-tag.tiered {
   color: var(--pt-ink, #9aa0ab);
   background-color: var(--pt-back, rgba(16,18,22,.55));
-  background-image: linear-gradient(100deg,
-    var(--pt-glow, transparent), var(--pt-glow2, transparent));
+  background-image: linear-gradient(100deg, var(--pt-glow, transparent),
+    var(--pt-glowm, transparent) 50%, var(--pt-glow2, transparent));
   border-color: var(--pt-edge, rgba(154,160,171,.45));
   border-image: linear-gradient(100deg,
     var(--pt-edge, rgba(154,160,171,.45)),
+    var(--pt-edgem, rgba(154,160,171,.45)) 50%,
     var(--pt-edge2, rgba(154,160,171,.45))) 1;
   box-shadow: inset 10px 0 14px -10px var(--pt-glow, transparent),
     inset -10px 0 14px -10px var(--pt-glow2, transparent);

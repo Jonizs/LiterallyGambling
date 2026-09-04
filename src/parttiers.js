@@ -15,30 +15,46 @@
   // purple over dark blue - carry a second ink for what they are mixed with.
   var TIERS = [
     { index: 1, key: "earthbound", name: "Earthbound",
-      ink: "#d98f52", ink2: "#b87333", edge: "rgba(217,143,82,.85)",
+      ink: "#d98f52", ink2: "#b87333",
+      edge: "rgba(217,143,82,.85)", edgem: "rgba(200,128,64,.85)",
       edge2: "rgba(184,115,51,.85)",
-      back: "rgba(46,28,14,.55)", glow: "rgba(217,143,82,0.15)",
+      back: "rgba(46,28,14,.55)",
+      glow: "rgba(217,143,82,0.15)", glowm: "rgba(200,128,64,0.15)",
       glow2: "rgba(184,115,51,0.15)" },
+    // Quenched steel is not white paper: it is cold, blued metal coming out
+    // of the barrel, pale at one end and steel blue at the other.
     { index: 2, key: "quenched", name: "Quenched Steel",
-      ink: "#f2f6fb", ink2: "#c9d3e0", edge: "rgba(242,246,251,.85)",
-      edge2: "rgba(201,211,224,.85)",
-      back: "rgba(30,34,42,.55)", glow: "rgba(230,238,248,0.135)",
-      glow2: "rgba(201,211,224,0.135)" },
+      ink: "#e6eef8", ink2: "#8ba6c6",
+      edge: "rgba(230,238,248,.85)", edgem: "rgba(174,196,220,.85)",
+      edge2: "rgba(139,166,198,.9)",
+      back: "rgba(22,28,38,.62)",
+      glow: "rgba(226,238,252,0.14)", glowm: "rgba(160,190,222,0.15)",
+      glow2: "rgba(110,150,196,0.16)" },
+    // The fire itself: white-gold at the heart, orange through the middle,
+    // and ember red at the edge of the flame.
     { index: 3, key: "flame", name: "Flame-Cleansed",
-      ink: "#ff8a3d", ink2: "#e2452a", edge: "rgba(255,120,60,.9)",
-      edge2: "rgba(226,69,42,.9)",
-      back: "rgba(56,20,10,.6)", glow: "rgba(255,110,40,0.165)",
-      glow2: "rgba(226,69,42,0.165)" },
+      ink: "#ffd24a", ink2: "#d92b12",
+      edge: "rgba(255,210,74,.95)", edgem: "rgba(255,122,26,.95)",
+      edge2: "rgba(217,43,18,.95)",
+      back: "rgba(48,14,6,.66)",
+      glow: "rgba(255,200,70,0.2)", glowm: "rgba(255,110,25,0.22)",
+      glow2: "rgba(200,30,12,0.2)" },
     { index: 4, key: "masterwork", name: "Masterwork Temper",
-      ink: "#b9f0e8", ink2: "#ffe1a0", edge: "rgba(185,240,232,.9)",
+      ink: "#b9f0e8", ink2: "#ffe1a0",
+      edge: "rgba(185,240,232,.9)", edgem: "rgba(220,233,196,.9)",
       edge2: "rgba(255,225,160,.9)",
-      back: "rgba(16,42,44,.55)", glow: "rgba(185,240,232,0.15)",
+      back: "rgba(16,42,44,.55)",
+      glow: "rgba(185,240,232,0.15)", glowm: "rgba(220,233,196,0.15)",
       glow2: "rgba(255,225,160,0.15)" },
+    // The void: near-black ground with the purple burning through it and the
+    // deep blue underneath.
     { index: 5, key: "void", name: "Void-Touched",
-      ink: "#b98cff", ink2: "#4b6bd8", edge: "rgba(150,110,255,.9)",
-      edge2: "rgba(75,107,216,.9)",
-      back: "rgba(12,10,30,.7)", glow: "rgba(150,110,255,0.18)",
-      glow2: "rgba(60,80,200,0.18)" }
+      ink: "#c39dff", ink2: "#3f5ec9",
+      edge: "rgba(163,110,255,.95)", edgem: "rgba(74,44,140,.95)",
+      edge2: "rgba(63,94,201,.9)",
+      back: "rgba(5,3,14,.9)",
+      glow: "rgba(150,90,255,0.24)", glowm: "rgba(20,10,40,0.3)",
+      glow2: "rgba(50,70,190,0.22)" }
   ];
 
   var FIRST = TIERS[0];

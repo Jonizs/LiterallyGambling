@@ -962,9 +962,11 @@
     el2.style.setProperty("--pt-ink", tier.ink);
     el2.style.setProperty("--pt-ink2", tier.ink2);
     el2.style.setProperty("--pt-edge", tier.edge);
+    el2.style.setProperty("--pt-edgem", tier.edgem);
     el2.style.setProperty("--pt-edge2", tier.edge2);
     el2.style.setProperty("--pt-back", tier.back);
     el2.style.setProperty("--pt-glow", tier.glow);
+    el2.style.setProperty("--pt-glowm", tier.glowm);
     el2.style.setProperty("--pt-glow2", tier.glow2);
     return el2;
   }
