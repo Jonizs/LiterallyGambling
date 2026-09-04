@@ -1019,7 +1019,12 @@
     // part that is named there, and pressing it puts the piece back.
     if (open) {
       pickBox.classList.add("part-box");
-      pickBox.appendChild(el("span", "part-name", open));
+      var name = el("span", "part-name", open);
+      // The void paints its own lettering, so the box marks it as such.
+      if (global.PartTiers.tierOf(held, open).key === "void") {
+        name.classList.add("void-ink", "pt-void");
+      }
+      pickBox.appendChild(name);
       pickBox.appendChild(el("span", "part-back", "Back to " + held.name));
     } else if (held) {
       pickBox.appendChild(pieceLine(held));

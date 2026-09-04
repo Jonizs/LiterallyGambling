@@ -1200,8 +1200,12 @@ body {
   color: var(--pt-ink, #eef2f7);
   text-shadow: 1px 1px 0 #000;
 }
+.part-stat.tier-stat.pt-void .part-stat-value,
+.split.part-open .part-name.void-ink { text-shadow: none; }
 /* Void-Touched will not hold a colour: a band of it runs left to right along
    the lettering rather than the whole word changing at once. */
+.part-stat.tier-stat.pt-void .part-stat-value,
+.split.part-open .pick-box.part-box .part-name.void-ink,
 .pt-void .part-stat-value,
 .pt-void .part-name,
 .anatomy-tag.tiered.pt-void .tag-ink {
