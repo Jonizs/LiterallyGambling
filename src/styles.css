@@ -13,8 +13,6 @@
   --green: #7fc36b;
   --red: #d4645c;
   --font: "Courier New", ui-monospace, monospace;
-  /* The pixel face the part bench uses for its tiers and callouts. */
-  --font-part: "Silkscreen", "Courier New", ui-monospace, monospace;
 
   /* One percent of the frame, measured on whichever side runs out first, so
      a wide-and-short window scales off its height instead of overflowing.
@@ -1133,10 +1131,10 @@ body {
   position: absolute;
   transform: translateY(-50%);
   white-space: nowrap;
-  font-family: var(--font-part);
+  font-family: var(--font);
   font-weight: 700;
-  font-size: clamp(7px, calc(.85 * var(--s)), 19px);
-  -webkit-text-stroke: 0;
+  font-size: clamp(9px, calc(1.15 * var(--s)), 26px);
+  -webkit-text-stroke: .5px currentColor;
   letter-spacing: 1px;
   text-transform: uppercase;
   /* Parts are not worked yet, so name and box both sit back in grey. */
@@ -1169,16 +1167,14 @@ body {
   text-align: left;
 }
 .part-stat-name {
-  font-family: var(--font-part);
-  font-size: clamp(8px, calc(.9 * var(--s)), 19px);
+  font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
   letter-spacing: 1px;
   text-transform: uppercase;
   color: rgba(198,205,216,.7);
   text-shadow: 1px 1px 0 #000;
 }
 .part-stat-value {
-  font-family: var(--font-part);
-  font-size: clamp(9px, calc(1.1 * var(--s)), 24px);
+  font-size: clamp(11px, calc(1.35 * var(--s)), 30px);
   font-weight: 700;
   letter-spacing: 1px;
   color: rgba(198,205,216,.75);
@@ -1269,8 +1265,7 @@ body {
   gap: 2px;
 }
 .part-name {
-  font-family: var(--font-part);
-  font-size: clamp(9px, calc(1.1 * var(--s)), 24px);
+  font-size: clamp(11px, calc(1.35 * var(--s)), 30px);
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -1278,8 +1273,7 @@ body {
   text-shadow: 1px 1px 0 #000;
 }
 .part-back {
-  font-family: var(--font-part);
-  font-size: clamp(7px, calc(.8 * var(--s)), 16px);
+  font-size: clamp(8px, calc(.95 * var(--s)), 20px);
   letter-spacing: 1px;
   text-transform: uppercase;
   color: rgba(198,205,216,.7);
