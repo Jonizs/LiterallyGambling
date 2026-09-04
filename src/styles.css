@@ -1200,18 +1200,24 @@ body {
   color: var(--pt-ink, #eef2f7);
   text-shadow: 1px 1px 0 #000;
 }
-/* Void-Touched will not hold a colour: its lettering drifts through the
-   hues around the violet it was struck in. */
+/* Void-Touched will not hold a colour: a band of it runs left to right along
+   the lettering rather than the whole word changing at once. */
 .pt-void .part-stat-value,
-.pt-void .part-name {
-  animation: void-hue 7s linear infinite;
+.pt-void .part-name,
+.anatomy-tag.tiered.pt-void .tag-ink {
+  background-image: linear-gradient(100deg,
+    #6f4bd8 0%, #c39dff 18%, #7fd2ff 32%, #c39dff 46%, #6f4bd8 64%,
+    #3f5ec9 82%, #6f4bd8 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: void-sweep 4.5s linear infinite;
 }
-@keyframes void-hue {
-  0% { filter: hue-rotate(-35deg) saturate(1.1); }
-  25% { filter: hue-rotate(20deg) saturate(1.25); }
-  50% { filter: hue-rotate(60deg) saturate(1.15); }
-  75% { filter: hue-rotate(20deg) saturate(1.25); }
-  100% { filter: hue-rotate(-35deg) saturate(1.1); }
+.anatomy-tag.tiered.pt-void .tag-ink { -webkit-text-stroke: 0; }
+@keyframes void-sweep {
+  from { background-position: 0% 50%; }
+  to { background-position: -300% 50%; }
 }
 .part-stat.tier-stat .part-stat-name { color: var(--pt-ink2, #c6cdd8); }
 /* With a part open the whole face of the menu takes its tier's colours. */

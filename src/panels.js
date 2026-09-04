@@ -633,8 +633,10 @@
     // The names are laid over the board rather than drawn into the picture,
     // so they keep the menu's own lettering.
     (only ? [] : parts).forEach(function (part) {
-      var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"),
-        part.label);
+      // The name sits in a span of its own inside the box, so a tier that
+      // paints its lettering does not have to fight the box's own ground.
+      var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"));
+      tag.appendChild(el("span", "tag-ink", part.label));
       // A part opens onto a bench of its own. The one already open is not a
       // way back in to itself.
       tierSkin(tag, global.PartTiers.tierOf(item, part.label));
