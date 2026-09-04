@@ -1201,6 +1201,7 @@ body {
   text-shadow: 1px 1px 0 #000;
 }
 .part-stat.tier-stat.pt-void .part-stat-value,
+.part-stat.tier-stat.pt-flame .part-stat-value,
 .split.part-open .part-name.void-ink { text-shadow: none; }
 /* Void-Touched will not hold a colour: a band of it runs left to right along
    the lettering rather than the whole word changing at once. */
@@ -1227,6 +1228,29 @@ body {
 @keyframes void-sweep {
   from { background-position: 0% 50%; }
   to { background-position: -300% 50%; }
+}
+/* Flame-Cleansed burns up the letters rather than across them: ember red at
+   their feet, orange through the body, white-gold off the top, and the whole
+   heat climbing. */
+.part-stat.tier-stat.pt-flame .part-stat-value,
+.split.part-open .pick-box.part-box .part-name.pt-flame,
+.pt-flame .part-stat-value,
+.pt-flame .part-name.pt-flame,
+.anatomy-tag.tiered.pt-flame .tag-ink {
+  background-image: linear-gradient(0deg,
+    #e2451f 0%, #ff6a1a 22%, #ff9c22 42%, #ffc93c 62%, #ffe98a 82%,
+    #fff6cf 100%);
+  background-size: 100% 260%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  animation: flame-rise 2.6s linear infinite;
+}
+.anatomy-tag.tiered.pt-flame .tag-ink { -webkit-text-stroke: 0; }
+@keyframes flame-rise {
+  from { background-position: 50% 0%; }
+  to { background-position: 50% 260%; }
 }
 .part-stat.tier-stat .part-stat-name { color: var(--pt-ink2, #c6cdd8); }
 /* With a part open the whole face of the menu takes its tier's colours. */

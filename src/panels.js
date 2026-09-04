@@ -1023,9 +1023,11 @@
     if (open) {
       pickBox.classList.add("part-box");
       var name = el("span", "part-name", open);
-      // The void paints its own lettering, so the box marks it as such.
-      if (global.PartTiers.tierOf(held, open).key === "void") {
-        name.classList.add("void-ink", "pt-void");
+      // The rungs that paint their own lettering - the void's travelling
+      // band, the flame's rising heat - mark the name as theirs.
+      var openTier = global.PartTiers.tierOf(held, open).key;
+      if (openTier === "void" || openTier === "flame") {
+        name.classList.add("void-ink", "pt-" + openTier);
       }
       pickBox.appendChild(name);
       pickBox.appendChild(el("span", "part-back", "Back to " + held.name));
