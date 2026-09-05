@@ -1130,27 +1130,7 @@ body {
   align-items: center;
   justify-content: center;
 }
-.anatomy-frame.broad { left: 20.6%; width: 58.8%; }
 .anatomy .anatomy-icon { height: 100%; width: auto; }
-/* A part drawn on the broad tile is sized off the frame's width instead, so
-   it runs wider than a blade ever could. */
-.anatomy .anatomy-icon.broad { width: 100%; height: auto; }
-/* The part stands in the frame the whole piece stands in. */
-.part-frame {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-/* The rule that closes the part off, where the piece's numbers would begin. */
-.part-rule {
-  height: 0;
-  margin: var(--gap-sm) 0 0;
-  border-top: 2px solid var(--pt-edge, rgba(154,160,171,.4));
-  border-image: linear-gradient(100deg,
-    var(--pt-edge, rgba(154,160,171,.4)),
-    var(--pt-edgem, rgba(154,160,171,.4)) 50%,
-    var(--pt-edge2, rgba(154,160,171,.4))) 1;
-}
 .anatomy-lines {
   position: absolute;
   inset: 0;

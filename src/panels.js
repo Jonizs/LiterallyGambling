@@ -588,18 +588,6 @@
   function atX(part) { return BOARD.left + part.x * BOARD.span / 100; }
   function atY(part) { return BOARD.top + part.y * BOARD.height / 100; }
 
-  // The part as a piece of its own - the fitting itself, drawn the way a shop
-  // would hang it up - standing in the frame the whole weapon stands in.
-  function partFrame(label) {
-    var frame = el("div", "anatomy-frame part-frame");
-    var icon = I.make("anat-" + label.toLowerCase(), "icon anatomy-icon");
-    // A part drawn on the broad tile is not held to a blade's column: on its
-    // own bench it opens out across the whole board.
-    if (icon.classList.contains("broad")) frame.classList.add("broad");
-    frame.appendChild(icon);
-    return frame;
-  }
-
   // The piece in the middle of the bench, with a line drawn off every part
   // of it that can be worked.
   function anatomy(item, only) {
@@ -616,11 +604,6 @@
       var frame = el("div", "anatomy-frame");
       frame.appendChild(I.make(item.icon, "icon anatomy-icon"));
       board.appendChild(frame);
-    } else {
-      // A part on its own bench fills the space the whole piece had: the
-      // piece is drawn large and pushed so the part itself is what the
-      // frame holds.
-      board.appendChild(partFrame(only));
     }
 
     var svg = document.createElementNS(SVG_NS, "svg");
@@ -670,10 +653,12 @@
       board.appendChild(tag);
     });
 
-    stage.appendChild(board);
-    wrap.appendChild(stage);
-    // A rule under the part, where the piece's own numbers would start.
-    if (only) wrap.appendChild(el("div", "part-rule"));
+    // A part on its own bench is not drawn: the bench is the part's numbers,
+    // not a picture of it. Only the whole piece takes the board.
+    if (!only) {
+      stage.appendChild(board);
+      wrap.appendChild(stage);
+    }
     if (!parts.length && !only) {
       wrap.appendChild(el("div", "anatomy-plain", "Nothing on this piece to modify."));
     }
