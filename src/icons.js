@@ -1204,15 +1204,15 @@
     // The rain guard, worn the way Midas' Anduril wears it: a swept gold
     // bar rather than a leather flap.
     "anat-chappe": function (c) {
-      hpx(c, 4, 11, 44, 5, C.goldDark);       // the top edge, held in shadow
-      hpx(c, 4, 16, 44, 5, C.gold);           // the face of it
-      hpx(c, 0, 11, 4, 7, C.gold);            // the tips, swept past the ends
-      hpx(c, 48, 11, 4, 7, C.gold);
-      hpx(c, 0, 11, 4, 2, C.goldLit);
-      hpx(c, 48, 11, 4, 2, C.goldLit);
-      hpx(c, 8, 16, 10, 2, "#fffdf2");        // the light running along it
-      hpx(c, 32, 16, 10, 2, "#fffdf2");
-      hpx(c, 4, 21, 44, 2, C.goldDark);       // the underside
+      hpx(c, 4, 5, 44, 4, C.goldDark);        // the top edge, held in shadow
+      hpx(c, 4, 9, 44, 4, C.gold);            // the face of it
+      hpx(c, 0, 5, 4, 8, C.gold);             // the tips, swept past the ends
+      hpx(c, 48, 5, 4, 8, C.gold);
+      hpx(c, 0, 5, 4, 2, C.goldLit);
+      hpx(c, 48, 5, 4, 2, C.goldLit);
+      hpx(c, 8, 9, 10, 2, "#fffdf2");         // the light running along it
+      hpx(c, 32, 9, 10, 2, "#fffdf2");
+      hpx(c, 4, 13, 44, 2, C.goldDark);       // the underside
     },
     // A wrapped grip on its own, collared at both ends.
     "anat-handle": function (c) {
@@ -1318,6 +1318,7 @@
   var GRID = 16;
   var WEAPON_H = 24;            // units down the tile a weapon gets
   var WIDE_W = 26;              // units across the tile a broad part gets
+  var WIDE_H = 10;              // and units down it, so the tile lies flat
   // Parts that lie across rather than stand up get a tile of their own, so
   // they are not squeezed into a blade's proportions.
   var WIDE = { "anat-chappe": 1 };
@@ -1339,7 +1340,7 @@
     var step = weapon || wide ? 2 : 1;      // subpixels to a unit
     var node = document.createElement("canvas");
     node.width = (wide ? WIDE_W : GRID) * step;
-    node.height = (wide ? GRID : weapon ? WEAPON_H : GRID) * step;
+    node.height = (wide ? WIDE_H : weapon ? WEAPON_H : GRID) * step;
     // .tall and .broad carry the tile's shape through to the CSS.
     node.className = (className || "icon") +
       (wide ? " broad" : weapon ? " tall" : "");
