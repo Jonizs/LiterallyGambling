@@ -590,21 +590,17 @@
 
   // The piece in the middle of the bench, with a line drawn off every part
   // of it that can be worked.
-  function anatomy(item, only) {
-    var parts = partsOf(item).filter(function (part) {
-      return !only || part.label === only;
-    });
+  function anatomy(item) {
+    var parts = partsOf(item);
     var wrap = el("div", "anatomy");
     // The board sits in a stage of its own so it can be sized against that
     // rather than scaled, which would soften every line and letter on it.
     var stage = el("div", "anatomy-stage");
     var board = el("div", "anatomy-board");
 
-    if (!only) {
-      var frame = el("div", "anatomy-frame");
-      frame.appendChild(I.make(item.icon, "icon anatomy-icon"));
-      board.appendChild(frame);
-    }
+    var frame = el("div", "anatomy-frame");
+    frame.appendChild(I.make(item.icon, "icon anatomy-icon"));
+    board.appendChild(frame);
 
     var svg = document.createElementNS(SVG_NS, "svg");
     svg.setAttribute("class", "anatomy-lines");
@@ -614,7 +610,7 @@
     // a slope rather than a step sideways. The board is 3:2, so a rise of
     // one and a half units to one across reads as 45 degrees on screen.
     // trim pulls the far end of a line back a touch.
-    (only ? [] : parts).forEach(function (part) {
+    parts.forEach(function (part) {
       var x = atX(part), y = atY(part);
       var run = y + (part.rise || 0);
       var end = part.side > 0
@@ -630,7 +626,7 @@
 
     // The names are laid over the board rather than drawn into the picture,
     // so they keep the menu's own lettering.
-    (only ? [] : parts).forEach(function (part) {
+    parts.forEach(function (part) {
       // The name sits in a span of its own inside the box, so a tier that
       // paints its lettering does not have to fight the box's own ground.
       var tag = el("div", "anatomy-tag " + (part.side > 0 ? "right" : "left"));
@@ -639,13 +635,10 @@
       // way back in to itself.
       tierSkin(tag, global.PartTiers.tierOf(item, part.label));
       tag.classList.add("tiered");
-      if (only) tag.classList.add("open");
-      else {
-        tag.addEventListener("click", function () {
-          polishPart = part.label;
-          onPartOpen();
-        });
-      }
+      tag.addEventListener("click", function () {
+        polishPart = part.label;
+        onPartOpen();
+      });
       var trim = part.trim || 0;
       tag.style.top = (atY(part) + (part.rise || 0)) + "%";
       if (part.side > 0) tag.style.left = (100 - BOARD.out - trim + 1) + "%";
@@ -653,18 +646,53 @@
       board.appendChild(tag);
     });
 
-    // A part on its own bench is not drawn: the bench is the part's numbers,
-    // not a picture of it. Only the whole piece takes the board.
-    if (!only) {
-      stage.appendChild(board);
-      wrap.appendChild(stage);
-    }
-    if (!parts.length && !only) {
+    stage.appendChild(board);
+    wrap.appendChild(stage);
+    if (!parts.length) {
       wrap.appendChild(el("div", "anatomy-plain", "Nothing on this piece to modify."));
     }
-    // A part on its own bench is shown by itself: the piece's own numbers
-    // belong to the piece, not to the part.
-    if (!only) wrap.appendChild(anatomyStats(item));
+    wrap.appendChild(anatomyStats(item));
+    return wrap;
+  }
+
+  // The bench a single part is worked on: its name over three readings, an
+  // open middle where the work will go, the limit it can be tempered to,
+  // and the synergy board under that.
+  var PART_FIGURES = ["Base power", "Weight distribution", "Purity"];
+
+  function partBench(item, label) {
+    var wrap = el("div", "part-bench");
+    var tag = el("div", "part-bench-tag");
+    tag.appendChild(el("span", "tag-ink", label));
+    tierSkin(tag, global.PartTiers.tierOf(item, label));
+    wrap.appendChild(tag);
+
+    var figures = el("div", "part-figures");
+    PART_FIGURES.forEach(function (name) {
+      var box = el("div", "part-figure");
+      box.appendChild(el("span", "part-figure-name", name));
+      box.appendChild(el("span", "part-figure-value", "\u2014"));
+      figures.appendChild(box);
+    });
+    wrap.appendChild(figures);
+
+    // Nothing stands here yet: the work itself goes in this gap.
+    wrap.appendChild(el("div", "part-open-space"));
+
+    var meter = el("div", "part-meter");
+    var head = el("div", "part-meter-head");
+    head.appendChild(el("span", "part-meter-name", "Temper limit"));
+    head.appendChild(el("span", "part-meter-value", "\u2014"));
+    meter.appendChild(head);
+    var track = el("div", "part-meter-track");
+    track.appendChild(el("div", "part-meter-fill"));
+    meter.appendChild(track);
+    wrap.appendChild(meter);
+
+    var synergy = el("div", "part-synergy");
+    synergy.appendChild(el("div", "part-synergy-tag", "Synergy"));
+    synergy.appendChild(el("div", "part-synergy-body"));
+    wrap.appendChild(synergy);
     return wrap;
   }
 
@@ -742,7 +770,8 @@
       fill.appendChild(el("div", "empty mod-empty", "Select a weapon"));
       return;
     }
-    fill.appendChild(anatomy(held, partOpenOn(held)));
+    var open = partOpenOn(held);
+    fill.appendChild(open ? partBench(held, open) : anatomy(held));
   }
 
   // The part the bench has open on this piece, or null - a part named on one
