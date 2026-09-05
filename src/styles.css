@@ -1278,11 +1278,13 @@ body {
   border-left-width: 5px;
   background: rgba(10,10,12,.45);
 }
-/* Out one way is cold and slack, out the other is hot and stiff; a part
-   that reads nought is balanced. */
-.part-pull.under { border-left-color: #7fa9ff; }
-.part-pull.over { border-left-color: #e0713f; }
-.part-pull.even { border-left-color: #9ad17a; }
+/* Out one way is cold and slack, out the other is hot and stiff; a part that
+   reads nought is balanced. The bar is struck in the tier's own colours -
+   one end of them, the other, and the middle for a part that is even. */
+.part-pull { border-left-color: var(--pt-edgem, rgba(198,205,216,.55)); }
+.part-pull.under { border-left-color: var(--pt-edge, #7fa9ff); }
+.part-pull.over { border-left-color: var(--pt-edge2, #e0713f); }
+.part-pull.even { border-left-color: var(--pt-edgem, #9ad17a); }
 .part-pull-name {
   font-size: clamp(8px, calc(.92 * var(--s)), 20px);
   letter-spacing: 1px;
