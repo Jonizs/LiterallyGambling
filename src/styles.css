@@ -1263,17 +1263,19 @@ body {
 /* The two pulls sit in the left half of the board, one over the other. */
 .part-pulls {
   display: grid;
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: var(--gap-sm);
+  grid-template-rows: repeat(2, auto);
+  align-content: start;
+  gap: var(--gap-xs);
   min-height: 0;
 }
+/* A pull is a strip, not a plate: its name and its number sit on one line. */
 .part-pull {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gap-sm);
   min-height: 0;
-  padding: calc(.9 * var(--gap-xs)) calc(.9 * var(--gap-sm));
+  padding: 0 calc(.9 * var(--gap-sm));
   border: 2px solid rgba(154,160,171,.4);
   border-left-width: 5px;
   background: rgba(10,10,12,.45);
