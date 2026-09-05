@@ -1258,7 +1258,7 @@ body {
   display: grid;
   /* The pulls take a narrow column on the left; the rest of the board is
      still to be filled. */
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
   gap: var(--gap-sm);
   padding: var(--gap-sm);
 }
