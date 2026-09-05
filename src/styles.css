@@ -1193,6 +1193,14 @@ body {
   color: var(--pt-ink, rgba(198,205,216,.75));
   text-shadow: 1px 1px 0 #000;
 }
+/* The number and the word it comes out as, side by side on one line. */
+.part-figure-read {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gap-sm);
+  min-width: 0;
+}
 /* What the reading comes out as in words - the rung, the grade, the grain. */
 .part-figure-note {
   font-size: clamp(8px, calc(.92 * var(--s)), 20px);

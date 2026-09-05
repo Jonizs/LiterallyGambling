@@ -747,8 +747,12 @@
     ].forEach(function (row) {
       var box = el("div", "part-figure");
       box.appendChild(el("span", "part-figure-name", row[0]));
-      box.appendChild(el("span", "part-figure-value", row[1]));
-      box.appendChild(el("span", "part-figure-note", row[2]));
+      // The reading and what it comes out as share a line, so a box is two
+      // lines deep rather than three.
+      var read = el("div", "part-figure-read");
+      read.appendChild(el("span", "part-figure-value", row[1]));
+      read.appendChild(el("span", "part-figure-note", row[2]));
+      box.appendChild(read);
       figures.appendChild(box);
     });
     wrap.appendChild(figures);
