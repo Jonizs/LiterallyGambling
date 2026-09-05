@@ -1130,6 +1130,7 @@ body {
   align-items: center;
   justify-content: center;
 }
+.anatomy-frame.broad { left: 3%; width: 94%; }
 .anatomy .anatomy-icon { height: 100%; width: auto; }
 /* A part drawn on the broad tile is sized off the frame's width instead, so
    it runs wider than a blade ever could. */

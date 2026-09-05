@@ -592,8 +592,11 @@
   // would hang it up - standing in the frame the whole weapon stands in.
   function partFrame(label) {
     var frame = el("div", "anatomy-frame part-frame");
-    frame.appendChild(I.make("anat-" + label.toLowerCase(),
-      "icon anatomy-icon"));
+    var icon = I.make("anat-" + label.toLowerCase(), "icon anatomy-icon");
+    // A part drawn on the broad tile is not held to a blade's column: on its
+    // own bench it opens out across the whole board.
+    if (icon.classList.contains("broad")) frame.classList.add("broad");
+    frame.appendChild(icon);
     return frame;
   }
 
