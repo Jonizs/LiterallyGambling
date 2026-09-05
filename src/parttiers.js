@@ -59,6 +59,44 @@
 
   var FIRST = TIERS[0];
 
+  // What a part carries. Base power is the one number the tier is read off;
+  // the rest say how well the part is made. A part starts with no power to
+  // it, badly balanced, and full of inclusions.
+  var START = { power: 0, weight: 10, purity: 5, temper: 0 };
+  var MAX_POWER = 1000;
+  var BAND = MAX_POWER / TIERS.length;   // base power to a rung of the ladder
+
+  // How well the weight sits in the part, worst to perfect.
+  var WEIGHTS = [
+    { at: 90, name: "Perfect" }, { at: 70, name: "Good" },
+    { at: 50, name: "Normal" }, { at: 30, name: "Bad" },
+    { at: 0, name: "Worst" }
+  ];
+  // Grain size in ASTM: the smaller the number, the cleaner the steel.
+  var PURITIES = [
+    { under: 0.05, name: "Perfect" }, { under: 0.5, name: "High-Purity" },
+    { under: 1, name: "Refined" }, { under: 2, name: "Standard" },
+    { under: 3, name: "Impure" }, { under: Infinity, name: "Brittle" }
+  ];
+  // What the part is out by when it comes off the anvil: heat one way or the
+  // other, and give one way or the other. Balanced is nought on both.
+  var SYNERGY = { thermal: [4, 5], flex: [18, 20] };
+
+  function num(value, fallback) {
+    return typeof value === "number" && isFinite(value) ? value : fallback;
+  }
+
+  function clamp(value, low, high) {
+    return Math.min(high, Math.max(low, value));
+  }
+
+  function tenth(value) { return Math.round(value * 10) / 10; }
+
+  function roll(range) {
+    var size = range[0] + Math.random() * (range[1] - range[0]);
+    return tenth(Math.random() < 0.5 ? -size : size);
+  }
+
   function tierAt(index) {
     for (var i = 0; i < TIERS.length; i++) {
       if (TIERS[i].index === index) return TIERS[i];
@@ -66,22 +104,73 @@
     return FIRST;
   }
 
+  // The rung base power puts a part on: a band of the ladder each.
+  function tierFor(power) {
+    var at = Math.floor(clamp(num(power, 0), 0, MAX_POWER) / BAND) + 1;
+    return tierAt(Math.min(at, TIERS.length));
+  }
+
+  function weightGrade(pct) {
+    for (var i = 0; i < WEIGHTS.length; i++) {
+      if (pct >= WEIGHTS[i].at) return WEIGHTS[i].name;
+    }
+    return WEIGHTS[WEIGHTS.length - 1].name;
+  }
+
+  function purityGrade(astm) {
+    for (var i = 0; i < PURITIES.length; i++) {
+      if (astm < PURITIES[i].under) return PURITIES[i].name;
+    }
+    return PURITIES[PURITIES.length - 1].name;
+  }
+
+  // Everything a named part of a piece carries, written back onto the piece
+  // so what a part was rolled is what it keeps. Saves from before a part had
+  // readings of its own kept nothing but its tier.
+  function stateOf(item, label) {
+    if (!item) return read({});
+    if (!item.parts) item.parts = {};
+    var at = item.parts[label];
+    if (typeof at === "number") at = { power: (at - 1) * BAND };
+    var state = read(at && typeof at === "object" ? at : {});
+    item.parts[label] = state;
+    return state;
+  }
+
+  function read(at) {
+    return {
+      power: clamp(num(at.power, START.power), 0, MAX_POWER),
+      weight: clamp(num(at.weight, START.weight), 0, 100),
+      purity: clamp(num(at.purity, START.purity), 0, 5),
+      temper: clamp(num(at.temper, START.temper), 0, 100),
+      thermal: num(at.thermal, null) === null
+        ? roll(SYNERGY.thermal) : tenth(at.thermal),
+      flex: num(at.flex, null) === null ? roll(SYNERGY.flex) : tenth(at.flex)
+    };
+  }
+
   // What tier a named part of a piece sits at. Anything unworked is at the
   // bottom of the ladder.
   function tierOf(item, label) {
-    var at = item && item.parts && item.parts[label];
-    return tierAt(at || FIRST.index);
+    return tierFor(stateOf(item, label).power);
   }
 
+  // Put a part on a rung: the bottom of that rung's band of base power.
   function setTier(item, label, index) {
-    if (!item.parts) item.parts = {};
-    item.parts[label] = tierAt(index).index;
+    var state = stateOf(item, label);
+    state.power = (tierAt(index).index - 1) * BAND;
+    return state;
   }
 
   global.PartTiers = {
     TIERS: TIERS,
+    MAX_POWER: MAX_POWER,
     tierAt: tierAt,
+    tierFor: tierFor,
     tierOf: tierOf,
-    setTier: setTier
+    stateOf: stateOf,
+    setTier: setTier,
+    weightGrade: weightGrade,
+    purityGrade: purityGrade
   };
 })(window);

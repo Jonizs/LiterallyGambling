@@ -171,15 +171,27 @@
       });
       if (Object.keys(base).length) item.sandBase = base;
     }
-    // What tier each worked part of the piece sits at.
+    // What each worked part of the piece carries. Saves written before a part
+    // had readings of its own kept nothing but its tier, and the part module
+    // reads that back as the base power that rung starts at.
     if (raw.parts && typeof raw.parts === "object") {
       var parts = {};
       Object.keys(raw.parts).forEach(function (label) {
         if (typeof label !== "string" || label.length > 40) return;
-        var at = whole(raw.parts[label], 0);
-        if (at > 0) {
-          parts[label] = global.PartTiers.tierAt(at).index;
+        var at = raw.parts[label];
+        if (typeof at === "number") {
+          if (at > 0) parts[label] = at;
+          return;
         }
+        if (!at || typeof at !== "object") return;
+        parts[label] = {
+          power: num(at.power, 0),
+          weight: num(at.weight, 10),
+          purity: num(at.purity, 5),
+          temper: num(at.temper, 0),
+          thermal: num(at.thermal, null),
+          flex: num(at.flex, null)
+        };
       });
       if (Object.keys(parts).length) item.parts = parts;
     }

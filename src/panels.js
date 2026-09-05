@@ -658,20 +658,31 @@
   // The bench a single part is worked on: its name over three readings, an
   // open middle where the work will go, the limit it can be tempered to,
   // and the synergy board under that.
-  var PART_FIGURES = ["Base power", "Weight distribution", "Purity"];
-
   function partBench(item, label) {
+    var P = global.PartTiers;
+    var state = P.stateOf(item, label);
+    var tier = P.tierFor(state.power);
     var wrap = el("div", "part-bench");
     var tag = el("div", "part-bench-tag");
     tag.appendChild(el("span", "tag-ink", label));
-    tierSkin(tag, global.PartTiers.tierOf(item, label));
+    tierSkin(tag, tier);
     wrap.appendChild(tag);
 
+    // The three readings the part is judged on: what it can put out, how the
+    // weight sits in it, and how clean the steel is.
     var figures = el("div", "part-figures");
-    PART_FIGURES.forEach(function (name) {
+    [
+      ["Base power", Math.round(state.power) + " / " + P.MAX_POWER,
+        "Tier " + tier.index],
+      ["Weight distribution", Math.round(state.weight) + "%",
+        P.weightGrade(state.weight)],
+      ["Purity", state.purity.toFixed(1) + " ASTM",
+        P.purityGrade(state.purity)]
+    ].forEach(function (row) {
       var box = el("div", "part-figure");
-      box.appendChild(el("span", "part-figure-name", name));
-      box.appendChild(el("span", "part-figure-value", "\u2014"));
+      box.appendChild(el("span", "part-figure-name", row[0]));
+      box.appendChild(el("span", "part-figure-value", row[1]));
+      box.appendChild(el("span", "part-figure-note", row[2]));
       figures.appendChild(box);
     });
     wrap.appendChild(figures);
@@ -679,99 +690,41 @@
     // Nothing stands here yet: the work itself goes in this gap.
     wrap.appendChild(el("div", "part-open-space"));
 
+    // How hot the part is from being worked. Full, and it has to cool before
+    // it can be taken up again.
     var meter = el("div", "part-meter");
     var head = el("div", "part-meter-head");
     head.appendChild(el("span", "part-meter-name", "Temper limit"));
-    head.appendChild(el("span", "part-meter-value", "\u2014"));
+    head.appendChild(el("span", "part-meter-value",
+      Math.round(state.temper) + "%"));
     meter.appendChild(head);
     var track = el("div", "part-meter-track");
-    track.appendChild(el("div", "part-meter-fill"));
+    var fill = el("div", "part-meter-fill");
+    fill.style.width = Math.round(state.temper) + "%";
+    track.appendChild(fill);
     meter.appendChild(track);
     wrap.appendChild(meter);
 
+    // What the part is out by, heat and give. Nought on both is balanced,
+    // and a reading either side of it is not.
     var synergy = el("div", "part-synergy");
     synergy.appendChild(el("div", "part-synergy-tag", "Synergy"));
-    synergy.appendChild(el("div", "part-synergy-body"));
+    var body = el("div", "part-synergy-body");
+    var pulls = el("div", "part-pulls");
+    [["Thermal", state.thermal], ["Flexibility", state.flex]].forEach(
+      function (row) {
+        var off = Math.abs(row[1]) < 0.05;
+        var box = el("div", "part-pull" +
+          (off ? " even" : row[1] < 0 ? " under" : " over"));
+        box.appendChild(el("span", "part-pull-name", row[0]));
+        box.appendChild(el("span", "part-pull-value",
+          (row[1] > 0 ? "+" : "") + row[1].toFixed(1)));
+        pulls.appendChild(box);
+      });
+    body.appendChild(pulls);
+    synergy.appendChild(body);
     wrap.appendChild(synergy);
     return wrap;
-  }
-
-  // The piece's own numbers, spelled out under the diagram: two rows of
-  // plates across the frame, with what it carries beneath them.
-  function anatomyStats(item) {
-    var stats = el("div", "anatomy-stats");
-
-    // Paired down the columns, so crit damage sits under crit chance.
-    var grid = el("div", "anatomy-grid");
-    [
-      ["Damage", item.damage, "dmg"],
-      ["Armour", item.armor, "arm"],
-      ["Attack speed", item.attackSpeed, "spd"],
-      ["Crit chance", item.critChance + "%", "crit"],
-      ["Crit damage", item.critDamage + "%", "crit"],
-      ["Armour pen", item.armorPen, "pen"],
-      ["Durability", item.durability, "dur"]
-    ].forEach(function (row) {
-      if (row[1] === undefined || row[1] === null || row[1] === 0) return;
-      var plate = el("div", "anatomy-stat " + row[2]);
-      plate.appendChild(el("span", "anatomy-stat-name", row[0]));
-      plate.appendChild(el("span", "anatomy-stat-value", String(row[1])));
-      grid.appendChild(plate);
-    });
-    stats.appendChild(grid);
-
-    // The board always holds six boxes: what is set, what is still open on
-    // this piece, and the rest locked off.
-    var slots = el("div", "anatomy-slots");
-    var list = el("div", "anatomy-ench-list");
-    for (var i = 0; i < 6; i++) {
-      var entry = item.enchants[i];
-      if (entry) {
-        var card = el("div", "anatomy-ench " + entry.rarity);
-        card.appendChild(el("span", "anatomy-ench-name", E.label(entry)));
-        // One stat a line, so a two-stat enchant still reads in the box.
-        if (entry.text) {
-          entry.text.split(", ").forEach(function (bit) {
-            card.appendChild(el("span", "anatomy-ench-text", bit));
-          });
-        }
-        list.appendChild(card);
-      } else if (i < item.slots) {
-        list.appendChild(blankSlot("open", "Empty"));
-      } else {
-        list.appendChild(blankSlot("locked", "Locked"));
-      }
-    }
-    slots.appendChild(list);
-    stats.appendChild(slots);
-
-    return stats;
-  }
-
-  // A slot with nothing in it still stands as tall as a card carrying a
-  // two-stat enchant: an unseen name and two lines of text hold the box
-  // open, and the word sits centred over them.
-  function blankSlot(kind, word) {
-    var card = el("div", "anatomy-ench " + kind);
-    var ghost = el("span", "anatomy-ench-ghost");
-    ghost.appendChild(el("span", "anatomy-ench-name", word));
-    ghost.appendChild(el("span", "anatomy-ench-text", word));
-    ghost.appendChild(el("span", "anatomy-ench-text", word));
-    card.appendChild(ghost);
-    card.appendChild(el("span", "anatomy-ench-word", word));
-    return card;
-  }
-
-  // What the modification pane holds: the piece laid out part by part, or a
-  // line telling the player to put one on the bench.
-  function modFill(fill, held) {
-    fill.innerHTML = "";
-    if (!held) {
-      fill.appendChild(el("div", "empty mod-empty", "Select a weapon"));
-      return;
-    }
-    var open = partOpenOn(held);
-    fill.appendChild(open ? partBench(held, open) : anatomy(held));
   }
 
   // The part the bench has open on this piece, or null - a part named on one
