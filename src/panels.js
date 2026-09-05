@@ -999,7 +999,10 @@
       // The tier's own box is named for its rung, so the rungs that letter
       // themselves - the void - can reach it past the plainer rules.
       if (!i) tierSkin(box, tier);
-      box.appendChild(el("span", "part-stat-name", i ? name : "Tier"));
+      // The tier's own box is headed with the rung it sits on - Tier 3 - and
+      // names that rung underneath.
+      box.appendChild(el("span", "part-stat-name",
+        i ? name : "Tier " + tier.index));
       box.appendChild(el("span", "part-stat-value",
         i ? "\u2014" : tier.name));
       boxes.appendChild(box);
