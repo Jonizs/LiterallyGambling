@@ -1064,7 +1064,23 @@ body {
   line-height: 1.2;
 }
 /* A slot the piece has but has not filled, and one it does not have at all. */
-.anatomy-ench.open, .anatomy-ench.locked { justify-content: center; }
+.anatomy-ench.open, .anatomy-ench.locked { position: relative; }
+/* The ghost only takes up room; the word is laid over it. */
+.anatomy-ench-ghost {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  visibility: hidden;
+}
+.anatomy-ench-word {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
 .anatomy-ench.open {
   border-style: dashed;
   border-left-color: rgba(198,205,216,.45);

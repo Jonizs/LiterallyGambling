@@ -721,15 +721,29 @@
         }
         list.appendChild(card);
       } else if (i < item.slots) {
-        list.appendChild(el("div", "anatomy-ench open", "Empty"));
+        list.appendChild(blankSlot("open", "Empty"));
       } else {
-        list.appendChild(el("div", "anatomy-ench locked", "Locked"));
+        list.appendChild(blankSlot("locked", "Locked"));
       }
     }
     slots.appendChild(list);
     stats.appendChild(slots);
 
     return stats;
+  }
+
+  // A slot with nothing in it still stands as tall as a card carrying a
+  // two-stat enchant: an unseen name and two lines of text hold the box
+  // open, and the word sits centred over them.
+  function blankSlot(kind, word) {
+    var card = el("div", "anatomy-ench " + kind);
+    var ghost = el("span", "anatomy-ench-ghost");
+    ghost.appendChild(el("span", "anatomy-ench-name", word));
+    ghost.appendChild(el("span", "anatomy-ench-text", word));
+    ghost.appendChild(el("span", "anatomy-ench-text", word));
+    card.appendChild(ghost);
+    card.appendChild(el("span", "anatomy-ench-word", word));
+    return card;
   }
 
   // What the modification pane holds: the piece laid out part by part, or a
