@@ -1201,25 +1201,21 @@
       hpx(c, 11, 36, 10, 3, C.leather);
       hpx(c, 11, 36, 2, 3, C.leatherLit);
     },
-    // The rain guard, cut leather over a steel collar.
+    // The rain guard, worn the way Midas' Anduril wears it: a swept gold
+    // bar rather than a leather flap.
     "anat-chappe": function (c) {
-      // A wide flap whose underside is cut in a shallow curve: each row down
-      // the bottom edge pulls further in at both ends, so the piece sweeps
-      // rather than ending square.
-      var CUT = [0, 0, 1, 3, 6, 10, 15];      // how far in each row is drawn
-      var y;
-      hpx(c, 0, 6, 52, 10, C.leather);        // the body of it
-      hpx(c, 0, 6, 8, 10, C.leatherLit);
-      hpx(c, 44, 6, 8, 10, C.leatherDark);
-      hpx(c, 3, 8, 46, 1, C.leatherLit);      // the crease along it
-      for (y = 0; y < CUT.length; y++) {      // the curve under it
-        var cut = CUT[y];
-        var wide = 52 - cut * 2;
-        hpx(c, cut, 16 + y * 2, wide, 2, C.leather);
-        hpx(c, cut, 16 + y * 2, 6, 2, C.leatherLit);
-        hpx(c, 52 - cut - 6, 16 + y * 2, 6, 2, C.leatherDark);
-      }
-      hpx(c, 6, 20, 40, 1, C.leatherLit);     // a second crease over the sweep
+      hpx(c, 6, 11, 40, 5, C.goldDark);       // the top edge, held in shadow
+      hpx(c, 6, 16, 40, 5, C.gold);           // the face of it
+      hpx(c, 2, 11, 4, 7, C.gold);            // the tips, swept past the ends
+      hpx(c, 46, 11, 4, 7, C.gold);
+      hpx(c, 2, 11, 4, 2, C.goldLit);
+      hpx(c, 46, 11, 4, 2, C.goldLit);
+      hpx(c, 9, 16, 9, 2, "#fffdf2");         // the light running along it
+      hpx(c, 31, 16, 9, 2, "#fffdf2");
+      hpx(c, 6, 21, 40, 2, C.goldDark);       // the underside
+      hpx(c, 22, 23, 8, 3, C.gold);           // the collar below the guard
+      hpx(c, 23, 24, 3, 1, C.goldLit);
+      hpx(c, 22, 26, 8, 2, C.goldDark);
     },
     // A wrapped grip on its own, collared at both ends.
     "anat-handle": function (c) {
