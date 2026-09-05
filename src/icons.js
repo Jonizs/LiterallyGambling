@@ -1204,18 +1204,15 @@
     // The rain guard, worn the way Midas' Anduril wears it: a swept gold
     // bar rather than a leather flap.
     "anat-chappe": function (c) {
-      hpx(c, 6, 11, 40, 5, C.goldDark);       // the top edge, held in shadow
-      hpx(c, 6, 16, 40, 5, C.gold);           // the face of it
-      hpx(c, 2, 11, 4, 7, C.gold);            // the tips, swept past the ends
-      hpx(c, 46, 11, 4, 7, C.gold);
-      hpx(c, 2, 11, 4, 2, C.goldLit);
-      hpx(c, 46, 11, 4, 2, C.goldLit);
-      hpx(c, 9, 16, 9, 2, "#fffdf2");         // the light running along it
-      hpx(c, 31, 16, 9, 2, "#fffdf2");
-      hpx(c, 6, 21, 40, 2, C.goldDark);       // the underside
-      hpx(c, 22, 23, 8, 3, C.gold);           // the collar below the guard
-      hpx(c, 23, 24, 3, 1, C.goldLit);
-      hpx(c, 22, 26, 8, 2, C.goldDark);
+      hpx(c, 4, 11, 44, 5, C.goldDark);       // the top edge, held in shadow
+      hpx(c, 4, 16, 44, 5, C.gold);           // the face of it
+      hpx(c, 0, 11, 4, 7, C.gold);            // the tips, swept past the ends
+      hpx(c, 48, 11, 4, 7, C.gold);
+      hpx(c, 0, 11, 4, 2, C.goldLit);
+      hpx(c, 48, 11, 4, 2, C.goldLit);
+      hpx(c, 8, 16, 10, 2, "#fffdf2");        // the light running along it
+      hpx(c, 32, 16, 10, 2, "#fffdf2");
+      hpx(c, 4, 21, 44, 2, C.goldDark);       // the underside
     },
     // A wrapped grip on its own, collared at both ends.
     "anat-handle": function (c) {
