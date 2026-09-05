@@ -1183,14 +1183,14 @@ body {
   font-size: clamp(8px, calc(.92 * var(--s)), 20px);
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: rgba(198,205,216,.7);
+  color: var(--pt-ink2, rgba(198,205,216,.7));
   text-shadow: 1px 1px 0 #000;
 }
 .part-figure-value {
   font-size: clamp(10px, calc(1.17 * var(--s)), 25px);
   font-weight: 700;
   letter-spacing: 1px;
-  color: rgba(198,205,216,.75);
+  color: var(--pt-ink, rgba(198,205,216,.75));
   text-shadow: 1px 1px 0 #000;
 }
 /* What the reading comes out as in words - the rung, the grade, the grain. */
@@ -1198,7 +1198,7 @@ body {
   font-size: clamp(8px, calc(.92 * var(--s)), 20px);
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: rgba(198,205,216,.55);
+  color: var(--pt-ink2, rgba(198,205,216,.55));
   text-shadow: 1px 1px 0 #000;
 }
 /* The gap the work itself will stand in. */
@@ -1215,10 +1215,10 @@ body {
   font-size: clamp(9px, calc(1.05 * var(--s)), 22px);
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: rgba(198,205,216,.7);
+  color: var(--pt-ink2, rgba(198,205,216,.7));
   text-shadow: 1px 1px 0 #000;
 }
-.part-meter-value { color: rgba(198,205,216,.85); font-weight: 700; }
+.part-meter-value { color: var(--pt-ink, rgba(198,205,216,.85)); font-weight: 700; }
 .part-meter-track {
   height: clamp(8px, calc(1.1 * var(--s)), 20px);
   border: 2px solid rgba(154,160,171,.4);
@@ -1249,7 +1249,7 @@ body {
   letter-spacing: 2px;
   text-transform: uppercase;
   text-align: center;
-  color: rgba(198,205,216,.8);
+  color: var(--pt-ink, rgba(198,205,216,.8));
   text-shadow: 1px 1px 0 #000;
 }
 .part-synergy-body {
@@ -1287,19 +1287,16 @@ body {
   font-size: clamp(8px, calc(.92 * var(--s)), 20px);
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: rgba(198,205,216,.7);
+  color: var(--pt-ink2, rgba(198,205,216,.7));
   text-shadow: 1px 1px 0 #000;
 }
 .part-pull-value {
   font-size: clamp(10px, calc(1.17 * var(--s)), 25px);
   font-weight: 700;
   letter-spacing: 1px;
-  color: #eef2f7;
+  color: var(--pt-ink, #eef2f7);
   text-shadow: 1px 1px 0 #000;
 }
-.part-pull.under .part-pull-value { color: #c3d8f2; }
-.part-pull.over .part-pull-value { color: #f2c3a8; }
-.part-pull.even .part-pull-value { color: #cdf0b6; }
 .anatomy-lines {
   position: absolute;
   inset: 0;
