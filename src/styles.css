@@ -1224,7 +1224,6 @@ body {
 .part-open-space { flex: 1 1 auto; min-height: 0; }
 /* How far this part can be tempered, read off a bar. The limit and the board
    under it sit lower than the open middle would leave them. */
-.part-synergy { transform: translateY(3.5%); }
 .part-meter { flex: none; display: flex; flex-direction: column; gap: 2px; }
 .part-meter-head {
   display: flex;

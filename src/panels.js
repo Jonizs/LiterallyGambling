@@ -784,6 +784,9 @@
     body.appendChild(pulls);
     synergy.appendChild(body);
     wrap.appendChild(synergy);
+    // The same gap under the board as over it, so the two open stretches of
+    // the bench read as one pair.
+    wrap.appendChild(el("div", "part-open-space"));
     return wrap;
   }
 
