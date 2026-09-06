@@ -1254,9 +1254,8 @@ body {
   flex: none;
   align-self: center;
   width: calc(100% - 2 * var(--gap-sm));
-  margin-top: var(--gap-sm);
   padding: var(--gap-xs) var(--gap-sm);
-  border: 2px solid rgba(154,160,171,.35);
+  border-bottom: 2px solid rgba(154,160,171,.35);
   font-size: clamp(9px, calc(1.15 * var(--s)), 24px);
   font-weight: 700;
   letter-spacing: 2px;
