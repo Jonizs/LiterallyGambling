@@ -744,9 +744,23 @@
     wrap.appendChild(head);
 
     // The synergy board takes the bench over: the name stays where it was
-    // and everything under it is the part's pulls.
+    // and everything under it is the part's pulls, laid out as the readings
+    // they stand in for.
     if (polishSynergy) {
-      wrap.appendChild(partSynergy(state, true));
+      var pulls = el("div", "part-figures");
+      [["Thermal", state.thermal], ["Flexibility", state.flex]].forEach(
+        function (row) {
+          var even = Math.abs(row[1]) < 0.05;
+          var box = el("div", "part-figure part-pull" +
+            (even ? " even" : row[1] < 0 ? " under" : " over"));
+          box.appendChild(el("span", "part-figure-name", row[0]));
+          box.appendChild(el("span", "part-figure-value",
+            (row[1] > 0 ? "+" : "") + row[1].toFixed(1)));
+          pulls.appendChild(box);
+        });
+      wrap.appendChild(pulls);
+      wrap.appendChild(el("div", "part-open-space"));
+      wrap.appendChild(benchSwitch("Part modification"));
       return wrap;
     }
 
@@ -776,37 +790,18 @@
     // Nothing stands here yet: the work itself goes in this gap.
     wrap.appendChild(el("div", "part-open-space"));
 
-    wrap.appendChild(partSynergy(state, false));
+    wrap.appendChild(benchSwitch("Part synergy"));
     return wrap;
   }
 
-  // What the part is out by, heat and give. Nought on both is balanced, and a
-  // reading either side of it is not. The board's name is the way in and out
-  // of it: pressed on the bench it takes the bench over, pressed again it
-  // gives the bench back.
-  function partSynergy(state, open) {
-    var synergy = el("div", "part-synergy" + (open ? " open" : ""));
-    var head = button("Part synergy", "part-synergy-tag", function () {
+  // The line along the foot of the bench that swaps the two screens over.
+  function benchSwitch(word) {
+    var b = button(word, "part-switch", function () {
       polishSynergy = !polishSynergy;
       onPartOpen();
     });
-    head.type = "button";
-    synergy.appendChild(head);
-    var body = el("div", "part-synergy-body");
-    var pulls = el("div", "part-pulls");
-    [["Thermal", state.thermal], ["Flexibility", state.flex]].forEach(
-      function (row) {
-        var off = Math.abs(row[1]) < 0.05;
-        var box = el("div", "part-pull" +
-          (off ? " even" : row[1] < 0 ? " under" : " over"));
-        box.appendChild(el("span", "part-pull-name", row[0]));
-        box.appendChild(el("span", "part-pull-value",
-          (row[1] > 0 ? "+" : "") + row[1].toFixed(1)));
-        pulls.appendChild(box);
-      });
-    body.appendChild(pulls);
-    synergy.appendChild(body);
-    return synergy;
+    b.type = "button";
+    return b;
   }
 
   // What the modification pane holds: the piece laid out part by part, or a

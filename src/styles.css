@@ -1251,31 +1251,18 @@ body {
   background-image: linear-gradient(100deg, var(--pt-edge, #9aa0ab),
     var(--pt-edgem, #9aa0ab) 50%, var(--pt-edge2, #9aa0ab));
 }
-/* The synergy board takes the room the piece's own numbers and its enchants
-   take together. */
-.part-synergy {
-  flex: 0 0 50%;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  border: 2px solid rgba(154,160,171,.4);
-  background: rgba(10,10,12,.45);
-}
-/* Open on the bench, the board takes everything under the part's name. */
-.part-synergy.open { flex: 1 1 auto; }
-/* The board's name is the way into it and back out: a line as wide as the
-   two pulls under it, centred over them, that answers to a press. */
-.part-synergy-tag {
+/* The line along the foot of the bench that swaps it for the synergy board
+   and back. */
+.part-switch {
   flex: none;
   align-self: center;
   width: calc(100% - 2 * var(--gap-sm));
   padding: var(--gap-xs) var(--gap-sm);
   border: 0;
-  border-bottom: 2px solid rgba(154,160,171,.35);
+  border-top: 2px solid rgba(154,160,171,.35);
   background: none;
   cursor: pointer;
   font-family: var(--font);
-  transition: color .12s ease-out, border-color .12s ease-out;
   font-size: clamp(9px, calc(1.15 * var(--s)), 24px);
   font-weight: 700;
   letter-spacing: 2px;
@@ -1283,57 +1270,17 @@ body {
   text-align: center;
   color: var(--pt-ink, rgba(198,205,216,.8));
   text-shadow: 1px 1px 0 #000;
+  transition: color .12s ease-out, border-color .12s ease-out;
 }
 @media (hover: hover) {
-  .part-synergy-tag:hover { border-bottom-color: var(--pt-edge, #ffd479); }
-}
-.part-synergy-body {
-  flex: 1;
-  min-height: 0;
-  display: block;
-  padding: var(--gap-sm);
-}
-/* The two pulls sit in the left half of the board, one over the other. */
-/* Heat on the left, give on the right, side by side across the board. */
-.part-pulls {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--gap-sm);
-  min-height: 0;
-}
-/* A pull is a strip, not a plate: its name and its number sit on one line. */
-.part-pull {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--gap-sm);
-  min-height: 0;
-  padding: 0 calc(.9 * var(--gap-sm));
-  border: 2px solid rgba(154,160,171,.4);
-  border-left-width: 5px;
-  background: rgba(10,10,12,.45);
+  .part-switch:hover { border-top-color: var(--pt-edge, #ffd479); }
 }
 /* Out one way is cold and slack, out the other is hot and stiff; a part that
    reads nought is balanced. The bar is struck in the tier's own colours -
    one end of them, the other, and the middle for a part that is even. */
-.part-pull { border-left-color: var(--pt-edgem, rgba(198,205,216,.55)); }
 .part-pull.under { border-left-color: var(--pt-edge, #7fa9ff); }
 .part-pull.over { border-left-color: var(--pt-edge2, #e0713f); }
 .part-pull.even { border-left-color: var(--pt-edgem, #9ad17a); }
-.part-pull-name {
-  font-size: clamp(8px, calc(.92 * var(--s)), 20px);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--pt-ink2, rgba(198,205,216,.7));
-  text-shadow: 1px 1px 0 #000;
-}
-.part-pull-value {
-  font-size: clamp(10px, calc(1.17 * var(--s)), 25px);
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: var(--pt-ink, #eef2f7);
-  text-shadow: 1px 1px 0 #000;
-}
 .anatomy-lines {
   position: absolute;
   inset: 0;
