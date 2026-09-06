@@ -1261,14 +1261,21 @@ body {
   border: 2px solid rgba(154,160,171,.4);
   background: rgba(10,10,12,.45);
 }
-/* The board's name is a bar of its own, as wide as the two pulls under it
-   and centred over them. */
+/* Open on the bench, the board takes everything under the part's name. */
+.part-synergy.open { flex: 1 1 auto; }
+/* The board's name is the way into it and back out: a line as wide as the
+   two pulls under it, centred over them, that answers to a press. */
 .part-synergy-tag {
   flex: none;
   align-self: center;
   width: calc(100% - 2 * var(--gap-sm));
   padding: var(--gap-xs) var(--gap-sm);
+  border: 0;
   border-bottom: 2px solid rgba(154,160,171,.35);
+  background: none;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: color .12s ease-out, border-color .12s ease-out;
   font-size: clamp(9px, calc(1.15 * var(--s)), 24px);
   font-weight: 700;
   letter-spacing: 2px;
@@ -1276,6 +1283,9 @@ body {
   text-align: center;
   color: var(--pt-ink, rgba(198,205,216,.8));
   text-shadow: 1px 1px 0 #000;
+}
+@media (hover: hover) {
+  .part-synergy-tag:hover { border-bottom-color: var(--pt-edge, #ffd479); }
 }
 .part-synergy-body {
   flex: 1;

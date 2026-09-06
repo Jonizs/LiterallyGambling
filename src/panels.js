@@ -434,6 +434,8 @@
   // The part of the piece the bench has opened, or null while the whole
   // piece is on it. Picking another piece drops back to the piece itself.
   var polishPart = null;
+  // Whether the bench has the part's synergy board open instead of its work.
+  var polishSynergy = false;
 
   function heldPiece(ctx) {
     var found = null;
@@ -468,6 +470,7 @@
         "mini-btn strong", function () {
           polishPiece = item.id;
           polishPart = null;
+          polishSynergy = false;
           polishPicking = false;
           ctx.refresh();
         }));
@@ -637,6 +640,7 @@
       tag.classList.add("tiered");
       tag.addEventListener("click", function () {
         polishPart = part.label;
+        polishSynergy = false;
         onPartOpen();
       });
       var trim = part.trim || 0;
@@ -736,8 +740,15 @@
     tag.appendChild(el("span", "tag-ink", label));
     tierSkin(tag, tier);
     head.appendChild(tag);
-    head.appendChild(temperMeter(state));
+    if (!polishSynergy) head.appendChild(temperMeter(state));
     wrap.appendChild(head);
+
+    // The synergy board takes the bench over: the name stays where it was
+    // and everything under it is the part's pulls.
+    if (polishSynergy) {
+      wrap.appendChild(partSynergy(state, true));
+      return wrap;
+    }
 
     // The three readings the part is judged on: what it can put out, how the
     // weight sits in it, and how clean the steel is.
@@ -765,10 +776,22 @@
     // Nothing stands here yet: the work itself goes in this gap.
     wrap.appendChild(el("div", "part-open-space"));
 
-    // What the part is out by, heat and give. Nought on both is balanced,
-    // and a reading either side of it is not.
-    var synergy = el("div", "part-synergy");
-    synergy.appendChild(el("div", "part-synergy-tag", "Synergy"));
+    wrap.appendChild(partSynergy(state, false));
+    return wrap;
+  }
+
+  // What the part is out by, heat and give. Nought on both is balanced, and a
+  // reading either side of it is not. The board's name is the way in and out
+  // of it: pressed on the bench it takes the bench over, pressed again it
+  // gives the bench back.
+  function partSynergy(state, open) {
+    var synergy = el("div", "part-synergy" + (open ? " open" : ""));
+    var head = button("Part synergy", "part-synergy-tag", function () {
+      polishSynergy = !polishSynergy;
+      onPartOpen();
+    });
+    head.type = "button";
+    synergy.appendChild(head);
     var body = el("div", "part-synergy-body");
     var pulls = el("div", "part-pulls");
     [["Thermal", state.thermal], ["Flexibility", state.flex]].forEach(
@@ -783,8 +806,7 @@
       });
     body.appendChild(pulls);
     synergy.appendChild(body);
-    wrap.appendChild(synergy);
-    return wrap;
+    return synergy;
   }
 
   // What the modification pane holds: the piece laid out part by part, or a
@@ -1127,7 +1149,7 @@
       pickBox.appendChild(el("span", null, "Select weapon"));
     }
     pickBox.addEventListener("click", function () {
-      if (open) polishPart = null;
+      if (open) { polishPart = null; polishSynergy = false; }
       else polishPicking = true;
       ctx.refresh();
     });
