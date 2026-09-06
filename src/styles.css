@@ -1142,8 +1142,19 @@ body {
   min-height: 0;
   font-family: var(--font);
 }
+/* The name and the temper meter share the top row, laid out on the same
+   three columns as the readings under them: the name over the first two,
+   the meter over the last. */
+.part-head {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: var(--gap-sm);
+}
 .part-bench-tag {
-  align-self: center;
+  grid-column: 1 / 3;
+  justify-self: center;
   padding: .2em .7em;
   font-weight: 700;
   font-size: clamp(10px, calc(1.35 * var(--s)), 30px);
@@ -1213,7 +1224,7 @@ body {
 .part-open-space { flex: 1 1 auto; min-height: 0; }
 /* How far this part can be tempered, read off a bar. The limit and the board
    under it sit lower than the open middle would leave them. */
-.part-meter, .part-synergy { transform: translateY(3.5%); }
+.part-synergy { transform: translateY(3.5%); }
 .part-meter { flex: none; display: flex; flex-direction: column; gap: 2px; }
 .part-meter-head {
   display: flex;

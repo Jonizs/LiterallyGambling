@@ -729,10 +729,15 @@
     var state = P.stateOf(item, label);
     var tier = P.tierFor(state.power);
     var wrap = el("div", "part-bench");
+    // The part's name across the top, with how hot it is beside it, over the
+    // last of the three readings.
+    var head = el("div", "part-head");
     var tag = el("div", "part-bench-tag");
     tag.appendChild(el("span", "tag-ink", label));
     tierSkin(tag, tier);
-    wrap.appendChild(tag);
+    head.appendChild(tag);
+    head.appendChild(temperMeter(state));
+    wrap.appendChild(head);
 
     // The three readings the part is judged on: what it can put out, how the
     // weight sits in it, and how clean the steel is.
@@ -759,21 +764,6 @@
 
     // Nothing stands here yet: the work itself goes in this gap.
     wrap.appendChild(el("div", "part-open-space"));
-
-    // How hot the part is from being worked. Full, and it has to cool before
-    // it can be taken up again.
-    var meter = el("div", "part-meter");
-    var head = el("div", "part-meter-head");
-    head.appendChild(el("span", "part-meter-name", "Temper limit"));
-    head.appendChild(el("span", "part-meter-value",
-      Math.round(state.temper) + "%"));
-    meter.appendChild(head);
-    var track = el("div", "part-meter-track");
-    var fill = el("div", "part-meter-fill");
-    fill.style.width = Math.round(state.temper) + "%";
-    track.appendChild(fill);
-    meter.appendChild(track);
-    wrap.appendChild(meter);
 
     // What the part is out by, heat and give. Nought on both is balanced,
     // and a reading either side of it is not.
@@ -807,6 +797,23 @@
     }
     var open = partOpenOn(held);
     fill.appendChild(open ? partBench(held, open) : anatomy(held));
+  }
+
+  // How hot the part is from being worked. Full, and it has to cool before it
+  // can be taken up again.
+  function temperMeter(state) {
+    var meter = el("div", "part-meter");
+    var head = el("div", "part-meter-head");
+    head.appendChild(el("span", "part-meter-name", "Temper"));
+    head.appendChild(el("span", "part-meter-value",
+      Math.round(state.temper) + "%"));
+    meter.appendChild(head);
+    var track = el("div", "part-meter-track");
+    var fill = el("div", "part-meter-fill");
+    fill.style.width = Math.round(state.temper) + "%";
+    track.appendChild(fill);
+    meter.appendChild(track);
+    return meter;
   }
 
   // The part the bench has open on this piece, or null - a part named on one
