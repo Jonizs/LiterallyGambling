@@ -747,15 +747,33 @@
     // and everything under it is the part's pulls, laid out as the readings
     // they stand in for.
     if (polishSynergy) {
-      var pulls = el("div", "part-figures");
-      [["Thermal", state.thermal], ["Flexibility", state.flex]].forEach(
-        function (row) {
-          var even = Math.abs(row[1]) < 0.05;
-          var box = el("div", "part-figure part-pull" +
-            (even ? " even" : row[1] < 0 ? " under" : " over"));
-          box.appendChild(el("span", "part-figure-name", row[0]));
-          box.appendChild(el("span", "part-figure-value",
-            (row[1] > 0 ? "+" : "") + row[1].toFixed(1)));
+      var pulls = el("div", "part-pulls");
+      // Each pull runs the width of the board, read off a scale with nought
+      // in the middle: the bar leans out of centre the way the part does.
+      [["Thermal", state.thermal, 5], ["Flexibility", state.flex, 20]]
+        .forEach(function (row) {
+          var value = row[1], even = Math.abs(value) < 0.05;
+          var box = el("div", "part-pull" +
+            (even ? " even" : value < 0 ? " under" : " over"));
+          var line = el("div", "part-pull-line");
+          line.appendChild(el("span", "part-pull-name", row[0]));
+          line.appendChild(el("span", "part-pull-value",
+            (value > 0 ? "+" : "") + value.toFixed(1)));
+          box.appendChild(line);
+          var track = el("div", "part-pull-track");
+          var lean = el("div", "part-pull-lean");
+          // Half the track either side of the middle, so a part at its worst
+          // fills its half and a balanced one shows nothing but the mark.
+          lean.style.width = Math.min(50, Math.abs(value) / row[2] * 50) + "%";
+          lean.style[value < 0 ? "right" : "left"] = "50%";
+          track.appendChild(lean);
+          track.appendChild(el("div", "part-pull-mark"));
+          box.appendChild(track);
+          var ends = el("div", "part-pull-ends");
+          ends.appendChild(el("span", null, "-" + row[2].toFixed(1)));
+          ends.appendChild(el("span", null, "0.0"));
+          ends.appendChild(el("span", null, "+" + row[2].toFixed(1)));
+          box.appendChild(ends);
           pulls.appendChild(box);
         });
       wrap.appendChild(pulls);

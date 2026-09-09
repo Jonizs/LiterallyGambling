@@ -1275,12 +1275,79 @@ body {
 @media (hover: hover) {
   .part-switch:hover { border-top-color: var(--pt-edge, #ffd479); }
 }
-/* Out one way is cold and slack, out the other is hot and stiff; a part that
-   reads nought is balanced. The bar is struck in the tier's own colours -
-   one end of them, the other, and the middle for a part that is even. */
+/* The two pulls, each the full width of the board and read off a scale with
+   nought in the middle. Out one way is cold and slack, out the other hot and
+   stiff; a part that reads nought is balanced. */
+.part-pulls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+.part-pull {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: calc(.9 * var(--gap-xs)) calc(.9 * var(--gap-sm));
+  border: 2px solid rgba(154,160,171,.4);
+  border-left-width: 5px;
+  border-left-color: var(--pt-edgem, rgba(198,205,216,.55));
+  background: rgba(10,10,12,.45);
+}
 .part-pull.under { border-left-color: var(--pt-edge, #7fa9ff); }
 .part-pull.over { border-left-color: var(--pt-edge2, #e0713f); }
-.part-pull.even { border-left-color: var(--pt-edgem, #9ad17a); }
+.part-pull-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gap-sm);
+}
+.part-pull-name {
+  font-size: clamp(9px, calc(1.02 * var(--s)), 22px);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--pt-ink2, rgba(198,205,216,.7));
+  text-shadow: 1px 1px 0 #000;
+}
+.part-pull-value {
+  font-size: clamp(11px, calc(1.3 * var(--s)), 28px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--pt-ink, #eef2f7);
+  text-shadow: 1px 1px 0 #000;
+}
+/* The scale itself: the lean runs out of the middle to the side it favours,
+   and the mark stands at nought. */
+.part-pull-track {
+  position: relative;
+  height: clamp(8px, calc(1.1 * var(--s)), 20px);
+  border: 2px solid rgba(154,160,171,.4);
+  background: rgba(10,10,12,.55);
+  overflow: hidden;
+}
+.part-pull-lean {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background-image: linear-gradient(100deg, var(--pt-edge, #9aa0ab),
+    var(--pt-edgem, #9aa0ab) 50%, var(--pt-edge2, #9aa0ab));
+}
+.part-pull-mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 1px);
+  width: 2px;
+  background: var(--pt-ink, rgba(238,242,247,.85));
+}
+.part-pull.even .part-pull-mark { background: #cdf0b6; }
+/* What the two ends of the scale are worth. */
+.part-pull-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: clamp(8px, calc(.88 * var(--s)), 18px);
+  letter-spacing: 1px;
+  color: var(--pt-ink2, rgba(198,205,216,.5));
+}
 .anatomy-lines {
   position: absolute;
   inset: 0;
