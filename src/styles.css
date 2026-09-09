@@ -1316,6 +1316,8 @@ body {
    and the mark stands at nought. */
 .part-pull-track {
   position: relative;
+  /* Lifted off the foot of the box, so the bar sits nearer its middle. */
+  margin-bottom: var(--gap-xs);
   height: clamp(8px, calc(1.1 * var(--s)), 20px);
   border: 2px solid rgba(154,160,171,.4);
   background: rgba(10,10,12,.55);
