@@ -755,12 +755,10 @@
           var value = row[1], even = Math.abs(value) < 0.05;
           var box = el("div", "part-pull" +
             (even ? " even" : value < 0 ? " under" : " over"));
-          // The whole box is dyed by how far out the part is: white at
-          // nought, running to a deep blue one way and a deep red the other.
-          var dye = pullDye(value, row[2]);
-          box.style.background = dye.back;
-          box.style.borderColor = dye.edge;
-          box.style.color = dye.ink;
+          // How far out the part is dyes its bar, its numbers and the line
+          // down its side: white at nought, running to a deep blue one way
+          // and a deep red the other.
+          box.style.setProperty("--dye", pullDye(value, row[2]));
           var line = el("div", "part-pull-line");
           line.appendChild(el("span", "part-pull-name", row[0]));
           line.appendChild(el("span", "part-pull-value",
@@ -828,19 +826,11 @@
   function pullDye(value, max) {
     var t = Math.min(1, Math.abs(value) / max);
     var end = value < 0 ? PULL_COLD : PULL_HOT;
-    var back = [], edge = [], i;
+    var dye = [], i;
     for (i = 0; i < 3; i++) {
-      back.push(Math.round(PULL_WHITE[i] + (end[i] - PULL_WHITE[i]) * t));
-      // The border is the same dye taken a step further in.
-      edge.push(Math.round(PULL_WHITE[i] + (end[i] - PULL_WHITE[i]) *
-        Math.min(1, t + 0.25)));
+      dye.push(Math.round(PULL_WHITE[i] + (end[i] - PULL_WHITE[i]) * t));
     }
-    return {
-      back: "rgb(" + back.join(",") + ")",
-      edge: "rgb(" + edge.join(",") + ")",
-      // Dark ground takes light lettering; a pale one takes the shop's ink.
-      ink: t > 0.45 ? "#f4f7fc" : "#14161c"
-    };
+    return "rgb(" + dye.join(",") + ")";
   }
 
   // The line along the foot of the bench that swaps the two screens over.
