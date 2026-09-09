@@ -1285,8 +1285,9 @@ body {
 .part-pull {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: calc(.9 * var(--gap-xs)) calc(.9 * var(--gap-sm));
+  gap: 1px;
+  padding: 0 calc(.9 * var(--gap-sm));
+  line-height: 1.15;
   border: 2px solid rgba(154,160,171,.4);
   border-left-width: 5px;
   border-left-color: var(--dye, rgba(198,205,216,.55));
@@ -1316,7 +1317,7 @@ body {
    and the mark stands at nought. */
 .part-pull-track {
   position: relative;
-  height: clamp(8px, calc(1.1 * var(--s)), 20px);
+  height: clamp(6px, calc(.85 * var(--s)), 16px);
   border: 2px solid rgba(154,160,171,.4);
   background: rgba(10,10,12,.55);
   overflow: hidden;
