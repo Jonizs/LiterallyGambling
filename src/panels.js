@@ -816,19 +816,18 @@
     return wrap;
   }
 
-  // Cold one way, hot the other, white in the middle: how far a pull is out
-  // of nought says how deep the colour goes, and how dark it gets says which
-  // lettering will read on it.
+  // Cold one way, hot the other, and the two meeting in purple at nought:
+  // how far a pull is out says how far its colour has run from that middle.
   var PULL_COLD = [8, 30, 92];
   var PULL_HOT = [104, 12, 18];
-  var PULL_WHITE = [244, 247, 252];
+  var PULL_EVEN = [186, 124, 255];
 
   function pullDye(value, max) {
     var t = Math.min(1, Math.abs(value) / max);
     var end = value < 0 ? PULL_COLD : PULL_HOT;
     var dye = [], i;
     for (i = 0; i < 3; i++) {
-      dye.push(Math.round(PULL_WHITE[i] + (end[i] - PULL_WHITE[i]) * t));
+      dye.push(Math.round(PULL_EVEN[i] + (end[i] - PULL_EVEN[i]) * t));
     }
     return "rgb(" + dye.join(",") + ")";
   }
