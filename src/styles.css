@@ -1336,14 +1336,6 @@ body {
   width: 2px;
   background: currentColor;
 }
-/* What the two ends of the scale are worth. */
-.part-pull-ends {
-  display: flex;
-  justify-content: space-between;
-  font-size: clamp(8px, calc(.88 * var(--s)), 18px);
-  letter-spacing: 1px;
-  color: var(--dye, #9aa0ab);
-}
 .anatomy-lines {
   position: absolute;
   inset: 0;

@@ -773,11 +773,6 @@
           track.appendChild(lean);
           track.appendChild(el("div", "part-pull-mark"));
           box.appendChild(track);
-          var ends = el("div", "part-pull-ends");
-          ends.appendChild(el("span", null, "-" + row[2].toFixed(1)));
-          ends.appendChild(el("span", null, "0.0"));
-          ends.appendChild(el("span", null, "+" + row[2].toFixed(1)));
-          box.appendChild(ends);
           pulls.appendChild(box);
         });
       wrap.appendChild(pulls);
