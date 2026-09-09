@@ -1279,8 +1279,8 @@ body {
    nought in the middle. Out one way is cold and slack, out the other hot and
    stiff; a part that reads nought is balanced. */
 .part-pulls {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--gap-sm);
 }
 .part-pull {
