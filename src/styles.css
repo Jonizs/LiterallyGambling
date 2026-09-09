@@ -1325,8 +1325,7 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  background-image: linear-gradient(100deg, var(--pt-edge, #9aa0ab),
-    var(--pt-edgem, #9aa0ab) 50%, var(--pt-edge2, #9aa0ab));
+  background: var(--dye, #9aa0ab);
 }
 .part-pull-mark {
   position: absolute;
