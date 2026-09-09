@@ -8,7 +8,7 @@
     wood:   { label: "Wood",   price: 4 },
     metal:  { label: "Metal",  price: 5 },
     // level, where it is set, is the smith level the shop starts stocking it.
-    paper:  { label: "Paper",  price: 25, level: 2 }
+    paper:  { label: "Paper",  price: 15, level: 2 }
   };
 
   var RECIPES = global.Recipes.LIST;
