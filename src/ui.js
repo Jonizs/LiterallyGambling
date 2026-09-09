@@ -42,11 +42,19 @@
   var $ = function (id) { return document.getElementById(id); };
   var tooltipEl = $("tooltip");
 
+  // The level the buttons were last drawn against, so a level earned at the
+  // anvil opens the workstation it unlocks there and then.
+  var shownLevel = null;
+
   function renderHeader() {
     $("player-name").textContent = smithName();
     $("lvl-value").textContent = state.level;
     $("xp-fill").style.width = G.xpPercent(state) + "%";
     renderPanelButtons();
+    if (shownLevel !== state.level) {
+      shownLevel = state.level;
+      syncRoomButtons();
+    }
   }
 
   function xpTooltip() {
